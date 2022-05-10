@@ -85,35 +85,6 @@ if mods["pyalienlife"] and mods["pyhightech"] then
 end
 
 if mods["pyalternativeenergy"] then
-    create_tmp_tech("nexelit-battery-recharge", "battery-mk02")
-
-    create_tmp_tech("aerial-blimp-mk03", "renewable-mk03")
-    create_tmp_tech("multiblade-turbine-mk03", "renewable-mk03")
-
-    create_tmp_tech("czts-plate", "solar-mk03")
-    create_tmp_tech("czts-slab", "solar-mk03")
-
-    create_tmp_tech("sc-engine", "erbium")
-    create_tmp_tech("rotor-m", "erbium")
-    create_tmp_tech("magnetic-ring", "erbium")
-
-    create_tmp_tech("arsenic", "nano-tech")
-    create_tmp_tech("gaas", "nano-tech")
-    create_tmp_tech("nanocrystaline-core", "nano-tech")
-
-    create_tmp_tech("heavy-fermion", "integrated-circuits-3")
-
-    create_tmp_tech("ammonium-sulfate", "nanozymes")
-
-    create_tmp_tech("utility-box-mk04", "intermetallics-mk04")
-    create_tmp_tech("electronics-mk04", "intermetallics-mk04")
-    create_tmp_tech("controler-mk04", "intermetallics-mk04")
-    create_tmp_tech("heating-system", "intermetallics-mk04")
-
-    create_tmp_tech("tio2", "solar-mk03")
-    create_tmp_tech("crude-top-layer", "solar-mk03")
-    create_tmp_tech("transparent-anode", "solar-mk03")
-
     create_tmp_tech("brake-mk03", "energy-3")
     create_tmp_tech("hydraulic-system-mk01", "energy-3")
 
