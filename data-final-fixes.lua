@@ -43,7 +43,7 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
     local new_tech = TECHNOLOGY {
         type = "technology",
         name = "tmp-" .. recipe .. "-tech",
-        icon = "__pycoalprocessinggraphics__/graphics/placeholder.png",
+        icon = "__pypostprocessing__/graphics/placeholder.png",
         icon_size = 128,
         order = "c-a",
         prerequisites = {},
