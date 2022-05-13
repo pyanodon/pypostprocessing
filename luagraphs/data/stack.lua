@@ -65,10 +65,12 @@ end
 function stack:toList()
     local result = require('luagraphs.data.list').create()
     local x = self.first
+
     while x ~= nil do
         result:add(x.value)
         x = x.next
     end
+
     return result
 end
 

@@ -18,6 +18,7 @@ function queue.Node.create(value)
 
     s.value = value
     s.next = nil
+
     return s
 end
 
@@ -35,9 +36,11 @@ end
 function queue:enqueue(value)
     local oldLast = self.last
     self.last = queue.Node.create(value)
+
     if oldLast ~= nil then
         oldLast.next = self.last
     end
+
     if self.first == nil then
         self.first = self.last
     end
@@ -47,6 +50,7 @@ end
 
 function queue:dequeue()
     local oldFirst = self.first
+
     if oldFirst == nil then
         return nil
     end
@@ -54,9 +58,11 @@ function queue:dequeue()
     local value = oldFirst.value
     self.first = oldFirst.next
     self.N = self.N - 1
+
     if self.first == nil then
         self.last = nil
     end
+
     return value
 end
 
