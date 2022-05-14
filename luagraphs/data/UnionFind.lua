@@ -9,18 +9,22 @@
 local UnionFind = {}
 UnionFind.__index = UnionFind
 
+
 function UnionFind.create(V)
     local s = {}
     setmetatable(s, UnionFind)
 
     s.id = {}
     s.count = {}
-    for v=0, V-1 do
+
+    for v = 0, V-1 do
         s.id[v] = v
         s.count[v] = 1
     end
+
     return s
 end
+
 
 function UnionFind.createFromVertexList(vertices)
     local s = {}
@@ -28,22 +32,28 @@ function UnionFind.createFromVertexList(vertices)
 
     s.id = {}
     s.count = {}
-    for i=0, vertices:size()-1 do
+
+    for i = 0, vertices:size()-1 do
         local v = vertices:get(i)
         s.id[v] = v
         s.count[v] = 1
     end
+
     return s
 end
 
+
 function UnionFind:root(v)
     local x = v
+
     while self.id[x] ~= x do
         x = self.id[x]
         self.id[x] = self.id[self.id[x]]
     end
+
     return x
 end
+
 
 function UnionFind:union(v, w)
     local v_root = self:root(v)
@@ -58,12 +68,13 @@ function UnionFind:union(v, w)
             self.count[w_root] = self.count[w_root] + self.count[v_root]
         end
     end
-
 end
+
 
 function UnionFind:connected(v, w)
     return self:root(v) == self:root(w)
 end
+
 
 return UnionFind
 

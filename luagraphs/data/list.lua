@@ -43,7 +43,7 @@ end
 function list.ArrayList:makeCopy()
     local temp = {}
 
-    for key,val in pairs(self.a) do
+    for key, val in pairs(self.a) do
         temp[key] = val
     end
 
@@ -131,7 +131,7 @@ end
 function list.ArrayList:enumerate()
     local temp = {}
 
-    for i = 0,(self.N-1) do
+    for i = 0, (self.N-1) do
         temp[i] = self.a[i]
     end
 
@@ -139,7 +139,7 @@ function list.ArrayList:enumerate()
 end
 
 function list.ArrayList:isSortedAscendingly(comparator)
-    for i=0,(self:size()-2) do
+    for i = 0, (self:size()-2) do
         if comparator(self.a:get(i), self.a:get(i+1)) > 0 then
             return false
         end
@@ -149,7 +149,7 @@ function list.ArrayList:isSortedAscendingly(comparator)
 end
 
 function list.ArrayList:isSortedDescendingly(comparator)
-    for i=0,(self:size()-2) do
+    for i = 0, (self:size()-2) do
         if comparator(self.a:get(i), self.a:get(i+1)) < 0 then
             return false
         end

@@ -12,6 +12,7 @@ queue.__index = queue
 queue.Node = {}
 queue.Node.__index = queue.Node
 
+
 function queue.Node.create(value)
     local s = {}
     setmetatable(s, queue.Node)
@@ -21,6 +22,7 @@ function queue.Node.create(value)
 
     return s
 end
+
 
 function queue.create()
     local s = {}
@@ -32,6 +34,7 @@ function queue.create()
 
     return s
 end
+
 
 function queue:enqueue(value)
     local oldLast = self.last
@@ -47,6 +50,7 @@ function queue:enqueue(value)
 
     self.N = self.N + 1
 end
+
 
 function queue:dequeue()
     local oldFirst = self.first
@@ -66,13 +70,15 @@ function queue:dequeue()
     return value
 end
 
+
 function queue:size()
     return self.N
 end
+
 
 function queue:isEmpty()
     return self.N == 0
 end
 
-return queue
 
+return queue

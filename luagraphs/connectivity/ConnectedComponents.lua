@@ -9,6 +9,7 @@
 local ConnectedComponents = {}
 ConnectedComponents.__index = ConnectedComponents
 
+
 function ConnectedComponents.create()
     local s = {}
     setmetatable(s, ConnectedComponents)
@@ -20,10 +21,11 @@ function ConnectedComponents.create()
     return s
 end
 
-function ConnectedComponents:run(G)
 
+function ConnectedComponents:run(G)
     self.marked = {}
     self.id = {}
+
     for i = 0, G:vertexCount()-1 do
         local v = G:vertexAt(i)
         self.marked[v] = false
@@ -31,34 +33,39 @@ function ConnectedComponents:run(G)
     end
 
     self.count = 0
+
     for i = 0, G:vertexCount()-1 do
         local v = G:vertexAt(i)
+
         if self.marked[v] == false then
             self:dfs(G, v)
             self.count = self.count + 1
         end
     end
-
 end
+
 
 function ConnectedComponents:dfs(G, v)
     self.marked[v] = true
     self.id[v] = self.count
 
     local adj_v = G:adj(v)
-    for i = 0,adj_v:size()-1 do
+
+    for i = 0, adj_v:size()-1 do
         local e = adj_v:get(i)
         local w = e:other(v)
+
         if self.marked[w] == false then
             self:dfs(G, w)
         end
     end
-
 end
+
 
 function ConnectedComponents:component(v)
     return self.id[v]
 end
+
 
 return ConnectedComponents
 

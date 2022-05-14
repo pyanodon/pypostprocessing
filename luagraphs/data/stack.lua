@@ -12,6 +12,7 @@ stack.__index = stack
 stack.Node = {}
 stack.Node.__index = stack.Node
 
+
 function stack.Node.create(value)
     local s = {}
     setmetatable(s, stack.Node)
@@ -21,6 +22,7 @@ function stack.Node.create(value)
 
     return s
 end
+
 
 function stack.create()
     local s = {};
@@ -32,6 +34,7 @@ function stack.create()
     return s
 end
 
+
 function stack:push(val)
     local oldFirst = self.first
     self.first = stack.Node.create(val)
@@ -39,13 +42,16 @@ function stack:push(val)
     self.N = self.N + 1
 end
 
+
 function stack:size()
     return self.N
 end
 
+
 function stack:isEmpty()
     return self.N == 0
 end
+
 
 function stack:pop()
     if self.N == 0 then
@@ -62,6 +68,7 @@ function stack:pop()
     return val
 end
 
+
 function stack:toList()
     local result = require('luagraphs.data.list').create()
     local x = self.first
@@ -73,5 +80,6 @@ function stack:toList()
 
     return result
 end
+
 
 return stack
