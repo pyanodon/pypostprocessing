@@ -711,8 +711,8 @@ function pytech.add_fuel_dependencies(child_node, item)
                     -- log('Adding fuel for recipe ' .. child_node.key .. ': ' .. fuel_node.key)
                 end
             end
-        elseif es.type == 'fluid' then
-            pytech.add_fluid_fuels(child_node, es.fluid_box.filter)
+        elseif es.type == 'fluid' and es.fluid_box.filter ~= "void" then
+            pytech.add_fluid_fuels(child_node, es.fluid_box.filter, es.burns_fluid)
         elseif es.type == 'electric' and not electricity_producers[entity.type] then
             local fuel_node = pytech.fg_get_node(fuel_electricity, nt_item)
             pytech.fg_add_fuzzy_link(fuel_node, child_node, l_fuel)
@@ -899,8 +899,10 @@ function pytech.add_boiler_recipe(boiler)
 end
 
 
-function pytech.add_fluid_fuels(node, fluid_name)
-    for fluid, _ in pairs(pytech.fuel_categories[fuel_fluid]) do
+function pytech.add_fluid_fuels(node, fluid_name, fluid_fuel)
+    local fluids = fluid_fuel and pytech.fuel_categories[fuel_fluid] or pytech.fluids
+
+    for fluid, _ in pairs(fluids) do
         if not fluid_name or fluid == fluid_name then
             for temp, _ in pairs(pytech.fluids[fluid]) do
                 local fuel_node = pytech.parse_fluid(nil, temp, fluid)
@@ -1404,7 +1406,7 @@ end
 
 
 function pytech.topological_sort(sorted_set_inc, start_node)
-    -- log('============== TOPOLOGICAL SORT ==============')
+    log('============== TOPOLOGICAL SORT ==============')
     -- log('Add incoming set')
     local sorted_set = {}
 
@@ -1558,13 +1560,13 @@ function pytech.topological_sort(sorted_set_inc, start_node)
         then
             if not ignore_science_packs then
                 ignore_science_packs = true
-                log('Restarting without science pack checks')
+                -- log('Restarting without science pack checks')
 
                 for sp_name, t in pairs(sp_virt_links) do
                     local node = pytech.fg_get_node(sp_name, nt_item)
 
                     for _, tech_node in pairs(t) do
-                        log('Removing link ' .. tech_node.key .. ' > ' .. node.key)
+                        -- log('Removing link ' .. tech_node.key .. ' > ' .. node.key)
                         pytech.fg_remove_link(tech_node, node)
                         node.incoming[tech_node.key] = nil
                     end
@@ -2136,6 +2138,7 @@ end
 
 function pytech.find_tech_prerequisites(node)
     local prerequisites = {}
+    local processed_nodes = {}
     local current_set = { node }
 
     while not table.is_empty(current_set) do
@@ -2143,10 +2146,14 @@ function pytech.find_tech_prerequisites(node)
 
         for _, c_node in pairs(current_set) do
             for _, p_node in pairs(c_node.parents) do
-                if p_node.type == nt_tech_tail then
-                    prerequisites[p_node.name] = true
-                else
-                    next_set[p_node.key] = p_node
+                if not processed_nodes[p_node.key] then
+                    processed_nodes[p_node.key] = true
+
+                    if p_node.type == nt_tech_tail then
+                        prerequisites[p_node.name] = true
+                    else
+                        next_set[p_node.key] = p_node
+                    end
                 end
             end
         end
@@ -2198,7 +2205,7 @@ end
 
 function pytech.calculate_prerequisites()
     -- log(serpent.block(pytech.fg_get_node('geothermal-water(300)', nt_fluid), { maxlevel = 3 }))
-    -- log(serpent.block(pytech.fg_get_node('boiler::solar-tower-building', nt_recipe), { maxlevel = 3 }))
+    -- log(serpent.block(pytech.fg_get_node('thermal-mk04 / solar-tower-building', nt_recipe), { maxlevel = 3 }))
     log('Nodes: ' .. table_size(pytech.fg))
 
     pytech.pre_process_fuzzy_graph()
@@ -2213,12 +2220,14 @@ function pytech.calculate_prerequisites()
     -- log(serpent.block(pytech.fg_get_node('coal-processing-1::calcium-carbide', nt_item), { maxlevel = 3 }))
     -- log(serpent.block(pytech.fg_get_node('coal-processing-1::calcium-carbide', nt_recipe), { maxlevel = 3 }))
 
+    log("========== Extract prerequisites ==========")
     pytech.extract_prerequisites()
 
     -- log(serpent.block(data.raw.technology['speed-module-3'], { maxlevel =3 }))
 
     pytech.tr_visited = {}
 
+    log("========== Transitive reduction ==========")
     for _, tech in pairs(data.raw.technology) do
         pytech.transitive_reduction(tech)
     end
