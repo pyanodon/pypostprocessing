@@ -98,8 +98,7 @@ if mods["pyalienlife"] and mods["pyhightech"] then
 end
 
 if mods["pyalternativeenergy"] then
-    create_tmp_tech("brake-mk03", "energy-3")
-    create_tmp_tech("hydraulic-system-mk01", "energy-3")
+
 end
 
 ----------------------------------------------------
