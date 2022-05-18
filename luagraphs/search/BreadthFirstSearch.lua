@@ -6,8 +6,12 @@
 -- To change this template use File | Settings | File Templates.
 --
 
+local queue = require('luagraphs.data.queue')
+local stack = require('luagraphs.data.stack')
+
 local BreadthFirstSearch = {}
 BreadthFirstSearch.__index = BreadthFirstSearch
+
 
 function BreadthFirstSearch.create()
     local s = {}
@@ -15,31 +19,33 @@ function BreadthFirstSearch.create()
 
     s.marked = {}
     s.pathTo = {}
+
     return s
 end
+
 
 function BreadthFirstSearch:run(G, s)
     self.s = s
 
-    for i = 0, G:vertexCount()-1 do
-        local v = G:vertexAt(i)
+    for _, v in pairs(G:vertices():enumerate()) do
         self.marked[v] = false
         self.pathTo[v] = -1
     end
 
-    local queue = require('luagraphs.data.queue').create()
+    local q = queue.create()
 
-    queue:enqueue(s)
-    while queue:isEmpty() == false do
-        local v = queue:dequeue()
+    q:enqueue(s)
+
+    while q:isEmpty() == false do
+        local v = q:dequeue()
         self.marked[v] = true
-        local adj_v = G:adj(v)
-        for i = 0, adj_v:size()-1 do
-            local e = adj_v:get(i)
+
+        for _, e in pairs(G:adj(v):enumerate()) do
             local w = e:other(v)
+
             if self.marked[w] == false then
                 self.pathTo[w] = v
-                queue:enqueue(w)
+                q:enqueue(w)
             end
         end
 
@@ -51,15 +57,18 @@ function BreadthFirstSearch:hasPathTo(v)
     return self.marked[v]
 end
 
+
 function BreadthFirstSearch:getPathTo(v)
-    local stack = require('luagraphs.data.stack')
     local path = stack.create()
     local x = v
+
     while x ~= self.s do
         path:push(x)
         x = self.pathTo[x]
     end
+
     path:push(self.s)
+
     return path
 end
 

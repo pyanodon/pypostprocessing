@@ -6,8 +6,11 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local DepthFirstSearch = {};
+local stack = require('luagraphs.data.stack')
+
+local DepthFirstSearch = {}
 DepthFirstSearch.__index = DepthFirstSearch
+
 
 function DepthFirstSearch.create()
     local s = {}
@@ -19,10 +22,11 @@ function DepthFirstSearch.create()
     return s
 end
 
+
 function DepthFirstSearch:run(G, s)
     self.s = s
-    for i = 0,G:vertexCount()-1 do
-        local v = G:vertexAt(i)
+
+    for _, v in pairs(G:vertices():enumerate()) do
         self.marked[v] = false
         self.pathTo[v] = -1
     end
@@ -30,12 +34,13 @@ function DepthFirstSearch:run(G, s)
     self:dfs(G, s)
 end
 
+
 function DepthFirstSearch:dfs(G, v)
     self.marked[v] = true
-    local adj_v = G:adj(v)
-    for i = 0,adj_v:size()-1 do
-        local e = adj_v:get(i)
+
+    for _, e in pairs(G:adj(v):enumerate()) do
         local w = e:other(v)
+
         if self.marked[w] == false then
             self.pathTo[w] = v
             self:dfs(G, w)
@@ -43,21 +48,25 @@ function DepthFirstSearch:dfs(G, v)
     end
 end
 
+
 function DepthFirstSearch:hasPathTo(v)
     return self.marked[v]
 end
 
+
 function DepthFirstSearch:getPathTo(v)
-    local stack = require('luagraphs.data.stack')
     local path = stack.create()
     local x = v
+
     while x ~= self.s do
         path:push(x)
         x = self.pathTo[x]
     end
+
     path:push(self.s)
+
     return path
 end
 
-return DepthFirstSearch
 
+return DepthFirstSearch

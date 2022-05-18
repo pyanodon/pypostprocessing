@@ -6,6 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
+local list = require('luagraphs.data.list')
+
 local stack = {}
 stack.__index = stack
 
@@ -70,7 +72,7 @@ end
 
 
 function stack:toList()
-    local result = require('luagraphs.data.list').create()
+    local result = list.create()
     local x = self.first
 
     while x ~= nil do

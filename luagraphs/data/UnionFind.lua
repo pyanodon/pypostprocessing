@@ -33,8 +33,7 @@ function UnionFind.createFromVertexList(vertices)
     s.id = {}
     s.count = {}
 
-    for i = 0, vertices:size()-1 do
-        local v = vertices:get(i)
+    for _, v in pairs(vertices:enumerate()) do
         s.id[v] = v
         s.count[v] = 1
     end

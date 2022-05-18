@@ -10,6 +10,7 @@ local list = {}
 list.ArrayList = {}
 list.ArrayList.__index = list.ArrayList
 
+
 function list.ArrayList.create()
     local s = {}
     setmetatable(s, list.ArrayList)
@@ -20,6 +21,7 @@ function list.ArrayList.create()
 
     return s
 end
+
 
 function list.ArrayList.createWith(a, aLen, N)
     local s = {}
@@ -32,13 +34,16 @@ function list.ArrayList.createWith(a, aLen, N)
     return s
 end
 
+
 function list.create()
     return list.ArrayList.create()
 end
 
+
 function list.createWith(a, aLen, N)
     return list.ArrayList.createWith(a, aLen, N)
 end
+
 
 function list.ArrayList:makeCopy()
     local temp = {}
@@ -50,6 +55,7 @@ function list.ArrayList:makeCopy()
     return list.ArrayList.createWith(temp, self.aLen, self.N)
 end
 
+
 function list.ArrayList:add(value)
     self.a[self.N] = value
     self.N = self.N + 1
@@ -59,15 +65,18 @@ function list.ArrayList:add(value)
     end
 end
 
+
 function list.ArrayList:set(index,value)
     self.a[index] = value
 end
+
 
 function list.ArrayList:get(index)
     local temp = self.a[index]
 
     return temp
 end
+
 
 function list.ArrayList:removeAt(index)
     if index == self.N-1 then
@@ -86,12 +95,13 @@ function list.ArrayList:removeAt(index)
     end
 end
 
+
 function list.ArrayList:indexOf(value)
     if self.N == 0 then
         return -1
     end
 
-    for i=0,self.N-1 do
+    for i = 0, self.N-1 do
         if self.a[i] == value then
             return i
         end
@@ -100,14 +110,17 @@ function list.ArrayList:indexOf(value)
     return -1
 end
 
+
 function list.ArrayList:contains(value)
     return self:indexOf(value) ~= -1
 end
+
 
 function list.ArrayList:remove(value)
     local index = self:indexOf(value)
     self:removeAt(index)
 end
+
 
 function list.ArrayList:resize(newSize)
     local temp = {}
@@ -120,13 +133,16 @@ function list.ArrayList:resize(newSize)
     self.aLen = newSize
 end
 
+
 function list.ArrayList:size()
     return self.N
 end
 
+
 function list.ArrayList:isEmpty()
     return self.N == 0
 end
+
 
 function list.ArrayList:enumerate()
     local temp = {}
@@ -138,6 +154,7 @@ function list.ArrayList:enumerate()
     return temp
 end
 
+
 function list.ArrayList:isSortedAscendingly(comparator)
     for i = 0, (self:size()-2) do
         if comparator(self.a:get(i), self.a:get(i+1)) > 0 then
@@ -147,6 +164,7 @@ function list.ArrayList:isSortedAscendingly(comparator)
 
     return true
 end
+
 
 function list.ArrayList:isSortedDescendingly(comparator)
     for i = 0, (self:size()-2) do
@@ -158,5 +176,5 @@ function list.ArrayList:isSortedDescendingly(comparator)
     return true
 end
 
-return list
 
+return list

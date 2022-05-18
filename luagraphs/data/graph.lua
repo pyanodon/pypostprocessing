@@ -6,12 +6,15 @@
 -- To change this template use File | Settings | File Templates.
 --
 
+local list = require('luagraphs.data.list')
+
 local graph = {}
 
 graph.__index = graph
 
 graph.Edge = {}
 graph.Edge.__index = graph.Edge
+
 
 function graph.Edge.create(v, w, weight)
     local s = {}
@@ -62,12 +65,12 @@ function graph.create(V, directed)
         directed = false
     end
 
-    g.vertexList = require('luagraphs.data.list').create()
+    g.vertexList = list.create()
     g.adjList = {}
 
     for v = 0, V-1 do
         g.vertexList:add(v)
-        g.adjList[v] = require('luagraphs.data.list').create()
+        g.adjList[v] = list.create()
     end
 
     g.directed = directed
@@ -98,7 +101,7 @@ function graph.createFromVertexList(vertices, directed)
     g.adjList = {}
 
     for _, v in pairs(g.vertexList:enumerate()) do
-        g.adjList[v] = require('luagraphs.data.list').create()
+        g.adjList[v] = list.create()
     end
 
     g.directed = directed
@@ -112,7 +115,7 @@ function graph:addVertexIfNotExists(v)
         return false
     else
         self.vertexList:add(v)
-        self.adjList[v] = require('luagraphs.data.list').create()
+        self.adjList[v] = list.create()
         return true
     end
 end
@@ -174,23 +177,51 @@ function graph:reverse()
 end
 
 
+function graph:copy()
+    local g = graph.createFromVertexList(self.vertexList, self.directed)
+
+    for _, v in pairs(self.vertexList:enumerate()) do
+        for _, e in pairs(self:adj(v):enumerate()) do
+            g:addEdge(e:from(), e:to(), e.weight)
+        end
+    end
+
+    return g
+end
+
+
+function graph:create_subgraph(vertexList)
+    local g = graph.createFromVertexList(vertexList, self.directed)
+
+    for _, v in pairs(vertexList:enumerate()) do
+        for _, e in pairs(self:adj(v):enumerate()) do
+            if vertexList:contains(e:other(v)) then
+                g:addEdge(e:from(), e:to(), e.weight)
+            end
+        end
+    end
+
+    return g
+end
+
+
 function graph:vertexAt(i)
     return self.vertexList:get(i)
 end
 
 
 function graph:edges()
-    local list = require('luagraphs.data.list').create()
+    local l = list.create()
 
     for _, v in pairs(self.vertexList:enumerate()) do
         for _, e in pairs(self:adj(v):enumerate()) do
             if self.directed == true or e:other(v) > v then
-                list:add(e)
+                l:add(e)
             end
         end
     end
 
-    return list
+    return l
 end
 
 

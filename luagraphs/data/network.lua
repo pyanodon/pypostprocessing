@@ -6,6 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
+local list = require('luagraphs.data.list')
+
 local network = {}
 network.__index = network
 
@@ -33,12 +35,12 @@ function network.FlowNetwork.create(V)
     local s = {}
     setmetatable(s, network.FlowNetwork)
 
-    s.vertexList = require('luagraphs.data.list').create()
+    s.vertexList = list.create()
     s.adjList = {}
 
     for v = 0, V-1 do
         s.vertexList:add(v)
-        s.adjList[v] = require('luagraphs.data.list').create()
+        s.adjList[v] = list.create()
     end
 
     return s
@@ -60,7 +62,7 @@ function network.FlowNetwork:addVertexIfNotExists(v)
         return false
     else
         self.vertexList:add(v)
-        self.adjList[v] = require('luagraphs.data.list').create()
+        self.adjList[v] = list.create()
         return true
     end
 end

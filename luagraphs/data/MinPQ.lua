@@ -21,6 +21,7 @@ function MinPQ.create(comparator)
     s.a = {}
     s.N = 0
     s.comparator = comparator
+
     return s
 end
 
@@ -103,4 +104,3 @@ end
 
 
 return MinPQ
-
