@@ -35,6 +35,18 @@ function list.ArrayList.createWith(a, aLen, N)
 end
 
 
+function list.ArrayList.fromArray(a)
+    local s = {}
+    setmetatable(s, list.ArrayList)
+
+    s.a = a
+    s.N = #a
+    a.aLen = a.N
+
+    return s
+end
+
+
 function list.create()
     return list.ArrayList.create()
 end
@@ -42,6 +54,11 @@ end
 
 function list.createWith(a, aLen, N)
     return list.ArrayList.createWith(a, aLen, N)
+end
+
+
+function list.fromArray(a)
+    return list.ArrayList.fromArray(a)
 end
 
 

@@ -9,7 +9,6 @@
 local list = require('luagraphs.data.list')
 
 local graph = {}
-
 graph.__index = graph
 
 graph.Edge = {}
