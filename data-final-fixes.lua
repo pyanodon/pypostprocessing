@@ -77,17 +77,19 @@ end
 -- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
 -- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
 if mods["pyalienlife"] then
-    for _, tech in pairs(data.raw.technology) do
-        local found = false
+    for t, tech in pairs(data.raw.technology) do
+        local logi_pack = false
+        local psp1 = false
 
         for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
             if (pack.name or pack[1]) == "logistic-science-pack" then
-                found = true
-                break
+                logi_pack = true
+            elseif (pack.name or pack[1]) == "py-science-pack-1" then
+                psp1 = true
             end
         end
 
-        if found then
+        if logi_pack and not psp1 then
             TECHNOLOGY(tech):add_pack("py-science-pack-1")
         end
     end
