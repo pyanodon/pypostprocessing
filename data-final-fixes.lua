@@ -104,11 +104,6 @@ if mods["pyalternativeenergy"] then
 end
 
 ----------------------------------------------------
--- THIRD PARTY COMPATIBILITY
-----------------------------------------------------
-require('prototypes/functions/compatibility')
-
-----------------------------------------------------
 -- AUTO TECH script. Make sure it's the very last
 ----------------------------------------------------
 require('prototypes/functions/auto_tech')
