@@ -1,4 +1,5 @@
-local list = require("luagraphs.data.list")
+local list = require "luagraphs.data.list"
+
 
 local config = {
     STARTING_ENTITIES = list.fromArray { "character", "crash-site-assembling-machine-1-repaired", "crash-site-lab-repaired" },

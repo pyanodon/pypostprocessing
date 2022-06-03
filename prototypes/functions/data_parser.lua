@@ -1,15 +1,25 @@
-local fz_graph = require("prototypes.functions.fuzzy_graph")
-local config = require("prototypes.config")
-local py_utils = require("prototypes.functions.utils")
-local graph = require("luagraphs.data.graph")
-local breadth_firt_search = require("luagraphs.search.BreadthFirstSearch")
-local table = require("__stdlib__/stdlib/utils/table")
-local string = require("__stdlib__/stdlib/utils/string")
+local table = require "__stdlib__.stdlib.utils.table"
+local string = require "__stdlib__.stdlib.utils.string"
+
+local graph = require "luagraphs.data.graph"
+local breadth_firt_search = require "luagraphs.search.BreadthFirstSearch"
+
+local config = require "prototypes.config"
+local fz_graph = require "prototypes.functions.fuzzy_graph"
+local py_utils = require "prototypes.functions.utils"
+
 
 local data_parser = {}
 data_parser.__index = data_parser
 
 local FUEL_FLUID = "fluid"
+local FUEL_ELECTRICITY = "electricity"
+local FUEL_HEAT = "heat"
+
+local RECIPE_PREFIX_START = "start:"
+
+local LABEL_RECIPE_RESULT = "__recipe_result__"
+local LABEL_MODULE = "__module__"
 
 function data_parser.create()
     local d = {}
@@ -29,6 +39,9 @@ function data_parser.create()
     d.placed_by = {}
     d.items_with_grid = {}
     d.entities_with_grid = {}
+    d.processed_recipes = {}
+    d.processed_items = {}
+    d.processed_fluids = {}
 
     return d
 end
@@ -37,12 +50,281 @@ end
 function data_parser:run()
     self:pre_process()
 
-    local fg = fz_graph.create()
+    self.fg = fz_graph.create()
 
-    
+    -- electricity
+    self.fg:add_node(FUEL_ELECTRICITY, fz_graph.NT_ITEM, { virtual = true })
+    py_utils.insert_double_lookup(self.fuel_categories, FUEL_ELECTRICITY, FUEL_ELECTRICITY)
 
-    return fg
+    -- heat
+    for _, temp in pairs(self.heat_temps) do
+        local node = self:parse_fluid(FUEL_HEAT, temp, { virtual = true })
+        py_utils.insert_double_lookup(self.fuel_categories, FUEL_HEAT, node.name)
+    end
+
+    -- starting entities
+    for _, entity_name in pairs(config.STARTING_ENTITIES:enumerate()) do
+        local entity = py_utils.get_prototype("entity", entity_name, true)
+
+        if entity then
+            local node = self.fg:add_node(entity_name, fz_graph.NT_ITEM, { factorio_name = entity_name })
+            self.fg:add_link(self.fg.start_node, node)
+        end
+    end
+
+    -- starting items
+    for _, item_name in pairs(config.STARTING_ITEMS:enumerate()) do
+        local item = py_utils.get_prototype("item", item_name, true)
+
+        if item then
+            local recipe = {
+                name = RECIPE_PREFIX_START .. item_name,
+                ingredients = {},
+                results = {{ type = "item", name = item_name, amount = 1 }}
+            }
+
+            local node = self:parse_recipe(nil, recipe, true)
+            self.fg:add_link(self.fg.start_node, node)
+        end
+    end
+
+    -- starting recipes
+    for _, recipe in pairs(data.raw.recipe) do
+        if (recipe.normal and recipe.normal.enabled ~= false) or (not recipe.normal and recipe.enabled ~= false) then
+            self:parse_recipe(nil, recipe)
+        end
+    end
+
+    -- minable entities
+    for _, entity in py_utils.iter_prototypes("entity") do
+        if entity.autoplace and entity.minable and (entity.minable.result or entity.minable.results) then
+            self:add_mining_recipe(entity)
+        end
+    end
+
+    -- technologies
+    for _, tech in pairs(data.raw.technology) do
+        if tech.enabled ~= false and not tech.hidden then
+            self:parse_tech(tech)
+        end
+    end
+
+    return self.fg
 end
+
+
+function data_parser:parse_recipe(tech_name, recipe, no_crafting)
+    local name = (tech_name and (tech_name .. " / ") or "") .. recipe.name
+    local node = self.fg:add_node(name, fz_graph.NT_RECIPE, { group = tech_name, factorio_name = recipe.name })
+
+    if self.processed_recipes[name] then
+        return node
+    else
+        self.processed_recipes[name] = true
+    end
+
+    node.ignore_for_dependencies = (not self.recipes[recipe.name] or recipe.ignore_for_dependencies or false)
+
+    local ing_count = 0
+    local fluid_in = 0
+    local fluid_out = 0
+    local ingredients = {}
+
+    local recipe_data = (type(recipe.normal) == "table" and recipe.normal or recipe)
+
+    for _, ing in pairs(py_utils.standardize_products(recipe_data.ingredients)) do
+        if ing.type == "item" then
+            local item = py_utils.get_prototype("item", ing.name)
+            local node_item = self:parse_item(item)
+            self.fg:add_link(node_item, node, ing.name)
+            ing_count = ing_count + 1
+            ingredients[ing.name] = true
+        else
+            local fluid = data.raw.fluid[ing.name]
+
+            if fluid then
+                ingredients[ing.name] = {}
+                node:add_label(ing.name)
+
+                for temp, _ in pairs(self.fluids[ing.name] or { data.raw.fluidd[ing.name].default_temperature }) do
+                    if (not ing.temperature or ing.temperature == temp)
+                        and (not ing.min_temperature or ing.min_temperature <= temp)
+                        and (not ing.max_temperature or ing.max_temperature >= temp)
+                    then
+                        local node_fluid = self:parse_fluid(ing.name, temp)
+                        self.fg.fg_add_link(node_fluid, node, ing.name)
+                        ingredients[ing.name][temp] = true
+                    end
+                end
+
+                fluid_in = fluid_in + 1
+            end
+       end
+    end
+
+    for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
+        if res.type == "item" and not ingredients[res.name] then
+            local node_item = self.fg:add_node(res.name, fz_graph.NT_ITEM)
+            local item
+
+            if not node_item.virtual then
+                item = py_utils.get_prototype("item", res.name)
+                node_item = self:parse_item(item)
+            end
+
+            self.fg:add_link(node, node_item, LABEL_RECIPE_RESULT)
+
+            if item and item.place_result then
+                self:add_entity_dependencies(node, item)
+            end
+
+            if item and item.placed_as_equipment_result then
+                self:add_equipment_dependencies(node, item)
+            end
+
+            if item and (item.rocket_launch_products or item.rocket_launch_product) then
+                self:add_rocket_product_recipe(item, tech_name)
+            end
+
+            node_item:inherit_ignore_for_dependencies(node)
+        elseif res.type == "fluid" then
+            local fluid = data.raw.fluid[res.name]
+            local temp = res.temperature or (fluid and fluid.default_temperature)
+
+            if not ingredients[res.name] or table.any(ingredients[res.name], function (t) return t ~= temp end) then
+                local node_fluid
+
+                if fluid or (res.temperature and self.fg:node_exists(self.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
+                    node_fluid = self:parse_fluid(res.name, res.temperature)
+                end
+
+                if node_fluid then
+                    if ingredients[res.name] and ingredients[res.name][temp] then
+                        self.fg:remove_link(node_fluid, node)
+                    end
+
+                    self.fg:add_link(node, node_fluid, LABEL_RECIPE_RESULT)
+
+                    if not node_fluid.virtual then
+                        fluid_out = fluid_out + 1
+                    end
+
+                    node_fluid:inherit_ignore_for_dependencies(node)
+                end
+            end
+        end
+    end
+
+    if not no_crafting then
+        local category = recipe.category or "crafting"
+        local found = false
+
+        if self.crafting_categories[category] then
+            for _, craft in pairs(self.crafting_categories[category]) do
+                if craft.ingredient_count >= ing_count and craft.fluidboxes_in >= fluid_in and craft.fluidboxes_out >= fluid_out then
+                    self:add_crafting_machine_link(node, craft.entity_name)
+                    found = true
+                end
+            end
+        end
+
+        if not found and not recipe.ignore_for_dependencies then
+            error("\n\nERROR: Missing crafting category: " .. category .. " (ingredients: " .. ing_count .. ", fluids in: " .. fluid_in .. ", fluids out:" .. fluid_out .. "), for " .. name .. "\n", 0)
+        end
+    end
+
+    self:add_module_dependencies(node, recipe)
+
+    return node
+end
+
+
+function data_parser:parse_fluid(fluid_name, temperature, properties)
+    local fluid = data.raw.fluid[fluid_name]
+
+    if fluid then
+        if not properties then
+            properties = {}
+        end
+
+        properties.factorio_name = fluid_name
+    end
+
+    local name = fluid_name .. "(" .. (temperature or fluid.default_temperature) .. ")"
+    local node = self.fg:add_node(name, fz_graph.NT_FLUID, properties)
+
+    if self.processed_fluids[name] then
+        return node
+    else
+        self.processed_fluids[name] = true
+    end
+
+    if not self.fluids[fluid_name] then
+        node.ignore_for_dependencies = true
+    else
+        node.ignore_for_dependencies = fluid and fluid.ignore_for_dependencies
+    end
+
+    return node
+end
+
+
+function data_parser:parse_item(item)
+    local node = self.fg:add_node(item.name, fz_graph.NT_ITEM, { factorio_name = item.name })
+
+    if self.processed_items[item.name] then
+        return node
+    else
+        self.processed_items[item.name] = true
+    end
+
+    if not self.items[item.name] then
+        node.ignore_for_dependencies = true
+    else
+        node.ignore_for_dependencies = item.ignore_for_dependencies
+    end
+
+    if item.fuel_category and item.burnt_result then
+        self:add_burnt_result_recipe(item)
+    end
+
+    if item.place_result then
+        local entity = py_utils.get_prototype("entity", item.place_result)
+
+        if entity.type == "boiler" then
+            self:add_boiler_recipe(entity)
+        elseif entity.type == "generator" then
+            self:add_generator_recipe(entity)
+        elseif entity.type == "burner-generator" then
+            self:add_simple_generator_recipe(entity)
+        elseif entity.type == "electric-energy-interface" and entity.energy_production and util.parse_energy(entity.energy_production) > 0 then
+            self:add_simple_generator_recipe(entity)
+        elseif entity.type == "offshore-pump" then
+            self:add_offhsore_pump_recipe(entity)
+        elseif entity.type == "reactor" then
+            self:add_reactor_recipe(entity)
+        end
+    end
+
+    return node
+end
+
+
+function data_parser:add_module_dependencies(node, recipe)
+    local category = data.raw["recipe-category"][recipe.category or "crafting"]
+
+    if category.modules_required and category.allowed_module_categories then
+        node:add_label(LABEL_MODULE)
+
+        for _, mod_cat in pairs(category.allowed_module_categories) do
+            for module, _ in pairs(self.module_categories[mod_cat]) do
+                local node_module = self.fg:add_node(module, fz_graph.NT_ITEM)
+                self.fg:add_link(node_module, node, LABEL_MODULE)
+            end
+        end
+    end
+end
+
 
 
 function data_parser:pre_process()

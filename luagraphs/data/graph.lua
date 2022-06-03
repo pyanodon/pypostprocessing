@@ -15,7 +15,7 @@ graph.Edge = {}
 graph.Edge.__index = graph.Edge
 
 
-function graph.Edge.create(v, w, weight)
+function graph.Edge.create(v, w, weight, label)
     local s = {}
     setmetatable(s, graph.Edge)
 
@@ -26,6 +26,7 @@ function graph.Edge.create(v, w, weight)
     s.v = v
     s.w = w
     s.weight = weight
+    s.label = label
 
     return s
 end
@@ -43,6 +44,11 @@ end
 
 function graph.Edge:either()
     return self.v
+end
+
+
+function graph.Edge:label()
+    return self.label
 end
 
 
@@ -149,8 +155,8 @@ function graph:adj(v)
 end
 
 
-function graph:addEdge(v, w, weight)
-    local e = graph.Edge.create(v, w, weight)
+function graph:addEdge(v, w, weight, label)
+    local e = graph.Edge.create(v, w, weight, label)
     self:addVertexIfNotExists(v)
     self:addVertexIfNotExists(w)
 

@@ -137,3 +137,5 @@ require('prototypes/functions/auto_tech')
 ----------------------------------------------------
 ----------------------------------------------------
 
+-- local dp = require("prototypes.functions.data_parser").create()
+-- dp:run()

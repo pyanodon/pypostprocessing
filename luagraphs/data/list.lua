@@ -80,6 +80,8 @@ function list.ArrayList:add(value)
     if self.N == self.aLen then
         self:resize(self.aLen * 2)
     end
+
+    return self.N - 1
 end
 
 

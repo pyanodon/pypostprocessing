@@ -1,6 +1,10 @@
-local config = require("prototypes.config")
-local table = require("__stdlib__/stdlib/utils/table")
-local string = require('__stdlib__/stdlib/utils/string')
+local table = require "__stdlib__.stdlib.utils.table"
+local string = require "__stdlib__.stdlib.utils.string"
+
+local list = require "luagraphs.data.list"
+
+local config = require "prototypes.config"
+
 
 local utils = {}
 
@@ -28,6 +32,27 @@ function utils.get_prototype(parent_type, prototype_name, no_error)
     end
 
     return prototype
+end
+
+
+function utils.iter_prototypes(parent_type)
+    local types = defines.prototypes[parent_type]
+    local t, n, d
+
+    return
+        function ()
+            repeat
+                if not t or not n then
+                    n, d, t, _ = nil, nil, next(types, t)
+                end
+
+                if t then
+                    n, d = next(data.raw[t], n)
+                end
+            until n or not t
+
+            return n, d
+        end
 end
 
 
