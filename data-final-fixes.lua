@@ -133,9 +133,9 @@ require('prototypes/functions/compatibility')
 ----------------------------------------------------
 -- AUTO TECH script. Make sure it's the very last
 ----------------------------------------------------
-require('prototypes/functions/auto_tech')
+-- require('prototypes/functions/auto_tech')
 ----------------------------------------------------
 ----------------------------------------------------
 
--- local dp = require("prototypes.functions.data_parser").create()
--- dp:run()
+local dp = require("prototypes.functions.data_parser").create()
+local fg = dp:run()

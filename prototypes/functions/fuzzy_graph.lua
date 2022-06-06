@@ -1,5 +1,5 @@
 local graph = require "luagraphs.data.graph"
-local list  = require "luagraphs.data.list"
+local table = require "__stdlib__.stdlib.utils.table"
 
 
 local fz_graph = {}
@@ -80,6 +80,29 @@ function fz_graph.create()
 end
 
 
+function fz_graph:copy()
+    local g = {}
+    setmetatable(g, fz_graph)
+
+    g.graph = self.graph:copy()
+    g.nodes = table.deep_copy(self.nodes)
+    g.start_node = g.nodes[fz_graph.START_NODE_NAME]
+
+    return g
+end
+
+
+function fz_graph:create_subgraph(node_list)
+    local g = {}
+    setmetatable(g, fz_graph)
+
+    local keys = table.map(node_list, function () return true end)
+    g.graph = self.graph:create_subgraph(keys)
+    g.nodes = table.deep_copy(node_list)
+    g.start_node = g.nodes[fz_graph.START_NODE_NAME]
+end
+
+
 function fz_graph:add_node(name, type, properties)
     local key = fz_graph.node.get_key(name, type)
     local node = self.nodes[key]
@@ -96,12 +119,28 @@ function fz_graph:add_node(name, type, properties)
 end
 
 
+function fz_graph:get_node(name, type)
+    local key = fz_graph.node.get_key(name, type)
+    return self.nodes[key]
+end
+
+
+function fz_graph:node_exists(name, type)
+    return self:get_node(name, type) ~= nil and true or false
+end
+
+
 function fz_graph:add_link(from, to, label)
     self.graph:addEdge(from.key, to.key, 1, label)
 
     if label then
         to:add_label(label)
     end
+end
+
+
+function fz_graph:remove_link(from, to)
+    self.graph:removeEdge(from.key, to.key)
 end
 
 

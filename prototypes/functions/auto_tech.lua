@@ -1023,8 +1023,8 @@ function pytech.add_rocket_product_recipe(item, tech_name)
     }
 
     local node = pytech.parse_recipe(tech_name, recipe, true)
-    local tech_node = pytech.fg_get_node(tech_name or start_tech_name, nt_tech_head)
-    pytech.fg_add_link(tech_node, node)
+    -- local tech_node = pytech.fg_get_node(tech_name or start_tech_name, nt_tech_head)
+    -- pytech.fg_add_link(tech_node, node)
     node.fz_parents[l_crafting_machine] = {}
 
     for _, entity in pairs(data.raw['rocket-silo']) do

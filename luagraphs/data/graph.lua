@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
+local table = require "__stdlib__.stdlib.utils.table"
 
 local graph = {}
 graph.__index = graph
@@ -70,12 +70,12 @@ function graph.create(V, directed)
         directed = false
     end
 
-    g.vertexList = list.create()
+    g.vertexList = {}
     g.adjList = {}
 
     for v = 0, V-1 do
-        g.vertexList:add(v)
-        g.adjList[v] = list.create()
+        g.vertexList[v] = true
+        g.adjList[v] = {}
     end
 
     g.directed = directed
@@ -85,7 +85,7 @@ end
 
 
 function graph:vertexCount()
-    return self.vertexList:size()
+    return table.size(self.vertexList)
 end
 
 
@@ -102,11 +102,11 @@ function graph.createFromVertexList(vertices, directed)
         directed = false
     end
 
-    g.vertexList = vertices
+    g.vertexList = table.deep_copy(vertices)
     g.adjList = {}
 
-    for _, v in pairs(g.vertexList:enumerate()) do
-        g.adjList[v] = list.create()
+    for v, _ in pairs(g.vertexList) do
+        g.adjList[v] = {}
     end
 
     g.directed = directed
@@ -116,27 +116,27 @@ end
 
 
 function graph:addVertexIfNotExists(v)
-    if self.vertexList:contains(v) then
+    if self.vertexList[v] then
         return false
     else
-        self.vertexList:add(v)
-        self.adjList[v] = list.create()
+        self.vertexList[v] = true
+        self.adjList[v] = {}
         return true
     end
 end
 
 
 function graph:removeVertex(v)
-    if self.vertexList:contains(v) then
-        self.vertexList:remove(v)
+    if self.vertexList[v] then
+        self.vertexList[v] = nil
         self.adjList[v] = nil
 
-        for _, w in pairs(self.vertexList:enumerate()) do
+        for w, _ in pairs(self.vertexList) do
             local adj_w = self.adjList[w]
 
-            for k, e in pairs(adj_w:enumerate()) do
+            for k, e in pairs(adj_w) do
                 if e:other(w) == v then
-                    adj_w:removeAt(k)
+                    table.remove(adj_w, k)
                     break
                 end
             end
@@ -146,7 +146,7 @@ end
 
 
 function graph:containsVertex(v)
-    return self.vertexList:contains(v)
+    return self.vertexList[v] or false
 end
 
 
@@ -159,12 +159,33 @@ function graph:addEdge(v, w, weight, label)
     local e = graph.Edge.create(v, w, weight, label)
     self:addVertexIfNotExists(v)
     self:addVertexIfNotExists(w)
+    table.insert(self.adjList[v], e)
 
-    if self.directed then
-        self.adjList[e:from()]:add(e)
-    else
-        self.adjList[e:from()]:add(e)
-        self.adjList[e:to()]:add(e)
+    if not self.directed then
+        table.insert(self.adjList[w], e)
+    end
+end
+
+
+function graph:removeEdge(v, w)
+    local adj_v = self.adjList[v]
+
+    for k, e in pairs(adj_v) do
+        if e:other(v) == w then
+            table.remove(adj_v, k)
+            break
+        end
+    end
+
+    if not self.directed then
+        local adj_w = self.adjList[w]
+
+        for k, e in pairs(adj_w) do
+            if e:other(w) == v then
+                table.remove(adj_w, k)
+                break
+            end
+        end
     end
 end
 
@@ -172,9 +193,11 @@ end
 function graph:reverse()
     local g = graph.createFromVertexList(self.vertexList, self.directed)
 
-    for _, v in pairs(self.vertexList:enumerate()) do
-        for _, e in pairs(self:adj(v):enumerate()) do
-            g:addEdge(e:to(), e:from(), e.weight)
+    for v, _ in pairs(self.vertexList) do
+        local adj_v = self:adj(v)
+
+        for _, e in pairs(adj_v) do
+            g:addEdge(e.v, e.w, e.weight, e.label)
         end
     end
 
@@ -185,9 +208,11 @@ end
 function graph:copy()
     local g = graph.createFromVertexList(self.vertexList, self.directed)
 
-    for _, v in pairs(self.vertexList:enumerate()) do
-        for _, e in pairs(self:adj(v):enumerate()) do
-            g:addEdge(e:from(), e:to(), e.weight)
+    for v, _ in pairs(self.vertexList) do
+        local adj_v = self:adj(v)
+
+        for _, e in pairs(adj_v) do
+            g:addEdge(e.v, e.w, e.weight, e.label)
         end
     end
 
@@ -198,10 +223,12 @@ end
 function graph:create_subgraph(vertexList)
     local g = graph.createFromVertexList(vertexList, self.directed)
 
-    for _, v in pairs(vertexList:enumerate()) do
-        for _, e in pairs(self:adj(v):enumerate()) do
-            if vertexList:contains(e:other(v)) then
-                g:addEdge(e:from(), e:to(), e.weight)
+    for v, _ in pairs(vertexList) do
+        local adj_v = self:adj(v)
+
+        for _, e in pairs(adj_v) do
+            if vertexList[e:other(v)] then
+                g:addEdge(e.v, e.w, e.weight, e.label)
             end
         end
     end
@@ -210,18 +237,15 @@ function graph:create_subgraph(vertexList)
 end
 
 
-function graph:vertexAt(i)
-    return self.vertexList:get(i)
-end
-
-
 function graph:edges()
-    local l = list.create()
+    local l = {}
 
-    for _, v in pairs(self.vertexList:enumerate()) do
-        for _, e in pairs(self:adj(v):enumerate()) do
+    for v, _ in pairs(self.vertexList) do
+        local adj_v = self:adj(v)
+
+        for _, e in pairs(adj_v) do
             if self.directed == true or e:other(v) > v then
-                l:add(e)
+                table.insert(l, e)
             end
         end
     end
@@ -238,8 +262,6 @@ function graph:hasEdge(v, w)
             return true
         end
     end
-
-    return false
 end
 
 return graph

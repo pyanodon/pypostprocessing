@@ -17,9 +17,24 @@ local FUEL_ELECTRICITY = "electricity"
 local FUEL_HEAT = "heat"
 
 local RECIPE_PREFIX_START = "start:"
+local RECIPE_PREFIX_BURNT = "burnt:"
+local RECIPE_PREFIX_BOILER = "boiler:"
+local RECIPE_PREFIX_GENERATOR = "generator:"
+local RECIPE_PREFIX_OFFSHORE = "offshore:"
+local RECIPE_PREFIX_REACTOR = "reactor:"
+local RECIPE_PREFIX_MINING = "mining:"
+local RECIPE_PREFIX_ROCKET = "rocket-product:"
 
 local LABEL_RECIPE_RESULT = "__recipe_result__"
 local LABEL_MODULE = "__module__"
+local LABEL_FUEL = "__fuel__"
+local LABEL_RAIL = "__rail__"
+local LABEL_LOCO = "__locomotive__"
+local LABEL_TRAINSTOP = "__trainstop__"
+local LABEL_CRAFTING_MACHINE = "__crafting__"
+local LABEL_BONUS = "__bonus__"
+local LABEL_GRID = "__grid__"
+
 
 function data_parser.create()
     local d = {}
@@ -30,6 +45,7 @@ function data_parser.create()
     d.items = {}
     d.fluids = {}
     d.entities = {}
+    d.science_packs = {}
     d.mining_categories = {}
     d.crafting_categories = {}
     d.module_categories = {}
@@ -42,6 +58,7 @@ function data_parser.create()
     d.processed_recipes = {}
     d.processed_items = {}
     d.processed_fluids = {}
+    d.processed_techs = {}
 
     return d
 end
@@ -115,7 +132,8 @@ end
 
 function data_parser:parse_recipe(tech_name, recipe, no_crafting)
     local name = (tech_name and (tech_name .. " / ") or "") .. recipe.name
-    local node = self.fg:add_node(name, fz_graph.NT_RECIPE, { group = tech_name, factorio_name = recipe.name })
+    local node = self.fg:add_node(name, fz_graph.NT_RECIPE,
+        { tech_name = tech_name, factorio_name = (not recipe.virtual and recipe.name), virtual = recipe.virtual })
 
     if self.processed_recipes[name] then
         return node
@@ -146,13 +164,13 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
                 ingredients[ing.name] = {}
                 node:add_label(ing.name)
 
-                for temp, _ in pairs(self.fluids[ing.name] or { data.raw.fluidd[ing.name].default_temperature }) do
+                for temp, _ in pairs(self.fluids[ing.name] or { data.raw.fluid[ing.name].default_temperature }) do
                     if (not ing.temperature or ing.temperature == temp)
                         and (not ing.min_temperature or ing.min_temperature <= temp)
                         and (not ing.max_temperature or ing.max_temperature >= temp)
                     then
                         local node_fluid = self:parse_fluid(ing.name, temp)
-                        self.fg.fg_add_link(node_fluid, node, ing.name)
+                        self.fg:add_link(node_fluid, node, ing.name)
                         ingredients[ing.name][temp] = true
                     end
                 end
@@ -194,7 +212,7 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
             if not ingredients[res.name] or table.any(ingredients[res.name], function (t) return t ~= temp end) then
                 local node_fluid
 
-                if fluid or (res.temperature and self.fg:node_exists(self.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
+                if fluid or (res.temperature and self.fg:node_exists(data_parser.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
                     node_fluid = self:parse_fluid(res.name, res.temperature)
                 end
 
@@ -239,6 +257,127 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
 end
 
 
+function data_parser:parse_tech(tech)
+    local node = self.fg:add_node(tech.name, fz_graph.NT_TECH_HEAD, { tech_name = tech.name, factorio_name = tech.name })
+
+    if self.processed_techs[tech.name] then
+        return node
+    else
+       self.processed_techs[tech.name] = true
+    end
+
+    if not self.techs[tech.name] then
+        node.ignore_for_dependencies = true
+        return node
+    end
+
+    node.ignore_for_dependencies = tech.ignore_for_dependencies
+
+    -- Hard coded dependencies
+    for _, dep in pairs(tech.dependencies or {}) do
+        if data.raw.technology[dep] then
+            local n_parent = self.fg:add_node(dep, fz_graph.NT_TECH_TAIL)
+            self.fg:add_link(n_parent, node)
+        else
+            error("\n\nInvalid tech dependency: " .. dep .. "\nSource: " .. tech.name .. "\n")
+        end
+    end
+
+    local packs = {}
+    -- Science packs
+    for _, ing in pairs(py_utils.standardize_products(tech.unit.ingredients)) do
+        local item = py_utils.get_prototype(fz_graph.NT_ITEM, ing.name)
+        local n_item = self:parse_item(item)
+        self.fg:add_link(n_item, node)
+        table.insert(packs, ing.name)
+        py_utils.insert_double_lookup(self.science_packs, ing.name, tech.name)
+    end
+
+    node:add_label(LABEL_CRAFTING_MACHINE)
+    local found_lab = false
+
+    for _, lab in pairs(data.raw.lab) do
+        local inputs = table.array_to_dictionary(lab.inputs)
+
+        if table.all(packs, function(p) return inputs[p] end) then
+            for item, _ in pairs(self.placed_by[lab.name] or {}) do
+                local item_node = self.fg:add_node(item, fz_graph.NT_ITEM)
+                self.fg:add_link(item_node, node, LABEL_CRAFTING_MACHINE)
+                found_lab = true
+            end
+        end
+    end
+
+    if not found_lab then
+        error("\n\nNo suitable lab found to research tech: " .. node.name .. "\n", 0)
+    end
+
+    -- Recipes
+    for _, effect in pairs(tech.effects or {}) do
+        if effect.type == "unlock-recipe" then
+            local recipe = data.raw.recipe[effect.recipe]
+
+            if recipe then
+                local n_recipe = self:parse_recipe(not recipe.ignore_for_dependencies and tech.name, recipe)
+
+                if not recipe.ignore_for_dependencies then
+                    self.fg:add_link(node, n_recipe)
+                end
+            end
+        -- Bonuses require at least on entity where they can be applied
+        elseif effect.type == "inserter-stack-size-bonus" then
+            self:add_bonus_dependencies(node, effect, "inserter", function(e) return not e.stack end)
+        elseif effect.type == "stack-inserter-capacity-bonus" then
+            self:add_bonus_dependencies(node, effect, "inserter", function(e) return e.stack end)
+        elseif effect.type == "laboratory-speed" or effect.type == "laboratory-productivity" then
+            self:add_bonus_dependencies(node, effect, "lab")
+        elseif effect.type == "mining-drill-productivity-bonus" then
+            self:add_bonus_dependencies(node, effect, "mining-drill")
+        elseif effect.type == "train-braking-force-bonus" then
+            self:add_bonus_dependencies(node, effect, "locomotive")
+        elseif effect.type == "maximum-following-robots-count" or effect.type == "follower-robot-lifetime" then
+            self:add_bonus_dependencies(node, effect, "combat-robot", function(e) return e.follows_player end)
+        elseif effect.type == "worker-robot-speed" or effect.type == "worker-robot-storage" or effect.type == "worker-robot-battery" then
+            self:add_bonus_dependencies(node, effect, "construction-robot")
+            self:add_bonus_dependencies(node, effect, "logistic-robot")
+        elseif effect.type == "character-logistic-requests" or effect.type == "character-logistic-trash-slots" then
+            self:add_bonus_dependencies(node, effect, "logistic-robot")
+        elseif effect.type == "artillery-range" then
+            self:add_bonus_dependencies(node, effect, "artillery-turret")
+            self:add_bonus_dependencies(node, effect, "artillery-wagon")
+        elseif effect.type == "turret-attack" then
+            self:add_bonus_dependencies(node, effect, "ammo-turret", function(e) return e.name == effect.turret_id end, false, effect.turret_id)
+            self:add_bonus_dependencies(node, effect, "electric-turret", function(e) return e.name == effect.turret_id end, false, effect.turret_id)
+            self:add_bonus_dependencies(node, effect, "fluid-turret", function(e) return e.name == effect.turret_id end, false, effect.turret_id)
+        elseif effect.type == "ammo-damage" or effect.type == "gun-speed" then
+            self:add_bonus_dependencies(node, effect, "ammo", function (i) return
+                (i.ammo_type.category and i.ammo_type.category == effect.ammo_category)
+                or not i.ammo_type.category and table.any(i.ammo_type, function (at) return at.category == effect.ammo_category end)
+            end, true, effect.ammo_category)
+            self:add_bonus_dependencies(node, effect, "capsule", function (i) return
+                i.capsule_action.attack_parameters and
+                ((i.capsule_action.attack_parameters.ammo_type.category and i.capsule_action.attack_parameters.ammo_type.category == effect.ammo_category)
+                or not i.capsule_action.attack_parameters.ammo_type.category and table.any(i.capsule_action.attack_parameters.ammo_type, function (at) return at.category == effect.ammo_category end))
+            end, true, effect.ammo_category)
+            self:add_bonus_dependencies(node, effect, "electric-turret", function (e) return
+                (e.attack_parameters.ammo_type.category and e.attack_parameters.ammo_type.category == effect.ammo_category)
+                or not e.attack_parameters.ammo_type.category and table.any(e.attack_parameters.ammo_type, function (at) return at.category == effect.ammo_category end)
+            end, false, effect.ammo_category)
+            self:add_bonus_dependencies(node, effect, "land-mine", function (e) return ((e.ammo_category or "") == effect.ammo_category) end, false, effect.ammo_category)
+        end
+    end
+end
+
+
+function data_parser.get_fluid_name(fluid_name, temperature)
+    if not temperature then
+        temperature = data.raw.fluid[fluid_name].default_temperature
+    end
+
+    return fluid_name .. "(" .. temperature .. ")"
+end
+
+
 function data_parser:parse_fluid(fluid_name, temperature, properties)
     local fluid = data.raw.fluid[fluid_name]
 
@@ -250,7 +389,7 @@ function data_parser:parse_fluid(fluid_name, temperature, properties)
         properties.factorio_name = fluid_name
     end
 
-    local name = fluid_name .. "(" .. (temperature or fluid.default_temperature) .. ")"
+    local name = data_parser.get_fluid_name(fluid_name, temperature)
     local node = self.fg:add_node(name, fz_graph.NT_FLUID, properties)
 
     if self.processed_fluids[name] then
@@ -325,6 +464,397 @@ function data_parser:add_module_dependencies(node, recipe)
     end
 end
 
+
+function data_parser:add_entity_dependencies(recipe_node, item)
+    local entity = py_utils.get_prototype("entity", item.place_result)
+
+    -- Fuel dependencies
+    local energy_source = entity.burner or entity.energy_source
+
+    if energy_source then
+        if energy_source.type == "burner" then
+            recipe_node:add_label(LABEL_FUEL)
+
+            for _, category in pairs(energy_source.fuel_categories or { (energy_source.fuel_category or "chemical") }) do
+                for fuel, _ in pairs(self.fuel_categories[category] or {}) do
+                    local fuel_node = self.fg:add_node(fuel, fz_graph.NT_ITEM)
+                    self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
+                end
+            end
+        elseif energy_source.type == "fluid" and energy_source.fluid_box.filter ~= "void" then
+            recipe_node:add_label(LABEL_FUEL)
+
+            local fluid_name = energy_source.fluid_box.filter
+            local fluids = energy_source.burns_fluid and self.fuel_categories[FUEL_FLUID] or self.fluids
+
+            for fluid, _ in pairs(fluids) do
+                if not fluid_name or fluid == fluid_name then
+                    for temp, _ in pairs(self.fluids[fluid]) do
+                        if temp >= (energy_source.fluid_box.minimum_temperature or temp) and temp <= (energy_source.fluid_box.minimum_temperature or temp) then
+                            local fuel_node = self:parse_fluid(fluid, temp)
+                            self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
+                        end
+                    end
+                end
+            end
+        elseif energy_source.type == "electric" and not config.ELECTRICITY_PRODUCER_PROTOTYPES:contains(entity.type) then
+            recipe_node:add_label(LABEL_FUEL)
+            local fuel_node = self.fg:get_node(FUEL_ELECTRICITY, fz_graph.NT_ITEM)
+            self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
+        elseif energy_source.type == "heat" then
+            recipe_node:add_label(LABEL_FUEL)
+
+            for _, temp in pairs(self.heat_temps) do
+                if temp >= (energy_source.min_working_temperature or 15) and temp <= energy_source.max_temperature then
+                    local fuel_node = self.fg:get_node(data_parser.get_fluid_name(FUEL_HEAT, temp), fz_graph.NT_FLUID)
+                    self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
+                end
+            end
+        end
+    end
+
+    -- Fixed recipe
+    if entity.fixed_recipe and recipe_node.tech_name then
+        local fixed_recipe = data.raw.recipe[entity.fixed_recipe]
+        local fixed_node = self:parse_recipe(recipe_node.tech_name, fixed_recipe)
+        local tech = self.fg:get_node(recipe_node.tech_name, fz_graph.NT_TECH_HEAD)
+        self.fg:add_link(tech, fixed_node)
+    end
+
+    -- Rail stuff need rails
+    if entity.type == "locomotive"
+        or entity.type == "cargo-wagon"
+        or entity.type == "fluid-wagon"
+        or entity.type == "artillery-wagon"
+        or entity.type == "train-stop"
+        or entity.type == "rail-signal"
+        or entity.type == "rail-chain-signal"
+    then
+        recipe_node:add_label(LABEL_RAIL)
+
+        for i, _ in pairs(data.raw["rail-planner"] or {}) do
+            if self.items[i] then
+                local r = self.fg:add_node(i, fz_graph.NT_ITEM)
+                self.fg:add_link(r, recipe_node, LABEL_RAIL)
+            end
+        end
+    end
+
+    -- Wagons need loco
+    if entity.type == "cargo-wagon" or entity.type == "fluid-wagon" or entity.type == "artillery-wagon" then
+        recipe_node:add_label(LABEL_LOCO)
+
+        for loco, _ in pairs(data.raw.locomotive or {}) do
+            if self.entities[loco] then
+                for i, _ in pairs(self.placed_by[loco] or {}) do
+                    local l = self.fg:add_node(i, fz_graph.NT_ITEM)
+                    self.fg:add_link(l, recipe_node, LABEL_LOCO)
+                end
+            end
+        end
+    end
+
+    -- Signals need stations
+    if entity.type == "rail-signal" or entity.type == "rail-chain-signal" then
+        recipe_node:add_label(LABEL_TRAINSTOP)
+
+        for ts, _ in pairs(data.raw["train-stop"] or {}) do
+            if self.entities[ts] then
+                for i, _ in pairs(self.placed_by[ts] or {}) do
+                    local l = self.fg:add_node(i, fz_graph.NT_ITEM)
+                    self.fg:add_link(l, recipe_node, LABEL_TRAINSTOP)
+                end
+            end
+        end
+    end
+end
+
+
+function data_parser:add_burnt_result_recipe(item)
+    local recipe = {
+        name = RECIPE_PREFIX_BURNT .. item.name,
+        ingredients = {{ type = fz_graph.NT_ITEM, name = item.name, amount = 1 }},
+        results = {{ type = fz_graph.NT_ITEM, name = item.burnt_result, amount = 1 }},
+        ignore_for_dependencies = true,
+        virtual = true
+    }
+
+    local node = self:parse_recipe(nil, recipe, true)
+    node:add_label(LABEL_CRAFTING_MACHINE)
+
+    for entity_name, _ in pairs(self.fuel_burners[item.fuel_category] or {}) do
+        local burner = py_utils.get_prototype("entity", entity_name)
+        local energy_source = burner.burner or burner.energy_source
+
+        if energy_source and (energy_source.burnt_inventory_size or 0) > 0 then
+            self:add_crafting_machine_link(node, entity_name)
+        end
+    end
+
+    return node
+end
+
+
+function data_parser:add_crafting_machine_link(recipe_node, entity_name)
+    for item, _ in pairs(self.placed_by[entity_name] or {}) do
+        local crafter_node = self.fg:add_node(item, fz_graph.NT_ITEM)
+        self.fg:add_link(crafter_node, recipe_node, LABEL_CRAFTING_MACHINE)
+    end
+end
+
+
+function data_parser:add_boiler_recipe(boiler)
+    if (boiler.mode or "heat-water-inside") == "output-to-separate-pipe" then
+        local out_fluid = boiler.output_fluid_box and boiler.output_fluid_box.filter or boiler.fluid_box.filter
+        local in_fluid = boiler.fluid_box.filter
+
+        if out_fluid and in_fluid then
+            local recipe = {
+                name = RECIPE_PREFIX_BOILER .. boiler.name,
+                ingredients = {{ type = "fluid", name = in_fluid, amount = 1, minimum_temperature = boiler.fluid_box.minimum_temperature, maximum_temperature = boiler.fluid_box.maximum_temperature }},
+                results = {{ type = "fluid", name = out_fluid, amount = 1, temperature = boiler.target_temperature }},
+                virtual = true
+            }
+
+            local node = self:parse_recipe(nil, recipe, true)
+            self:add_crafting_machine_link(node, boiler.name)
+
+            return node
+        else
+            error("ERROR: Unsupported feature: Unfiltered boiler")
+        end
+    else
+        local fluid = boiler.fluid_box.filter
+
+        if fluid then
+            local recipe = {
+                name = RECIPE_PREFIX_BOILER .. boiler.name,
+                ingredients = {{
+                    type = "fluid",
+                    name = fluid, amount = 1,
+                    minimum_temperature = boiler.fluid_box.minimum_temperature,
+                    maximum_temperature = math.min (boiler.fluid_box.maximum_temperature or data.raw.fluid[fluid].max_temperature, data.raw.fluid[fluid].max_temperature - 1) }},
+                results = {{ type = "fluid", name = fluid, amount = 1, temperature = data.raw.fluid[fluid].max_temperature }},
+                virtual = true
+            }
+
+            local node = self:parse_recipe(nil, recipe, true)
+            self:add_crafting_machine_link(node, boiler.name)
+
+            return node
+        else
+            error("ERROR: Unsupported feature: Unfiltered boiler")
+        end
+    end
+end
+
+
+function data_parser:add_generator_recipe(generator)
+    local in_fluid = generator.fluid_box.filter
+    local node
+
+    local recipe = {
+        name = RECIPE_PREFIX_GENERATOR .. generator.name,
+        ingredients = {},
+        results = {{ type = "item", name = FUEL_ELECTRICITY, amount = 1 }},
+        virtual = true
+    }
+
+    if not generator.burns_fluid then
+        recipe.ingredients = {{ type = "fluid", name = in_fluid, amount = 1, minimum_temperature = generator.fluid_box.minimum_temperature, maximum_temperature = generator.fluid_box.maximum_temperature }}
+    end
+
+    node = self:parse_recipe(nil, recipe, true)
+
+    if generator.burns_fluid then
+        self:add_fluid_fuels(node, in_fluid)
+    end
+
+    self:add_crafting_machine_link(node, generator.name)
+end
+
+
+function data_parser:add_offhsore_pump_recipe(pump)
+    local recipe = {
+        name = RECIPE_PREFIX_OFFSHORE .. pump.name,
+        ingredients = {},
+        results = {{ type = "fluid", name = pump.fluid, amount = pump.pumping_speed }},
+        virtual = true
+    }
+
+    local node = self:parse_recipe(nil, recipe, true)
+    self:add_crafting_machine_link(node, pump.name)
+
+    return node
+end
+
+
+function data_parser:add_simple_generator_recipe(generator)
+    local recipe = {
+        name = RECIPE_PREFIX_GENERATOR .. generator.name,
+        ingredients = {},
+        results = {{ type = "item", name = FUEL_ELECTRICITY, amount = 1 }},
+        virtual = true
+    }
+
+    local node = self:parse_recipe(nil, recipe, true)
+    self:add_crafting_machine_link(node, generator.name)
+end
+
+
+function data_parser:add_reactor_recipe(reactor)
+    local recipe = {
+        name = RECIPE_PREFIX_REACTOR .. reactor.name,
+        ingredients = {},
+        results = {{ type = "fluid", name = FUEL_HEAT, amount = 1, temperature = reactor.heat_buffer.max_temperature }},
+        virtual = true
+    }
+
+    local node = self:parse_recipe(nil, recipe, true)
+    self:add_crafting_machine_link(node, reactor.name)
+end
+
+
+function data_parser:add_mining_recipe(entity)
+    local recipe = {
+        name = RECIPE_PREFIX_MINING .. entity.name,
+        ingredients = entity.minable.required_fluid and {{ type = "fluid", name = entity.minable.required_fluid, amount = entity.minable.fluid_amount }} or {},
+        results = entity.minable.results,
+        result = entity.minable.result,
+        result_count = entity.minable.count
+    }
+
+    local node = self:parse_recipe(nil, recipe, true)
+
+    if entity.type == "resource" then
+        local category = (entity.category or "basic-solid") .. (entity.minable.required_fluid and "+fluid" or "")
+
+        if not self.mining_categories[category] then
+            error("\n\nERROR: Missing mining category: " .. category .. ", for " .. entity.name .. "\n", 0)
+        end
+
+        if self.mining_categories[category] then
+            for miner, _ in pairs(self.mining_categories[category]) do
+                self:add_crafting_machine_link(node, miner)
+            end
+        end
+    else
+        self:add_crafting_machine_link(node, "character")
+    end
+
+    return node
+end
+
+
+function data_parser:add_bonus_dependencies(tech_node, effect, entity_type, condition, is_item, suffix)
+    local recipe = { name = effect.type .. (suffix or ""), ingredients = {}, results = {}, virtual = true }
+    local recipe_node = self:parse_recipe(tech_node.name, recipe, true)
+    self.fg:add_link(tech_node, recipe_node)
+
+    if entity_type then
+        for _, entity in pairs(data.raw[entity_type] or {}) do
+            if condition == nil or condition(entity) then
+                if not is_item and self.entities[entity.name] then
+                    for i, _ in pairs(self.placed_by[entity.name]) do
+                        local item = self.fg:add_node(i, fz_graph.NT_ITEM)
+                        self.fg:add_link(item, recipe_node, LABEL_BONUS)
+                    end
+                elseif self.items[entity.name] then
+                    local item = self.fg:add_node(entity.name, fz_graph.NT_ITEM)
+                    self.fg:add_link(item, recipe_node, LABEL_BONUS)
+                end
+            end
+        end
+    end
+end
+
+
+function data_parser:add_rocket_product_recipe(item, tech_name)
+    local recipe = {
+        name = RECIPE_PREFIX_ROCKET .. item.name,
+        ingredients = {{ type = "item", name = item.name, amount = 1 }},
+        results = item.rocket_launch_products or { item.rocket_launch_product },
+        virtual = true
+    }
+
+    local node = self:parse_recipe(tech_name, recipe, true)
+    -- local tech_node = self.fg:add_node(tech_name or fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD)
+    -- self.fg:add_link(tech_node, node)
+    node:add_label(LABEL_CRAFTING_MACHINE)
+
+    for _, entity in pairs(data.raw["rocket-silo"]) do
+        if (entity.rocket_result_inventory_size or 0) > 0 and entity.fixed_recipe then
+            local rocket = data.raw["rocket-silo-rocket"][entity.rocket_entity]
+
+            if rocket and rocket.inventory_size > 0 then
+                self:add_crafting_machine_link(node, entity.name)
+            end
+        end
+    end
+
+    return node
+end
+
+
+function data_parser:add_equipment_dependencies(recipe_node, item)
+    local equipment = py_utils.get_prototype("equipment", item.placed_as_equipment_result)
+    local eq_cat = table.array_to_dictionary(equipment.categories, true)
+    recipe_node:add_label(LABEL_GRID)
+
+    for i, grid in pairs(self.items_with_grid) do
+        if table.any(grid.equipment_categories, function (c) return eq_cat[c] ~= nil end) then
+            local g = self.fg:add_node(i, fz_graph.NT_ITEM)
+            self.fg:add_link(g, recipe_node, LABEL_GRID)
+        end
+    end
+
+    for e, grid in pairs(self.entities_with_grid) do
+        if table.any(grid.equipment_categories, function (c) return eq_cat[c] ~= nil end) then
+            for i, _ in pairs(self.placed_by[e] or {}) do
+                local g = self.fg:add_node(i, fz_graph.NT_ITEM)
+                self.fg:add_link(g, recipe_node, LABEL_GRID)
+            end
+        end
+    end
+
+    if equipment.burner then
+        local es = equipment.burner
+
+        for _, category in pairs(es.fuel_categories or { (es.fuel_category or "chemical") }) do
+            for fuel, _ in pairs(self.fuel_categories[category]) do
+                local fuel_node = self.fg:add_node(fuel, fz_graph.NT_ITEM)
+                self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
+            end
+        end
+    end
+
+    if (equipment.type == "active-defense-equipment" and equipment.attack_parameters.ammo_type and equipment.attack_parameters.ammo_type.energy_consumption and util.parse_energy(equipment.attack_parameters.ammo_type.energy_consumption) > 0)
+        or equipment.type == "battery-equipment"
+        or (equipment.type == "belt-immunity-equipment" and util.parse_energy(equipment.energy_consumption) > 0)
+        or (equipment.type == "energy-shield-equipment" and util.parse_energy(equipment.energy_per_shield) > 0)
+        or (equipment.type == "movement-bonus-equipment" and util.parse_energy(equipment.energy_consumption) > 0)
+        or (equipment.type == "night-vision-equipment" and util.parse_energy(equipment.energy_input) > 0)
+        or (equipment.type == "roboport-equipment" and not equipment.burner)
+    then
+        for _, gen in pairs(data.raw["generator-equipment"]) do
+            if table.any(gen.categories, function (c) return eq_cat[c] ~= nil end) then
+                for i, _ in pairs(self.placed_by[gen.name] or {}) do
+                    local g = self.fg:add_node(i, fz_graph.NT_ITEM)
+                    self.fg:add_link(g, recipe_node, LABEL_FUEL)
+                end
+            end
+        end
+
+        for _, gen in pairs(data.raw["solar-panel-equipment"]) do
+            if table.any(gen.categories, function (c) return eq_cat[c] ~= nil end) then
+                for i, _ in pairs(self.placed_by[gen.name] or {}) do
+                    local g = self.fg:add_node(i, fz_graph.NT_ITEM)
+                    self.fg:add_link(g, recipe_node, LABEL_FUEL)
+                end
+            end
+        end
+    end
+end
 
 
 function data_parser:pre_process()
