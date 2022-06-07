@@ -141,7 +141,7 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
         self.processed_recipes[name] = true
     end
 
-    node.ignore_for_dependencies = (not self.recipes[recipe.name] or recipe.ignore_for_dependencies or false)
+    node.ignore_for_dependencies = ((not self.recipes[recipe.name] and not node.virtual) or recipe.ignore_for_dependencies or false)
 
     local ing_count = 0
     local fluid_in = 0

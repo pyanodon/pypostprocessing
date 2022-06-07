@@ -144,4 +144,40 @@ function fz_graph:remove_link(from, to)
 end
 
 
+function fz_graph:remove_node(key)
+    if self.nodes[key] then
+        self.graph:removeVertex(key)
+        self.nodes[key] = nil
+    end
+end
+
+
+function fz_graph:recursive_remove(filter, logging)
+    local found
+
+    repeat
+        found = false
+
+        for key, _ in pairs(table.filter(self.nodes, filter)) do
+            self:remove_node(key)
+            found = true
+
+            if logging then
+                log(" - Removed from dependency graph: " .. key)
+            end
+        end
+    until not found
+end
+
+
+function fz_graph:has_links_from(key)
+    return not table.is_empty(self.graph:adj(key))
+end
+
+
+function fz_graph:has_links_to(key)
+    return not table.is_empty(self.graph:rev(key))
+end
+
+
 return fz_graph

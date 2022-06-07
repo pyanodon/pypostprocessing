@@ -73,9 +73,17 @@ function graph.create(V, directed)
     g.vertexList = {}
     g.adjList = {}
 
+    if directed then
+        g.revList = {}
+    end
+
     for v = 0, V-1 do
         g.vertexList[v] = true
         g.adjList[v] = {}
+
+        if directed then
+            g.revList[v] = {}
+        end
     end
 
     g.directed = directed
@@ -95,18 +103,18 @@ end
 
 
 function graph.createFromVertexList(vertices, directed)
-    local g = {}
+    local g = graph.create(0, directed)
     setmetatable(g, graph)
-
-    if directed == nil then
-        directed = false
-    end
 
     g.vertexList = table.deep_copy(vertices)
     g.adjList = {}
 
     for v, _ in pairs(g.vertexList) do
         g.adjList[v] = {}
+
+        if directed then
+            g.revList[v] = {}
+        end
     end
 
     g.directed = directed
@@ -121,6 +129,11 @@ function graph:addVertexIfNotExists(v)
     else
         self.vertexList[v] = true
         self.adjList[v] = {}
+
+        if self.directed then
+            self.revList[v] = {}
+        end
+
         return true
     end
 end
@@ -129,17 +142,15 @@ end
 function graph:removeVertex(v)
     if self.vertexList[v] then
         self.vertexList[v] = nil
+
+        for _, e in pairs(table.merge({}, self.adjList[v])) do
+            self:removeEdge(v, e:other(v))
+        end
+
         self.adjList[v] = nil
 
-        for w, _ in pairs(self.vertexList) do
-            local adj_w = self.adjList[w]
-
-            for k, e in pairs(adj_w) do
-                if e:other(w) == v then
-                    table.remove(adj_w, k)
-                    break
-                end
-            end
+        if self.directed then
+            self.revList[v] = nil
         end
     end
 end
@@ -155,6 +166,11 @@ function graph:adj(v)
 end
 
 
+function graph:rev(v)
+    return self.directed and self.revList[v] or nil
+end
+
+
 function graph:addEdge(v, w, weight, label)
     local e = graph.Edge.create(v, w, weight, label)
     self:addVertexIfNotExists(v)
@@ -163,6 +179,8 @@ function graph:addEdge(v, w, weight, label)
 
     if not self.directed then
         table.insert(self.adjList[w], e)
+    else
+        table.insert(self.revList[w], e)
     end
 end
 
@@ -177,14 +195,12 @@ function graph:removeEdge(v, w)
         end
     end
 
-    if not self.directed then
-        local adj_w = self.adjList[w]
+    local adj_w = self.directed and self.revList[w] or self.adjList[w]
 
-        for k, e in pairs(adj_w) do
-            if e:other(w) == v then
-                table.remove(adj_w, k)
-                break
-            end
+    for k, e in pairs(adj_w) do
+        if e:other(w) == v then
+            table.remove(adj_w, k)
+            break
         end
     end
 end

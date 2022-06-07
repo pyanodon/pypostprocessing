@@ -137,5 +137,5 @@ require('prototypes/functions/compatibility')
 ----------------------------------------------------
 ----------------------------------------------------
 
-local dp = require("prototypes.functions.data_parser").create()
-local fg = dp:run()
+local at = require("prototypes.functions.auto_tech").create()
+at:run()
