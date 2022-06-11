@@ -17,6 +17,8 @@ fz_graph.NT_FLUID = "fluid"
 fz_graph.NT_RECIPE = "recipe"
 
 
+fz_graph.node.property_names = table.array_to_dictionary {"virtual", "factorio_name", "tech_name", "ignore_for_dependencies", "internal", "original_key"}
+
 function fz_graph.node.create(name, type, properties)
     local n = {}
     setmetatable(n, fz_graph.node)
@@ -35,16 +37,14 @@ end
 function fz_graph.node:update(properties)
     if not properties then return end
 
-    if properties.virtual ~= nil then
-        self.virtual = properties.virtual
+    for k, v in pairs(properties) do
+        if v ~= nil and fz_graph.node.property_names[k] then
+            self[k] = v
+        end
     end
 
-    if properties.factorio_name ~= nil then
-        self.factorio_name = properties.factorio_name
-    end
-
-    if properties.ignore_for_dependencies ~= nil then
-        self.ignore_for_dependencies = properties.ignore_for_dependencies
+    if properties.labels ~= nil then
+        self.labels = table.merge(self.labels, properties.labels)
     end
 end
 
@@ -120,7 +120,7 @@ end
 
 
 function fz_graph:get_node(name, type)
-    local key = fz_graph.node.get_key(name, type)
+    local key = type and fz_graph.node.get_key(name, type) or name
     return self.nodes[key]
 end
 
@@ -170,14 +170,39 @@ function fz_graph:recursive_remove(filter, logging)
 end
 
 
-function fz_graph:has_links_from(key)
-    return not table.is_empty(self.graph:adj(key))
+function fz_graph:has_links_from(node)
+    return not table.is_empty(self.graph:adj(node.key))
 end
 
 
-function fz_graph:has_links_to(key)
-    return not table.is_empty(self.graph:rev(key))
+function fz_graph:has_links_to(node)
+    return not table.is_empty(self.graph:rev(node.key))
 end
 
+
+function fz_graph:get_links_from(node, label)
+    return table.filter(self.graph:adj(node.key), function (e) return label == nil or e.label == label end)
+end
+
+
+function fz_graph:get_links_to(node, label)
+    return table.filter(self.graph:rev(node.key), function (e) return label == nil or e.label == label end)
+end
+
+
+function fz_graph:clone_node(source_node, name)
+    local node = self:add_node(name, source_node.type)
+    node:update(source_node)
+
+    for _, e in pairs(self:get_links_from(source_node)) do
+        self:add_link(node, self.nodes[e:other(source_node.key)], e.label)
+    end
+
+    for _, e in pairs(self:get_links_to(source_node)) do
+        self:add_link(self.nodes[e:other(source_node.key)], node, e.label)
+    end
+
+    return node
+end
 
 return fz_graph

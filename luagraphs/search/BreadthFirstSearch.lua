@@ -24,31 +24,26 @@ function BreadthFirstSearch.create()
 end
 
 
-function BreadthFirstSearch:run(G, s)
+function BreadthFirstSearch:run(G, s, stop_filter)
     self.s = s
-
-    for _, v in pairs(G:vertices():enumerate()) do
-        self.marked[v] = false
-        self.pathTo[v] = -1
-    end
 
     local q = queue.create()
 
     q:enqueue(s)
+    self.marked[s] = true
 
     while q:isEmpty() == false do
         local v = q:dequeue()
-        self.marked[v] = true
 
-        for _, e in pairs(G:adj(v):enumerate()) do
+        for _, e in pairs(G:adj(v)) do
             local w = e:other(v)
 
-            if self.marked[w] == false then
+            if not self.marked[w] and (not stop_filter or not stop_filter(w, v)) then
+                self.marked[w] = true
                 self.pathTo[w] = v
                 q:enqueue(w)
             end
         end
-
     end
 end
 
@@ -62,7 +57,7 @@ function BreadthFirstSearch:getPathTo(v)
     local path = stack.create()
     local x = v
 
-    while x ~= self.s do
+    while x and x ~= self.s do
         path:push(x)
         x = self.pathTo[x]
     end

@@ -136,6 +136,7 @@ require('prototypes/functions/compatibility')
 -- require('prototypes/functions/auto_tech')
 ----------------------------------------------------
 ----------------------------------------------------
-
+log("AUTOTECH START")
 local at = require("prototypes.functions.auto_tech").create()
 at:run()
+log("AUTOTECH END")

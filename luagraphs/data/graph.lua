@@ -143,8 +143,14 @@ function graph:removeVertex(v)
     if self.vertexList[v] then
         self.vertexList[v] = nil
 
-        for _, e in pairs(table.merge({}, self.adjList[v])) do
-            self:removeEdge(v, e:other(v))
+        local edges = table.merge({}, self.adjList[v])
+
+        if self.directed then
+            table.merge(edges, self.revList[v])
+        end
+
+        for _, e in pairs(edges) do
+            self:removeEdge(e:from(), e:to(v))
         end
 
         self.adjList[v] = nil

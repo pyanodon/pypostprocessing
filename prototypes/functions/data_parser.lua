@@ -1,9 +1,6 @@
 local table = require "__stdlib__.stdlib.utils.table"
 local string = require "__stdlib__.stdlib.utils.string"
 
-local graph = require "luagraphs.data.graph"
-local breadth_firt_search = require "luagraphs.search.BreadthFirstSearch"
-
 local config = require "prototypes.config"
 local fz_graph = require "prototypes.functions.fuzzy_graph"
 local py_utils = require "prototypes.functions.utils"
@@ -100,7 +97,7 @@ function data_parser:run()
                 results = {{ type = "item", name = item_name, amount = 1 }}
             }
 
-            local node = self:parse_recipe(nil, recipe, true)
+            local node = self:parse_recipe(fz_graph.START_NODE_NAME, recipe, true)
             self.fg:add_link(self.fg.start_node, node)
         end
     end
@@ -108,7 +105,7 @@ function data_parser:run()
     -- starting recipes
     for _, recipe in pairs(data.raw.recipe) do
         if (recipe.normal and recipe.normal.enabled ~= false) or (not recipe.normal and recipe.enabled ~= false) then
-            self:parse_recipe(nil, recipe)
+            self:parse_recipe(not recipe.ignore_for_dependencies and fz_graph.START_NODE_NAME or nil, recipe)
         end
     end
 
@@ -318,7 +315,7 @@ function data_parser:parse_tech(tech)
             local recipe = data.raw.recipe[effect.recipe]
 
             if recipe then
-                local n_recipe = self:parse_recipe(not recipe.ignore_for_dependencies and tech.name, recipe)
+                local n_recipe = self:parse_recipe(not recipe.ignore_for_dependencies and tech.name or nil, recipe)
 
                 if not recipe.ignore_for_dependencies then
                     self.fg:add_link(node, n_recipe)
