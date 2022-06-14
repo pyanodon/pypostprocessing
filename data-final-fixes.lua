@@ -107,8 +107,6 @@ if mods["pyalternativeenergy"] then
 
 end
 
-log(serpent.block(data.raw.recipe["numal-improved-2"]))
-
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
