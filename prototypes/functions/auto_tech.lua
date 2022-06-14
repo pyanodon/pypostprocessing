@@ -1,7 +1,7 @@
 local table = require('__stdlib__/stdlib/utils/table')
 local queue = require('__stdlib__/stdlib/misc/queue')
 local string = require('__stdlib__/stdlib/utils/string')
--- require('defines')
+-- local defines = require('defines')
 
 local pytech = {}
 
@@ -2387,6 +2387,12 @@ function pytech.pre_process_item(item)
     if item.place_result then
         pytech.insert_double_lookup(pytech.placed_by, item.place_result, item.name)
         pytech.pre_process_entity(pytech.get_prototype('entity', item.place_result))
+    end
+
+    -- TODO
+    if item.name == "numal-mk01" then
+        pytech.insert_double_lookup(pytech.placed_by, "numal-mk01", "numal-mk01")
+        pytech.pre_process_entity(pytech.get_prototype('entity', "numal-mk01"))
     end
 
     if item.placed_as_equipment_result then

@@ -73,28 +73,32 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 
--- TMP TECHS HERE --
--- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
--- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
 if mods["pyalienlife"] then
-    for t, tech in pairs(data.raw.technology) do
-        local logi_pack = false
-        local psp1 = false
+    for _, tech in pairs(data.raw.technology) do
+        local science_packs = {}
 
         for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-            if (pack.name or pack[1]) == "logistic-science-pack" then
-                logi_pack = true
-            elseif (pack.name or pack[1]) == "py-science-pack-1" then
-                psp1 = true
-            end
+            science_packs[pack.name or pack[1]] = true
         end
 
-        if logi_pack and not psp1 then
+        if science_packs["logistic-science-pack"] and not science_packs["py-science-pack-1"] then
             TECHNOLOGY(tech):add_pack("py-science-pack-1")
+        end
+
+        if science_packs["production-science-pack"] and not science_packs["py-science-pack-2"] then
+            TECHNOLOGY(tech):add_pack("py-science-pack-2")
+        end
+
+        if science_packs["utility-science-pack"] and not science_packs["py-science-pack-3"] then
+            TECHNOLOGY(tech):add_pack("py-science-pack-3")
         end
     end
 end
 
+
+-- TMP TECHS HERE --
+-- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
+-- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
 if mods["pyalienlife"] and mods["pyhightech"] then
     -- create_tmp_tech("salt-mine", "electrolysis")
 end
@@ -102,6 +106,8 @@ end
 if mods["pyalternativeenergy"] then
 
 end
+
+log(serpent.block(data.raw.recipe["numal-improved-2"]))
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
