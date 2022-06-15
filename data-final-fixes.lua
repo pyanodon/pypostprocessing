@@ -73,24 +73,42 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 
-if mods["pyalienlife"] then
-    for _, tech in pairs(data.raw.technology) do
-        local science_packs = {}
+for _, tech in pairs(data.raw.technology) do
+    local science_packs = {}
 
-        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-            science_packs[pack.name or pack[1]] = true
-        end
+    for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
+        science_packs[pack.name or pack[1]] = true
+    end
 
+    if science_packs["utility-science-pack"] and not science_packs["military-science-pack"] then
+        TECHNOLOGY(tech):add_pack("military-science-pack")
+        science_packs["military-science-pack"] = true
+    end
+
+    if mods["pyalienlife"] then
         if science_packs["logistic-science-pack"] and not science_packs["py-science-pack-1"] then
             TECHNOLOGY(tech):add_pack("py-science-pack-1")
+            science_packs["py-science-pack-1"] = true
         end
 
         if science_packs["production-science-pack"] and not science_packs["py-science-pack-2"] then
             TECHNOLOGY(tech):add_pack("py-science-pack-2")
+            science_packs["py-science-pack-2"] = true
         end
 
-        if science_packs["utility-science-pack"] and not science_packs["py-science-pack-3"] then
+        if science_packs["production-science-pack"] and not science_packs["py-science-pack-3"] then
             TECHNOLOGY(tech):add_pack("py-science-pack-3")
+            science_packs["py-science-pack-3"] = true
+        end
+
+        if science_packs["utility-science-pack"] and not science_packs["py-science-pack-4"] then
+            TECHNOLOGY(tech):add_pack("py-science-pack-4")
+            science_packs["py-science-pack-4"] = true
+        end
+
+        if mods["pyalternativeenergy"] and science_packs["py-science-pack-4"] and not science_packs["military-science-pack"] then
+            TECHNOLOGY(tech):add_pack("military-science-pack")
+            science_packs["military-science-pack"] = true
         end
     end
 end
