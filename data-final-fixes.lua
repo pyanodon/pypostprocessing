@@ -76,39 +76,27 @@ end
 for _, tech in pairs(data.raw.technology) do
     local science_packs = {}
 
+    local function add_science_pack_dep(t, science_pack, dep_pack)
+        if science_packs[science_pack] and not science_packs[dep_pack] then
+            TECHNOLOGY(t):add_pack(dep_pack)
+            science_packs[dep_pack] = true
+        end
+    end
+
     for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
         science_packs[pack.name or pack[1]] = true
     end
 
-    if science_packs["utility-science-pack"] and not science_packs["military-science-pack"] then
-        TECHNOLOGY(tech):add_pack("military-science-pack")
-        science_packs["military-science-pack"] = true
-    end
+    add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
 
     if mods["pyalienlife"] then
-        if science_packs["logistic-science-pack"] and not science_packs["py-science-pack-1"] then
-            TECHNOLOGY(tech):add_pack("py-science-pack-1")
-            science_packs["py-science-pack-1"] = true
-        end
+        add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
+        add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
+        add_science_pack_dep(tech, "py-science-pack-3", "py-science-pack-2")
+        add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
 
-        if science_packs["production-science-pack"] and not science_packs["py-science-pack-2"] then
-            TECHNOLOGY(tech):add_pack("py-science-pack-2")
-            science_packs["py-science-pack-2"] = true
-        end
-
-        if science_packs["production-science-pack"] and not science_packs["py-science-pack-3"] then
-            TECHNOLOGY(tech):add_pack("py-science-pack-3")
-            science_packs["py-science-pack-3"] = true
-        end
-
-        if science_packs["utility-science-pack"] and not science_packs["py-science-pack-4"] then
-            TECHNOLOGY(tech):add_pack("py-science-pack-4")
-            science_packs["py-science-pack-4"] = true
-        end
-
-        if mods["pyalternativeenergy"] and science_packs["py-science-pack-4"] and not science_packs["military-science-pack"] then
-            TECHNOLOGY(tech):add_pack("military-science-pack")
-            science_packs["military-science-pack"] = true
+        if mods["pyalternativeenergy"] then
+            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
         end
     end
 end
