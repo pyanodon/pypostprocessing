@@ -2390,9 +2390,9 @@ function pytech.pre_process_item(item)
     end
 
     -- TODO
-    if item.name == "numal-mk01" then
-        pytech.insert_double_lookup(pytech.placed_by, "numal-mk01", "numal-mk01")
-        pytech.pre_process_entity(pytech.get_prototype('entity', "numal-mk01"))
+    if item.name == "numal-reef-mk01" then
+        pytech.insert_double_lookup(pytech.placed_by, "numal-reef-mk01", "numal-reef-mk01")
+        pytech.pre_process_entity(pytech.get_prototype('entity', "numal-reef-mk01"))
     end
 
     if item.placed_as_equipment_result then
