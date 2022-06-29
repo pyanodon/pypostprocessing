@@ -81,7 +81,7 @@ function data_parser:run()
         local entity = py_utils.get_prototype("entity", entity_name, true)
 
         if entity then
-            local node = self.fg:add_node(entity_name, fz_graph.NT_ITEM, { factorio_name = entity_name })
+            local node = self.fg:add_node(entity_name, fz_graph.NT_ITEM, { factorio_name = entity_name, tech_name = fz_graph.START_NODE_NAME })
             self.fg:add_link(self.fg.start_node, node)
         end
     end
@@ -105,7 +105,11 @@ function data_parser:run()
     -- starting recipes
     for _, recipe in pairs(data.raw.recipe) do
         if (recipe.normal and recipe.normal.enabled ~= false) or (not recipe.normal and recipe.enabled ~= false) then
-            self:parse_recipe(not recipe.ignore_for_dependencies and fz_graph.START_NODE_NAME or nil, recipe)
+            local node = self:parse_recipe(not recipe.ignore_for_dependencies and fz_graph.START_NODE_NAME or nil, recipe)
+
+            if not recipe.ignore_for_dependencies then
+                self.fg:add_link(self.fg.start_node, node)
+            end
         end
     end
 
@@ -138,7 +142,7 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
         self.processed_recipes[name] = true
     end
 
-    node.ignore_for_dependencies = ((not self.recipes[recipe.name] and not node.virtual) or recipe.ignore_for_dependencies or false)
+    node.ignore_for_dependencies = (not self.recipes[recipe.name] or node.virtual or recipe.ignore_for_dependencies or false)
 
     local ing_count = 0
     local fluid_in = 0
@@ -178,7 +182,9 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
     end
 
     for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
-        if res.type == "item" and not ingredients[res.name] then
+        if res.type == "item" and not ingredients[res.name]
+            and (not config.PRIMARY_PRODUCTION_RECIPE[res.name] or config.PRIMARY_PRODUCTION_RECIPE[res.name] == recipe.name)
+        then
             local node_item = self.fg:add_node(res.name, fz_graph.NT_ITEM)
             local item
 
@@ -271,14 +277,14 @@ function data_parser:parse_tech(tech)
     node.ignore_for_dependencies = tech.ignore_for_dependencies
 
     -- Hard coded dependencies
-    for _, dep in pairs(tech.dependencies or {}) do
-        if data.raw.technology[dep] then
-            local n_parent = self.fg:add_node(dep, fz_graph.NT_TECH_TAIL)
-            self.fg:add_link(n_parent, node)
-        else
-            error("\n\nInvalid tech dependency: " .. dep .. "\nSource: " .. tech.name .. "\n")
-        end
-    end
+    -- for _, dep in pairs(tech.dependencies or {}) do
+    --     if data.raw.technology[dep] then
+    --         local n_parent = self.fg:add_node(dep, fz_graph.NT_TECH_TAIL)
+    --         self.fg:add_link(n_parent, node)
+    --     else
+    --         error("\n\nInvalid tech dependency: " .. dep .. "\nSource: " .. tech.name .. "\n")
+    --     end
+    -- end
 
     local packs = {}
     -- Science packs
@@ -1075,6 +1081,11 @@ function data_parser:pre_process_item(item)
     if item.place_result then
         py_utils.insert_double_lookup(self.placed_by, item.place_result, item.name)
         self:pre_process_entity(py_utils.get_prototype("entity", item.place_result))
+    end
+
+    for _, entity_name in pairs(config.ENTITY_SCRIPT_UNLOCKS[item.name] or {}) do
+        py_utils.insert_double_lookup(self.placed_by, entity_name, item.name)
+        self:pre_process_entity(py_utils.get_prototype("entity", entity_name))
     end
 
     if item.placed_as_equipment_result then

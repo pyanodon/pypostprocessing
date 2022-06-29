@@ -26,7 +26,7 @@ function graph.Edge.create(v, w, weight, label)
     s.v = v
     s.w = w
     s.weight = weight
-    s.label = label
+    s.label = label or ""
 
     return s
 end
@@ -191,11 +191,11 @@ function graph:addEdge(v, w, weight, label)
 end
 
 
-function graph:removeEdge(v, w)
+function graph:removeEdge(v, w, label)
     local adj_v = self.adjList[v]
 
     for k, e in pairs(adj_v) do
-        if e:other(v) == w then
+        if e:other(v) == w and (not label or label == "" or label == e.label) then
             table.remove(adj_v, k)
             break
         end
@@ -204,7 +204,7 @@ function graph:removeEdge(v, w)
     local adj_w = self.directed and self.revList[w] or self.adjList[w]
 
     for k, e in pairs(adj_w) do
-        if e:other(w) == v then
+        if e:other(w) == v and (not label or label == "" or label == e.label) then
             table.remove(adj_w, k)
             break
         end
@@ -219,7 +219,7 @@ function graph:reverse()
         local adj_v = self:adj(v)
 
         for _, e in pairs(adj_v) do
-            g:addEdge(e.v, e.w, e.weight, e.label)
+            g:addEdge(e.w, e.v, e.weight, e.label)
         end
     end
 

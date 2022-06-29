@@ -74,7 +74,7 @@ function fz_graph.create()
 
     g.graph = graph.create(0, true)
     g.nodes = {}
-    g.start_node = g:add_node(fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD, { virtual = true })
+    g.start_node = g:add_node(fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD, { virtual = true , tech_name = fz_graph.START_NODE_NAME })
 
     return g
 end
@@ -86,7 +86,7 @@ function fz_graph:copy()
 
     g.graph = self.graph:copy()
     g.nodes = table.deep_copy(self.nodes)
-    g.start_node = g.nodes[fz_graph.START_NODE_NAME]
+    g.start_node = g.nodes[self.start_node.key]
 
     return g
 end
@@ -99,7 +99,9 @@ function fz_graph:create_subgraph(node_list)
     local keys = table.map(node_list, function () return true end)
     g.graph = self.graph:create_subgraph(keys)
     g.nodes = table.deep_copy(node_list)
-    g.start_node = g.nodes[fz_graph.START_NODE_NAME]
+    g.start_node = g.nodes[self.start_node.name]
+
+    return g
 end
 
 
@@ -139,15 +141,15 @@ function fz_graph:add_link(from, to, label)
 end
 
 
-function fz_graph:remove_link(from, to)
-    self.graph:removeEdge(from.key, to.key)
+function fz_graph:remove_link(from, to, label)
+    self.graph:removeEdge(from.key, to.key, label)
 end
 
 
-function fz_graph:remove_node(key)
-    if self.nodes[key] then
-        self.graph:removeVertex(key)
-        self.nodes[key] = nil
+function fz_graph:remove_node(node)
+    if self.nodes[node.key] then
+        self.graph:removeVertex(node.key)
+        self.nodes[node.key] = nil
     end
 end
 
@@ -158,8 +160,8 @@ function fz_graph:recursive_remove(filter, logging)
     repeat
         found = false
 
-        for key, _ in pairs(table.filter(self.nodes, filter)) do
-            self:remove_node(key)
+        for key, node in pairs(table.filter(self.nodes, filter, self)) do
+            self:remove_node(node)
             found = true
 
             if logging then
@@ -181,12 +183,46 @@ end
 
 
 function fz_graph:get_links_from(node, label)
-    return table.filter(self.graph:adj(node.key), function (e) return label == nil or e.label == label end)
+    return table.filter(self.graph:adj(node.key), function (e) return not label or e.label == label end)
 end
 
 
 function fz_graph:get_links_to(node, label)
-    return table.filter(self.graph:rev(node.key), function (e) return label == nil or e.label == label end)
+    return table.filter(self.graph:rev(node.key), function (e) return not label or e.label == label end)
+end
+
+
+function fz_graph:iter_links_from(node, label)
+    local tab = self.graph:adj(node.key)
+    local k, e
+
+    return
+        function ()
+            repeat
+                k, e = next(tab, k)
+            until (label or "") == "" or not k or e.label == label
+
+            return k, e
+        end
+end
+
+function fz_graph:has_label_from(node)
+    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= "" end)
+end
+
+
+function fz_graph:iter_links_to(node, label)
+    local tab = self.graph:rev(node.key)
+    local k, e
+
+    return
+        function ()
+            repeat
+                k, e = next(tab, k)
+            until (label or "") == "" or not k or e.label == label
+
+            return k, e
+        end
 end
 
 
@@ -194,11 +230,11 @@ function fz_graph:clone_node(source_node, name)
     local node = self:add_node(name, source_node.type)
     node:update(source_node)
 
-    for _, e in pairs(self:get_links_from(source_node)) do
+    for _, e in self:iter_links_from(source_node) do
         self:add_link(node, self.nodes[e:other(source_node.key)], e.label)
     end
 
-    for _, e in pairs(self:get_links_to(source_node)) do
+    for _, e in self:iter_links_to(source_node) do
         self:add_link(self.nodes[e:other(source_node.key)], node, e.label)
     end
 
