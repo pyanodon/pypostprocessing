@@ -20,7 +20,11 @@
     "? palternativeenergy",
     "? omnimatter",
     "? omnimatter_water",
-    "? omnimatter_wood"
+    "? omnimatter_wood",
+    "? deadlock-beltboxes-loaders",
+    "? DeadlockCrating",
+    "? deadlock_stacked_recipes",
+    "? DeadlocksStackingForPyanadon"
   ],
   "package": {
     "ignore": [],
