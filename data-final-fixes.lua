@@ -39,6 +39,18 @@ for _, module in pairs(data.raw.module) do
 end
 
 
+for _, recipe in pairs(data.raw.recipe) do
+    if recipe.results and table.size(recipe.results) == 1 then
+        local product = recipe.results[1]
+        if (product.amount or product[2]) ~= 1 then
+            recipe.always_show_products = true
+        end
+    elseif recipe.result_amount ~= 1 then
+        recipe.always_show_products = true
+    end
+end
+
+
 local function create_tmp_tech(recipe, original_tech, add_dependency)
     local new_tech = TECHNOLOGY {
         type = "technology",
