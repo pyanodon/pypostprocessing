@@ -635,12 +635,12 @@ function pytech.parse_recipe(tech_name, recipe, no_crafting)
                     if not n_fluid.virtual then
                         fluid_out = fluid_out + 1
                     end
-                end
 
-                if node.ignore_for_dependencies and n_fluid.ignore_for_dependencies == nil then
-                    n_fluid.ignore_for_dependencies = true
-                elseif not node.ignore_for_dependencies and n_fluid.ignore_for_dependencies then
-                    n_fluid.ignore_for_dependencies = false
+                    if node.ignore_for_dependencies and n_fluid.ignore_for_dependencies == nil then
+                        n_fluid.ignore_for_dependencies = true
+                    elseif not node.ignore_for_dependencies and n_fluid.ignore_for_dependencies then
+                        n_fluid.ignore_for_dependencies = false
+                    end
                 end
             end
         end

@@ -24,7 +24,8 @@
     "? deadlock-beltboxes-loaders",
     "? DeadlockCrating",
     "? deadlock_stacked_recipes",
-    "? DeadlocksStackingForPyanadon"
+    "? DeadlocksStackingForPyanadon",
+    "! ResearchFog"
   ],
   "package": {
     "ignore": [],
