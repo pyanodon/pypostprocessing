@@ -5,7 +5,7 @@ local lazy_bfs = {}
 lazy_bfs.__index = lazy_bfs
 
 
-function lazy_bfs.create(g, start_node, strong, reverse)
+function lazy_bfs.create(g, start_node, strong, reverse, stop_filter)
     local b = {}
     setmetatable(b, lazy_bfs)
 
@@ -13,6 +13,7 @@ function lazy_bfs.create(g, start_node, strong, reverse)
     b.start = start_node
     b.strong = strong or false
     b.reverse = reverse or false
+    b.stop_filter = stop_filter
 
     b.marked = {}
     b.labels = {}
@@ -37,11 +38,11 @@ function lazy_bfs:run(target_node)
         for _, e in (not self.reverse and self.graph:iter_links_from(v) or self.graph:iter_links_to(v)) do
             local w = self.graph:get_node(e:other(v.key))
 
-            if not self.marked[w.key] then
+            if not self.marked[w.key] and (not self.stop_filter or not self.stop_filter(w, v)) then
                 -- log(" - Checking: " .. w.key)
                 local progress = true
 
-                if v.key ~= self.start.key and self.strong and e.label and e.label ~= "" then
+                if progress and v.key ~= self.start.key and self.strong and e.label and e.label ~= "" then
                     local labels = self.labels[w.key]
 
                     if not labels then

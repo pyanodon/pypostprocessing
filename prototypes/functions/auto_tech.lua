@@ -11,6 +11,7 @@ local BreadthFirstSearch = require("luagraphs.search.BreadthFirstSearch")
 local auto_tech = {}
 auto_tech.__index = auto_tech
 
+local LABEL_UNLOCK_RECIPE = "__unlock_recipe__"
 
 local function deadend_node(n, k, g) return not g:has_links_to(n) or not g:has_links_from(n) or false end
 local function ifd_deadend_node(n, k, g) return n.ignore_for_dependencies and deadend_node(n, k, g) end
@@ -52,12 +53,12 @@ function auto_tech:run()
         end
     end
 
-    -- self:process_tech(fg:get_node("__START__", fz_graph.NT_TECH_HEAD), fg)
+    -- self:process_tech(fg:get_node("tholin-mk01", fz_graph.NT_TECH_HEAD), fg)
 
     fg:recursive_remove(ifd_deadend_node, false)
 
     ts = fz_topo.create(fg)
-    error = ts:run(false)
+    error = ts:run(false, false)
 
     if error then
         log("ERROR: Dependency loop detected")
@@ -68,32 +69,44 @@ function auto_tech:run()
         end
     end
 
-    -- log("ClEANUP START")
-    -- self:remove_redundant_deps(fg)
-    -- log("ClEANUP END")
-
 end
 
 
 function auto_tech:process_tech(tech_node, fg)
     local tail_node = fg:add_node(tech_node.name, fz_graph.NT_TECH_TAIL, { tech_name = tech_node.name, factorio_name = tech_node.name })
     local recipes = {}
+    local tmp_nodes = {}
 
     for _, e in pairs(fg:get_links_from(tech_node)) do
         local node = fg.nodes[e:to()]
-        fg:add_link(node, tail_node)
-        recipes[node.key] = node
+
+        if node.type == fz_graph.NT_RECIPE then
+            fg:add_link(node, tail_node, node.key)
+            recipes[node.key] = node
+
+            for label, _ in pairs(node.labels) do
+                if fg:has_label_to(node, label) then
+                    local tmp_node = fg:add_node(node.name .. "/" .. label, node.type, node)
+                    recipes[tmp_node.key] = tmp_node
+                    table.insert(tmp_nodes, tmp_node)
+                    fg:add_link(tech_node, tmp_node, LABEL_UNLOCK_RECIPE)
+
+                    for _, e2 in fg:iter_links_to(node, label) do
+                        fg:add_link(fg:get_node(e2:from()), tmp_node, label)
+                    end
+                end
+            end
+        end
     end
 
-    fg:add_link(tech_node, tail_node)
+    fg:add_link(tech_node, tail_node, tech_node.key)
     local products = {}
 
     for _, node in pairs(recipes) do
         for _, e in pairs(fg:get_links_from(node)) do
             if e:to() ~= tail_node.key then
                 local p = fg.nodes[e:to()]
-                py_utils.insert_double_lookup(products, p.key, node.key)
-                products[p.key][e.label] = true
+                py_utils.insert_double_lookup(products, p.key, e.label)
             end
         end
     end
@@ -101,7 +114,8 @@ function auto_tech:process_tech(tech_node, fg)
     local internal_nodes = {}
     -- local internal_nodes = self:find_internal_nodes(fg, tech_node.name, recipes)
 
-    for k, product_labels in pairs(products) do
+    for k, _ in pairs(products) do
+        -- log(" - Processing product: " .. k)
         local bfs = BreadthFirstSearch.create()
 
         bfs:run(fg.graph, k, function (v, from)
@@ -149,10 +163,6 @@ function auto_tech:process_tech(tech_node, fg)
                 end
             end
         end
-
-        for label, _ in pairs(product_labels) do
-            fg:add_link(fg:get_node(k), tail_node, label)
-        end
     end
 
     for _, node in pairs(internal_nodes) do
@@ -160,23 +170,16 @@ function auto_tech:process_tech(tech_node, fg)
             local to_node = fg:get_node(e:to())
 
             if to_node.tech_name ~= tech_node.name then
-                fg:remove_link(node, to_node)
+                fg:remove_link(node, to_node, e.label)
             end
         end
 
         for label, _ in pairs(node.labels or {}) do
-            local links = fg:get_links_to(node, label)
-            local has_local_source = table.any(links, function (e)
-                return fg:get_node(e:from()).tech_name == tech_node.name
-            end)
+            for _, e in pairs(fg:get_links_to(node, label)) do
+                local from_node = fg:get_node(e:from())
 
-            if has_local_source then
-                for _, e in pairs(links) do
-                    local from_node = fg:get_node(e:from())
-
-                    if from_node.tech_name ~= tech_node.name then
-                        fg:remove_link(from_node, node)
-                    end
+                if from_node.tech_name ~= tech_node.name then
+                    fg:remove_link(from_node, node, label)
                 end
             end
         end
@@ -191,6 +194,30 @@ function auto_tech:process_tech(tech_node, fg)
     local ts = fz_topo.create(tgraph)
     local error = ts:run(false, false)
 
+    for _, e in pairs(ts.removed_links) do
+        -- log("Remove link: " .. e:from() .. " > " .. e:to() .. " / " .. e.label)
+        fg:remove_link(fg:get_node(e:from()), fg:get_node(e:to()), e.label)
+    end
+
+    if error then
+        -- log("Local loop: " .. tech_node.name)
+        -- for k, node in pairs(tgraph.nodes) do
+        --     if not node.ignore_for_dependencies and not ts.sorted[k] then
+        --         log(" - " .. k)
+        --     end
+        -- end
+    else
+        for _, node in pairs(internal_nodes) do
+            for _, e in fg:iter_links_from(node) do
+                local cons_node = fg:get_node(e:to())
+
+                if not cons_node.internal then
+                    fg:remove_link(fg:get_node(node.original_key), cons_node, e.label)
+                end
+            end
+        end
+    end
+
     -- if error then
     --     log("Local loop: " .. tech_node.name)
     --     for k, node in pairs(tgraph.nodes) do
@@ -199,6 +226,26 @@ function auto_tech:process_tech(tech_node, fg)
     --         end
     --     end
     -- end
+
+    for k, product_labels in pairs(products) do
+        local product_node = fg:get_node(k)
+
+        for _, e in pairs(fg:get_links_to(product_node)) do
+            local from_node = fg:get_node(e:from())
+
+            if from_node.tech_name == tech_node.name then
+                fg:remove_link(from_node, product_node, e.label)
+            end
+        end
+
+        for label, _ in pairs(product_labels) do
+            fg:add_link(tail_node, product_node, label)
+        end
+    end
+
+    for _, node in pairs(tmp_nodes) do
+        fg:remove_node(node)
+    end
 end
 
 
@@ -219,7 +266,7 @@ function auto_tech:find_internal_nodes(fg, tech_name, recipes)
     while not queue.is_empty(q) do
         local n = q()
 
-        for _, e in pairs(fg:get_links_from(fg.nodes[n.last])) do
+        for _, e in fg:iter_links_from(fg.nodes[n.last]) do
             local node = fg.nodes[e:to()]
 
             if not marked[node.key] and not n.deps[node.key] and not node.tech_name then
@@ -229,7 +276,7 @@ function auto_tech:find_internal_nodes(fg, tech_name, recipes)
                 nn.last = node.key
                 nn.deps[node.key] = true
 
-                for _, ee in pairs(fg:get_links_to(node)) do
+                for _, ee in fg:iter_links_to(node) do
                     nn.deps[ee:from()] = true
                 end
 

@@ -133,10 +133,14 @@ end
 
 
 function fz_graph:add_link(from, to, label)
-    self.graph:addEdge(from.key, to.key, 1, label)
+    if not label or label == "" then error("Missing parameter: label") end
 
-    if label then
-        to:add_label(label)
+    if not self:link_exists(from, to, label) then
+        self.graph:addEdge(from.key, to.key, 1, label)
+
+        if label then
+            to:add_label(label)
+        end
     end
 end
 
@@ -192,6 +196,11 @@ function fz_graph:get_links_to(node, label)
 end
 
 
+function fz_graph:link_exists(from, to, label)
+    return table.any(self.graph.adjList[from.key], function (e) return e:to() == to.key and e.label == label end)
+end
+
+
 function fz_graph:iter_links_from(node, label)
     local tab = self.graph:adj(node.key)
     local k, e
@@ -204,10 +213,6 @@ function fz_graph:iter_links_from(node, label)
 
             return k, e
         end
-end
-
-function fz_graph:has_label_from(node)
-    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= "" end)
 end
 
 
@@ -223,6 +228,16 @@ function fz_graph:iter_links_to(node, label)
 
             return k, e
         end
+end
+
+
+function fz_graph:has_label_from(node, label)
+    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
+end
+
+
+function fz_graph:has_label_to(node, label)
+    return table.any(self.graph:rev(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
 end
 
 

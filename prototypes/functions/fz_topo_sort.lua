@@ -15,6 +15,7 @@ function fz_topo.create(g)
     s.sorted = {}
     s.queue = queue()
     s.fuzzy_nodes = {}
+    s.removed_links = {}
 
     return s
 end
@@ -59,13 +60,16 @@ function fz_topo:run(check_ancestry, logging)
             adj[to_key] = true
         end
 
-        if check_ancestry and not table.is_empty(links_to_remove) then
-            bfs = fz_lazy_bfs.create(self.work_graph, node, true)
+        if not table.is_empty(links_to_remove) then
+            if check_ancestry then
+                bfs = fz_lazy_bfs.create(self.work_graph, node, true)
+            end
 
             for _, e in pairs(links_to_remove) do
-                if e:from() ~= node.key and bfs:has_path_to(self.work_graph:get_node(e:from())) then
+                if e:from() ~= node.key and (not check_ancestry or bfs:has_path_to(self.work_graph:get_node(e:from()))) then
                     if logging then log("  - Removing link: " .. e:from() .. " >> " .. e:to() .. " : " .. e.label) end
                     self.graph:remove_link(self.graph:get_node(e:from()), self.graph:get_node(e:to()), e.label)
+                    table.insert(self.removed_links, e)
                 end
             end
         end

@@ -31,6 +31,8 @@ local LABEL_TRAINSTOP = "__trainstop__"
 local LABEL_CRAFTING_MACHINE = "__crafting__"
 local LABEL_BONUS = "__bonus__"
 local LABEL_GRID = "__grid__"
+local LABEL_UNLOCK_RECIPE = "__unlock_recipe__"
+local LABEL_TECH_FINISH = "__tech_finish__"
 
 
 function data_parser.create()
@@ -80,9 +82,14 @@ function data_parser:run()
     for _, entity_name in pairs(config.STARTING_ENTITIES:enumerate()) do
         local entity = py_utils.get_prototype("entity", entity_name, true)
 
-        if entity then
-            local node = self.fg:add_node(entity_name, fz_graph.NT_ITEM, { factorio_name = entity_name, tech_name = fz_graph.START_NODE_NAME })
-            self.fg:add_link(self.fg.start_node, node)
+        if entity and self.placed_by[entity_name] then
+            for item_name, _ in pairs(self.placed_by[entity_name]) do
+                config.STARTING_ITEMS:add(item_name)
+
+                if not py_utils.get_prototype("item", item_name, true) then
+                    self.fg:add_node(item_name, fz_graph.NT_ITEM, { virtual = true })
+                end
+            end
         end
     end
 
@@ -90,7 +97,7 @@ function data_parser:run()
     for _, item_name in pairs(config.STARTING_ITEMS:enumerate()) do
         local item = py_utils.get_prototype("item", item_name, true)
 
-        if item then
+        if item or self.fg:node_exists(item_name, fz_graph.NT_ITEM) then
             local recipe = {
                 name = RECIPE_PREFIX_START .. item_name,
                 ingredients = {},
@@ -98,7 +105,7 @@ function data_parser:run()
             }
 
             local node = self:parse_recipe(fz_graph.START_NODE_NAME, recipe, true)
-            self.fg:add_link(self.fg.start_node, node)
+            self.fg:add_link(self.fg.start_node, node, LABEL_UNLOCK_RECIPE)
         end
     end
 
@@ -108,7 +115,7 @@ function data_parser:run()
             local node = self:parse_recipe(not recipe.ignore_for_dependencies and fz_graph.START_NODE_NAME or nil, recipe)
 
             if not recipe.ignore_for_dependencies then
-                self.fg:add_link(self.fg.start_node, node)
+                self.fg:add_link(self.fg.start_node, node, LABEL_UNLOCK_RECIPE)
             end
         end
     end
@@ -291,7 +298,7 @@ function data_parser:parse_tech(tech)
     for _, ing in pairs(py_utils.standardize_products(tech.unit.ingredients)) do
         local item = py_utils.get_prototype(fz_graph.NT_ITEM, ing.name)
         local n_item = self:parse_item(item)
-        self.fg:add_link(n_item, node)
+        self.fg:add_link(n_item, node, ing.name)
         table.insert(packs, ing.name)
         py_utils.insert_double_lookup(self.science_packs, ing.name, tech.name)
     end
@@ -324,7 +331,7 @@ function data_parser:parse_tech(tech)
                 local n_recipe = self:parse_recipe(not recipe.ignore_for_dependencies and tech.name or nil, recipe)
 
                 if not recipe.ignore_for_dependencies then
-                    self.fg:add_link(node, n_recipe)
+                    self.fg:add_link(node, n_recipe, LABEL_UNLOCK_RECIPE)
                 end
             end
         -- Bonuses require at least on entity where they can be applied
@@ -521,7 +528,7 @@ function data_parser:add_entity_dependencies(recipe_node, item)
         local fixed_recipe = data.raw.recipe[entity.fixed_recipe]
         local fixed_node = self:parse_recipe(recipe_node.tech_name, fixed_recipe)
         local tech = self.fg:get_node(recipe_node.tech_name, fz_graph.NT_TECH_HEAD)
-        self.fg:add_link(tech, fixed_node)
+        self.fg:add_link(tech, fixed_node, LABEL_UNLOCK_RECIPE)
     end
 
     -- Rail stuff need rails
@@ -752,7 +759,7 @@ end
 function data_parser:add_bonus_dependencies(tech_node, effect, entity_type, condition, is_item, suffix)
     local recipe = { name = effect.type .. (suffix or ""), ingredients = {}, results = {}, virtual = true }
     local recipe_node = self:parse_recipe(tech_node.name, recipe, true)
-    self.fg:add_link(tech_node, recipe_node)
+    self.fg:add_link(tech_node, recipe_node, LABEL_UNLOCK_RECIPE)
 
     if entity_type then
         for _, entity in pairs(data.raw[entity_type] or {}) do
@@ -780,7 +787,7 @@ function data_parser:add_rocket_product_recipe(item, tech_name)
         virtual = true
     }
 
-    local node = self:parse_recipe(tech_name, recipe, true)
+    local node = self:parse_recipe(nil, recipe, true)
     -- local tech_node = self.fg:add_node(tech_name or fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD)
     -- self.fg:add_link(tech_node, node)
     node:add_label(LABEL_CRAFTING_MACHINE)
@@ -866,7 +873,7 @@ function data_parser:pre_process()
         local entity = py_utils.get_prototype("entity", e, true)
 
         if entity then
-            py_utils.insert_double_lookup(self.placed_by, entity, entity)
+            py_utils.insert_double_lookup(self.placed_by, entity.name, entity.name)
             self:pre_process_entity(entity)
         end
     end
