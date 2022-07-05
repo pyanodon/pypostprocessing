@@ -587,59 +587,61 @@ function pytech.parse_recipe(tech_name, recipe, no_crafting)
 
     local recipe_data = (type(recipe.normal) == "table" and recipe.normal or recipe)
 
-    for _, res in pairs(pytech.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
-        if ((res.amount or 0) > 0 or (res.amount_max or 0) > 0) and (not res.probability or res.probability > 0) then
-            if res.type == nt_item then
-                local n_item = pytech.fg_get_node(res.name, nt_item)
-                local item
+    if recipe.unlock_results ~= false then
+        for _, res in pairs(pytech.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
+            if ((res.amount or 0) > 0 or (res.amount_max or 0) > 0) and (not res.probability or res.probability > 0) then
+                if res.type == nt_item then
+                    local n_item = pytech.fg_get_node(res.name, nt_item)
+                    local item
 
-                if not n_item.virtual then
-                    item = pytech.get_prototype(nt_item, res.name)
-                    n_item = pytech.parse_item(item)
-                end
-
-                pytech.fg_add_fuzzy_link(node, n_item, l_recipe_result)
-
-                if item and item.place_result then
-                    pytech.add_fuel_dependencies(node, item)
-                    pytech.add_fixed_recipe(node, item)
-                    pytech.add_entity_dependencies(node, item)
-                end
-
-                if item and item.placed_as_equipment_result then
-                    pytech.add_equipment_dependencies(node, item)
-                end
-
-                if item and (item.rocket_launch_products or item.rocket_launch_product) then
-                    pytech.add_rocket_product_recipe(item, tech_name)
-                end
-
-                if node.ignore_for_dependencies and n_item.ignore_for_dependencies == nil then
-                    n_item.ignore_for_dependencies = true
-                elseif not node.ignore_for_dependencies and n_item.ignore_for_dependencies then
-                    n_item.ignore_for_dependencies = false
-                end
-            else
-                local fluid = data.raw.fluid[res.name]
-                local n_fluid
-
-                if fluid then
-                    n_fluid = pytech.parse_fluid(fluid, res.temperature)
-                elseif res.temperature and pytech.fg_node_exists(res.name .. '(' .. res.temperature .. ')', nt_fluid) then
-                    n_fluid = pytech.parse_fluid(nil, res.temperature, res.name)
-                end
-
-                if n_fluid then
-                    pytech.fg_add_fuzzy_link(node, n_fluid, l_recipe_result)
-
-                    if not n_fluid.virtual then
-                        fluid_out = fluid_out + 1
+                    if not n_item.virtual then
+                        item = pytech.get_prototype(nt_item, res.name)
+                        n_item = pytech.parse_item(item)
                     end
 
-                    if node.ignore_for_dependencies and n_fluid.ignore_for_dependencies == nil then
-                        n_fluid.ignore_for_dependencies = true
-                    elseif not node.ignore_for_dependencies and n_fluid.ignore_for_dependencies then
-                        n_fluid.ignore_for_dependencies = false
+                    pytech.fg_add_fuzzy_link(node, n_item, l_recipe_result)
+
+                    if item and item.place_result then
+                        pytech.add_fuel_dependencies(node, item)
+                        pytech.add_fixed_recipe(node, item)
+                        pytech.add_entity_dependencies(node, item)
+                    end
+
+                    if item and item.placed_as_equipment_result then
+                        pytech.add_equipment_dependencies(node, item)
+                    end
+
+                    if item and (item.rocket_launch_products or item.rocket_launch_product) then
+                        pytech.add_rocket_product_recipe(item, tech_name)
+                    end
+
+                    if node.ignore_for_dependencies and n_item.ignore_for_dependencies == nil then
+                        n_item.ignore_for_dependencies = true
+                    elseif not node.ignore_for_dependencies and n_item.ignore_for_dependencies then
+                        n_item.ignore_for_dependencies = false
+                    end
+                else
+                    local fluid = data.raw.fluid[res.name]
+                    local n_fluid
+
+                    if fluid then
+                        n_fluid = pytech.parse_fluid(fluid, res.temperature)
+                    elseif res.temperature and pytech.fg_node_exists(res.name .. '(' .. res.temperature .. ')', nt_fluid) then
+                        n_fluid = pytech.parse_fluid(nil, res.temperature, res.name)
+                    end
+
+                    if n_fluid then
+                        pytech.fg_add_fuzzy_link(node, n_fluid, l_recipe_result)
+
+                        if not n_fluid.virtual then
+                            fluid_out = fluid_out + 1
+                        end
+
+                        if node.ignore_for_dependencies and n_fluid.ignore_for_dependencies == nil then
+                            n_fluid.ignore_for_dependencies = true
+                        elseif not node.ignore_for_dependencies and n_fluid.ignore_for_dependencies then
+                            n_fluid.ignore_for_dependencies = false
+                        end
                     end
                 end
             end
