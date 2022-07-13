@@ -28,6 +28,7 @@ function fz_graph.node.create(name, type, properties)
     n.key = fz_graph.node.get_key(name, type)
     n.labels = {}
     n.virtual = false
+    n.products = {}
     n:update(properties)
 
     return n
@@ -45,6 +46,10 @@ function fz_graph.node:update(properties)
 
     if properties.labels ~= nil then
         self.labels = table.merge(self.labels, properties.labels)
+    end
+
+    if properties.products ~= nil then
+        self.products = table.merge(self.products, properties.products)
     end
 end
 

@@ -1,3 +1,5 @@
+require('__stdlib__/stdlib/data/data').Util.create_data_globals()
+
 local table = require('__stdlib__/stdlib/utils/table')
 
 for _, module in pairs(data.raw.module) do

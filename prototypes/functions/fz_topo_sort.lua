@@ -16,6 +16,7 @@ function fz_topo.create(g)
     s.queue = queue()
     s.fuzzy_nodes = {}
     s.removed_links = {}
+    s.level = {}
 
     return s
 end
@@ -23,6 +24,7 @@ end
 
 function fz_topo:run(check_ancestry, logging)
     self.queue(self.work_graph.start_node)
+    self.level[self.work_graph.start_node.key] = 1
 
     while not queue.is_empty(self.queue) do
         local node = self.queue()
@@ -83,8 +85,9 @@ function fz_topo:run(check_ancestry, logging)
         for to_key, _ in pairs(adj) do
             local to_node = self.work_graph:get_node(to_key)
 
-            if not self.work_graph:has_links_to(to_node) then
+            if to_node and not self.work_graph:has_links_to(to_node) then
                 self.queue(to_node)
+                self.level[to_node.key] = self.level[node.key] + 1
                 if logging then log("  - Queued: " .. to_key) end
             elseif logging then
                 log("  - Not queued: " .. to_key)

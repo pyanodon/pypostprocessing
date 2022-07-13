@@ -219,7 +219,7 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
             local fluid = data.raw.fluid[res.name]
             local temp = res.temperature or (fluid and fluid.default_temperature)
 
-            if not ingredients[res.name] or table.any(ingredients[res.name], function (t) return t ~= temp end) then
+            if not ingredients[res.name] or table.any(ingredients[res.name], function (_, t) return t ~= temp end) then
                 local node_fluid
 
                 if fluid or (res.temperature and self.fg:node_exists(data_parser.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
@@ -941,19 +941,17 @@ function data_parser:pre_process_techs()
                 end
             end
 
-            if not py_utils.is_py_or_base_tech(tech) then
-                for _, pre in pairs(tech.prerequisites or {}) do
-                    local pre_tech = data.raw.technology[pre]
+            -- for _, pre in pairs(tech.prerequisites or {}) do
+            --     local pre_tech = data.raw.technology[pre]
 
-                    if pre_tech and not py_utils.is_py_or_base_tech(pre_tech) then
-                        if not tech.dependencies then
-                            tech.dependencies = {}
-                        end
+            --     if pre_tech and not py_utils.is_py_or_base_tech(pre_tech) then
+            --         if not tech.dependencies then
+            --             tech.dependencies = {}
+            --         end
 
-                        table.insert(tech.dependencies, pre)
-                    end
-                end
-            end
+            --         table.insert(tech.dependencies, pre)
+            --     end
+            -- end
         end
     end
 end
