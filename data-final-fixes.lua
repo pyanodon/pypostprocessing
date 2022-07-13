@@ -1,3 +1,5 @@
+require('__stdlib__/stdlib/data/data').Util.create_data_globals()
+
 local table = require('__stdlib__/stdlib/utils/table')
 
 for _, module in pairs(data.raw.module) do
@@ -133,6 +135,10 @@ require('prototypes/functions/compatibility')
 ----------------------------------------------------
 -- AUTO TECH script. Make sure it's the very last
 ----------------------------------------------------
-require('prototypes/functions/auto_tech')
+-- require('prototypes/functions/auto_tech')
 ----------------------------------------------------
 ----------------------------------------------------
+log("AUTOTECH START")
+local at = require("prototypes.functions.auto_tech").create()
+at:run()
+log("AUTOTECH END")
