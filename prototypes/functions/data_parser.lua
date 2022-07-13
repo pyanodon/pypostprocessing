@@ -188,56 +188,58 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
        end
     end
 
-    for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
-        if res.type == "item" and not ingredients[res.name]
-            and (not config.PRIMARY_PRODUCTION_RECIPE[res.name] or config.PRIMARY_PRODUCTION_RECIPE[res.name] == recipe.name)
-        then
-            local node_item = self.fg:add_node(res.name, fz_graph.NT_ITEM)
-            local item
+    if recipe.unlock_results ~= false then
+        for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
+            if res.type == "item" and not ingredients[res.name]
+                and (not config.PRIMARY_PRODUCTION_RECIPE[res.name] or config.PRIMARY_PRODUCTION_RECIPE[res.name] == recipe.name)
+            then
+                local node_item = self.fg:add_node(res.name, fz_graph.NT_ITEM)
+                local item
 
-            if not node_item.virtual then
-                item = py_utils.get_prototype("item", res.name)
-                node_item = self:parse_item(item)
-            end
-
-            self.fg:add_link(node, node_item, LABEL_RECIPE_RESULT)
-
-            if item and item.place_result then
-                self:add_entity_dependencies(node, item)
-            end
-
-            if item and item.placed_as_equipment_result then
-                self:add_equipment_dependencies(node, item)
-            end
-
-            if item and (item.rocket_launch_products or item.rocket_launch_product) then
-                self:add_rocket_product_recipe(item, tech_name)
-            end
-
-            node_item:inherit_ignore_for_dependencies(node)
-        elseif res.type == "fluid" then
-            local fluid = data.raw.fluid[res.name]
-            local temp = res.temperature or (fluid and fluid.default_temperature)
-
-            if not ingredients[res.name] or table.any(ingredients[res.name], function (_, t) return t ~= temp end) then
-                local node_fluid
-
-                if fluid or (res.temperature and self.fg:node_exists(data_parser.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
-                    node_fluid = self:parse_fluid(res.name, res.temperature)
+                if not node_item.virtual then
+                    item = py_utils.get_prototype("item", res.name)
+                    node_item = self:parse_item(item)
                 end
 
-                if node_fluid then
-                    if ingredients[res.name] and ingredients[res.name][temp] then
-                        self.fg:remove_link(node_fluid, node)
+                self.fg:add_link(node, node_item, LABEL_RECIPE_RESULT)
+
+                if item and item.place_result then
+                    self:add_entity_dependencies(node, item)
+                end
+
+                if item and item.placed_as_equipment_result then
+                    self:add_equipment_dependencies(node, item)
+                end
+
+                if item and (item.rocket_launch_products or item.rocket_launch_product) then
+                    self:add_rocket_product_recipe(item, tech_name)
+                end
+
+                node_item:inherit_ignore_for_dependencies(node)
+            elseif res.type == "fluid" then
+                local fluid = data.raw.fluid[res.name]
+                local temp = res.temperature or (fluid and fluid.default_temperature)
+
+                if not ingredients[res.name] or table.any(ingredients[res.name], function (_, t) return t ~= temp end) then
+                    local node_fluid
+
+                    if fluid or (res.temperature and self.fg:node_exists(data_parser.get_fluid_name(res.name, res.temperature), fz_graph.NT_FLUID)) then
+                        node_fluid = self:parse_fluid(res.name, res.temperature)
                     end
 
-                    self.fg:add_link(node, node_fluid, LABEL_RECIPE_RESULT)
+                    if node_fluid then
+                        if ingredients[res.name] and ingredients[res.name][temp] then
+                            self.fg:remove_link(node_fluid, node)
+                        end
 
-                    if not node_fluid.virtual then
-                        fluid_out = fluid_out + 1
+                        self.fg:add_link(node, node_fluid, LABEL_RECIPE_RESULT)
+
+                        if not node_fluid.virtual then
+                            fluid_out = fluid_out + 1
+                        end
+
+                        node_fluid:inherit_ignore_for_dependencies(node)
                     end
-
-                    node_fluid:inherit_ignore_for_dependencies(node)
                 end
             end
         end
