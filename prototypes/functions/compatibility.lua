@@ -2,7 +2,7 @@
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
 if data.raw.recipe["electronic-circuit"].enabled == false
-    and not data.raw.recipe["electronic-circuit-initial"]
+    and (not data.raw.recipe["electronic-circuit-initial"] or data.raw.recipe["electronic-circuit-initial"].enabled == false)
     and data.raw.recipe["inductor1-2"]
     and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
 then
