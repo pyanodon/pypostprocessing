@@ -1123,7 +1123,10 @@ function data_parser:pre_process_item(item)
         local ap = item.capsule_action.attack_parameters
 
         if ap.ammo_type and ap.ammo_type.action then
-            for _, a in pairs(ap.ammo_type.action) do
+            local action = ap.ammo_type.action
+            if action.type then action = { action } end
+
+            for _, a in pairs(action) do
                 local ad = a.action_delivery
                 if ad.type then ad = { ad } end
 

@@ -1,6 +1,25 @@
 -- Compatibility changes which need to modify data.raw should go here.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
+if data.raw.recipe["electronic-circuit"].enabled == false
+    and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
+then
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe.enabled == nil or recipe.enabled == true then
+            RECIPE(recipe):replace_ingredient("electronic-circuit", "inductor1")
+        end
+    end
+end
+
+if mods["pyrawores"] then
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe.enabled == nil or recipe.enabled == true then
+            RECIPE(recipe):replace_ingredient("coal", "raw-coal")
+        end
+    end
+end
+
+
 if mods["DeadlockLargerLamp"] then
     -- Originally these include electronic-circuits and are unlocked at optics, causing a deadlock in pymods
     RECIPE("deadlock-large-lamp"):remove_ingredient("electronic-circuit"):add_ingredient({type = "item", name = "copper-plate", amount = 4}):add_ingredient({type = "item", name = "glass", amount = 6})
