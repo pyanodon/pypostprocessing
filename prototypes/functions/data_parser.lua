@@ -27,6 +27,7 @@ local LABEL_MODULE = "__module__"
 local LABEL_FUEL = "__fuel__"
 local LABEL_RAIL = "__rail__"
 local LABEL_LOCO = "__locomotive__"
+local LABEL_PUMP = "__pump__"
 local LABEL_TRAINSTOP = "__trainstop__"
 local LABEL_CRAFTING_MACHINE = "__crafting__"
 local LABEL_BONUS = "__bonus__"
@@ -561,6 +562,20 @@ function data_parser:add_entity_dependencies(recipe_node, item)
                 for i, _ in pairs(self.placed_by[loco] or {}) do
                     local l = self.fg:add_node(i, fz_graph.NT_ITEM)
                     self.fg:add_link(l, recipe_node, LABEL_LOCO)
+                end
+            end
+        end
+    end
+
+    -- Fluid wagons need pumps
+    if entity.type == "fluid-wagon" then
+        recipe_node:add_label(LABEL_PUMP)
+
+        for pump, _ in pairs(data.raw.pump or {}) do
+            if self.entities[pump] then
+                for i, _ in pairs(self.placed_by[pump] or {}) do
+                    local l = self.fg:add_node(i, fz_graph.NT_ITEM)
+                    self.fg:add_link(l, recipe_node, LABEL_PUMP)
                 end
             end
         end
