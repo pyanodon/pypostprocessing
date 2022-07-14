@@ -54,3 +54,7 @@ if mods["deadlock_stacked_recipes"] then
         end
     end
 end
+
+if mods["LightedPolesPlus"] then
+    RECIPE("lighted-small-electric-pole"):add_unlock("optics"):remove_unlock("creosote"):set_enabled(false)
+end

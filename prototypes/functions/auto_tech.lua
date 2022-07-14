@@ -105,7 +105,7 @@ function auto_tech:run()
     local fg2 = fg:copy()
     local error_found
 
-    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
+    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs, false)
 
     -- log(serpent.block(fg:get_node("fluid|silicon-mk01:hydrogen-chloride(10)")))
 
@@ -286,7 +286,7 @@ function auto_tech:run()
 end
 
 
-function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
+function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs, logging)
     local sp_links = {}
 
     for _, sp in pairs(sp_graph.nodes) do
@@ -321,7 +321,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     end
 
     local ts = fz_topo.create(fg)
-    local error_found = ts:run(false, false)
+    local error_found = ts:run(false, logging)
 
     for _, link in pairs(sp_links) do
         fg:remove_link(link.from, link.to, link.from.name)
@@ -330,7 +330,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     if error_found then
         log("RESTARTING without SP links")
         ts = fz_topo.create(fg)
-        error_found = ts:run(false, false)
+        error_found = ts:run(false, logging)
     end
 
     return error_found, ts
