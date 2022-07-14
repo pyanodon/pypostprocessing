@@ -59,7 +59,6 @@ function auto_tech:run()
     ts:run(true, false)
     fg:recursive_remove(ifd_deadend_node, false)
 
-
     local fg_tmp = fg:copy()
     local ts_tmp = fz_topo.create(fg_tmp)
     ts_tmp:run(false, false)
@@ -99,10 +98,14 @@ function auto_tech:run()
     -- self:process_tech(fg:get_node("tholin-mk01", fz_graph.NT_TECH_HEAD), fg)
     fg:recursive_remove(ifd_deadend_node, false)
 
-    local fg2 = fg:copy()
+    local spg = self:extract_science_pack_graph(fg, parser)
+    local sp_ts = fz_topo.create(spg)
+    sp_ts:run()
 
-    ts = fz_topo.create(fg)
-    local error_found = ts:run(false, false)
+    local fg2 = fg:copy()
+    local error_found
+
+    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
 
     -- log(serpent.block(fg:get_node("fluid|silicon-mk01:hydrogen-chloride(10)")))
 
@@ -147,9 +150,7 @@ function auto_tech:run()
 
     self:add_original_prerequisites(fg, fg2, ts.level)
 
-    ts = fz_topo.create(fg2)
-    error_found = ts:run(false, false)
-    local node_level = ts.level
+    error_found, ts = self:topo_sort_with_sp(fg2, spg, parser.science_packs)
 
     if error_found then
         -- for k, node in pairs(fg.nodes) do
@@ -169,10 +170,6 @@ function auto_tech:run()
         local msg = "\n\nERROR: Dependency loop detected\n"
         error(msg)
     end
-
-    local spg = self:extract_science_pack_graph(fg2, parser, node_level)
-    local sp_ts = fz_topo.create(spg)
-    sp_ts:run()
 
     local sp_level = {}
     local level_amount = {}
@@ -289,6 +286,57 @@ function auto_tech:run()
 end
 
 
+function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
+    local sp_links = {}
+
+    for _, sp in pairs(sp_graph.nodes) do
+        local sp_node = fg:get_node(sp.key)
+        local bfs = fz_lazy_bfs.create(sp_graph, sp, false, true)
+
+        for _, e in sp_graph:iter_links_to(sp) do
+            -- log("Checking links from : " .. e:from() .. " To: " .. sp.name)
+            local sp2 = sp_graph:get_node(e:from())
+
+            for tech, _ in pairs(science_packs[sp2.name]) do
+                local other_parents = true
+
+                for sp3, t in pairs(science_packs) do
+                    if sp3 ~= sp.name and sp3.name ~= sp2.name and t[tech]
+                        and not bfs:has_path_to(sp_graph:get_node(sp3, fz_graph.NT_ITEM))
+                    then
+                        other_parents = false
+                        break
+                    end
+                end
+
+                local tech_node = fg:get_node(tech, fz_graph.NT_TECH_TAIL)
+
+                if other_parents and tech_node and not science_packs[sp.name][tech] then
+                    fg:add_link(tech_node, sp_node, tech)
+                    table.insert(sp_links, {from = tech_node, to = sp_node })
+                    -- log("  - Adding sp link: " .. tech_node.key .. " >> " .. sp_node.key)
+                end
+            end
+        end
+    end
+
+    local ts = fz_topo.create(fg)
+    local error_found = ts:run(false, false)
+
+    for _, link in pairs(sp_links) do
+        fg:remove_link(link.from, link.to, link.from.name)
+    end
+
+    if error_found then
+        log("RESTARTING without SP links")
+        ts = fz_topo.create(fg)
+        error_found = ts:run(false, false)
+    end
+
+    return error_found, ts
+end
+
+
 function auto_tech.cost_rounding(num)
     local t = config.TC_COST_ROUNDING_TARGETS
 
@@ -359,7 +407,7 @@ function auto_tech:calculate_factor(level_sp_cost, target)
 end
 
 
-function auto_tech:extract_science_pack_graph(fg, parser, level)
+function auto_tech:extract_science_pack_graph(fg, parser)
     local sp_graph = fz_graph.create()
 
     for item_name, _ in pairs(parser.science_packs) do
@@ -370,7 +418,7 @@ function auto_tech:extract_science_pack_graph(fg, parser, level)
 
     for _, node in pairs(sp_graph.nodes) do
         local fg_node = fg:get_node(node.key)
-        local bfs = fz_lazy_bfs.create(fg, fg_node)
+        local bfs = fz_lazy_bfs.create(fg, fg_node, true)
 
         for _, node2 in pairs(sp_graph.nodes) do
             if node.key ~= node2.key and bfs:has_path_to(node2) then
