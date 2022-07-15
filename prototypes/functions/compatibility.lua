@@ -1,6 +1,9 @@
 -- Compatibility changes which need to modify data.raw should go here.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
+local py_utils = require "prototypes.functions.utils"
+local table = require "__stdlib__.stdlib.utils.table"
+
 if data.raw.recipe["electronic-circuit"].enabled == false
     and (not data.raw.recipe["electronic-circuit-initial"] or data.raw.recipe["electronic-circuit-initial"].enabled == false)
     and data.raw.recipe["inductor1-2"]
@@ -29,36 +32,34 @@ if mods["DeadlockLargerLamp"] then
 end
 
 if mods["deadlock-beltboxes-loaders"] then
-    for item_type, _ in pairs(defines.prototypes["item"]) do
-        for item_name, item in pairs(data.raw[item_type]) do
-            if data.raw.item["deadlock-stack-" .. item_name] ~= nil then
-                data.raw.item["deadlock-stack-" .. item_name].ignore_for_dependencies = true
-                data.raw.recipe["deadlock-stacks-stack-" .. item_name].ignore_for_dependencies = true
-                data.raw.recipe["deadlock-stacks-unstack-" .. item_name].ignore_for_dependencies = true
+    for item_name, item in py_utils.iter_prototypes("item") do
+        if data.raw.item["deadlock-stack-" .. item_name] ~= nil then
+            data.raw.item["deadlock-stack-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-stacks-stack-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-stacks-unstack-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-stacks-unstack-" .. item_name].unlock_results = false
 
-                if ITEM(item):has_flag("hidden") then
-                    ITEM("deadlock-stack-" .. item_name):add_flag("hidden")
-                    data.raw.recipe["deadlock-stacks-stack-" .. item_name].hidden = true
-                    data.raw.recipe["deadlock-stacks-unstack-" .. item_name].hidden = true
-                end
+            if ITEM(item):has_flag("hidden") then
+                ITEM("deadlock-stack-" .. item_name):add_flag("hidden")
+                data.raw.recipe["deadlock-stacks-stack-" .. item_name].hidden = true
+                data.raw.recipe["deadlock-stacks-unstack-" .. item_name].hidden = true
             end
         end
     end
 end
 
 if mods["DeadlockCrating"] then
-    for item_type, _ in pairs(defines.prototypes["item"]) do
-        for item_name, item in pairs(data.raw[item_type]) do
-            if data.raw.item["deadlock-crate-" .. item_name] ~= nil then
-                data.raw.item["deadlock-crate-" .. item_name].ignore_for_dependencies = true
-                data.raw.recipe["deadlock-packrecipe-" .. item_name].ignore_for_dependencies = true
-                data.raw.recipe["deadlock-unpackrecipe-" .. item_name].ignore_for_dependencies = true
+    for item_name, item in py_utils.iter_prototypes("item") do
+        if data.raw.item["deadlock-crate-" .. item_name] ~= nil then
+            data.raw.item["deadlock-crate-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-packrecipe-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-unpackrecipe-" .. item_name].ignore_for_dependencies = true
+            data.raw.recipe["deadlock-unpackrecipe-" .. item_name].unlock_results = false
 
-                if ITEM(item):has_flag("hidden") then
-                    ITEM("deadlock-crate-" .. item_name):add_flag("hidden")
-                    data.raw.recipe["deadlock-packrecipe-" .. item_name].hidden = true
-                    data.raw.recipe["deadlock-unpackrecipe-" .. item_name].hidden = true
-                end
+            if ITEM(item):has_flag("hidden") then
+                ITEM("deadlock-crate-" .. item_name):add_flag("hidden")
+                data.raw.recipe["deadlock-packrecipe-" .. item_name].hidden = true
+                data.raw.recipe["deadlock-unpackrecipe-" .. item_name].hidden = true
             end
         end
     end
@@ -78,4 +79,34 @@ end
 
 if mods["LightedPolesPlus"] then
     RECIPE("lighted-small-electric-pole"):add_unlock("optics"):remove_unlock("creosote"):set_enabled(false)
+end
+
+if mods["reverse-factory"] then
+    local cat = table.array_to_dictionary({"recycle-products", "recycle-intermediates", "recycle-with-fluids", "recycle-productivity"}, true)
+
+    for item_name, item in py_utils.iter_prototypes("item") do
+        local recipe_name = "rf-" .. item_name
+
+        if data.raw.recipe[recipe_name] and cat[data.raw.recipe[recipe_name].category] then
+            data.raw.recipe[recipe_name].ignore_for_dependencies = true
+            data.raw.recipe[recipe_name].unlock_results = false
+
+            if ITEM(item):has_flag("hidden") then
+                data.raw.recipe[recipe_name].hidden = true
+            end
+        end
+    end
+
+    for fluid_name, fluid in pairs(data.raw.fluid) do
+        local recipe_name = "rf-" .. fluid_name
+
+        if data.raw.recipe[recipe_name] and cat[data.raw.recipe[recipe_name].category] then
+            data.raw.recipe[recipe_name].ignore_for_dependencies = true
+            data.raw.recipe[recipe_name].unlock_results = false
+
+            if fluid.hidden then
+                data.raw.recipe[recipe_name].hidden = true
+            end
+        end
+    end
 end

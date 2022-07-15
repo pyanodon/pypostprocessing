@@ -1175,16 +1175,18 @@ function data_parser:pre_process_recipe(recipe)
 
     local r = recipe.normal or recipe
 
-    for _, res in pairs(py_utils.standardize_products(r.results, nil, r.result, r.result_count)) do
-        if res.type == "fluid" then
-            local fluid = data.raw.fluid[res.name]
+    if recipe.unlock_results ~= false then
+        for _, res in pairs(py_utils.standardize_products(r.results, nil, r.result, r.result_count)) do
+            if res.type == "fluid" then
+                local fluid = data.raw.fluid[res.name]
 
-            if fluid then
-                self:pre_process_fluid(fluid, res.temperature)
+                if fluid then
+                    self:pre_process_fluid(fluid, res.temperature)
+                end
+            else
+                local item = py_utils.get_prototype("item", res.name)
+                self:pre_process_item(item)
             end
-        else
-            local item = py_utils.get_prototype("item", res.name)
-            self:pre_process_item(item)
         end
     end
 end
