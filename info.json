@@ -26,7 +26,8 @@
     "? deadlock_stacked_recipes",
     "? DeadlocksStackingForPyanadon",
     "? LightedPolesPlus",
-    "! ResearchFog"
+    "! ResearchFog",
+    "! Transport_Drones"
   ],
   "package": {
     "ignore": [],
