@@ -528,9 +528,11 @@ function data_parser:add_entity_dependencies(recipe_node, item)
     -- Fixed recipe
     if entity.fixed_recipe and recipe_node.tech_name then
         local fixed_recipe = data.raw.recipe[entity.fixed_recipe]
-        local fixed_node = self:parse_recipe(recipe_node.tech_name, fixed_recipe)
-        local tech = self.fg:get_node(recipe_node.tech_name, fz_graph.NT_TECH_HEAD)
-        self.fg:add_link(tech, fixed_node, LABEL_UNLOCK_RECIPE)
+        if fixed_recipe then
+            local fixed_node = self:parse_recipe(recipe_node.tech_name, fixed_recipe)
+            local tech = self.fg:get_node(recipe_node.tech_name, fz_graph.NT_TECH_HEAD)
+            self.fg:add_link(tech, fixed_node, LABEL_UNLOCK_RECIPE)
+        end
     end
 
     -- Rail stuff need rails

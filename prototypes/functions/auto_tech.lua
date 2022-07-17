@@ -69,7 +69,7 @@ function auto_tech:run()
     local recipes = {}
 
     for _, node in pairs(fg_tmp.nodes) do
-        if node.type == fz_graph.NT_RECIPE and not node.virtual and data.raw.recipe[node.factorio_name] and not recipes[node.factorio_name] then
+        if node.type == fz_graph.NT_RECIPE and not node.ignore_for_dependencies and not node.virtual and data.raw.recipe[node.factorio_name] and not recipes[node.factorio_name] then
             recipes[node.factorio_name] = true
 
             if bfs:has_path_to(node) then
