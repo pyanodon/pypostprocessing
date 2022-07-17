@@ -5,7 +5,6 @@ local config = require "prototypes.config"
 local fz_graph = require "prototypes.functions.fuzzy_graph"
 local py_utils = require "prototypes.functions.utils"
 
-
 local data_parser = {}
 data_parser.__index = data_parser
 
@@ -912,11 +911,9 @@ function data_parser:pre_process()
     end
 
     -- Minables
-    for et, _ in pairs(defines.prototypes["entity"]) do
-        for _, entity in pairs(data.raw[et]) do
-            if entity.autoplace and entity.minable and (entity.minable.result or entity.minable.results) then
-                self:pre_process_entity(entity)
-            end
+    for _, entity in py_utils.iter_prototypes("entity") do
+        if entity.autoplace and entity.minable and (entity.minable.result or entity.minable.results) then
+            self:pre_process_entity(entity)
         end
     end
 

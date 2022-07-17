@@ -1,4 +1,4 @@
-defines = {
+return {
   alert_type = {
     custom = 6,
     entity_destroyed = 0,

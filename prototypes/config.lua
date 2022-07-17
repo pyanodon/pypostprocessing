@@ -1,4 +1,4 @@
-local list = require "luagraphs.data.list"
+local list = require "__pypostprocessing__.luagraphs.data.list"
 
 
 local config = {

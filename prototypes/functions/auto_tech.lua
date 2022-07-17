@@ -224,7 +224,7 @@ function auto_tech:run()
         local tech = data.raw.technology[node.name]
 
         if tech then
-            node.mandatory = node.name == config.WIN_GAME_TECH or tech_bfs:has_path_to(node)
+            node.mandatory = (node.name == config.WIN_GAME_TECH or tech_bfs:has_path_to(node))
             local pre = {}
 
             for _, e in tg:iter_links_to(node) do
@@ -251,9 +251,6 @@ function auto_tech:run()
                 tech_sp_cost[tech.name] = tech_sp_cost[tech.name] + sp.amount * sp_cost[highest_level][sp.name]
             end
 
-            -- TODO
-            -- tech_sp_cost[tech.name] = 1
-
             if node.mandatory then
                 if not level_sp_cost[tech_ts.level[node.key]] then
                     level_sp_cost[tech_ts.level[node.key]] = tech_sp_cost[tech.name]
@@ -273,6 +270,8 @@ function auto_tech:run()
     -- log("Target: " .. target)
 
     local factor = self:calculate_factor(level_sp_cost, target)
+    local sum_mand_packs = 0
+    local sum_total_packs = 0
     -- local factor = 1.2
 
     for _, node in pairs(tg.nodes) do
@@ -281,8 +280,16 @@ function auto_tech:run()
         if tech and not tech.unit.count_formula then
             tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 1) / tech_sp_cost[tech.name]))
             -- log(tech.name .. " : 10 * " .. math.pow(factor, tech_ts.level[node.key] - 2) .. " / " .. tech_sp_cost[tech.name] .. " = "..  tech.unit.count)
+            sum_total_packs = sum_total_packs + tech.unit.count
+
+            if node.mandatory then
+                sum_mand_packs = sum_mand_packs + tech.unit.count
+            end
         end
     end
+
+    log("Mandatory tech pack count: " .. sum_mand_packs)
+    log("Total tech pack count: " .. sum_total_packs)
 end
 
 

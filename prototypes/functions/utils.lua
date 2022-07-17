@@ -1,10 +1,8 @@
 local table = require "__stdlib__.stdlib.utils.table"
 local string = require "__stdlib__.stdlib.utils.string"
+local config = require "__pypostprocessing__.prototypes.config"
 
-local list = require "luagraphs.data.list"
-
-local config = require "prototypes.config"
-
+local defines = require "defines"
 
 local utils = {}
 
