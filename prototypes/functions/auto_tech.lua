@@ -253,10 +253,10 @@ function auto_tech:run()
 
             if node.mandatory then
                 if not level_sp_cost[tech_ts.level[node.key]] then
-                    level_sp_cost[tech_ts.level[node.key]] = tech_sp_cost[tech.name]
-                else
-                    level_sp_cost[tech_ts.level[node.key]] = level_sp_cost[tech_ts.level[node.key]] + tech_sp_cost[tech.name]
+                    level_sp_cost[tech_ts.level[node.key]] = 0
                 end
+
+                level_sp_cost[tech_ts.level[node.key]] = level_sp_cost[tech_ts.level[node.key]] + 1 / tech_sp_cost[tech.name]
             end
 
             tech.unit.time = config.TC_SCIENCE_PACK_TIME[highest_sp]
@@ -267,7 +267,7 @@ function auto_tech:run()
 
     -- Calculate tech costs
     local target = config.TC_BASE_MULT * (recipe_count * config.TC_MANDATORY_RECIPE_COUNT_MULT + opt_recipe_count * config.TC_OPTIONAL_RECIPE_COUNT_MULT)
-    -- log("Target: " .. target)
+    log("Target: " .. target)
 
     local factor = self:calculate_factor(level_sp_cost, target)
     local sum_mand_packs = 0
@@ -278,7 +278,7 @@ function auto_tech:run()
         local tech = data.raw.technology[node.name]
 
         if tech and not tech.unit.count_formula then
-            tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 1) / tech_sp_cost[tech.name]))
+            tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) / tech_sp_cost[tech.name]))
             -- log(tech.name .. " : 10 * " .. math.pow(factor, tech_ts.level[node.key] - 2) .. " / " .. tech_sp_cost[tech.name] .. " = "..  tech.unit.count)
             sum_total_packs = sum_total_packs + tech.unit.count
 
