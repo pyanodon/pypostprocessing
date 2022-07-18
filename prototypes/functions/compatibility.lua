@@ -112,3 +112,35 @@ if mods["reverse-factory"] then
         end
     end
 end
+
+if mods["omnimatter_water"] and mods["pyindustry"] then
+    RECIPE("py-sinkhole"):remove_unlock("steel-processing"):add_unlock("engine")
+end
+
+-- Trains move to py-science-1 under pyindustry, move common train mods to match
+if mods["pyindustry"] then
+    if mods["LogisticTrainNetwork"] then
+        TECHNOLOGY("logistic-train-network"):remove_pack("logistic-science-pack")
+    end
+
+    if mods["railloader"] then
+        TECHNOLOGY("railloader"):remove_pack("logistic-science-pack")
+    end
+
+    if mods["train-pubsub"] then
+        TECHNOLOGY("train-manager"):remove_pack("logistic-science-pack")
+    end
+
+    if mods["ShuttleTrainRefresh"] then
+        TECHNOLOGY("shuttle-train"):remove_pack("logistic-science-pack")
+    end
+end
+
+if mods["Teleporters"] and mods["pyhightech"] then
+    RECIPE("teleporter"):replace_ingredient("advanced-circuit", "electronic-circuit")
+    -- Remove prereqs and let autotech figure it out
+    TECHNOLOGY('teleporter'):remove_pack('chemical-science-pack'):remove_prereq('advanced-electronics')
+    if mods["pyalienlife"] then
+        TECHNOLOGY('teleporter'):remove_pack('py-science-pack-2')
+    end
+end
