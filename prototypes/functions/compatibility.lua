@@ -10,7 +10,9 @@ if data.raw.recipe["electronic-circuit"].enabled == false
     and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
 then
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled == nil or recipe.enabled == true then
+        local recipe_data = (recipe.normal and type(recipe.normal) == "table" and recipe.normal) or recipe
+
+        if recipe_data.enabled == nil or recipe_data.enabled == true then
             RECIPE(recipe):replace_ingredient("electronic-circuit", "inductor1")
         end
     end
