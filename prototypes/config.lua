@@ -115,4 +115,11 @@ if mods["NoHandCrafting"] then
     config.STARTING_ITEMS:add("assembling-machine-1")
 end
 
+if mods["trainfactory"] then
+    config.ENTITY_SCRIPT_UNLOCKS["trainfactory-full-placer-item"] = { "trainfactory-full-entity" }
+    config.ENTITY_SCRIPT_UNLOCKS["trainfactory-half-placer-item"] = { "trainfactory-half-entity" }
+    config.ENTITY_SCRIPT_UNLOCKS["trainfactory-disassemble-full-placer-item"] = { "trainfactory-disassemble-full-entity" }
+    config.ENTITY_SCRIPT_UNLOCKS["trainfactory-disassemble-half-placer-item"] = { "trainfactory-disassemble-half-entity" }
+end
+
 return config
