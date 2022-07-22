@@ -17,7 +17,7 @@
     "? pyrawores",
     "? pypetroleumhandling",
     "? pyalienlife",
-    "? palternativeenergy",
+    "? pyalternativeenergy",
     "? omnimatter",
     "? omnimatter_water",
     "? omnimatter_wood",
@@ -26,8 +26,7 @@
     "? deadlock_stacked_recipes",
     "? DeadlocksStackingForPyanadon",
     "? LightedPolesPlus",
-    "! ResearchFog",
-    "! Transport_Drones"
+    "! ResearchFog"
   ],
   "package": {
     "ignore": [],

@@ -152,3 +152,7 @@ if mods["WaterWell"] then
         RECIPE("water-well-pump"):replace_ingredient("electronic-circuit", "inductor1")
     end
 end
+
+if mods["Transport_Drones"] then
+    data.raw.technology["transport-system"].prerequisites = nil
+end
