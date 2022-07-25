@@ -21,12 +21,11 @@ local config = {
     TC_MANDATORY_RECIPE_COUNT_MULT = 1/4,
     TC_OPTIONAL_RECIPE_COUNT_MULT = 1/16,
     TC_BASE_MULT = 3600 * 0.5,
-    TC_SCIENCE_PACK_COST = {},
-    TC_SCIENCE_PACK_COST_REDUCE = {},
     TC_SCIENCE_PACK_TIME = {},
     TC_SCIENCE_PACK_MULT = {1, 2, 3, 6},
     TC_SCIENCE_PACK_MULT_STEP = 10,
     TC_STARTING_TECH_COST = 10,
+    TC_WIN_TECH_COST = 3000,
     TC_EXP_THRESHOLD = 0.001,
     TC_COST_ROUNDING_TARGETS = {10, 11, 12, 13, 14, 15, 16, 17.5, 20, 22.5, 25, 27.5, 30, 33, 36, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90}     -- Should be >=10 & <100
 }
@@ -55,30 +54,6 @@ if mods["pyalternativeenergy"] then
     config.ENTITY_SCRIPT_UNLOCKS["numal-reef-mk04"] = { "numal-reef-mk04" }
 end
 
-
--- TC_SCIENCE_PACK_COST estimate science pack production "cost" relative to the cheapest (on the same tech level)
-config.TC_SCIENCE_PACK_COST["automation-science-pack"] = 1
-config.TC_SCIENCE_PACK_COST["py-science-pack-1"] = 2
-config.TC_SCIENCE_PACK_COST["logistic-science-pack"] = 5
-config.TC_SCIENCE_PACK_COST["military-science-pack"] = 10
-config.TC_SCIENCE_PACK_COST["py-science-pack-2"] = 10
-config.TC_SCIENCE_PACK_COST["chemical-science-pack"] = 25
-config.TC_SCIENCE_PACK_COST["py-science-pack-3"] = 50
-config.TC_SCIENCE_PACK_COST["production-science-pack"] = 125
-config.TC_SCIENCE_PACK_COST["py-science-pack-4"] = 250
-config.TC_SCIENCE_PACK_COST["utility-science-pack"] = 625
-config.TC_SCIENCE_PACK_COST["space-science-pack"] = 3125
-
--- TC_SCIENCE_PACK_COST_REDUCE estimate how much cheaper science packs become after researching techs at a science pack tier
-config.TC_SCIENCE_PACK_COST_REDUCE["automation-science-pack"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["py-science-pack-1"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["logistic-science-pack"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["py-science-pack-2"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["chemical-science-pack"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["py-science-pack-3"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["production-science-pack"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["py-science-pack-4"] = 1
-config.TC_SCIENCE_PACK_COST_REDUCE["utility-science-pack"] = 1
 
 -- Research time if the science pack is the highest on the tech
 config.TC_SCIENCE_PACK_TIME["automation-science-pack"] = 30

@@ -23,6 +23,8 @@ function auto_tech.create()
     local a = {}
     setmetatable(a, auto_tech)
 
+    a.spf_cache = {}
+
     return a
 end
 
@@ -174,7 +176,6 @@ function auto_tech:run()
     local sp_level = {}
     local level_amount = {}
     local max_level = 0
-    local sp_cost = {}
 
     -- Set science pack order
     for _, node in pairs(spg.nodes) do
@@ -187,8 +188,6 @@ function auto_tech:run()
         if sp_level[sp.name] > max_level then
             max_level = sp_level[sp.name]
         end
-
-        sp_cost[sp_level[sp.name]] = {}
     end
 
     for _, lab in pairs(data.raw.lab) do
@@ -199,25 +198,11 @@ function auto_tech:run()
 
     for i = 1, max_level do
         level_amount[i] = math.floor(config.TC_SCIENCE_PACK_MULT[(i-1) % mult_count + 1] * math.pow(config.TC_SCIENCE_PACK_MULT_STEP, math.floor((i-1) / mult_count)) + 0.5)
-
-        for sp, c in pairs(config.TC_SCIENCE_PACK_COST) do
-            if i == 1 then
-                sp_cost[i][sp] = c
-            else
-                sp_cost[i][sp] = sp_cost[i-1][sp]
-
-                for sp2, l in pairs(sp_level) do
-                    if l == i-1 and config.TC_SCIENCE_PACK_COST_REDUCE[sp2] then
-                        sp_cost[i][sp] = sp_cost[i][sp] / config.TC_SCIENCE_PACK_COST_REDUCE[sp2]
-                    end
-                end
-            end
-        end
     end
 
-    local tech_sp_cost = {}
     local tech_bfs = fz_lazy_bfs.create(tg, tg:get_node(config.WIN_GAME_TECH, fz_graph.NT_TECH_HEAD), false, true)
     local level_sp_cost = {}
+    local tech_highest_sp = {}
 
     -- Export tech changes to prototypes
     for _, node in pairs(tg.nodes) do
@@ -243,20 +228,19 @@ function auto_tech:run()
                 end
             end
 
-            tech_sp_cost[tech.name] = 0
+            tech_highest_sp[tech.name] = highest_level
 
             for i, sp in pairs(py_utils.standardize_products(tech.unit.ingredients)) do
                 sp.amount = level_amount[highest_level - sp_level[sp.name] + 1]
                 tech.unit.ingredients[i] = sp
-                tech_sp_cost[tech.name] = tech_sp_cost[tech.name] + sp.amount * sp_cost[highest_level][sp.name]
             end
 
             if node.mandatory then
                 if not level_sp_cost[tech_ts.level[node.key]] then
-                    level_sp_cost[tech_ts.level[node.key]] = 0
+                    level_sp_cost[tech_ts.level[node.key]] = {}
                 end
 
-                level_sp_cost[tech_ts.level[node.key]] = level_sp_cost[tech_ts.level[node.key]] + 1 / tech_sp_cost[tech.name]
+                level_sp_cost[tech_ts.level[node.key]][highest_level] = (level_sp_cost[tech_ts.level[node.key]][highest_level] or 0) + 1
             end
 
             tech.unit.time = config.TC_SCIENCE_PACK_TIME[highest_sp]
@@ -269,7 +253,10 @@ function auto_tech:run()
     local target = config.TC_BASE_MULT * (recipe_count * config.TC_MANDATORY_RECIPE_COUNT_MULT + opt_recipe_count * config.TC_OPTIONAL_RECIPE_COUNT_MULT)
     log("Target: " .. target)
 
-    local factor = self:calculate_factor(level_sp_cost, target)
+    local win_level = tech_ts.level[tg:get_node(config.WIN_GAME_TECH, fz_graph.NT_TECH_HEAD).key]
+    local win_sp_level = tech_highest_sp[config.WIN_GAME_TECH]
+    local factor = self:calculate_factor(level_sp_cost, target, win_level, win_sp_level)
+    local spf = self:calculate_sp_factor(factor, win_level, win_sp_level)
     local sum_mand_packs = 0
     local sum_total_packs = 0
     -- local factor = 1.2
@@ -278,7 +265,7 @@ function auto_tech:run()
         local tech = data.raw.technology[node.name]
 
         if tech and not tech.unit.count_formula then
-            tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) / tech_sp_cost[tech.name]))
+            tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
             -- log(tech.name .. " : 10 * " .. math.pow(factor, tech_ts.level[node.key] - 2) .. " / " .. tech_sp_cost[tech.name] .. " = "..  tech.unit.count)
             sum_total_packs = sum_total_packs + tech.unit.count
 
@@ -362,23 +349,36 @@ function auto_tech.cost_rounding(num)
 end
 
 
-function auto_tech:calculate_factor(level_sp_cost, target)
+function auto_tech:calculate_sp_factor(factor, win_level, win_sp_level)
+    if not self.spf_cache[factor] then
+        self.spf_cache[factor] = math.pow(config.TC_WIN_TECH_COST / config.TC_STARTING_TECH_COST / math.pow(factor, win_level - 2), 1 / (win_sp_level - 1))
+    end
+
+    return self.spf_cache[factor]
+end
+
+
+function auto_tech:calculate_factor(level_sp_cost, target, win_level, win_sp_level)
     local max_f = 2.0
     local min_f = 1.0
     local f
 
     while true do
+        local spf = self:calculate_sp_factor(max_f, win_level, win_sp_level)
         local m = config.TC_STARTING_TECH_COST
         local t = 0
 
-        for _, c in pairs(level_sp_cost) do
-            t = t + m * c
+        for _, sp_levels in pairs(level_sp_cost) do
+            for spl, c in pairs(sp_levels) do
+                t = t + m * c * math.pow(spf, spl - 1)
+            end
+
             m = m * max_f
 
             if t > target * (1 + config.TC_EXP_THRESHOLD) then break end
         end
 
-        -- log("MAXF: " .. max_f .. " T: " .. t)
+        log("MAXF: " .. max_f .. " SPF: " .. spf ..  " T: " .. t)
 
         if t < target * (1 - config.TC_EXP_THRESHOLD) then
             max_f = max_f * 2
@@ -389,17 +389,21 @@ function auto_tech:calculate_factor(level_sp_cost, target)
 
     while min_f < max_f do
         f = (min_f + max_f) / 2
+        local spf = self:calculate_sp_factor(f, win_level, win_sp_level)
         local m = config.TC_STARTING_TECH_COST
         local t = 0
 
-        for _, c in pairs(level_sp_cost) do
-            t = t + m * c
+        for _, sp_levels in pairs(level_sp_cost) do
+            for spl, c in pairs(sp_levels) do
+                t = t + m * c * math.pow(spf, spl - 1)
+            end
+
             m = m * f
 
             if t > target * (1 + config.TC_EXP_THRESHOLD) then break end
         end
 
-        -- log("F: " .. f .. " T: " .. t)
+        log("F: " .. f .. " SPF: " .. spf .. " T: " .. t)
 
         if t < target * (1 - config.TC_EXP_THRESHOLD) then
             min_f = f
