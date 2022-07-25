@@ -156,3 +156,9 @@ end
 if mods["Transport_Drones"] then
     data.raw.technology["transport-system"].prerequisites = nil
 end
+
+if mods["miniloader"] then
+    TECHNOLOGY("miniloader"):add_pack("py-science-pack-1"):add_pack("logistic-science-pack")
+    TECHNOLOGY("fast-miniloader"):add_pack("py-science-pack-2")
+    RECIPE("chute-miniloader"):add_ingredient{"burner-inserter", 2}
+end
