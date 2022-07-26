@@ -343,7 +343,7 @@ function auto_tech.cost_rounding(num)
 
     for i, n in pairs(t) do
         if i == #t or num < (n + t[i+1]) / 2 then
-            return n * exp
+            return math.floor(n * exp)
         end
     end
 end
