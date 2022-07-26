@@ -20,7 +20,7 @@ local config = {
     -- Tech cost stuff
     TC_MANDATORY_RECIPE_COUNT_MULT = 1/4,
     TC_OPTIONAL_RECIPE_COUNT_MULT = 1/16,
-    TC_BASE_MULT = 3600 * 0.5,
+    TC_BASE_MULT = 3600 * 0.4,
     TC_SCIENCE_PACK_TIME = {},
     TC_SCIENCE_PACK_MULT = {1, 2, 3, 6},
     TC_SCIENCE_PACK_MULT_STEP = 10,
