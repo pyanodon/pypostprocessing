@@ -162,3 +162,7 @@ if mods["miniloader"] then
     TECHNOLOGY("fast-miniloader"):add_pack("py-science-pack-2")
     RECIPE("chute-miniloader"):add_ingredient{"burner-inserter", 2}
 end
+
+if mods["bobinserters"] then
+    TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
+end
