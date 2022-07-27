@@ -172,3 +172,7 @@ if mods["Flare Stack"] then
         end
     end
 end
+
+if mods["bobinserters"] then
+    TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
+end
