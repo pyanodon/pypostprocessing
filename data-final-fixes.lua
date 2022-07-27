@@ -108,10 +108,7 @@ for _, tech in pairs(data.raw.technology) do
         add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
         add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
         add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
-
-        if mods["pyalternativeenergy"] then
-            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
-        end
+        add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
     end
 end
 
