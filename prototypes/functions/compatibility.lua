@@ -189,7 +189,7 @@ if mods["botReplacer"] and mods["pyindustry"] then
     RECIPE("logistic-chest-botUpgrader"):remove_unlock("construction-robotics"):add_unlock("robotics")
 end
 
-if mods["yi_railway"] then
+if mods["yi_railway"] and mods["pyindustry"] then
     for recipe_name, recipe in pairs(data.raw.recipe) do
 		--log("checking "..recipe_name.." , subgroup:" .. recipe.subgroup .. " ("..string.sub(recipe.subgroup,1,4)..")")
 		if recipe.subgroup and string.sub(recipe.subgroup,1,4) == "yir_" then
