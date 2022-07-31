@@ -264,7 +264,7 @@ function auto_tech:run()
     for _, node in pairs(tg.nodes) do
         local tech = data.raw.technology[node.name]
 
-        if tech and not tech.unit.count_formula then
+        if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
             tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
             -- log(tech.name .. " : 10 * " .. math.pow(factor, tech_ts.level[node.key] - 2) .. " / " .. tech_sp_cost[tech.name] .. " = "..  tech.unit.count)
             sum_total_packs = sum_total_packs + tech.unit.count
@@ -272,6 +272,9 @@ function auto_tech:run()
             if node.mandatory then
                 sum_mand_packs = sum_mand_packs + tech.unit.count
             end
+        elseif tech and tech.name == config.WIN_GAME_TECH then
+            tech.unit.count = config.TC_WIN_TECH_COST_OVERRIDE
+            sum_total_packs = sum_total_packs + tech.unit.count
         end
     end
 
