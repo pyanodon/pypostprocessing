@@ -98,4 +98,15 @@ if mods["trainfactory"] then
     config.ENTITY_SCRIPT_UNLOCKS["trainfactory-disassemble-half-placer-item"] = { "trainfactory-disassemble-half-entity" }
 end
 
+if mods["Rocket-Silo-Construction"] then
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage1"] = { "rsc-silo-stage2" }
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage2"] = { "rsc-silo-stage3" }
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage3"] = { "rsc-silo-stage4" }
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage4"] = { "rsc-silo-stage5" }
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage5"] = { "rsc-silo-stage6" }
+    config.ENTITY_SCRIPT_UNLOCKS["rsc-building-stage6"] = { "rocket-silo" }
+end
+
+
+-- ==========================================================================================
 return config
