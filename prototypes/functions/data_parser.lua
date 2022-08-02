@@ -52,6 +52,7 @@ function data_parser.create()
     d.fuel_burners = {}
     d.heat_temps = {}
     d.placed_by = {}
+    d.place_result = {}
     d.items_with_grid = {}
     d.entities_with_grid = {}
     d.processed_recipes = {}
@@ -190,32 +191,8 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
 
     if recipe.unlock_results ~= false then
         for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
-            if res.type == "item" and not ingredients[res.name]
-                and (not config.PRIMARY_PRODUCTION_RECIPE[res.name] or config.PRIMARY_PRODUCTION_RECIPE[res.name] == recipe.name)
-            then
-                local node_item = self.fg:add_node(res.name, fz_graph.NT_ITEM)
-                local item
-
-                if not node_item.virtual then
-                    item = py_utils.get_prototype("item", res.name)
-                    node_item = self:parse_item(item)
-                end
-
-                self.fg:add_link(node, node_item, LABEL_RECIPE_RESULT)
-
-                if item and item.place_result then
-                    self:add_entity_dependencies(node, item)
-                end
-
-                if item and item.placed_as_equipment_result then
-                    self:add_equipment_dependencies(node, item)
-                end
-
-                if item and (item.rocket_launch_products or item.rocket_launch_product) then
-                    self:add_rocket_product_recipe(item, tech_name)
-                end
-
-                node_item:inherit_ignore_for_dependencies(node)
+            if res.type == "item" then
+                self:add_recipe_result_item(res.name, recipe.name, node, ingredients)
             elseif res.type == "fluid" then
                 local fluid = data.raw.fluid[res.name]
                 local temp = res.temperature or (fluid and fluid.default_temperature)
@@ -266,6 +243,38 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
     self:add_module_dependencies(node, recipe)
 
     return node
+end
+
+
+function data_parser:add_recipe_result_item(item_name, recipe_name, recipe_node, ingredients)
+    if not ingredients[item_name]
+        and (not config.PRIMARY_PRODUCTION_RECIPE[item_name] or config.PRIMARY_PRODUCTION_RECIPE[item_name] == recipe_name)
+    then
+        local node_item = self.fg:add_node(item_name, fz_graph.NT_ITEM)
+        local item
+
+        if not node_item.virtual then
+            item = py_utils.get_prototype("item", item_name)
+            node_item = self:parse_item(item)
+        end
+
+        self.fg:add_link(recipe_node, node_item, LABEL_RECIPE_RESULT)
+
+        for entity_name, _ in pairs(self.place_result[item_name] or {}) do
+            local entity  = py_utils.get_prototype("entity", entity_name)
+            self:add_entity_dependencies(entity, recipe_node, recipe_name, item, ingredients)
+        end
+
+        if item and item.placed_as_equipment_result then
+            self:add_equipment_dependencies(recipe_node, item)
+        end
+
+        if item and (item.rocket_launch_products or item.rocket_launch_product) then
+            self:add_rocket_product_recipe(item)
+        end
+
+        node_item:inherit_ignore_for_dependencies(recipe_node)
+    end
 end
 
 
@@ -477,9 +486,7 @@ function data_parser:add_module_dependencies(node, recipe)
 end
 
 
-function data_parser:add_entity_dependencies(recipe_node, item)
-    local entity = py_utils.get_prototype("entity", item.place_result)
-
+function data_parser:add_entity_dependencies(entity, recipe_node, recipe_name, item, ingredients)
     -- Fuel dependencies
     local energy_source = entity.burner or entity.energy_source
 
@@ -532,6 +539,14 @@ function data_parser:add_entity_dependencies(recipe_node, item)
             local fixed_node = self:parse_recipe(recipe_node.tech_name, fixed_recipe)
             local tech = self.fg:get_node(recipe_node.tech_name, fz_graph.NT_TECH_HEAD)
             self.fg:add_link(tech, fixed_node, LABEL_UNLOCK_RECIPE)
+        end
+    end
+
+    if entity.minable then
+        for _, res in pairs(py_utils.standardize_products(entity.minable.results, nil, entity.minable.result, entity.minable.count)) do
+            if res.type == "item" and res.name ~= item.name then
+                self:add_recipe_result_item(res.name, recipe_name, recipe_node, ingredients)
+            end
         end
     end
 
@@ -797,7 +812,7 @@ function data_parser:add_bonus_dependencies(tech_node, effect, entity_type, cond
 end
 
 
-function data_parser:add_rocket_product_recipe(item, tech_name)
+function data_parser:add_rocket_product_recipe(item)
     local recipe = {
         name = RECIPE_PREFIX_ROCKET .. item.name,
         ingredients = {{ type = "item", name = item.name, amount = 1 }},
@@ -1101,11 +1116,13 @@ function data_parser:pre_process_item(item)
 
     if item.place_result then
         py_utils.insert_double_lookup(self.placed_by, item.place_result, item.name)
+        py_utils.insert_double_lookup(self.place_result, item.name, item.place_result)
         self:pre_process_entity(py_utils.get_prototype("entity", item.place_result))
     end
 
     for _, entity_name in pairs(config.ENTITY_SCRIPT_UNLOCKS[item.name] or {}) do
         py_utils.insert_double_lookup(self.placed_by, entity_name, item.name)
+        py_utils.insert_double_lookup(self.place_result, item.name, entity_name)
         self:pre_process_entity(py_utils.get_prototype("entity", entity_name))
     end
 
