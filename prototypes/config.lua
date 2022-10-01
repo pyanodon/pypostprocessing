@@ -76,6 +76,7 @@ config.PRIMARY_PRODUCTION_RECIPE["empty-barrel"] = "empty-barrel"
 config.PRIMARY_PRODUCTION_RECIPE["cage"] = "cage"
 config.PRIMARY_PRODUCTION_RECIPE["empty-fuel-canister"] = "empty-jerry-can"
 config.PRIMARY_PRODUCTION_RECIPE["biomass"] = "biomass-log"
+config.PRIMARY_PRODUCTION_RECIPE["used-auog"] = "burnt:auog"
 
 if mods["pyrawores"] then
     config.PRIMARY_PRODUCTION_RECIPE["ash"] = "burnt:raw-coal"
