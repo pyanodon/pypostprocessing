@@ -333,6 +333,10 @@ if mods["Rocket-Silo-Construction"] then
 end
 
 
+if mods["nixie-tubes"] then
+    TECHNOLOGY("cathodes"):remove_pack("logistic-science-pack"):remove_prereq("advanced-electronics")
+end
+
 if data.raw.recipe["electronic-circuit"].enabled == false
     and (not data.raw.recipe["electronic-circuit-initial"] or data.raw.recipe["electronic-circuit-initial"].enabled == false)
     and data.raw.recipe["inductor1-2"]
