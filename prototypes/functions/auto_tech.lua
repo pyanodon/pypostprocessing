@@ -107,7 +107,7 @@ function auto_tech:run()
     local fg2 = fg:copy()
     local error_found
 
-    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs, false)
+    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs, settings.startup["pypp-verboselog"].value)
 
     -- log(serpent.block(fg:get_node("fluid|silicon-mk01:hydrogen-chloride(10)")))
 
