@@ -544,7 +544,7 @@ function data_parser:add_entity_dependencies(entity, recipe_node, recipe_name, i
 
     if entity.minable then
         for _, res in pairs(py_utils.standardize_products(entity.minable.results, nil, entity.minable.result, entity.minable.count)) do
-            if res.type == "item" and res.name ~= item.name then
+            if res.type == "item" and res.name ~= nil and res.name ~= item.name then
                 self:add_recipe_result_item(res.name, recipe_name, recipe_node, ingredients)
             end
         end
