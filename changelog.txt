@@ -1,0 +1,6 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2022-10-23
+  Changes:
+    - added compatibility for Clusterio
+    - added compatibility for Subspace stroage
