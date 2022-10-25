@@ -139,6 +139,11 @@ if mods["WaterWell"] then
     end
 end
 
+if mods["TinyStart"] then
+    data.raw.recipe["tiny-armor-mk1"].ignore_for_dependencies = true
+    data.raw.recipe["tiny-armor-mk2"].ignore_for_dependencies = true
+end
+
 if mods["Transport_Drones"] then
     data.raw.technology["transport-system"].prerequisites = nil
 end
