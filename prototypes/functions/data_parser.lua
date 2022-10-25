@@ -1026,8 +1026,19 @@ function data_parser:pre_process_entity(entity)
             end
         end
     end
+    
+    -- If handcraft is disabled, we fudge it by adding "crafting" to the real list
+    local category_list
+    if (entity.type == "character" 
+        and entity.crafting_categories 
+        and not table.invert(entity.crafting_categories)["crafting"])
+    then
+        category_list = table.array_combine(entity.crafting_categories, {"crafting"})
+    else
+        category_list = entity.crafting_categories or {}
+    end
 
-    for _, c in pairs(entity.crafting_categories or {}) do
+    for _, c in pairs(category_list) do
         if not self.crafting_categories[c] then
             self.crafting_categories[c] = {}
         end
