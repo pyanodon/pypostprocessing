@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2022-10-25
+  Changes:
+    - added compatibility for TinyStart
+    - added compatibility for portals
+    - added compatibility for No Hand Crafting Continued
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2022-10-23
   Changes:
