@@ -1,3 +1,5 @@
+local dev_mode = false
+
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
 local table = require('__stdlib__/stdlib/utils/table')
@@ -53,40 +55,6 @@ for _, recipe in pairs(data.raw.recipe) do
 end
 
 
-local function create_tmp_tech(recipe, original_tech, add_dependency)
-    local new_tech = TECHNOLOGY {
-        type = "technology",
-        name = "tmp-" .. recipe .. "-tech",
-        icon = "__pypostprocessing__/graphics/placeholder.png",
-        icon_size = 128,
-        order = "c-a",
-        prerequisites = {},
-        effects = {
-            { type = "unlock-recipe", recipe = recipe }
-        },
-        unit = {
-            count = 30,
-            ingredients = {
-                {"automation-science-pack", 1}
-            },
-            time = 30
-        }
-    }
-
-    RECIPE(recipe):set_enabled(false)
-
-    if original_tech then
-        RECIPE(recipe):remove_unlock(original_tech)
-
-        if add_dependency then
-            new_tech.dependencies = { original_tech }
-        end
-    end
-
-    return new_tech
-end
-
-
 for _, tech in pairs(data.raw.technology) do
     local science_packs = {}
 
@@ -117,29 +85,21 @@ for _, tech in pairs(data.raw.technology) do
 end
 
 
--- TMP TECHS HERE --
--- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
--- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
-if mods["pyalienlife"] and mods["pyhightech"] then
-    -- create_tmp_tech("salt-mine", "electrolysis")
-end
-
-if mods["pyalternativeenergy"] then
-
-end
-
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
 require('prototypes/functions/compatibility')
 
+
 ----------------------------------------------------
--- AUTO TECH script. Make sure it's the very last
+-- TECHNOLOGY CHANGES
 ----------------------------------------------------
--- require('prototypes/functions/auto_tech')
-----------------------------------------------------
-----------------------------------------------------
-log("AUTOTECH START")
-local at = require("prototypes.functions.auto_tech").create()
-at:run()
-log("AUTOTECH END")
+if dev_mode then
+    log("AUTOTECH START")
+    local at = require("prototypes.functions.auto_tech").create()
+    at:run()
+    at:create_cachefile_code()
+    log("AUTOTECH END")
+else
+    require "cached-configs.run"
+end
