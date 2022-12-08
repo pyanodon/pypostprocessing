@@ -13,6 +13,56 @@ local BreadthFirstSearch = require("luagraphs.search.BreadthFirstSearch")
 local auto_tech = {}
 auto_tech.__index = auto_tech
 
+local function merge(table, value)
+	for k, v in pairs(value) do
+		if type(v) == 'table' then
+			table[k] = table[k] or {}
+			merge(table[k], v)
+		else
+			table[k] = v
+		end
+	end
+end
+
+local tech_updates = {}
+local function set_tech_property(tech, property)
+    tech_updates[tech.name] = tech_updates[tech.name] or {}
+    merge(tech_updates[tech.name], property)
+end
+
+local science_pack_string = '\n'
+local function science_pack_order(science_pack, order)
+    science_pack_string = science_pack_string .. 'science_pack_order("' .. science_pack .. '","' .. order .. '")\n'
+end
+
+local pymods = {
+	'pycoalprocessing',
+	'pyindustry',
+	'pyfusionenergy',
+	'pyrawores',
+	'pypetroleumhandling',
+	'pyhightech',
+	'pyalienlife',
+	'pyalternativeenergy'
+}
+local function get_modlist_string()
+    local modlist = {}
+    for _, mod in pairs(pymods) do
+        if mods[mod] then modlist[#modlist+1] = mod end
+    end
+    table.sort(modlist)
+    return table.concat(modlist, '+') ..'.lua'
+end
+
+function auto_tech:create_cachefile_code()
+    local result = science_pack_string
+    for tech_name, update in pairs(tech_updates) do
+        result = result .. 'fix_tech("' .. tech_name .. '",' .. serpent.line(update, {compact = true}) .. ')\n'
+    end
+    log(result)
+    error('\n\n\n\n----------------------------------------------\nSuccess! pypostprocessing config file was created @ factorio-current.log\n'..get_modlist_string()..'\n----------------------------------------------\n\n\n\n', 10)
+end
+
 local LABEL_UNLOCK_RECIPE = "__unlock_recipe__"
 
 local function deadend_node(n, _, g) return not g:has_links_to(n) or not g:has_links_from(n) or false end
@@ -32,28 +82,6 @@ end
 function auto_tech:run()
     local parser = data_parser.create()
     local fg = parser:run()
-
-    -- for _, node in pairs(fg.nodes) do
-    --     if node.type == fz_graph.NT_RECIPE then
-    --         local deps = {}
-
-    --         for _, e in fg:iter_links_to(node) do
-    --             deps[e:from()] = e
-    --         end
-
-    --         for _, e in pairs(fg:get_links_from(node)) do
-    --             if deps[e:to()] and e.label == "__recipe_result__" then
-    --                 if deps[e:to()].label == "__crafting__" then
-    --                     fg:remove_link(fg:get_node(e:to()), node, deps[e:to()].label)
-    --                     log("  - Removing link: " .. e:to() .. " >> " .. node.key .. " : " .. deps[e:to()].label)
-    --                 else
-    --                     fg:remove_link(node, fg:get_node(e:to()), e.label)
-    --                     log("  - Removing link: " .. node.key .. " >> " .. e:to() .. " : " .. e.label)
-    --                 end
-    --             end
-    --         end
-    --     end
-    -- end
 
     -- cleanup dead-end nodes
     fg:recursive_remove(ifd_deadend_node, false)
@@ -109,44 +137,8 @@ function auto_tech:run()
 
     error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs, settings.startup["pypp-verboselog"].value)
 
-    -- log(serpent.block(fg:get_node("fluid|silicon-mk01:hydrogen-chloride(10)")))
-
     if error_found then
-        -- for k, node in pairs(fg.nodes) do
-        --     if not node.ignore_for_dependencies and not ts.sorted[k] then
-        --         log(" - " .. k)
-        --     end
-        -- end
-
-        -- local loop = self:find_dependency_loop(fg, ts)
         local msg = "\n\nERROR: Dependency loop detected\n"
-        -- local prev_node
-
-        -- while not queue.is_empty(loop) do
-        --     local key = loop()
-        --     local node = fg:get_node(key)
-
-        --     if node.type == fz_graph.NT_TECH_HEAD then
-        --         msg = msg .. "  - Technology: " .. node.name .. "\n"
-        --     elseif node.type == fz_graph.NT_RECIPE then
-        --         msg = msg .. "  - Recipe: " .. node.name .. "\n"
-        --     elseif node.type == fz_graph.NT_ITEM then
-        --         msg = msg .. "  - Item: " .. node.name .. "\n"
-        --     elseif node.type == fz_graph.NT_FLUID then
-        --         msg = msg .. "  - Fluid: " .. node.name .. "\n"
-        --     elseif node.type == fz_graph.NT_TECH_TAIL and prev_node then
-        --         for _, e in fg:iter_links_to(node) do
-        --             local recipe_node = fg:get_node(e:from())
-        --             if recipe_node.products[prev_node.key] then
-        --                 msg = msg .. "  - Recipe: " .. recipe_node.name .. "\n"
-        --                 break
-        --             end
-        --         end
-        --     end
-
-        --     prev_node = node
-        -- end
-
         error(msg)
     end
 
@@ -155,11 +147,6 @@ function auto_tech:run()
     error_found, ts = self:topo_sort_with_sp(fg2, spg, parser.science_packs)
 
     if error_found then
-        -- for k, node in pairs(fg.nodes) do
-        --     if not node.ignore_for_dependencies and not ts.sorted[k] then
-        --         log(" - " .. k)
-        --     end
-        -- end
         local msg = "\n\nERROR: Dependency loop detected\n"
         error(msg)
     end
@@ -179,14 +166,12 @@ function auto_tech:run()
 
     -- Set science pack order
     for _, node in pairs(spg.nodes) do
-        local sp = data.raw.tool[node.name]
+        science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key]))
 
-        sp.subgroup = "science-pack"
-        sp.order = string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key])
         sp_level[node.name] = sp_ts.level[node.key]
 
-        if sp_level[sp.name] > max_level then
-            max_level = sp_level[sp.name]
+        if sp_level[node.name] > max_level then
+            max_level = sp_level[node.name]
         end
     end
 
@@ -232,7 +217,7 @@ function auto_tech:run()
 
             for i, sp in pairs(py_utils.standardize_products(tech.unit.ingredients)) do
                 sp.amount = level_amount[highest_level - sp_level[sp.name] + 1]
-                tech.unit.ingredients[i] = sp
+                set_tech_property(tech, {unit = {ingredients = {[i] = sp}}})
             end
 
             if node.mandatory then
@@ -243,9 +228,10 @@ function auto_tech:run()
                 level_sp_cost[tech_ts.level[node.key]][highest_level] = (level_sp_cost[tech_ts.level[node.key]][highest_level] or 0) + 1
             end
 
-            tech.unit.time = config.TC_SCIENCE_PACK_TIME[highest_sp]
+            set_tech_property(tech, {unit = {time = config.TC_SCIENCE_PACK_TIME[highest_sp]}})
+            set_tech_property(tech, {prerequisites = table.keys(pre)})
             tech.prerequisites = table.keys(pre)
-            tech.order = string.format("%06d", tech_ts.level[node.key])
+            set_tech_property(tech, {order = string.format("%06d", tech_ts.level[node.key])})
         end
     end
 
@@ -265,15 +251,16 @@ function auto_tech:run()
         local tech = data.raw.technology[node.name]
 
         if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
-            tech.unit.count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
-            -- log(tech.name .. " : 10 * " .. math.pow(factor, tech_ts.level[node.key] - 2) .. " / " .. tech_sp_cost[tech.name] .. " = "..  tech.unit.count)
+            set_tech_property(tech, {unit = {
+                count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
+            }})
             sum_total_packs = sum_total_packs + tech.unit.count
 
             if node.mandatory then
                 sum_mand_packs = sum_mand_packs + tech.unit.count
             end
         elseif tech and tech.name == config.WIN_GAME_TECH then
-            tech.unit.count = config.TC_WIN_TECH_COST_OVERRIDE
+            set_tech_property(tech, {unit = {count = config.TC_WIN_TECH_COST_OVERRIDE}})
             sum_total_packs = sum_total_packs + tech.unit.count
         end
     end
