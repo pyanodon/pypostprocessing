@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.0
+Version: 0.2.0
 Date: 2022-12-7
   Changes:
     - Fixed huge lag when loading pymods
     - Fixed many crashes with other mods
+    - added compatibilty for lighted poles with new electric pole techs
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2022-10-25
