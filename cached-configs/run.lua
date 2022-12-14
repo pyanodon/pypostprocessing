@@ -1,6 +1,6 @@
 local function merge(table, value)
 	for k, v in pairs(value) do
-		if type(v) == 'table' and k ~= 'prerequisites' then
+		if type(v) == 'table' and k ~= 'prerequisites' and k ~= 'ingredients' then
 			table[k] = table[k] or {}
 			merge(table[k], v)
 		else
