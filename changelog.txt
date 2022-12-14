@@ -5,6 +5,8 @@ Date: 2022-12-7
     - Fixed huge lag when loading pymods
     - Fixed many crashes with other mods
     - added compatibilty for lighted poles with new electric pole techs
+    - bobs modules compatibilty
+    - fixed deadlock stacking chemical fuels not giving ash
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2022-10-25
