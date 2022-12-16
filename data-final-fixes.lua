@@ -1,4 +1,4 @@
-local dev_mode = false
+local dev_mode = true
 
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
