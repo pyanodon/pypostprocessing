@@ -772,10 +772,6 @@ function data_parser:add_mining_recipe(entity)
     if entity.type == "resource" then
         local category = (entity.category or "basic-solid") .. (entity.minable.required_fluid and "+fluid" or "")
 
-        if not self.mining_categories[category] then
-            error("\n\nERROR: Missing mining category: " .. category .. ", for " .. entity.name .. "\n", 0)
-        end
-
         if self.mining_categories[category] then
             for miner, _ in pairs(self.mining_categories[category]) do
                 self:add_crafting_machine_link(node, miner)
