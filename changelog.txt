@@ -1,9 +1,15 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.1
-Date: ?
+Version: 0.2.2
+Date: 2022-12-20
   Changes:
     - Fixed deadlock stacking error message not showing
     - Regenerated cache files
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2022-12-14
+  Changes:
+    - bobs modules compatibilty
+    - fixed deadlock stacking chemical fuels not giving ash
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2022-12-7
