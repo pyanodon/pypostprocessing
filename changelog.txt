@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: ?
+  Changes:
+    - fixed deadlock stacking error message sometimes showing when it shouldn't
+    - added cache me outside mode
+    - fixed labs having the science packs in a random order
+---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2022-12-20
   Changes:

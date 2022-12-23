@@ -106,3 +106,7 @@ if dev_mode then
 else
     require "cached-configs.run"
 end
+
+for _, lab in pairs(data.raw.lab) do
+    table.sort(lab.inputs, function (i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
+end

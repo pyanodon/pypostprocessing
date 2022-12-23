@@ -20,8 +20,6 @@ if mods['DeadlockLargerLamp'] then
 end
 
 if mods['deadlock-beltboxes-loaders'] then
-    if not data.raw.item['deadlock-stack-ash'] then error('\n\n\n\n\nPlease install Deadlock\'s Stacking for Pyanodon\n\n\n\n\n') end
-
     for item_name, item in py_utils.iter_prototypes('item') do
         local stack = data.raw.item['deadlock-stack-' .. item_name]
         if stack then
@@ -30,7 +28,10 @@ if mods['deadlock-beltboxes-loaders'] then
             data.raw.recipe['deadlock-stacks-unstack-' .. item_name].ignore_for_dependencies = true
             data.raw.recipe['deadlock-stacks-unstack-' .. item_name].unlock_results = false
 
-            if ITEM(item).burnt_result == 'ash' then stack.burnt_result = 'deadlock-stack-ash' end
+            if ITEM(item).burnt_result == 'ash' then
+                if not data.raw.item['deadlock-stack-ash'] then error('\n\n\n\n\nPlease install Deadlock\'s Stacking for Pyanodon\n\n\n\n\n') end
+                stack.burnt_result = 'deadlock-stack-ash'
+            end
 
             if ITEM(item):has_flag('hidden') then
                 ITEM('deadlock-stack-' .. item_name):add_flag('hidden')
