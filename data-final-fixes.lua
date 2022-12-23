@@ -1,4 +1,5 @@
 local dev_mode = false
+local create_cache_mode = false
 
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
@@ -98,7 +99,9 @@ if dev_mode then
     log("AUTOTECH START")
     local at = require("prototypes.functions.auto_tech").create()
     at:run()
-    at:create_cachefile_code()
+    if create_cache_mode then
+        at:create_cachefile_code()
+    end
     log("AUTOTECH END")
 else
     require "cached-configs.run"
