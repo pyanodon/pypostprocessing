@@ -56,9 +56,18 @@ for _, recipe in pairs(data.raw.recipe) do
 end
 
 
+----------------------------------------------------
+-- THIRD PARTY COMPATIBILITY
+----------------------------------------------------
+require('prototypes/functions/compatibility')
+
+
+----------------------------------------------------
+-- TECHNOLOGY CHANGES
+----------------------------------------------------
+
 for _, tech in pairs(data.raw.technology) do
     local science_packs = {}
-
     local function add_science_pack_dep(t, science_pack, dep_pack)
         if science_packs[science_pack] and not science_packs[dep_pack] then
             TECHNOLOGY(t):add_pack(dep_pack)
@@ -86,15 +95,6 @@ for _, tech in pairs(data.raw.technology) do
 end
 
 
-----------------------------------------------------
--- THIRD PARTY COMPATIBILITY
-----------------------------------------------------
-require('prototypes/functions/compatibility')
-
-
-----------------------------------------------------
--- TECHNOLOGY CHANGES
-----------------------------------------------------
 if dev_mode then
     log("AUTOTECH START")
     local at = require("prototypes.functions.auto_tech").create()
@@ -106,6 +106,7 @@ if dev_mode then
 else
     require "cached-configs.run"
 end
+
 
 for _, lab in pairs(data.raw.lab) do
     table.sort(lab.inputs, function (i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)

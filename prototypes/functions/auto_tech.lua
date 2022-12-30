@@ -1,3 +1,5 @@
+local verbose_logging = false
+
 local table = require "__stdlib__.stdlib.utils.table"
 local queue = require "__stdlib__.stdlib.misc.queue"
 local config = require "prototypes.config"
@@ -135,7 +137,7 @@ function auto_tech:run()
     local fg2 = fg:copy()
     local error_found
 
-    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs, settings.startup["pypp-verboselog"].value)
+    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
 
     if error_found then
         local msg = "\n\nERROR: Dependency loop detected\n"
@@ -167,11 +169,14 @@ function auto_tech:run()
     -- Set science pack order
     for _, node in pairs(spg.nodes) do
         science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key]))
+        local sp = data.raw.tool[node.name]
 
+        sp.subgroup = "science-pack"
+        sp.order = string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key])
         sp_level[node.name] = sp_ts.level[node.key]
 
-        if sp_level[node.name] > max_level then
-            max_level = sp_level[node.name]
+        if sp_level[sp.name] > max_level then
+            max_level = sp_level[sp.name]
         end
     end
 
@@ -218,6 +223,7 @@ function auto_tech:run()
             for i, sp in pairs(py_utils.standardize_products(tech.unit.ingredients)) do
                 sp.amount = level_amount[highest_level - sp_level[sp.name] + 1]
                 set_tech_property(tech, {unit = {ingredients = {[i] = sp}}})
+                tech.unit.ingredients[i] = sp
             end
 
             if node.mandatory then
@@ -230,8 +236,10 @@ function auto_tech:run()
 
             set_tech_property(tech, {unit = {time = config.TC_SCIENCE_PACK_TIME[highest_sp]}})
             set_tech_property(tech, {prerequisites = table.keys(pre)})
-            tech.prerequisites = table.keys(pre)
             set_tech_property(tech, {order = string.format("%06d", tech_ts.level[node.key])})
+            tech.unit.time = config.TC_SCIENCE_PACK_TIME[highest_sp]
+            tech.prerequisites = table.keys(pre)
+            tech.order = string.format("%06d", tech_ts.level[node.key])
         end
     end
 
@@ -251,9 +259,9 @@ function auto_tech:run()
         local tech = data.raw.technology[node.name]
 
         if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
-            set_tech_property(tech, {unit = {
-                count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
-            }})
+            local count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
+            set_tech_property(tech, {unit = {count = count}})
+            tech.unit.count = count
             sum_total_packs = sum_total_packs + tech.unit.count
 
             if node.mandatory then
@@ -261,6 +269,7 @@ function auto_tech:run()
             end
         elseif tech and tech.name == config.WIN_GAME_TECH then
             set_tech_property(tech, {unit = {count = config.TC_WIN_TECH_COST_OVERRIDE}})
+            tech.unit.count = config.TC_WIN_TECH_COST_OVERRIDE
             sum_total_packs = sum_total_packs + tech.unit.count
         end
     end
@@ -270,7 +279,7 @@ function auto_tech:run()
 end
 
 
-function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs, logging)
+function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     local sp_links = {}
 
     for _, sp in pairs(sp_graph.nodes) do
@@ -305,7 +314,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs, logging)
     end
 
     local ts = fz_topo.create(fg)
-    local error_found = ts:run(false, logging)
+    local error_found = ts:run(false, verbose_logging)
 
     for _, link in pairs(sp_links) do
         fg:remove_link(link.from, link.to, link.from.name)
@@ -314,7 +323,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs, logging)
     if error_found then
         log("RESTARTING without SP links")
         ts = fz_topo.create(fg)
-        error_found = ts:run(false, logging)
+        error_found = ts:run(false, verbose_logging)
     end
 
     return error_found, ts
