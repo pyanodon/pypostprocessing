@@ -1,5 +1,3 @@
-local verbose_logging = false
-
 local table = require "__stdlib__.stdlib.utils.table"
 local queue = require "__stdlib__.stdlib.misc.queue"
 local config = require "prototypes.config"

@@ -1,5 +1,6 @@
 local dev_mode = false
-local create_cache_mode = false
+local create_cache_mode = true
+_G.verbose_logging = false
 
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
