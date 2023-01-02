@@ -131,6 +131,10 @@ if mods['pyindustry'] then
     if mods['ShuttleTrainRefresh'] then
         TECHNOLOGY('shuttle-train'):remove_pack('logistic-science-pack')
     end
+
+    if mods['train-upgrader'] then
+        TECHNOLOGY('tu-rail-modernization'):add_prereq('railway-mk02'):remove_pack('chemical-science-pack'):add_pack('py-science-pack-2')
+    end
 end
 
 if mods['Portals'] and mods['pyhightech'] then
