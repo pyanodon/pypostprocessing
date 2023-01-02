@@ -112,3 +112,12 @@ end
 for _, lab in pairs(data.raw.lab) do
     table.sort(lab.inputs, function (i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
 end
+
+if mods['pycoalprocessing'] then
+    for _, subgroup in pairs(data.raw['item-subgroup']) do
+        if subgroup.group == 'intermediate-products' then
+            subgroup.group = 'coal-processing'
+            subgroup.order = 'b'
+        end
+    end
+end
