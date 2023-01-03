@@ -265,10 +265,6 @@ function data_parser:add_recipe_result_item(item_name, recipe_name, recipe_node,
             self:add_entity_dependencies(entity, recipe_node, recipe_name, item, ingredients)
         end
 
-        if item and item.placed_as_equipment_result then
-            self:add_equipment_dependencies(recipe_node, item)
-        end
-
         if item and (item.rocket_launch_products or item.rocket_launch_product) then
             self:add_rocket_product_recipe(item)
         end
@@ -832,67 +828,6 @@ function data_parser:add_rocket_product_recipe(item)
     end
 
     return node
-end
-
-
-function data_parser:add_equipment_dependencies(recipe_node, item)
-    local equipment = py_utils.get_prototype("equipment", item.placed_as_equipment_result)
-    local eq_cat = table.array_to_dictionary(equipment.categories, true)
-    recipe_node:add_label(LABEL_GRID)
-
-    for i, grid in pairs(self.items_with_grid) do
-        if table.any(grid.equipment_categories, function (c) return eq_cat[c] ~= nil end) then
-            local g = self.fg:add_node(i, fz_graph.NT_ITEM)
-            self.fg:add_link(g, recipe_node, LABEL_GRID)
-        end
-    end
-
-    for e, grid in pairs(self.entities_with_grid) do
-        if table.any(grid.equipment_categories, function (c) return eq_cat[c] ~= nil end) then
-            for i, _ in pairs(self.placed_by[e] or {}) do
-                local g = self.fg:add_node(i, fz_graph.NT_ITEM)
-                self.fg:add_link(g, recipe_node, LABEL_GRID)
-            end
-        end
-    end
-
-    if equipment.burner then
-        local es = equipment.burner
-
-        for _, category in pairs(es.fuel_categories or { (es.fuel_category or "chemical") }) do
-            for fuel, _ in pairs(self.fuel_categories[category]) do
-                local fuel_node = self.fg:add_node(fuel, fz_graph.NT_ITEM)
-                self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
-            end
-        end
-    end
-
-    if (equipment.type == "active-defense-equipment" and equipment.attack_parameters.ammo_type and equipment.attack_parameters.ammo_type.energy_consumption and util.parse_energy(equipment.attack_parameters.ammo_type.energy_consumption) > 0)
-        or equipment.type == "battery-equipment"
-        or (equipment.type == "belt-immunity-equipment" and util.parse_energy(equipment.energy_consumption) > 0)
-        or (equipment.type == "energy-shield-equipment" and util.parse_energy(equipment.energy_per_shield) > 0)
-        or (equipment.type == "movement-bonus-equipment" and util.parse_energy(equipment.energy_consumption) > 0)
-        or (equipment.type == "night-vision-equipment" and util.parse_energy(equipment.energy_input) > 0)
-        or (equipment.type == "roboport-equipment" and not equipment.burner)
-    then
-        for _, gen in pairs(data.raw["generator-equipment"]) do
-            if table.any(gen.categories, function (c) return eq_cat[c] ~= nil end) then
-                for i, _ in pairs(self.placed_by[gen.name] or {}) do
-                    local g = self.fg:add_node(i, fz_graph.NT_ITEM)
-                    self.fg:add_link(g, recipe_node, LABEL_FUEL)
-                end
-            end
-        end
-
-        for _, gen in pairs(data.raw["solar-panel-equipment"]) do
-            if table.any(gen.categories, function (c) return eq_cat[c] ~= nil end) then
-                for i, _ in pairs(self.placed_by[gen.name] or {}) do
-                    local g = self.fg:add_node(i, fz_graph.NT_ITEM)
-                    self.fg:add_link(g, recipe_node, LABEL_FUEL)
-                end
-            end
-        end
-    end
 end
 
 
