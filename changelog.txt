@@ -1,11 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.3
-Date: ?
+Date: 2023-1-5
   Changes:
     - fixed deadlock stacking error messages showing when they shouldn't
     - added cache me outside mode
     - fixed labs having the science packs in a random order
     - add compat with train upgrader mod
+    - updated cached data with recent mod changes
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2022-12-20
