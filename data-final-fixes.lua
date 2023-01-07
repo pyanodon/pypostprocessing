@@ -121,3 +121,29 @@ if mods['pycoalprocessing'] then
         end
     end
 end
+
+for _, recipe in pairs(data.raw.recipe) do
+    local subgroup = recipe.subgroup
+    if not subgroup then
+        local main_product = recipe.main_product or recipe.result
+        if not main_product and recipe.results and recipe.results[1] then
+            main_product = recipe.results[1][1] or recipe.results[1].name
+        end
+        if not main_product then goto continue end
+
+        local item_or_fluid = data.raw.fluid[main_product]
+        for _, type in pairs(data.raw) do
+            if type[main_product] and type[main_product].stack_size then
+                item_or_fluid = type[main_product]
+                break
+            end
+        end
+        if item_or_fluid then subgroup = item_or_fluid.subgroup end
+    end
+
+    if subgroup and data.raw['item-subgroup'][subgroup] and data.raw['item-subgroup'][subgroup].hide_from_player_crafting then
+        recipe.hide_from_player_crafting = true
+    end
+
+    ::continue::
+end
