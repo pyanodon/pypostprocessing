@@ -43,7 +43,8 @@ local pymods = {
 	'pypetroleumhandling',
 	'pyhightech',
 	'pyalienlife',
-	'pyalternativeenergy'
+	'pyalternativeenergy',
+    'PyBlock'
 }
 local function get_modlist_string()
     local modlist = {}

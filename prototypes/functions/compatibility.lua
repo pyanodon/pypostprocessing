@@ -423,3 +423,7 @@ then
         end
     end
 end
+
+if mods["aai-loaders"] then
+    TECHNOLOGY("aai-express-loader"):remove_prereq("advanced-electronics-2")
+end
