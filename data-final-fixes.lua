@@ -48,7 +48,10 @@ end
 for _, recipe in pairs(data.raw.recipe) do
     if recipe.results and table.size(recipe.results) == 1 then
         local product = recipe.results[1]
-        if (product.amount or product[2]) ~= 1 then
+        --log(serpent.block(recipe))
+        --log(serpent.block(recipe.results))
+        --log(serpent.block(product))
+        if product ~= nil and (product.amount or product[2]) ~= 1 then
             recipe.always_show_products = true
         end
     elseif recipe.result_amount ~= 1 then
@@ -56,6 +59,58 @@ for _, recipe in pairs(data.raw.recipe) do
     end
 end
 
+local function create_tmp_tech(recipe, original_tech, add_dependency)
+    local new_tech = TECHNOLOGY {
+        type = "technology",
+        name = "tmp-" .. recipe .. "-tech",
+        icon = "__pypostprocessing__/graphics/placeholder.png",
+        icon_size = 128,
+        order = "c-a",
+        prerequisites = {},
+        effects = {
+            { type = "unlock-recipe", recipe = recipe }
+        },
+        unit = {
+            count = 30,
+            ingredients = {
+                {"automation-science-pack", 1}
+            },
+            time = 30
+        }
+    }
+
+    RECIPE(recipe):set_enabled(false)
+
+    if original_tech then
+        RECIPE(recipe):remove_unlock(original_tech)
+
+        if add_dependency then
+            new_tech.dependencies = { original_tech }
+        end
+    end
+
+    return new_tech
+end
+
+if mods["PyBlock"] then
+create_tmp_tech("fake-anti-ore")
+create_tmp_tech("fake-borax-ore")
+--create_tmp_tech("fake-copper-ore")
+create_tmp_tech("fake-moly-ore")
+create_tmp_tech("fake-nio-ore")
+create_tmp_tech("fake-aluminium-ore")
+create_tmp_tech("fake-bioreserve-ore")
+create_tmp_tech("fake-chrome-ore")
+create_tmp_tech("fake-lead-ore")
+create_tmp_tech("fake-nickel-ore")
+create_tmp_tech("fake-tin-ore")
+create_tmp_tech("fake-titanium-ore")
+create_tmp_tech("fake-zinc-ore")
+create_tmp_tech("fake-phosphate-ore")
+create_tmp_tech("fake-ree-ore")
+create_tmp_tech("fake-stone-ore")
+create_tmp_tech("fake-kerogen-ore")
+end
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
