@@ -1,4 +1,4 @@
-local dev_mode = true
+local dev_mode = false
 local create_cache_mode = false
 _G.verbose_logging = false
 
