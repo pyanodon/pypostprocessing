@@ -7,8 +7,9 @@ local py_utils = require("prototypes.functions.utils")
 local fz_lazy_bfs = require("prototypes.functions.search.fz_lazy_bfs")
 local fz_topo = require "prototypes.functions.fz_topo_sort"
 local trans_reduct = require "prototypes.functions.transitive_reduction"
-
 local BreadthFirstSearch = require("luagraphs.search.BreadthFirstSearch")
+
+local verbose_logging = settings.startup["pypp-verbose-logging"].value
 
 local auto_tech = {}
 auto_tech.__index = auto_tech

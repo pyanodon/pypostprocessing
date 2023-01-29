@@ -1,6 +1,5 @@
-local dev_mode = false
-local create_cache_mode = false
-_G.verbose_logging = false
+local dev_mode = settings.startup["pypp-dev-mode"].value
+local create_cache_mode = settings.startup["pypp-create-cache"].value
 
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
@@ -111,6 +110,52 @@ create_tmp_tech("fake-ree-ore")
 create_tmp_tech("fake-stone-ore")
 create_tmp_tech("fake-kerogen-ore")
 end
+
+local function create_tmp_tech(recipe, original_tech, add_dependency)
+    local new_tech = TECHNOLOGY {
+        type = "technology",
+        name = "tmp-" .. recipe .. "-tech",
+        icon = "__pypostprocessing__/graphics/placeholder.png",
+        icon_size = 128,
+        order = "c-a",
+        prerequisites = {},
+        effects = {
+            { type = "unlock-recipe", recipe = recipe }
+        },
+        unit = {
+            count = 30,
+            ingredients = {
+                {"automation-science-pack", 1}
+            },
+            time = 30
+        }
+    }
+
+    RECIPE(recipe):set_enabled(false)
+
+    if original_tech then
+        RECIPE(recipe):remove_unlock(original_tech)
+
+        if add_dependency then
+            new_tech.dependencies = { original_tech }
+        end
+    end
+
+    return new_tech
+end
+
+
+-- TMP TECHS HERE --
+-- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
+-- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
+if mods["pyalienlife"] and mods["pyhightech"] then
+    -- create_tmp_tech("salt-mine", "electrolysis")
+end
+
+if mods["pyalternativeenergy"] then
+
+end
+
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
