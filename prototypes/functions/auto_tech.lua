@@ -9,8 +9,6 @@ local fz_topo = require "prototypes.functions.fz_topo_sort"
 local trans_reduct = require "prototypes.functions.transitive_reduction"
 local BreadthFirstSearch = require("luagraphs.search.BreadthFirstSearch")
 
-local verbose_logging = settings.startup["pypp-verbose-logging"].value
-
 local auto_tech = {}
 auto_tech.__index = auto_tech
 
@@ -76,6 +74,7 @@ function auto_tech.create()
     setmetatable(a, auto_tech)
 
     a.spf_cache = {}
+    a.verbose_logging = settings.startup["pypp-verbose-logging"].value
 
     return a
 end
@@ -314,7 +313,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     end
 
     local ts = fz_topo.create(fg)
-    local error_found = ts:run(false, verbose_logging)
+    local error_found = ts:run(false, self.verbose_logging)
 
     for _, link in pairs(sp_links) do
         fg:remove_link(link.from, link.to, link.from.name)
@@ -323,7 +322,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     if error_found then
         log("RESTARTING without SP links")
         ts = fz_topo.create(fg)
-        error_found = ts:run(false, verbose_logging)
+        error_found = ts:run(false, self.verbose_logging)
     end
 
     return error_found, ts
