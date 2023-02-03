@@ -109,6 +109,10 @@ create_tmp_tech("fake-phosphate-ore")
 create_tmp_tech("fake-ree-ore")
 create_tmp_tech("fake-stone-ore")
 create_tmp_tech("fake-kerogen-ore")
+
+--aluminium
+create_tmp_tech("borax-mine", "glass")
+--create_tmp_tech("aluminium-plate-1")
 end
 
 local function create_tmp_tech(recipe, original_tech, add_dependency)
