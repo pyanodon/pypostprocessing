@@ -92,7 +92,7 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 if mods["PyBlock"] then
-create_tmp_tech("fake-anti-ore")
+--create_tmp_tech("fake-anti-ore")
 create_tmp_tech("fake-borax-ore")
 --create_tmp_tech("fake-copper-ore")
 create_tmp_tech("fake-moly-ore")
