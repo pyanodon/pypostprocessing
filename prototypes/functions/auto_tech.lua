@@ -259,12 +259,15 @@ function auto_tech:run()
 
         if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
             local count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
-            set_tech_property(tech, {unit = {count = count}})
-            tech.unit.count = count
-            sum_total_packs = sum_total_packs + tech.unit.count
+            local turd_adjusted_count = count
+            if tech.is_turd then turd_adjusted_count = count * 5 end
+
+            set_tech_property(tech, {unit = {count = turd_adjusted_count}})
+            tech.unit.count = turd_adjusted_count
+            sum_total_packs = sum_total_packs + count
 
             if node.mandatory then
-                sum_mand_packs = sum_mand_packs + tech.unit.count
+                sum_mand_packs = sum_mand_packs + count
             end
         elseif tech and tech.name == config.WIN_GAME_TECH then
             set_tech_property(tech, {unit = {count = config.TC_WIN_TECH_COST_OVERRIDE}})
