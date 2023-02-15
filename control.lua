@@ -6,6 +6,10 @@ script.on_configuration_changed(function()
 	   force.reset_technologies()
 	   force.reset_technology_effects()
 	end
+
+	if remote.interfaces['pywiki_turd_page'] then
+		for _, force in pairs(game.forces) do remote.call('pywiki_turd_page', 'reapply_turd_bonuses', force) end
+	end
 end)
 
 
