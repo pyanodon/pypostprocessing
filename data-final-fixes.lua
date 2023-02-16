@@ -92,27 +92,15 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 if mods["PyBlock"] then
---create_tmp_tech("fake-anti-ore")
-create_tmp_tech("fake-borax-ore")
---create_tmp_tech("fake-copper-ore")
-create_tmp_tech("fake-moly-ore")
-create_tmp_tech("fake-nio-ore")
---create_tmp_tech("fake-aluminium-ore")
 create_tmp_tech("fake-bioreserve-ore")
---create_tmp_tech("fake-chrome-ore")
-create_tmp_tech("fake-lead-ore")
-create_tmp_tech("fake-nickel-ore")
---create_tmp_tech("fake-tin-ore")
-create_tmp_tech("fake-titanium-ore")
-create_tmp_tech("fake-zinc-ore")
-create_tmp_tech("fake-phosphate-ore")
-create_tmp_tech("fake-ree-ore")
-create_tmp_tech("fake-stone-ore")
+
 create_tmp_tech("fake-kerogen-ore")
+
+create_tmp_tech("flavonoids", "yaedols")
+create_tmp_tech("biofactory-mk01", "yaedols")
 
 --aluminium
 create_tmp_tech("borax-mine", "glass")
---create_tmp_tech("aluminium-plate-1")
 end
 
 local function create_tmp_tech(recipe, original_tech, add_dependency)
