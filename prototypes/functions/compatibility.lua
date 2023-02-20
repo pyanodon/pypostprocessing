@@ -372,6 +372,10 @@ if mods['nixie-tubes'] then
     TECHNOLOGY('cathodes'):remove_pack('logistic-science-pack'):remove_prereq('advanced-electronics')
 end
 
+if mods['Teleporters'] and mods['pyalternativeenergy'] then
+    TECHNOLOGY('teleporter'):remove_prereq('battery'):add_prereq('battery-mk01')
+end
+
 if mods['pushbutton'] then
     RECIPE('pushbutton'):remove_ingredient('advanced-circuit')
 end
