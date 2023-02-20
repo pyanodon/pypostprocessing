@@ -3,6 +3,8 @@ Version: 0.2.5
 Date: 2023-2-??
   Features:
     - Added a command, /check-technology-consistency, to fix techs if the player breaks them by adding/removing mods
+  Changes:
+    - Added compatibility with the Teleporters mod.
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.4
 Date: 2023-1-31
