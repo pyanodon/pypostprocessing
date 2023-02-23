@@ -260,7 +260,7 @@ function auto_tech:run()
         if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
             local count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
             local turd_adjusted_count = count
-            if tech.is_turd then turd_adjusted_count = count * 5 end
+            if tech.is_turd then turd_adjusted_count = count * 10 end
 
             set_tech_property(tech, {unit = {count = turd_adjusted_count}})
             tech.unit.count = turd_adjusted_count
