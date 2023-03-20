@@ -52,12 +52,10 @@ local config = {
     end,
 
     NON_PRODDABLE_ITEMS = {
-        ['barrel-milk'] = true,
         ['empty-barrel-milk'] = true,
         ['empty-barrel'] = true,
         ['methanol-gas-canister'] = true,
         ['empty-gas-canister'] = true,
-        ['steam'] = true,
         ['cage'] = true,
         ['empty-fuel-canister'] = true,
     }
