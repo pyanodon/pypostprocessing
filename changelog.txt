@@ -3,6 +3,7 @@ Version: 0.2.6
 Date: ?
   Changes:
     - Updated compatibility with the Bulk Rail Loader mod.
+    - Prevented cages, barrels, canisters, ect from being duplicated with prod modules
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.5
 Date: 2023-2-??

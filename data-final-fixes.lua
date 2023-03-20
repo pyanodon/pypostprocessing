@@ -4,6 +4,7 @@ local create_cache_mode = settings.startup["pypp-create-cache"].value
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
 local table = require('__stdlib__/stdlib/utils/table')
+local config = require "prototypes.config"
 
 for _, module in pairs(data.raw.module) do
     local remove_recipe = {}
@@ -43,18 +44,26 @@ for _, module in pairs(data.raw.module) do
     end
 end
 
-
 for _, recipe in pairs(data.raw.recipe) do
-    if recipe.results and table.size(recipe.results) == 1 then
-        local product = recipe.results[1]
-        --log(serpent.block(recipe))
-        --log(serpent.block(recipe.results))
-        --log(serpent.block(product))
-        if product ~= nil and (product.amount or product[2]) ~= 1 then
-            recipe.always_show_products = true
+    recipe.always_show_products = true
+    recipe.always_show_made_in = true
+    if recipe.results or recipe.result then
+        if not recipe.results then
+            recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = 'item'}}
+            recipe.result = nil
+            recipe.result_count = nil
         end
-    elseif recipe.result_amount ~= 1 then
-        recipe.always_show_products = true
+        for i, result in pairs(recipe.results) do
+            local name = result.name or result[1]
+            local amount = result.amount or result[2]
+            if name and config.NON_PRODDABLE_ITEMS[name] and not result.catalyst_amount then
+                if result[1] then
+                    recipe.results[i] = {type = result.type or 'item', name = name, amount = amount, catalyst_amount = amount}
+                else
+                    result.catalyst_amount = amount
+                end
+            end
+        end
     end
 end
 

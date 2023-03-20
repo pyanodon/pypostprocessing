@@ -49,7 +49,18 @@ local config = {
             multiplier = math.min(multiplier, multipliers[pack] or 10)
         end
         return multiplier
-    end
+    end,
+
+    NON_PRODDABLE_ITEMS = {
+        ['barrel-milk'] = true,
+        ['empty-barrel-milk'] = true,
+        ['empty-barrel'] = true,
+        ['methanol-gas-canister'] = true,
+        ['empty-gas-canister'] = true,
+        ['steam'] = true,
+        ['cage'] = true,
+        ['empty-fuel-canister'] = true,
+    }
 }
 
 -- If an item unlocks an entity(s) that're not in its place_result:
