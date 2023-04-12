@@ -55,11 +55,11 @@ local function get_modlist_string()
 end
 
 function auto_tech:create_cachefile_code()
-    local result = science_pack_string
+    local result = '<BEGINPYPP>' .. science_pack_string
     for tech_name, update in pairs(tech_updates) do
         result = result .. 'fix_tech("' .. tech_name .. '",' .. serpent.line(update, {compact = true}) .. ')\n'
     end
-    log(result)
+    log(result .. '<ENDPYPP>')
     error('\n\n\n\n----------------------------------------------\nSuccess! pypostprocessing config file was created @ factorio-current.log\n'..get_modlist_string()..'\n----------------------------------------------\n\n\n\n', 10)
 end
 
