@@ -4,6 +4,8 @@ on:
   pull_request_target:
     branches:
     - main
+    paths-ignore:
+      - 'cached-configs/**'
 
 permissions:
   contents: read
