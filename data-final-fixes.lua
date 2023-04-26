@@ -67,6 +67,113 @@ for _, recipe in pairs(data.raw.recipe) do
     end
 end
 
+-------------------------------------------
+-- Resource category locale builder --
+-------------------------------------------
+
+-- List below only includes py resource category names
+local category_data = {
+    --borax = {'raw-borax', 'ore-quartz'}
+    ['borax'] = {''},
+    ['niobium'] = {''},
+    ['volcanic-pipe'] = {''},
+    ['molybdenum'] = {''},
+    ['regolite'] = {''},
+    ['ore-quartz'] = {''},
+    ['salt-rock'] = {''},
+    ['phosphate-rock-02'] = {''},
+    ['iron-rock'] = {''},
+    ['coal-rock'] = {''},
+    ['lead-rock'] = {''},
+    ['quartz-rock'] = {''},
+    ['aluminium-rock'] = {''},
+    ['chromium-rock'] = {''},
+    ['copper-rock'] = {''},
+    ['nexelit-rock'] = {''},
+    ['nickel-rock'] = {''},
+    ['tin-rock'] = {''},
+    ['titanium-rock'] = {''},
+    ['uranium-rock'] = {''},
+    ['zinc-rock'] = {''},
+    ['phosphate'] = {''},
+    ['rare-earth'] = {''},
+    ['oil-sand'] = {''},
+    ['oil-mk01'] = {''},
+    ['oil-mk02'] = {''},
+    ['tar-patch'] = {''},
+    ['sulfur-patch'] = {''},
+    ['oil-mk03'] = {''},
+    ['oil-mk04'] = {''},
+    ['bitumen-seep'] = {''},
+    ['natural-gas'] = {''},
+    ['ralesia-flowers'] = {''},
+    ['tuuphra-tuber'] = {''},
+    ['rennea-flowers'] = {''},
+    ['grod-flower'] = {''},
+    ['yotoi-tree'] = {''},
+    ['yotoi-tree-fruit'] = {''},
+    ['kicalk-tree'] = {''},
+    ['arum'] = {''},
+    ['ore-bioreserve'] = {''},
+    ['ore-nexelit'] = {''},
+    ['geothermal-crack'] = {''},
+    ['ree'] = {''},
+    ['antimonium'] = {''},
+    ['mova'] = {''}
+}
+for resource, proto in pairs(data.raw.resource) do
+    local category_name = proto.category or 'basic-solid'
+    local entry = category_data[category_name]
+    if entry then
+        -- Add our autoplace control name which helpfully has the icon
+        entry[#entry+1] = {
+            '?',
+            {
+                '',
+                #entry > 1 and ', ' or '',
+                {
+                    '?',
+                    {
+                        'autoplace-control-names.' .. resource
+                    },
+                    {
+                        '',
+                        '[img=entity.' .. resource .. ']',
+                        {'entity-name.' .. resource}
+                    }
+                }
+            }
+        }
+    end
+end
+for category_name, proto in pairs(data.raw['resource-category']) do
+    local resource_list = category_data[category_name]
+    if resource_list then
+        -- Just one entry besides the string concat
+        if #resource_list == 2 then
+            -- resource name, not autoplace - no icon. absolutely cursed indexing.
+            local ore_locale = resource_list[2][2][3][3][3][1]
+            -- {'!'} here just functions to tell '?' to skip the entry
+            proto.localised_name = {'?', proto.localised_name or {'!'}, {ore_locale}}
+            -- resource description just transposed here
+            ore_locale = ore_locale:gsub('%-name%.', '-description.')
+            proto.localised_description = {'?', proto.localised_description or {'!'}, {ore_locale}}
+        else
+            proto.localised_description = {
+                '?',
+                {
+                    '',
+                    proto.localised_description or {'resource-category-description.' .. category_name},
+                    '\n',
+                    resource_list
+                },
+                resource_list
+            }
+        end
+    end
+end
+-- End resource category locale builder
+
 local function create_tmp_tech(recipe, original_tech, add_dependency)
     local new_tech = TECHNOLOGY {
         type = "technology",
