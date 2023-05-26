@@ -6,7 +6,7 @@ local table = require '__stdlib__.stdlib.utils.table'
 
 if mods['pyrawores'] then
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled == nil or recipe.enabled == true then
+        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
             RECIPE(recipe):replace_ingredient('coal', 'raw-coal')
         end
     end
