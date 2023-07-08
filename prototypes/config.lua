@@ -78,6 +78,10 @@ if mods["pypetroleumhandling"] then
     config.ENTITY_SCRIPT_UNLOCKS["tar-seep-mk04"] = { "tar-extractor-mk04", "tar-patch" }
 end
 
+if mods["pyalienlife"] then
+    config.STARTING_ITEMS["guano"] = true
+end
+
 if mods["pyalternativeenergy"] then
     config.ENTITY_SCRIPT_UNLOCKS["numal-reef-mk01"] = { "numal-reef-mk01" }
     config.ENTITY_SCRIPT_UNLOCKS["numal-reef-mk02"] = { "numal-reef-mk02" }
