@@ -79,7 +79,7 @@ if mods["pypetroleumhandling"] then
 end
 
 if mods["pyalienlife"] then
-    config.STARTING_ITEMS["guano"] = true
+    config.STARTING_ITEMS:add("guano")
 end
 
 if mods["pyalternativeenergy"] then
