@@ -24,4 +24,11 @@ data:extend(
         hidden = true,
         order = "e",
     },
+    {
+        type = "bool-setting",
+        name = "pypp-big-inventory-gui",
+        setting_type = "startup",
+        default_value = false,
+        order = "e",
+    }
 })

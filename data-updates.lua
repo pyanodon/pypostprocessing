@@ -54,3 +54,8 @@ for _, prototype in pairs{"assembling-machine", "furnace"} do
         ::continue::
     end
 end
+
+if settings.startup["pypp-big-inventory-gui"].value then
+    data.raw["utility-constants"]["default"].select_slot_row_count = 17
+    data.raw["utility-constants"]["default"].select_group_row_count = 100
+end
