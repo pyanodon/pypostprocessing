@@ -6,6 +6,7 @@ Date: ?
     - improve ALT-mode icon size for the largest machines.
     - added optional big inventory GUI mode
     - added integration with YAFC (Simon Weinberger)
+    - fixed unkown key error with "gear girl character" mod
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: 2023-4-16
