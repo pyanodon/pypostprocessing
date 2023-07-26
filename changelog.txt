@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.9
-Date: ?
+Date: 2023-7-25
   Changes:
     - update chinese translation. (sdqwo)
     - improve ALT-mode icon size for the largest machines.
