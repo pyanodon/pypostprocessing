@@ -143,7 +143,7 @@ if mods['pyalienlife'] then
                 name = 'nexelit-from-' .. food_name .. '-' .. y[1],
                 energy_required = y[3] * y[4] / 60,
                 ingredients = {
-                    {type = 'item', name = food_name, amount = 1},
+                    {type = 'item', name = food_name, amount = 4},
                     {type = 'item', name = y[1], amount = 4}
                 },
                 results = {
