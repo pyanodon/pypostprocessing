@@ -32,7 +32,8 @@ local pymods = {
 	'pypetroleumhandling',
 	'pyhightech',
 	'pyalienlife',
-	'pyalternativeenergy'
+	'pyalternativeenergy',
+	'pyblock'
 }
 local success = false
 local function run_cache_files(subset)
@@ -74,6 +75,9 @@ run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores',
 run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife'}
 run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech'}
 run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy'}
+
+-- PyBlock
+run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pyblock'}
 
 if not success then
 	error('pypostprocessing was not loaded correctly! Please report this')
