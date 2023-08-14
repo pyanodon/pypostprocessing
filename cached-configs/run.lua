@@ -33,7 +33,7 @@ local pymods = {
 	'pyhightech',
 	'pyalienlife',
 	'pyalternativeenergy',
-	'pyblock'
+	'PyBlock'
 }
 local success = false
 local function run_cache_files(subset)
@@ -51,7 +51,9 @@ local function run_cache_files(subset)
 	success = true
 
 	table.sort(subset)
-	require(table.concat(subset, '+'))
+	subset = table.concat(subset, '+')
+	log('running cached config ' .. subset)
+	require(subset)
 end
 
 -- simple py
@@ -77,7 +79,7 @@ run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores',
 run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy'}
 
 -- PyBlock
-run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pyblock'}
+run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
 
 if not success then
 	error('pypostprocessing was not loaded correctly! Please report this')
