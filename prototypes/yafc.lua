@@ -199,7 +199,8 @@ if mods['pyalienlife'] then
         result = 'hidden-beacon-turd'
     }
 
-    local tech_upgrades = require('__pyalienlife__/prototypes/upgrades/tech-upgrades')
+    _G.yafc_turd_integration = true
+    local tech_upgrades, farm_building_tiers = table.unpack(require '__pyalienlife__/prototypes/upgrades/tech-upgrades')
     for _, tech_upgrade in pairs(tech_upgrades) do
         local master_tech = tech_upgrade.master_tech
         for _, tech in pairs(tech_upgrade.sub_techs) do
