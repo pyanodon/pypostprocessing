@@ -210,11 +210,6 @@ end
 if mods["PyBlock"] then
 create_tmp_tech("fake-bioreserve-ore")
 
-create_tmp_tech("fake-kerogen-ore")
-
-create_tmp_tech("flavonoids", "yaedols")
-create_tmp_tech("biofactory-mk01", "yaedols")
-
 --aluminium
 create_tmp_tech("borax-mine", "glass")
 end
