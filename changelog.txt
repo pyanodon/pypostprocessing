@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.10
-Date: 2023-7-25
+Date: ?
   Changes:
     - fixed too high food amounts in yafc integration for digosaur recipes
+    - improve TURD support in yafc
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.9
 Date: 2023-7-25
