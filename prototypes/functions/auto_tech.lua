@@ -34,20 +34,9 @@ local function science_pack_order(science_pack, order)
     science_pack_string = science_pack_string .. 'science_pack_order("' .. science_pack .. '","' .. order .. '")\n'
 end
 
-local pymods = {
-	'pycoalprocessing',
-	'pyindustry',
-	'pyfusionenergy',
-	'pyrawores',
-	'pypetroleumhandling',
-	'pyhightech',
-	'pyalienlife',
-	'pyalternativeenergy',
-    'PyBlock'
-}
 local function get_modlist_string()
     local modlist = {}
-    for _, mod in pairs(pymods) do
+    for _, mod in pairs(config.PYMODS) do
         if mods[mod] then modlist[#modlist+1] = mod end
     end
     table.sort(modlist)
@@ -139,7 +128,7 @@ function auto_tech:run()
     error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
 
     if error_found then
-        local msg = "\n\nERROR: Dependency loop detected\n"
+        local msg = "\n\nERROR: Dependency loop detected in step 1\n"
         error(msg)
     end
 
@@ -148,7 +137,7 @@ function auto_tech:run()
     error_found, ts = self:topo_sort_with_sp(fg2, spg, parser.science_packs)
 
     if error_found then
-        local msg = "\n\nERROR: Dependency loop detected\n"
+        local msg = "\n\nERROR: Dependency loop detected in step 2\n"
         error(msg)
     end
 
@@ -157,7 +146,7 @@ function auto_tech:run()
     error_found = tech_ts:run(false, false)
 
     if error_found then
-        local msg = "\n\nERROR: Dependency loop detected\n"
+        local msg = "\n\nERROR: Dependency loop detected in step 3\n"
         error(msg)
     end
 

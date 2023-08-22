@@ -9,7 +9,21 @@ local config = {
 
     PY_GRAPHICS_MODS = list.fromArray { "__pyalienlifegraphics__", "__pyalienlifegraphics2__", "__pyalienlifegraphics3__",
         "__pyalternativeenergygraphics__", "__pycoalprocessinggraphics__", "__pyfusionenergygraphics__", "__pyhightechgraphics__",
-        "__pyindustry__", "__pypetroleumhandlinggraphics__", "__pyraworesgraphics__" },
+        "__pyindustry__", "__pypetroleumhandlinggraphics__", "__pyraworesgraphics__", "__pyaliensgraphics__", "__pystellarexpeditiongraphics__" },
+
+    PYMODS = {
+        'pycoalprocessing',
+        'pyindustry',
+        'pyfusionenergy',
+        'pyrawores',
+        'pypetroleumhandling',
+        'pyhightech',
+        'pyalienlife',
+        'pyalternativeenergy',
+        'PyBlock',
+        'pystellarexpedition',
+        'pyaliens'
+    },
 
     ENTITY_SCRIPT_UNLOCKS = {},
 
@@ -91,17 +105,32 @@ end
 
 
 -- Research time if the science pack is the highest on the tech
-config.TC_SCIENCE_PACK_TIME["automation-science-pack"] = 30
-config.TC_SCIENCE_PACK_TIME["py-science-pack-1"] = 45
-config.TC_SCIENCE_PACK_TIME["logistic-science-pack"] = 60
-config.TC_SCIENCE_PACK_TIME["military-science-pack"] = 90
-config.TC_SCIENCE_PACK_TIME["py-science-pack-2"] = 90
-config.TC_SCIENCE_PACK_TIME["chemical-science-pack"] = 120
-config.TC_SCIENCE_PACK_TIME["py-science-pack-3"] = 180
-config.TC_SCIENCE_PACK_TIME["production-science-pack"] = 300
-config.TC_SCIENCE_PACK_TIME["py-science-pack-4"] = 450
-config.TC_SCIENCE_PACK_TIME["utility-science-pack"] = 600
-config.TC_SCIENCE_PACK_TIME["space-science-pack"] = 1200
+if mods.pystellarexpedition then
+    config.TC_SCIENCE_PACK_TIME["automation-science-pack"] = 30
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-1"] = 45
+    config.TC_SCIENCE_PACK_TIME["logistic-science-pack"] = 60
+    config.TC_SCIENCE_PACK_TIME["military-science-pack"] = 90
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-2"] = 120
+    config.TC_SCIENCE_PACK_TIME["chemical-science-pack"] = 160
+    config.TC_SCIENCE_PACK_TIME["stellar-science-pack"] = 220
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-3"] = 300
+    config.TC_SCIENCE_PACK_TIME["production-science-pack"] = 450
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-4"] = 600
+    config.TC_SCIENCE_PACK_TIME["utility-science-pack"] = 1200
+    config.TC_SCIENCE_PACK_TIME["space-science-pack"] = 1800
+else
+    config.TC_SCIENCE_PACK_TIME["automation-science-pack"] = 30
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-1"] = 45
+    config.TC_SCIENCE_PACK_TIME["logistic-science-pack"] = 60
+    config.TC_SCIENCE_PACK_TIME["military-science-pack"] = 90
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-2"] = 90
+    config.TC_SCIENCE_PACK_TIME["chemical-science-pack"] = 120
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-3"] = 180
+    config.TC_SCIENCE_PACK_TIME["production-science-pack"] = 300
+    config.TC_SCIENCE_PACK_TIME["py-science-pack-4"] = 450
+    config.TC_SCIENCE_PACK_TIME["utility-science-pack"] = 600
+    config.TC_SCIENCE_PACK_TIME["space-science-pack"] = 1200
+end
 
 
 -- PRIMARY_PRODUCTION_RECIPE means the recipe that unlocks first.

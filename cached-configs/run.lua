@@ -1,3 +1,5 @@
+local config = require 'prototypes.config'
+
 local function merge(table, value)
 	for k, v in pairs(value) do
 		if type(v) == 'table' and k ~= 'prerequisites' and k ~= 'ingredients' then
@@ -24,23 +26,12 @@ function _G.science_pack_order(science_pack, order)
 	sp.order = order
 end
 
-local pymods = {
-	'pycoalprocessing',
-	'pyindustry',
-	'pyfusionenergy',
-	'pyrawores',
-	'pypetroleumhandling',
-	'pyhightech',
-	'pyalienlife',
-	'pyalternativeenergy',
-	'PyBlock'
-}
 local success = false
 local function run_cache_files(subset)
 	local truth_table = {}
 	for _, mod in pairs(subset) do truth_table[mod] = true end
 	
-	for _, pymod in pairs(pymods) do
+	for _, pymod in pairs(config.PYMODS) do
 		if (not truth_table[pymod]) ~= (not mods[pymod]) then
 			-- the current modlist does match input
 			return
@@ -80,6 +71,10 @@ run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores',
 
 -- PyBlock
 run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
+
+-- space py
+run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pystellarexpedition'}
+run_cache_files{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pystellarexpedition', 'pyaliens'}
 
 if not success then
 	error('pypostprocessing was not loaded correctly! Please report this')

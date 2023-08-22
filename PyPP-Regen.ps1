@@ -28,7 +28,9 @@ ForEach($ModCombination in $ModCombinations){
         "pyfusionenergygraphics",
         "pyhightechgraphics",
         "pypetroleumhandlinggraphics",
-        "pyraworesgraphics"
+        "pyraworesgraphics",
+        "pyaliensgraphics",
+        "pystellarexpeditiongraphics"
     )
     $FullModList = "$ModCombination+$($BaseMods -join '+')" -split "\+"
     $ModListContent = (Get-Content $ModListJson -Raw).Replace("true", "false")

@@ -208,89 +208,82 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 if mods["PyBlock"] then
-create_tmp_tech("fake-bioreserve-ore")
-
---aluminium
-create_tmp_tech("borax-mine", "glass")
-end
-
-local function create_tmp_tech(recipe, original_tech, add_dependency)
-    local new_tech = TECHNOLOGY {
-        type = "technology",
-        name = "tmp-" .. recipe .. "-tech",
-        icon = "__pypostprocessing__/graphics/placeholder.png",
-        icon_size = 128,
-        order = "c-a",
-        prerequisites = {},
-        effects = {
-            { type = "unlock-recipe", recipe = recipe }
-        },
-        unit = {
-            count = 30,
-            ingredients = {
-                {"automation-science-pack", 1}
-            },
-            time = 30
-        }
-    }
-
-    RECIPE(recipe):set_enabled(false)
-
-    if original_tech then
-        RECIPE(recipe):remove_unlock(original_tech)
-
-        if add_dependency then
-            new_tech.dependencies = { original_tech }
-        end
-    end
-
-    return new_tech
-end
-
-
--- TMP TECHS HERE --
--- create_tmp_tech(<recipe-name>): Create tmp tech with only that recipe
--- create_tmp_tech(<recipe-name>, <tech-name>): Create tmp tech with only that recipe, and remove it from tech
-if mods["pyalienlife"] and mods["pyhightech"] then
-    -- create_tmp_tech("salt-mine", "electrolysis")
-end
-
-if mods["pyalternativeenergy"] then
-
+    create_tmp_tech("fake-bioreserve-ore")
+    --aluminium
+    create_tmp_tech("borax-mine", "glass")
 end
 
 ----------------------------------------------------
 -- TECHNOLOGY CHANGES
 ----------------------------------------------------
 
-for _, tech in pairs(data.raw.technology) do
-    local science_packs = {}
-    local function add_science_pack_dep(t, science_pack, dep_pack)
-        if science_packs[science_pack] and not science_packs[dep_pack] then
-            TECHNOLOGY(t):add_pack(dep_pack)
-            science_packs[dep_pack] = true
+if mods['pystellarexpedition'] then
+    local order = {
+        'automation-science-pack',
+        'py-science-pack-1',
+        'logistic-science-pack',
+        'military-science-pack',
+        'py-science-pack-2',
+        'chemical-science-pack',
+        'stellar-science-pack',
+        'py-science-pack-3',
+        'production-science-pack',
+        'py-science-pack-4',
+        'utility-science-pack',
+        'space-science-pack',
+    }
+    local inverted = {}
+    for i, science_pack in pairs(order) do
+        inverted[science_pack] = i
+    end
+
+    for _, tech in pairs(data.raw.technology) do
+        local science_packs = {}
+        local highest = 'automation-science-pack'
+        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
+            pack = pack.name or pack[1]
+            science_packs[pack] = true
+            if inverted[pack] and inverted[highest] < inverted[pack] then
+                highest = pack
+            end
+        end
+
+        for i = 1, inverted[highest] do
+            local to_add = order[i]
+            if not science_packs[to_add] then
+                TECHNOLOGY(tech):add_pack(to_add)
+            end
         end
     end
+else
+    for _, tech in pairs(data.raw.technology) do
+        local science_packs = {}
+        local function add_science_pack_dep(t, science_pack, dep_pack)
+            if science_packs[science_pack] and not science_packs[dep_pack] then
+                TECHNOLOGY(t):add_pack(dep_pack)
+                science_packs[dep_pack] = true
+            end
+        end
 
-    for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-        science_packs[pack.name or pack[1]] = true
-    end
+        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
+            science_packs[pack.name or pack[1]] = true
+        end
 
-    add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
+        add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
 
-    if mods["pyalienlife"] then
-        add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
-        add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
-        add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
-        add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
-        add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
-    end
+        if mods["pyalienlife"] then
+            add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
+            add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
+            add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
+            add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
+            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
+        end
 
-    if mods["pyalternativeenergy"] then
-        add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+        if mods["pyalternativeenergy"] then
+            add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+        end
     end
 end
-
 
 if dev_mode then
     log("AUTOTECH START")
