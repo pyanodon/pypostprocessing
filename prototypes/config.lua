@@ -36,11 +36,11 @@ local config = {
     TC_OPTIONAL_RECIPE_COUNT_MULT = 1/16,
     TC_BASE_MULT = 3600 * 0.2,
     TC_SCIENCE_PACK_TIME = {},
-    TC_SCIENCE_PACK_MULT = {1, 2, 3, 6},
-    TC_SCIENCE_PACK_MULT_STEP = 10,
+    TC_SCIENCE_PACK_MULT = mods.pystellarexpedition and {1, 2, 4, 6, 8, 10, 20, 30, 40, 50, 80} or {1, 2, 3, 6},
+    TC_SCIENCE_PACK_MULT_STEP = mods.pystellarexpedition and 100 or 10,
     TC_STARTING_TECH_COST = 20,
-    TC_WIN_TECH_COST = 500,
-    TC_WIN_TECH_COST_OVERRIDE = 3000,
+    TC_WIN_TECH_COST = mods.pystellarexpedition and 2000 or 500,
+    TC_WIN_TECH_COST_OVERRIDE = mods.pystellarexpedition and 5000 or 3000,
     TC_EXP_THRESHOLD = 0.001,
     TC_COST_ROUNDING_TARGETS = {10, 11, 12, 13, 14, 15, 16, 17.5, 20, 22.5, 25, 27.5, 30, 33, 36, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90},     -- Should be >=10 & <100
     TC_TURD_MULTIPLIER = function(tech)
