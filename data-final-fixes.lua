@@ -225,7 +225,7 @@ if mods['pystellarexpedition'] then
         'military-science-pack',
         'py-science-pack-2',
         'chemical-science-pack',
-        'stellar-science-pack',
+        'space-science-pack-2',
         'py-science-pack-3',
         'production-science-pack',
         'py-science-pack-4',
