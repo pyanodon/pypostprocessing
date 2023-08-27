@@ -109,7 +109,8 @@ if mods['pyalienlife'] then
         {'simik', 'simik-den-mk01'},
         {'yotoi', 'yotoi-aloe-orchard-mk01'},
         {'yaedols', 'yaedols-culture-mk01'},
-        {'zipir1', 'zipir-reef-mk01'}
+        {'zipir1', 'zipir-reef-mk01'},
+        {'kakkalakki-m', 'kakkalakki-habitat-mk01'}
     }
 
     if mods['pyalternativeenergy'] then
