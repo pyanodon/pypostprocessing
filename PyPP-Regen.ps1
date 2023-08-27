@@ -7,17 +7,22 @@ $FactorioArgs = "--mod-directory $FactorioModsPath --benchmark notafile" #Stand 
 $ModCombinations = (Get-ChildItem "$FactorioModsPath\pypostprocessing\cached-configs" -Exclude run.lua).BaseName
 $StartToken = "<BEGINPYPP>" #\1
 $EndToken = "<ENDPYPP>" #\2
-# Enable PyPP dev mode
+
 $PyPPConfigPath = "$FactorioModsPath\pypostprocessing\settings-updates.lua"
 $PyPPPrevConfig = Get-Content -Path $PyPPConfigPath -Raw
-$PyPPConfig = $PyPPPrevConfig.Replace('data.raw["bool-setting"]["pypp-dev-mode"].forced_value  = false', 'data.raw["bool-setting"]["pypp-dev-mode"].forced_value  = true')
-$PyPPConfig = $PyPPConfig.Replace('data.raw["bool-setting"]["pypp-create-cache"].forced_value  = false', 'data.raw["bool-setting"]["pypp-create-cache"].forced_value  = true')
+$ModListJson = "$FactorioModsPath\mod-list.json"
+$ModListJsonPrevContent = Get-Content $ModListJson -Raw
 
 #this restores the settings even if someone control+C kills the script. Won't work if you exit the containing shell though...
-Register-EngineEvent PowerShell.Exiting –Action { Set-Content -Path $PyPPConfigPath -Value $PyPPPrevConfig -Encoding UTF8 -NoNewline }
+Register-EngineEvent PowerShell.Exiting –Action{
+    Set-Content -Path $PyPPConfigPath -Value $PyPPPrevConfig -Encoding UTF8 -NoNewline
+    Set-Content -Path $ModListJson -Value $ModListJsonPrevContent -Encoding UTF8 -NoNewline
+}
 
+# Enable PyPP dev mode
+$PyPPConfig = $PyPPPrevConfig.Replace('data.raw["bool-setting"]["pypp-dev-mode"].forced_value  = false', 'data.raw["bool-setting"]["pypp-dev-mode"].forced_value  = true')
+$PyPPConfig = $PyPPConfig.Replace('data.raw["bool-setting"]["pypp-create-cache"].forced_value  = false', 'data.raw["bool-setting"]["pypp-create-cache"].forced_value  = true')
 Set-Content -Path $PyPPConfigPath -Value $PyPPConfig -Encoding UTF8 -NoNewline
-$ModListJson = "$FactorioModsPath\mod-list.json"
 ForEach($ModCombination in $ModCombinations){
     $ModList = $ModCombination -split "\+"
     $BaseMods = @(
@@ -61,5 +66,4 @@ ForEach($ModCombination in $ModCombinations){
         Read-Host -Prompt "Mod Set $ModCombination did not load successfully. Pausing for dramatic effect and so you can read the error message."
     }
 }
-$PyPPPrevConfig | Out-File -FilePath $PyPPConfigPath -Encoding utf8
 pause
