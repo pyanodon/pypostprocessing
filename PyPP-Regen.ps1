@@ -17,6 +17,7 @@ $ModListJsonPrevContent = Get-Content $ModListJson -Raw
 Register-EngineEvent PowerShell.Exiting –Action{
     Set-Content -Path $PyPPConfigPath -Value $PyPPPrevConfig -Encoding UTF8 -NoNewline
     Set-Content -Path $ModListJson -Value $ModListJsonPrevContent -Encoding UTF8 -NoNewline
+    Remove-Item -Path "$FactorioDataPath\.lock" -Force
 }
 
 # Enable PyPP dev mode
