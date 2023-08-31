@@ -4,6 +4,7 @@ Date: ?
   Changes:
     - fixed too high food amounts in yafc integration for digosaur recipes
     - improve TURD support in yafc
+    - all assembling machines will now have match_animation_speed_to_activity = false
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.9
 Date: 2023-7-25

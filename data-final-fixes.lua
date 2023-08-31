@@ -311,6 +311,12 @@ if mods['pycoalprocessing'] then
     end
 end
 
+for _, type in pairs{'furnace', 'assembling-machine'} do
+    for _, prototype in pairs(data.raw[type]) do
+        prototype.match_animation_speed_to_activity = false
+    end
+end
+
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
