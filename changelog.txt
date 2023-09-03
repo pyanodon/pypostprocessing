@@ -2,6 +2,7 @@
 Version: 0.2.11
 Date: ?
   Changes:
+    - fix crash with cargo ships mod
     - fix crash caused by deadlocks stacking
     - fix crash caused by YAFC
     - fix issue with duplicate science packs crashes in bulk rail loader and train upgrader mods

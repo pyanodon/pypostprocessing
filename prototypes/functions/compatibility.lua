@@ -447,7 +447,7 @@ if mods["aai-loaders"] then
 end
 
 if mods["cargo-ships"] then
-    TECHNOLOGY("water_transport"):remove_prereq("logistics-2"):remove_pack("logistic-science-pack"):add_pack("py-science-pack-1")
-    TECHNOLOGY("cargo_ships"):remove_pack("logistic-science-pack"):add_pack("py-science-pack-1")
-    TECHNOLOGY("automated_water_transport"):remove_pack("logistic-science-pack"):add_pack("py-science-pack-1")
+    TECHNOLOGY("water_transport"):remove_prereq("logistics-2"):remove_pack("logistic-science-pack")
+    TECHNOLOGY("cargo_ships"):remove_pack("logistic-science-pack")
+    TECHNOLOGY("automated_water_transport"):remove_pack("logistic-science-pack")
 end
