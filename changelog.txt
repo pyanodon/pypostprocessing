@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.11
+Date: ?
+  Changes:
+    - fix issue with duplicate science packs crashes in bulk rail loader and train upgrader mods
+---------------------------------------------------------------------------------------------------
 Version: 0.2.10
 Date: 2023-9-3
   Changes:
