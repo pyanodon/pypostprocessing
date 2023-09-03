@@ -40,6 +40,19 @@ if mods['deadlock-beltboxes-loaders'] then
             end
         end
     end
+
+    if data.raw.recipe['deadlock-stacks-stack-ralesia'] then
+        RECIPE('deadlock-stacks-stack-ralesia'):remove_unlock('deadlock-stacking-1')
+        RECIPE('deadlock-stacks-unstack-ralesia'):remove_unlock('deadlock-stacking-1')
+        data.raw.recipe['deadlock-stacks-stack-ralesia'] = nil
+        data.raw.recipe['deadlock-stacks-unstack-ralesia'] = nil
+    end
+    if data.raw.recipe['deadlock-stacks-stack-py-fertilizer'] then
+        RECIPE('deadlock-stacks-stack-py-fertilizer'):remove_unlock('deadlock-stacking-2')
+        RECIPE('deadlock-stacks-unstack-py-fertilizer'):remove_unlock('deadlock-stacking-2')
+        data.raw.recipe['deadlock-stacks-stack-py-fertilizer'] = nil
+        data.raw.recipe['deadlock-stacks-unstack-py-fertilizer'] = nil
+    end
 end
 
 if mods['DeadlockCrating'] then
