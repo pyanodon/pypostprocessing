@@ -121,7 +121,7 @@ if mods['pyindustry'] then
     end
 
     if mods['railloader'] then
-        TECHNOLOGY('railloader'):remove_pack('logistic-science-pack'):add_pack('py-science-pack-1')
+        TECHNOLOGY('railloader'):remove_pack('logistic-science-pack')
         data.raw.technology['railloader'].prerequisites = {'railway-mk01'}
     end
 
@@ -134,7 +134,7 @@ if mods['pyindustry'] then
     end
 
     if mods['train-upgrader'] then
-        TECHNOLOGY('tu-rail-modernization'):add_prereq('railway-mk02'):remove_pack('chemical-science-pack'):add_pack('py-science-pack-2')
+        TECHNOLOGY('tu-rail-modernization'):add_prereq('railway-mk02'):remove_pack('chemical-science-pack')
     end
 end
 
