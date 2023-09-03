@@ -109,13 +109,16 @@ if mods['pyalienlife'] then
         {'simik', 'simik-den-mk01'},
         {'yotoi', 'yotoi-aloe-orchard-mk01'},
         {'yaedols', 'yaedols-culture-mk01'},
-        {'zipir1', 'zipir-reef-mk01'},
-        {'kakkalakki-m', 'kakkalakki-habitat-mk01'}
+        {'zipir1', 'zipir-reef-mk01'}
     }
 
     if mods['pyalternativeenergy'] then
         mod_buildings[#mod_buildings+1] = {'zungror', 'zungror-lair-mk01'}
         mod_buildings[#mod_buildings+1] = {'numal', 'numal-reef-mk01'}
+    end
+
+    if mods['pystellarexpedition'] then
+        mod_buildings[#mod_buildings+1] = {'kakkalakki-m', 'kakkalakki-habitat-mk01'}
     end
 
     for _, x in ipairs(mod_buildings) do
