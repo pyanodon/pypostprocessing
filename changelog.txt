@@ -1,11 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.11
-Date: ?
+Date: 2023-9-4
   Changes:
     - fix crash with cargo ships mod
     - fix crash caused by deadlocks stacking
     - fix crash caused by YAFC
     - fix issue with duplicate science packs crashes in bulk rail loader and train upgrader mods
+    - updated pyblock cache with navens changes
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.10
 Date: 2023-9-3
