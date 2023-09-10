@@ -214,76 +214,8 @@ if mods["PyBlock"] then
 end
 
 ----------------------------------------------------
--- TECHNOLOGY CHANGES
+-- AUTOTECH
 ----------------------------------------------------
-
-if mods['pystellarexpedition'] then
-    local order = {
-        'automation-science-pack',
-        'py-science-pack-1',
-        'logistic-science-pack',
-        'military-science-pack',
-        'py-science-pack-2',
-        'chemical-science-pack',
-        'space-science-pack-2',
-        'py-science-pack-3',
-        'production-science-pack',
-        'py-science-pack-4',
-        'utility-science-pack',
-        'space-science-pack',
-    }
-    local inverted = {}
-    for i, science_pack in pairs(order) do
-        inverted[science_pack] = i
-    end
-
-    for _, tech in pairs(data.raw.technology) do
-        local science_packs = {}
-        local highest = 'automation-science-pack'
-        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-            pack = pack.name or pack[1]
-            science_packs[pack] = true
-            if inverted[pack] and inverted[highest] < inverted[pack] then
-                highest = pack
-            end
-        end
-
-        for i = 1, inverted[highest] do
-            local to_add = order[i]
-            if not science_packs[to_add] then
-                TECHNOLOGY(tech):add_pack(to_add)
-            end
-        end
-    end
-else
-    for _, tech in pairs(data.raw.technology) do
-        local science_packs = {}
-        local function add_science_pack_dep(t, science_pack, dep_pack)
-            if science_packs[science_pack] and not science_packs[dep_pack] then
-                TECHNOLOGY(t):add_pack(dep_pack)
-                science_packs[dep_pack] = true
-            end
-        end
-
-        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-            science_packs[pack.name or pack[1]] = true
-        end
-
-        add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
-
-        if mods["pyalienlife"] then
-            add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
-            add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
-            add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
-            add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
-            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
-        end
-
-        if mods["pyalternativeenergy"] then
-            add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
-        end
-    end
-end
 
 if dev_mode then
     log("AUTOTECH START")
@@ -295,6 +227,40 @@ if dev_mode then
     log("AUTOTECH END")
 else
     require "cached-configs.run"
+end
+
+----------------------------------------------------
+-- TECHNOLOGY CHANGES
+----------------------------------------------------
+
+for _, tech in pairs(data.raw.technology) do
+    local tech_ingredients_to_use = {}
+    local function add_tech_ingredients(ingredient_to_add)
+        tech_ingredients_to_use[#tech_ingredients_to_use+1] = ingredient_to_add
+    end
+
+    local add_military_science = false
+    local highest_science_pack = 'automation-science-pack'
+    for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
+        local pack = ingredient.name or ingredient[1]
+        if pack == "military-science-pack" and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
+            add_military_science = true
+        elseif config.SCIENCE_PACK_INDEX[pack] then
+            if config.SCIENCE_PACK_INDEX[highest_science_pack] < config.SCIENCE_PACK_INDEX[pack] then
+                highest_science_pack = pack
+            end
+        else -- not one of ours, sir
+            add_tech_ingredients(ingredient)
+        end
+    end
+
+    for _, ingredient in pairs(config.TC_TECH_INGREDIENTS_PER_LEVEL[highest_science_pack]) do
+        add_tech_ingredients(ingredient)
+    end
+    if add_military_science then
+        add_tech_ingredients({"military-science-pack", config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]})
+    end
+    tech.unit.ingredients = tech_ingredients_to_use
 end
 
 
