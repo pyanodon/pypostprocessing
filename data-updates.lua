@@ -1,5 +1,5 @@
 local py_utils = require("prototypes.functions.utils")
-
+require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
 local function set_underground_recipe(underground, belt, prev_underground, prev_belt)
     local dist = data.raw['underground-belt'][underground].max_distance + 1
