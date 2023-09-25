@@ -189,7 +189,7 @@ function data_parser:parse_recipe(tech_name, recipe, no_crafting)
        end
     end
 
-    if recipe.unlock_results ~= false then
+    if (recipe.unlock_results ~= false) and not recipe.ignore_in_pypp then
         for _, res in pairs(py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)) do
             if res.type == "item" then
                 self:add_recipe_result_item(res.name, recipe.name, node, ingredients)
@@ -1133,7 +1133,7 @@ function data_parser:pre_process_recipe(recipe)
 
     local r = recipe.normal or recipe
 
-    if recipe.unlock_results ~= false then
+    if (recipe.unlock_results ~= false) and not recipe.ignore_in_pypp then
         for _, res in pairs(py_utils.standardize_products(r.results, nil, r.result, r.result_count)) do
             if res.type == "fluid" then
                 local fluid = data.raw.fluid[res.name]
