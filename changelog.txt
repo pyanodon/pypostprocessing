@@ -3,6 +3,7 @@ Version: 0.2.14
 Date: ???
   Changes:
     - Added support for ignore_in_pypp, which avoids the soot recipes breaking the tech tree.
+    - Added support for decentralised cache files, allowing mods to use their own cache file.
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.13
 Date: 2023-9-16

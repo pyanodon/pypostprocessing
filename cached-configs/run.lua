@@ -47,6 +47,11 @@ local function run_cache_files(subset)
 	require(subset)
 end
 
+if pypp_cache_file_to_use ~= nil then
+	pypp_cache_file_to_use()
+	return
+end
+
 -- simple py
 run_cache_files{'pycoalprocessing'}
 run_cache_files{'pyindustry'}
