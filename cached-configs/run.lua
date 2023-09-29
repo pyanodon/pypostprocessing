@@ -48,8 +48,8 @@ local function run_cache_files(subset)
 end
 
 if pypp_cache_file_to_use ~= nil then
-	pypp_cache_file_to_use()
-	return
+	--pypp_cache_file_to_use()
+	--return
 end
 
 -- simple py
