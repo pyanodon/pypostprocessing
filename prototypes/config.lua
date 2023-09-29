@@ -39,7 +39,7 @@ local config = {
     TC_SCIENCE_PACK_MULT = mods.pystellarexpedition and {1, 2, 4, 6, 8, 10, 20, 30, 40, 50, 80} or {1, 2, 3, 6},
     TC_SCIENCE_PACK_MULT_STEP = mods.pystellarexpedition and 100 or 10,
     TC_STARTING_TECH_COST = 20,
-    TC_WIN_TECH_COST = mods.pystellarexpedition and 2000 or 500,
+    TC_WIN_TECH_COST = mods.pystellarexpedition and 5000 or 500,
     TC_WIN_TECH_COST_OVERRIDE = mods.pystellarexpedition and 5000 or 3000,
     TC_EXP_THRESHOLD = 0.001,
     TC_COST_ROUNDING_TARGETS = {10, 11, 12, 13, 14, 15, 16, 17.5, 20, 22.5, 25, 27.5, 30, 33, 36, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90},     -- Should be >=10 & <100
@@ -192,17 +192,17 @@ end
 -- Research cost if the science pack is the highest on the tech
 if mods.pystellarexpedition then
     config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["automation-science-pack"] = {1}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-1"] = {1,2}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["logistic-science-pack"] = {1,2,3}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["military-science-pack"] = {1,2,3,6}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-2"] = {1,2,3,6,10}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["chemical-science-pack"] = {1,2,3,6,10,20}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["space-science-pack-2"] = {1,2,3,6,10,20,30}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-3"] = {1,2,3,6,10,20,30,60}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["production-science-pack"] = {1,2,3,6,10,20,30,60,100}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-4"] = {1,2,3,6,10,20,30,60,100,200}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["utility-science-pack"] = {1,2,3,6,10,20,30,60,100,200,300}
-    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["space-science-pack"] = {1,2,3,6,10,20,30,60,100,200,300,600}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-1"] = {1, 2}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["logistic-science-pack"] = {1, 2, 4}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["military-science-pack"] = {1, 2, 4, 6}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-2"] = {1, 2, 4, 6, 8}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["chemical-science-pack"] = {1, 2, 4, 6, 8, 10}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["space-science-pack-2"] = {1, 2, 4, 6, 8, 10, 20}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-3"] = {1, 2, 4, 6, 8, 10, 20, 30}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["production-science-pack"] = {1, 2, 4, 6, 8, 10, 20, 30, 40}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-4"] = {1, 2, 4, 6, 8, 10, 20, 30, 40, 50}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["utility-science-pack"] = {1, 2, 4, 6, 8, 10, 20, 30, 40, 50, 80}
+    config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["space-science-pack"] = {1, 2, 4, 6, 8, 10, 20, 30, 40, 50, 80, 100}
 elseif mods.pyalienlife then
     config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["automation-science-pack"] = {1}
     config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL["py-science-pack-1"] = {1,2}
