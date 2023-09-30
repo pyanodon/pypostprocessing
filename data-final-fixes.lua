@@ -234,6 +234,10 @@ end
 ----------------------------------------------------
 
 for _, tech in pairs(data.raw.technology) do
+    if tech.unit == nil then
+        goto continue
+    end
+
     local tech_ingredients_to_use = {}
     local function add_tech_ingredients(ingredient_to_add)
         tech_ingredients_to_use[#tech_ingredients_to_use+1] = ingredient_to_add
@@ -261,6 +265,7 @@ for _, tech in pairs(data.raw.technology) do
         add_tech_ingredients({"military-science-pack", config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]})
     end
     tech.unit.ingredients = tech_ingredients_to_use
+    ::continue::
 end
 
 
