@@ -218,6 +218,35 @@ end
 ----------------------------------------------------
 
 if dev_mode then
+    -- correct tech dependencies before autotech happens
+    for _, tech in pairs(data.raw.technology) do
+        local science_packs = {}
+        local function add_science_pack_dep(t, science_pack, dep_pack)
+            if science_packs[science_pack] and not science_packs[dep_pack] then
+                TECHNOLOGY(t):add_pack(dep_pack)
+                science_packs[dep_pack] = true
+            end
+        end
+    
+        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
+            science_packs[pack.name or pack[1]] = true
+        end
+    
+        add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
+    
+        if mods["pyalienlife"] then
+            add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
+            add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
+            add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
+            add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
+            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
+        end
+    
+        if mods["pyalternativeenergy"] then
+            add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+        end
+    end
+
     log("AUTOTECH START")
     local at = require("prototypes.functions.auto_tech").create()
     at:run()
