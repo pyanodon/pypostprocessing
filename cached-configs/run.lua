@@ -62,10 +62,6 @@ register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'py
 -- PyBlock
 register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
 
--- space py
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pystellarexpedition'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'pystellarexpedition', 'pyaliens'}
-
 local union_of_all_subsets = {}
 for _, cache_file_info in pairs(pypp_registered_cache_files) do
 	for _, mod in pairs(cache_file_info.subset) do
@@ -75,6 +71,11 @@ end
 union_of_all_subsets = Table.keys(union_of_all_subsets)
 local recognized_enabled_mods = Table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
 table.sort(recognized_enabled_mods)
+
+if #recognized_enabled_mods == 0 then
+	log("No Pyanodon mods appear to be loaded, not loading cache file.")
+	return
+end
 
 local function can_left_replace_fallback_right(left, right)
 	return not left.is_fallback_from_pypp and right.is_fallback_from_pypp
