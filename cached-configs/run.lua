@@ -37,30 +37,30 @@ local function register_cache_file_pypp(subset)
 	}
 end
 
--- simple py
-register_cache_file_pypp{'pycoalprocessing'}
-register_cache_file_pypp{'pyindustry'}
-register_cache_file_pypp{'pyindustry', 'pycoalprocessing'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry'}
+-- -- simple py
+-- register_cache_file_pypp{'pycoalprocessing'}
+-- register_cache_file_pypp{'pyindustry'}
+-- register_cache_file_pypp{'pyindustry', 'pycoalprocessing'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry'}
 
--- medium py
-register_cache_file_pypp{'pycoalprocessing', 'pyindustry', 'pyrawores'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyhightech'}
+-- -- medium py
+-- register_cache_file_pypp{'pycoalprocessing', 'pyindustry', 'pyrawores'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyhightech'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pyhightech'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling', 'pyhightech'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyhightech'}
 
--- full py
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy'}
+-- -- full py
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech'}
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy'}
 
--- PyBlock
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
+-- -- PyBlock
+-- register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
 
 local union_of_all_subsets = {}
 for _, cache_file_info in pairs(pypp_registered_cache_files) do
