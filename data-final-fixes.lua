@@ -267,13 +267,12 @@ for _, tech in pairs(data.raw.technology) do
         goto continue
     end
 
+    -- Holds the final ingredients for the current tech
     local tech_ingredients_to_use = {}
-    local function add_tech_ingredients(ingredient_to_add)
-        tech_ingredients_to_use[#tech_ingredients_to_use+1] = ingredient_to_add
-    end
 
     local add_military_science = false
     local highest_science_pack = 'automation-science-pack'
+    -- Add the current ingredients for the technology
     for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
         local pack = ingredient.name or ingredient[1]
         if pack == "military-science-pack" and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
@@ -283,17 +282,23 @@ for _, tech in pairs(data.raw.technology) do
                 highest_science_pack = pack
             end
         else -- not one of ours, sir
-            add_tech_ingredients(ingredient)
+            tech_ingredients_to_use[pack] = ingredient.amount or ingredient[2]
         end
     end
 
+    -- Add any missing ingredients that we want present
     for _, ingredient in pairs(config.TC_TECH_INGREDIENTS_PER_LEVEL[highest_science_pack]) do
-        add_tech_ingredients(ingredient)
+        tech_ingredients_to_use[ingredient.name or ingredient[1]] = ingredient.amount or ingredient[2]
     end
+    -- Add military ingredients if applicable
     if add_military_science then
-        add_tech_ingredients({"military-science-pack", config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]})
+        tech_ingredients_to_use["military-science-pack"] = config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]
     end
-    tech.unit.ingredients = tech_ingredients_to_use
+    -- Push a copy of our final list to .ingredients
+    tech.unit.ingredients = {}
+    for pack_name, pack_amount in pairs(tech_ingredients_to_use) do
+        tech.unit.ingredients[#tech.unit.ingredients+1] = {name = pack_name, amount = pack_amount}
+    end
     ::continue::
 end
 

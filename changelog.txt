@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.15
+Date: 2023-??-??
+  Changes:
+    - Fix accidentally linking unit.ingredients[n] between different techs (re-use of a table reference)
+    - Fix crash on load caused by the above creating duplicate technology ingredients
+---------------------------------------------------------------------------------------------------
 Version: 0.2.14
 Date: 2023-10-8
   Changes:
