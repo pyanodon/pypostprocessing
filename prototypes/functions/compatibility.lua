@@ -451,3 +451,77 @@ if mods["cargo-ships"] then
     TECHNOLOGY("cargo_ships"):remove_pack("logistic-science-pack")
     TECHNOLOGY("automated_water_transport"):remove_pack("logistic-science-pack")
 end
+
+if mods['RenaiTransportation'] then
+    if mods['pyindustry'] then
+        TECHNOLOGY('RTFlyingFreight'):remove_prereq('railway'):remove_prereq('concrete'):add_prereq('railway-mk01')
+        TECHNOLOGY('RTImpactTech'):remove_prereq('railway'):remove_prereq('concrete'):add_prereq('railway-mk01')
+    end
+
+    if mods['pycoalprocessing'] then
+        TECHNOLOGY('RTDeliverThePayload'):remove_prereq('military-3'):remove_pack('chemical-science-pack')
+        
+        RECIPE('PrimerBouncePlateRecipe'):replace_ingredient('coal', 'coke')
+    end
+
+    if mods['pyfusionenergy'] then
+        TECHNOLOGY('RTZiplineTech5'):remove_prereq('uranium-processing')
+    end
+
+    if mods['pyrawores'] then
+        TECHNOLOGY('RTZiplineTech5'):remove_prereq('kovarex-enrichment-process')
+    end
+
+    if mods['pypetroleumhandling'] then
+        RECIPE('RTZiplineRecipe3'):remove_ingredient('small-parts-01'):add_ingredient({type = 'item', name = 'small-parts-02', amount = 50})
+        RECIPE('RTZiplineRecipe4'):remove_ingredient('small-parts-01'):add_ingredient({type = 'item', name = 'small-parts-03', amount = 50})
+    end
+
+    if mods['pyhightech'] then
+        TECHNOLOGY('RTImpactTech'):remove_prereq('advanced-electronics')
+        TECHNOLOGY('RTSimonSays'):remove_prereq('advanced-electronics'):add_prereq('circuit-network')
+        TECHNOLOGY('RTZiplineTech'):add_prereq('vacuum-tube-electronics'):remove_prereq('steel-processing')
+        TECHNOLOGY('RTZiplineTech2'):remove_prereq('logistic-science-pack')
+        TECHNOLOGY('RTZiplineTech3'):add_prereq('basic-electronics')
+        TECHNOLOGY('RTZiplineTech4'):remove_prereq('advanced-electronics-2'):add_prereq('advanced-electronics')
+
+        RECIPE('RTImpactUnloaderRecipe'):replace_ingredient('advanced-circuit', 'electronic-circuit')
+        RECIPE('RTMagnetTrainRampRecipe'):replace_ingredient('advanced-circuit', 'electronic-circuit')
+        RECIPE('RTImpactWagonRecipe'):replace_ingredient('advanced-circuit', 'electronic-circuit')
+        RECIPE('DirectorBouncePlateRecipie'):replace_ingredient('advanced-circuit', 'decider-combinator')
+    end
+
+    if mods['pyalienlife'] then
+        TECHNOLOGY('EjectorHatchRTTech'):add_prereq('py-science-pack-mk01')
+        TECHNOLOGY('RTDeliverThePayload'):add_prereq('military-science-pack')
+        TECHNOLOGY('EjectorHatchRTTech'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTFlyingFreight'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('SignalPlateTech'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTFreightPlates'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('PrimerPlateTech'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTImpactTech'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTSimonSays'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTProgrammableZiplineControlTech'):remove_pack('logistic-science-pack')
+        TECHNOLOGY('RTDeliverThePayload'):remove_pack('py-science-pack-2')
+        TECHNOLOGY('RTZiplineTech3'):remove_pack('chemical-science-pack')
+        TECHNOLOGY('RTZiplineTech4'):add_pack('py-science-pack-3'):remove_prereq('')
+    end
+
+    if mods['pyalternativeenergy'] then
+        TECHNOLOGY('RTMagnetTrainRamps'):remove_pack('chemical-science-pack'):remove_pack('py-science-pack-2')
+        TECHNOLOGY('RTZiplineTech4'):add_prereq('machine-components-mk03')
+
+        RECIPE('RTMagnetTrainRampRecipe'):add_ingredient({type = 'item', name = 'nexelit-plate', amount = 10}):replace_ingredient('substation', 'big-electric-pole')
+        RECIPE('RTZiplineRecipe3'):add_ingredient({type = 'item', name = 'mechanical-parts-02', amount = 10})
+        RECIPE('RTZiplineRecipe4'):add_ingredient({type = 'item', name = 'mechanical-parts-03', amount = 10})
+        RECIPE('RTTrainRampRecipe'):add_ingredient({type = 'item', name = 'intermetallics', amount = 10})
+
+        data.raw.recipe['RTZiplineRecipe5'].ingredients = data.raw.recipe['exoskeleton-equipment'].ingredients
+
+        RECIPE('RTZiplineRecipe5'):add_ingredient({type = 'item', name = 'fusion-reactor-equipment', amount = 1}):add_ingredient({type = 'item', name = 'RTZiplineItem4', amount = 1}):add_ingredient({type = 'item', name = 'nuclear-fuel', amount = 5})
+    end
+end
+
+if mods['angelsrefining'] and not mods['PyCoalTBaA'] then
+    error('\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n') 
+end
