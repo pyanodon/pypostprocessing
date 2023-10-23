@@ -332,19 +332,19 @@ $FactorioArgs = "--mod-directory $FactorioModsPath --benchmark notafile" #Stand 
 $BaseMods = @(
     "base",
     "stdlib",
-    "pypostprocessing",
-    "pyalienlifegraphics",
-    "pyalienlifegraphics2",
-    "pyalienlifegraphics3",
-    "pyalternativeenergygraphics",
-    "pycoalprocessinggraphics",
-    "pyfusionenergygraphics",
-    "pyhightechgraphics",
-    "pypetroleumhandlinggraphics",
-    "pyraworesgraphics",
-    "pyaliensgraphics",
-    "pystellarexpeditiongraphics"
+    "pypostprocessing"
 )
+$GraphicModsLookup = @{
+    pyalienlife = @("pyalienlifegraphics", "pyalienlifegraphics2", "pyalienlifegraphics3")
+    ; pyalternativeenergy = @("pyalternativeenergygraphics")
+    ; pycoalprocessing = @("pycoalprocessinggraphics")
+    ; pyfusionenergy = @("pyfusionenergygraphics")
+    ; pyhightech = @("pyhightechgraphics")
+    ; pypetroleumhandling = @("pypetroleumhandlinggraphics")
+    ; pyrawores = @("pyraworesgraphics")
+    ; pyaliens = @("pyaliensgraphics")
+    ; pystellarexpedition = @("pystellarexpeditiongraphics")
+}
 
 foreach ($CacheFileModList in $CacheFileModLists){
     $Path = $CacheFileModList.Path
@@ -356,11 +356,18 @@ foreach ($CacheFileModList in $CacheFileModLists){
     Write-Host "Generating cache file $Path..."
 
     # enable the right mods
-    foreach ($Mod in $ModListJsonContent.mods){
-        $Mod.enabled = $BaseMods.Contains($Mod.name)
+    $GraphicModsToAdd = [System.Collections.Generic.List[string]]::new()
+    foreach ($Mod in $CacheFileModList.Mods){
+        foreach ($GraphicMod in $GraphicModsLookup[$Mod]){
+            $GraphicModsToAdd.Add($GraphicMod)
+        }
     }
     foreach ($Mod in $ModListJsonContent.mods){
+        $Mod.enabled = $BaseMods.Contains($Mod.name)
         if ($CacheFileModList.Mods.Contains($Mod.name)){
+            $Mod.enabled = $true
+        }
+        if ($GraphicModsToAdd.Contains($Mod.name)){
             $Mod.enabled = $true
         }
     }
