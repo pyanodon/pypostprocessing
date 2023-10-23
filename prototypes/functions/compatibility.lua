@@ -444,6 +444,9 @@ end
 
 if mods["aai-loaders"] then
     TECHNOLOGY("aai-express-loader"):remove_prereq("advanced-electronics-2")
+    if mods["pyalienlife"] then
+        TECHNOLOGY("aai-fast-loader"):remove_prereq('advanced-electronics'):remove_pack('chemical-science-pack')
+    end
 end
 
 if mods["cargo-ships"] then
