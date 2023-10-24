@@ -5,6 +5,22 @@
     [Boolean]$QuietMode = $false
 )
 
+# Here's how this script works and why:
+function Print-PyExplanation{
+    Write-Host "Pyanodon's PostProcessing is a mod that changes a lot about the tech tree. In particular, it ensures that if you get a recipe from a tech, then you must already have a way to make all the ingredients for that recipe. It also does things like automatic tech scaling. However, it had two problems: 1) it was slow to start up, and 2) it also tried to edit techs from other mods, which often resulted in problems. The cache files solve both problems: this script loads a specific subset of the Py mods, applies the tech tree correction and stores the modifications made in a cache file. This cache file can then be loaded instead of recalculating the tech tree corrections from scratch. In particular, this is much faster, and if a player loads other mods, those mods won't have their tech trees modified."
+    Write-Host ""
+    Write-Host "This script will load Factorio from the command line, capture the tech tree changes and save them in a file. You can pick the mod sets that you want a cache file for. This is not limited to the Py mods: you can add your own mods on top of this, such as PyBlock, and generate a cache file. These cache files can then be registered with PyPostProcessing in the data-update stage of your mod, so that players using your mod will use your cache file, and not the preconfigured ones. You can check for example data-updates.lua in the dev version of PyCoalProcessing to see how to register a cache file."
+    Write-Host ""
+    Write-Host "This script has two main menus. The first menu allows you to set variables, in particular the Factorio paths. If you want to save time, you can also call this script with parameters like so:"
+    Write-Host ""
+    Write-Host "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -file ""C:\Users\<username>\AppData\Roaming\Factorio\packs\PyanodonGit\pypostprocessing\PyPP-Regen-New.ps1"" -FactorioPath ""C:\Program Files (x86)\Steam\steamapps\common\Factorio\bin\x64\factorio.exe"" -FactorioDataPath ""C:\Users\<username>\AppData\Roaming\Factorio"" -FactorioModsPath ""C:\Users\<username>\AppData\Roaming\Factorio\packs\PyanodonGit"
+    Write-Host ""
+    Write-Host "On the way to the second menu, this script detects existing cache files. The second menu then allows you to configure what cache file should be (re)generated. The main tool for this is that you are able to enable and disable cache files using a regex. Only enabled cache files will be (re)generated. Since this is a regex, you have to escape backslashes in Windows paths! It's also nice to know that entering an empty value will enable or disable all mods (since they all match the empty regex)."
+    Write-Host ""
+    Write-Host "The second menu also allows you to add your own cache file. You will have to enter the folder it will end up in, and then you can select a 'base': a starting set of mods to be used for your new cache files, taken from the existing cache files. You can then add and remove any installed mods to this set."
+    Write-Host ""
+}
+
 class CacheFile{
     [string[]]$Mods
     [string]$Path
@@ -36,12 +52,6 @@ function Print-PySettings{
     Write-Host "Quiet mode is $QuietMode"
 }
 
-function Print-PyExplanation{
-    Write-Host "Pyanodon's PostProcessing is a mod that changes a lot about the tech tree. In particular, it ensures that if you get a recipe from a tech, then you must already have a way to make all the ingredients for that recipe. It also does things like automatic tech scaling. However, it had two problems: 1) it was slow to start up, and 2) it also tried to edit techs from other mods, which often resulted in problems. The cache files solve both problems: this script loads a specific subset of the Py mods, applies the tech tree correction and stores the modifications made in a cache file. This cache file can then be loaded instead of recalculating the tech tree corrections from scratch. In particular, this is much faster, and if a player loads other mods, those mods won't have their tech trees modified."
-    Write-Host ""
-    Write-Host "This script will load Factorio from the command line, capture the tech tree changes and save them in a file. You can pick the mod sets that you want a cache file for. This is not limited to the Py mods: you can add your own mods on top of this, such as PyBlock, and generate a cache file. These cache files can then be registered with PyPostProcessing in the data-update stage of your mod, so that players using your mod will use your cache file, and not the preconfigured ones. You can check for example data-updates.lua in the dev version of PyCoalProcessing to see how to register a cache file."
-}
-
 function Choose-FactorioPath{
     param(
         [ref][string]$path,
@@ -71,7 +81,7 @@ function Choose-PySettingsMenu{
             1 {Choose-FactorioPath ([ref]$FactorioDataPath) "data path"}
             2 {Choose-FactorioPath ([ref]$FactorioModsPath) "mods path"}
             3 {
-                $QuietMode = !$QuietMode
+                $Global:QuietMode = !$QuietMode
                 Write-Host "Toggled quiet mode, new value is $QuietMode"
             }
             4 {Print-PyExplanation}
