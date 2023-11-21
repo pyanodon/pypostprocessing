@@ -6,6 +6,11 @@ require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 local table = require('__stdlib__/stdlib/utils/table')
 local config = require "prototypes.config"
 
+----------------------------------------------------
+-- THIRD PARTY COMPATIBILITY
+----------------------------------------------------
+require('prototypes/functions/compatibility')
+
 for _, module in pairs(data.raw.module) do
     local remove_recipe = {}
 
@@ -322,10 +327,7 @@ for _, type in pairs{'furnace', 'assembling-machine'} do
     end
 end
 
-----------------------------------------------------
--- THIRD PARTY COMPATIBILITY
-----------------------------------------------------
-require('prototypes/functions/compatibility')
+-- YAFC
 if type(data.data_crawler) == 'string' and string.sub(data.data_crawler, 1, 5) == 'yafc ' then
     require('prototypes/yafc')
 end

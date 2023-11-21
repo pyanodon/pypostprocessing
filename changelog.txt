@@ -4,6 +4,7 @@ Date: 2023-??-??
   Changes:
     - Fix accidentally linking unit.ingredients[n] between different techs (re-use of a table reference)
     - Fix crash on load caused by the above creating duplicate technology ingredients
+    - fixed compatibility.lua being loaded after pyPP tech tree changes (https://github.com/pyanodon/pybugreports/issues/333)
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.14
 Date: 2023-10-8
