@@ -3,6 +3,7 @@ Version: 0.2.16
 Date: ?
   Changes:
     - fix crash with transport drones compatibility
+    - fix crash with train factory mod
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.15
 Date: 2023-11-21

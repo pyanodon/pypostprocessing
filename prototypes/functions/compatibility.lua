@@ -227,6 +227,10 @@ if mods['Transport_Drones'] then
     end
 end
 
+if mods['trainfactory'] then
+    data.raw['train-stop']['trainfactory-trainstop'].next_upgrade = nil
+end
+
 if mods['miniloader'] then
     TECHNOLOGY('miniloader'):add_pack('py-science-pack-1'):add_pack('logistic-science-pack')
     TECHNOLOGY('fast-miniloader'):add_pack('py-science-pack-2')
