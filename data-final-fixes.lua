@@ -218,6 +218,8 @@ if mods["PyBlock"] then
     create_tmp_tech("borax-mine", "glass")
 end
 
+create_tmp_tech("bioreserve-super-7", "mega-farm-bioreserve")
+
 ----------------------------------------------------
 -- AUTOTECH
 ----------------------------------------------------
