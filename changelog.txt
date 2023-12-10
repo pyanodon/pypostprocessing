@@ -4,6 +4,7 @@ Date: ?
   Changes:
     - fix crash with transport drones compatibility
     - fix crash with train factory mod
+    - removed the backup cache files, except for PyBlock
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.15
 Date: 2023-11-21
