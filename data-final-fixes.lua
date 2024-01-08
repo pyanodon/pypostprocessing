@@ -1,10 +1,12 @@
-local dev_mode = settings.startup["pypp-dev-mode"].value
-local create_cache_mode = settings.startup["pypp-create-cache"].value
+local dev_mode = settings.startup['pypp-dev-mode'].value
+local create_cache_mode = settings.startup['pypp-create-cache'].value
 
 require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 
 local table = require('__stdlib__/stdlib/utils/table')
-local config = require "prototypes.config"
+local config = require 'prototypes.config'
+
+local FUN = require('__pycoalprocessing__/prototypes/functions/functions')
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
@@ -181,19 +183,19 @@ end
 
 local function create_tmp_tech(recipe, original_tech, add_dependency)
     local new_tech = TECHNOLOGY {
-        type = "technology",
-        name = "tmp-" .. recipe .. "-tech",
-        icon = "__pypostprocessing__/graphics/placeholder.png",
+        type = 'technology',
+        name = 'tmp-' .. recipe .. '-tech',
+        icon = '__pypostprocessing__/graphics/placeholder.png',
         icon_size = 128,
-        order = "c-a",
+        order = 'c-a',
         prerequisites = {},
         effects = {
-            { type = "unlock-recipe", recipe = recipe }
+            { type = 'unlock-recipe', recipe = recipe }
         },
         unit = {
             count = 30,
             ingredients = {
-                {"automation-science-pack", 1}
+                {'automation-science-pack', 1}
             },
             time = 30
         }
@@ -212,10 +214,17 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
     return new_tech
 end
 
-if mods["PyBlock"] then
-    create_tmp_tech("fake-bioreserve-ore")
+if mods['PyBlock'] then
+    create_tmp_tech('fake-bioreserve-ore')
     --aluminium
-    create_tmp_tech("borax-mine", "glass")
+    create_tmp_tech('borax-mine', 'glass')
+end
+
+for _, recipe in pairs(data.raw.module['productivity-module'].limitation) do
+    recipe = data.raw.recipe[recipe]
+    if recipe then
+        FUN.add_to_description('recipe', recipe, {'recipe-description.affected-by-productivity'})
+    end
 end
 
 ----------------------------------------------------
@@ -237,30 +246,30 @@ if dev_mode then
             science_packs[pack.name or pack[1]] = true
         end
     
-        add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
+        add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
     
-        if mods["pyalienlife"] then
-            add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
-            add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
-            add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
-            add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
-            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
+        if mods['pyalienlife'] then
+            add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
+            add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
+            add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
+            add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
+            add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
         end
     
-        if mods["pyalternativeenergy"] then
-            add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+        if mods['pyalternativeenergy'] then
+            add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
         end
     end
 
-    log("AUTOTECH START")
-    local at = require("prototypes.functions.auto_tech").create()
+    log('AUTOTECH START')
+    local at = require('prototypes.functions.auto_tech').create()
     at:run()
     if create_cache_mode then
         at:create_cachefile_code()
     end
-    log("AUTOTECH END")
+    log('AUTOTECH END')
 else
-    require "cached-configs.run"
+    require 'cached-configs.run'
 end
 
 ----------------------------------------------------
@@ -280,7 +289,7 @@ for _, tech in pairs(data.raw.technology) do
     -- Add the current ingredients for the technology
     for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
         local pack = ingredient.name or ingredient[1]
-        if pack == "military-science-pack" and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
+        if pack == 'military-science-pack' and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
             add_military_science = true
         elseif config.SCIENCE_PACK_INDEX[pack] then
             if config.SCIENCE_PACK_INDEX[highest_science_pack] < config.SCIENCE_PACK_INDEX[pack] then
@@ -297,7 +306,7 @@ for _, tech in pairs(data.raw.technology) do
     end
     -- Add military ingredients if applicable
     if add_military_science then
-        tech_ingredients_to_use["military-science-pack"] = config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]
+        tech_ingredients_to_use['military-science-pack'] = config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL[highest_science_pack]
     end
     -- Push a copy of our final list to .ingredients
     tech.unit.ingredients = {}

@@ -2,9 +2,10 @@
 Version: 0.2.16
 Date: ?
   Changes:
-    - fix crash with transport drones compatibility
-    - fix crash with train factory mod
-    - removed the backup cache files, except for PyBlock
+    - Fixed crash with transport drones compatibility
+    - Fixed crash with train factory mod
+    - Removed the backup cache files, except for PyBlock
+    - Added 'Affected by Productivity' to relavant recipe descriptions
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.15
 Date: 2023-11-21
