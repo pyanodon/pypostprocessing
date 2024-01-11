@@ -43,27 +43,18 @@ local config = {
     TC_WIN_TECH_COST_OVERRIDE = mods.pystellarexpedition and 5000 or 3000,
     TC_EXP_THRESHOLD = 0.001,
     TC_COST_ROUNDING_TARGETS = {10, 11, 12, 13, 14, 15, 16, 17.5, 20, 22.5, 25, 27.5, 30, 33, 36, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90},     -- Should be >=10 & <100
-    TC_TURD_MULTIPLIER = function(tech)
-        local multiplier = 10
-        local multipliers = {
-            ['automation-science-pack'] = 10,
-            ['py-science-pack-1'] = 9,
-            ['logistic-science-pack'] = 8,
-            ['military-science-pack'] = 7,
-            ['py-science-pack-2'] = 7,
-            ['chemical-science-pack'] = 6,
-            ['py-science-pack-3'] = 5,
-            ['production-science-pack'] = 4,
-            ['py-science-pack-4'] = 3,
-            ['utility-science-pack'] = 2,
-            ['space-science-pack'] = 1,
-        }
-        for _, pack in pairs(tech.unit.ingredients) do
-            pack = pack.name
-            multiplier = math.min(multiplier, multipliers[pack] or 10)
-        end
-        return multiplier
-    end,
+    TC_TURD_COST = {
+        500, -- automation-science-pack
+        2000, -- py-science-pack-1
+        5000, -- logistic-science-pack
+        10000, -- py-science-pack-2
+        10000, -- chemical-science-pack
+        5000, -- py-science-pack-3
+        5000, -- production-science-pack
+        3000, -- py-science-pack-4
+        2000, -- utility-science-pack
+        1000, -- space-science-pack
+    },
     TC_SCIENCE_PACK_COUNTS_PER_LEVEL = {},
     TC_TECH_INGREDIENTS_PER_LEVEL = {},
     TC_MIL_SCIENCE_IS_PROGRESSION_PACK = not not mods["pystellarexpedition"],
