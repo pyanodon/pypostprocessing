@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.17
-Date: ?
+Date: 2024-1-19
   Changes:
     - T.U.R.D. tech costs are now determined by their science packs unlocks only.
     - Fix crash when using a 'remove productivity limitation' mod
