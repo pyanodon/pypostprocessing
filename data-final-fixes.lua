@@ -6,8 +6,6 @@ require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 local table = require('__stdlib__/stdlib/utils/table')
 local config = require 'prototypes.config'
 
-local FUN = require('__pycoalprocessing__/prototypes/functions/functions')
-
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
@@ -220,10 +218,13 @@ if mods['PyBlock'] then
     create_tmp_tech('borax-mine', 'glass')
 end
 
-for _, recipe in pairs(data.raw.module['productivity-module'].limitation or {}) do
-    recipe = data.raw.recipe[recipe]
-    if recipe then
-        FUN.add_to_description('recipe', recipe, {'recipe-description.affected-by-productivity'})
+if mods.pycoalprocessing then
+    local FUN = require('__pycoalprocessing__/prototypes/functions/functions')
+    for _, recipe in pairs(data.raw.module['productivity-module'].limitation or {}) do
+        recipe = data.raw.recipe[recipe]
+        if recipe then
+            FUN.add_to_description('recipe', recipe, {'recipe-description.affected-by-productivity'})
+        end
     end
 end
 
