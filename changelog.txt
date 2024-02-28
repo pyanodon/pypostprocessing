@@ -3,6 +3,7 @@ Version: 0.2.19
 Date: ???
   Changes:
     - Fix crash with pyCP is missing
+    - Fix compatibility with Renai Transportation affecting exoskeleton recipe
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.18
 Date: 2024-1-20

@@ -566,7 +566,7 @@ if mods['RenaiTransportation'] then
         RECIPE('RTZiplineRecipe4'):add_ingredient({type = 'item', name = 'mechanical-parts-03', amount = 10})
         RECIPE('RTTrainRampRecipe'):add_ingredient({type = 'item', name = 'intermetallics', amount = 10})
 
-        data.raw.recipe['RTZiplineRecipe5'].ingredients = data.raw.recipe['exoskeleton-equipment'].ingredients
+        data.raw.recipe['RTZiplineRecipe5'].ingredients = table.deepcopy(data.raw.recipe['exoskeleton-equipment'].ingredients)
 
         RECIPE('RTZiplineRecipe5'):add_ingredient({type = 'item', name = 'fusion-reactor-equipment', amount = 1}):add_ingredient({type = 'item', name = 'RTZiplineItem4', amount = 1}):add_ingredient({type = 'item', name = 'nuclear-fuel', amount = 5})
     end
