@@ -575,3 +575,12 @@ end
 if mods['angelsrefining'] and not mods['PyCoalTBaA'] then
     error('\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n') 
 end
+
+if mods['jetpack'] then
+    TECHNOLOGY("rocket-fuel"):set_fields{prerequisites = {"kerogen", "electrolysis"}}:remove_pack("py-science-pack-3"):remove_pack("chemical-science-pack"):remove_pack("py-science-pack-2"):remove_pack("logistic-science-pack"):remove_pack("military-science-pack"):add_pack("py-science-pack-1")
+    TECHNOLOGY("jetpack-1"):set_fields{prerequisites = {"rocket-fuel"}}:remove_pack("chemical-science-pack"):remove_pack("logistic-science-pack"):add_pack("py-science-pack-1")
+    RECIPE("jetpack-1"):add_ingredient({type = 'item', name = 'mechanical-parts-01', amount = 2}):replace_ingredient("electronic-circuit", "electronics-mk01")
+    TECHNOLOGY("jetpack-2"):set_fields{prerequisites = {}}:remove_pack("chemical-science-pack"):add_pack("py-science-pack-2")
+    TECHNOLOGY("jetpack-3"):set_fields{prerequisites = {}}:remove_pack("production-science-pack"):remove_pack("py-science-pack-4"):remove_pack("utility-science-pack"):add_pack("py-science-pack-3")
+    TECHNOLOGY("jetpack-4"):set_fields{prerequisites = {}}:remove_pack("space-science-pack")
+end
