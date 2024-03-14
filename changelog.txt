@@ -1,8 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.20
+Date: 2024-3-13
+  Changes:
+    - Added compatibility with Jetpacks mod
+---------------------------------------------------------------------------------------------------
 Version: 0.2.19
-Date: ???
+Date: 2024-2-28
   Changes:
     - Fix crash with pyCP is missing
+    - Fix compatibility with Renai Transportation affecting exoskeleton recipe
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.18
 Date: 2024-1-20

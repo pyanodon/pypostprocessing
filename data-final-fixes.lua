@@ -6,11 +6,6 @@ require('__stdlib__/stdlib/data/data').Util.create_data_globals()
 local table = require('__stdlib__/stdlib/utils/table')
 local config = require 'prototypes.config'
 
-----------------------------------------------------
--- THIRD PARTY COMPATIBILITY
-----------------------------------------------------
-require('prototypes/functions/compatibility')
-
 for _, module in pairs(data.raw.module) do
     local remove_recipe = {}
 
@@ -272,6 +267,11 @@ if dev_mode then
 else
     require 'cached-configs.run'
 end
+
+----------------------------------------------------
+-- THIRD PARTY COMPATIBILITY
+----------------------------------------------------
+require('prototypes/functions/compatibility')
 
 ----------------------------------------------------
 -- TECHNOLOGY CHANGES

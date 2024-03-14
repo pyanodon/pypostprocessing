@@ -1,6 +1,6 @@
 {
   "name": "pypostprocessing",
-  "version": "0.2.18",
+  "version": "0.2.20",
   "factorio_version": "1.1",
   "title": "Pyanodons Post-processing",
   "author": "Pyanodon, Shadowglass",
@@ -30,7 +30,8 @@
     "? deadlock_stacked_recipes",
     "? DeadlocksStackingForPyanadon",
     "? LightedPolesPlus",
-    "! ResearchFog"
+    "! ResearchFog",
+    "? jetpack"
   ],
   "package": {
     "ignore": [],
