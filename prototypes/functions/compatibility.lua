@@ -12,6 +12,9 @@ if mods['pyrawores'] then
     end
 end
 
+if mods["galdocs-manufacturing"] then
+    require("prototypes/functions/galdoc")
+end
 
 if mods['DeadlockLargerLamp'] then
     -- Originally these include electronic-circuits and are unlocked at optics, causing a deadlock in pymods
