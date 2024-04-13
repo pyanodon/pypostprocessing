@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.22
-Date: 2024-4-13
+Date: ?
   Changes:
     - Made sure very early techs are not effected by tech cost multiplier (https://github.com/pyanodon/pybugreports/issues/467)
+    - Fixed duplicate "affected-by-productivity" text on recipe descriptions when combined with the extended-descriptions mod.
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.21
 Date: 2024-4-1
