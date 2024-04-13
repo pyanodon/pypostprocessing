@@ -59,3 +59,20 @@ if settings.startup["pypp-big-inventory-gui"].value then
     data.raw["utility-constants"]["default"].select_slot_row_count = 17
     data.raw["utility-constants"]["default"].select_group_row_count = 100
 end
+
+-- make sure very early techs are not effected by the tech cost multiplier
+local function prevent_cost_multiplier(name)
+    local tech = data.raw.technology[name]
+    if not tech then return end
+    tech.ignore_tech_cost_multiplier = true
+end
+
+prevent_cost_multiplier('wood-processing')
+prevent_cost_multiplier('moss-mk01')
+prevent_cost_multiplier('automation')
+prevent_cost_multiplier('soil-washing')
+prevent_cost_multiplier('botany-mk01')
+prevent_cost_multiplier('glass')
+prevent_cost_multiplier('mining-with-fluid')
+prevent_cost_multiplier('steel-processing')
+prevent_cost_multiplier('coal-processing-1')

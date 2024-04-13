@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.22
+Date: 2024-4-13
+  Changes:
+    - Made sure very early techs are not effected by tech cost multiplier (https://github.com/pyanodon/pybugreports/issues/467)
+---------------------------------------------------------------------------------------------------
 Version: 0.2.21
 Date: 2024-4-1
   Changes:
