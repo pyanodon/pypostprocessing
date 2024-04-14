@@ -5,6 +5,7 @@ Date: ?
     - Made sure very early techs are not effected by tech cost multiplier (https://github.com/pyanodon/pybugreports/issues/467)
     - Fixed duplicate "affected-by-productivity" text on recipe descriptions when combined with the extended-descriptions mod.
     - Added open/close SFX to all machines (https://github.com/pyanodon/pybugreports/issues/421)
+    - Fixed a crash with the transport drones compatibility
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.21
 Date: 2024-4-1
