@@ -10,6 +10,10 @@ script.on_configuration_changed(function()
 	if remote.interfaces['pywiki_turd_page'] then
 		for _, force in pairs(game.forces) do remote.call('pywiki_turd_page', 'reapply_turd_bonuses', force) end
 	end
+
+	if remote.interfaces['pyse_start_seqence'] then
+		for _, force in pairs(game.forces) do remote.call('pyse_start_seqence', 'update_force', force) end
+	end
 end)
 
 
