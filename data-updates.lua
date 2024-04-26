@@ -60,6 +60,26 @@ if settings.startup['pypp-big-inventory-gui'].value then
     data.raw['utility-constants']['default'].select_group_row_count = 100
 end
 
+if settings.startup['pypp-compactified-recipe-tooltips'].value then
+    for _, type in pairs{'assembling-machine', 'furnace', 'rocket-silo'} do
+        for _, entity in pairs(data.raw[type]) do
+            if
+                entity.name and
+                (entity.name:find('%-[23456789]$') or entity.name:find('%-[mM][kK]0[23456789]$'))
+                and not entity.name:find('-powerplant-', 1, true)
+                and not entity.name:find('quantum-computer', 1, true)
+            then
+                entity.flags = entity.flags or {}
+                table.insert(entity.flags, 'not-in-made-in')
+            end
+        end
+    end
+end
+
+if data.raw['character']['ulric-man'] then
+    table.insert(data.raw['character']['ulric-man'].flags, 'not-in-made-in')
+end
+
 -- make sure very early techs are not effected by the tech cost multiplier
 local function prevent_cost_multiplier(name)
     local tech = data.raw.technology[name]

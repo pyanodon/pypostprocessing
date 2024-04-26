@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.23
+Date: 2024-4-25
+  Changes:
+    - Changed the big inventory GUI startup setting from default OFF -> default ON
+    - Added a new startup setting to compactify recipe descriptions. Default ON.
+    - Ulric man is no longer shown in the "made-in" section of recipe tooltips.
+---------------------------------------------------------------------------------------------------
 Version: 0.2.22
 Date: 2024-4-15
   Changes:
