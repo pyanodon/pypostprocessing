@@ -213,7 +213,7 @@ if mods['PyBlock'] then
     create_tmp_tech('borax-mine', 'glass')
 end
 
-if mods.pycoalprocessing then
+if mods.pycoalprocessing and not mods['extended-descriptions'] then
     local FUN = require('__pycoalprocessing__/prototypes/functions/functions')
     for _, recipe in pairs(data.raw.module['productivity-module'].limitation or {}) do
         recipe = data.raw.recipe[recipe]

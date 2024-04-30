@@ -1,4 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.23
+Date: 2024-4-25
+  Changes:
+    - Changed the big inventory GUI startup setting from default OFF -> default ON
+    - Added a new startup setting to compactify recipe descriptions. Default ON.
+    - Ulric man is no longer shown in the "made-in" section of recipe tooltips.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.22
+Date: 2024-4-15
+  Changes:
+    - Made sure very early techs are not effected by tech cost multiplier (https://github.com/pyanodon/pybugreports/issues/467)
+    - Fixed duplicate "affected-by-productivity" text on recipe descriptions when combined with the extended-descriptions mod.
+    - Added open/close SFX to all machines (https://github.com/pyanodon/pybugreports/issues/421)
+    - Fixed a crash with the transport drones compatibility
+---------------------------------------------------------------------------------------------------
+Version: 0.2.21
+Date: 2024-4-1
+  Changes:
+    - Added some basic compatibility with Galdoc Manufacturing mod
+---------------------------------------------------------------------------------------------------
 Version: 0.2.20
 Date: 2024-3-13
   Changes:

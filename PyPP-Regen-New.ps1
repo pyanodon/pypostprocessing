@@ -233,25 +233,43 @@ function Choose-PyCacheFiles{
     }
 }
 
+function Space-Mode{
+    $Regex = 'pystellarexpedition'
+    foreach ($CacheFileModList in $CacheFileModLists)
+    {
+        if ($CacheFileModList.Path -match $Regex){
+            $CacheFileModList.Enabled = $true
+            Write-Host "Matched $($CacheFileModList.Path)"
+        }else{
+            $CacheFileModList.Enabled = $false
+        }
+    }
+}
+
 function Choose-PyModSetMenu{
     $change_sets = New-Object System.Management.Automation.Host.ChoiceDescription "&Change cache file sets", "Change what cache files to generate"
     $print_sets = New-Object System.Management.Automation.Host.ChoiceDescription "&Print cache files", "Print all cache files that will get generated"
-    $print_settings = New-Object System.Management.Automation.Host.ChoiceDescription "Print &settings", "Print all current settings."
+    $print_settings = New-Object System.Management.Automation.Host.ChoiceDescription "P&rint settings", "Print all current settings."
     $explain = New-Object System.Management.Automation.Host.ChoiceDescription "E&xplain", "Explain what this script is for."
     $generate = New-Object System.Management.Automation.Host.ChoiceDescription "&Generate", "Begin cache file generation."
+    $space = New-Object System.Management.Automation.Host.ChoiceDescription "&Space Mode", "Quickly generate cache files just for pySE and pyAliens."
     $exit = New-Object System.Management.Automation.Host.ChoiceDescription "&Exit", "Exit this script."
-    $options = [System.Management.Automation.Host.ChoiceDescription[]]($change_sets, $print_sets, $print_settings, $explain, $generate, $exit)
+    $options = [System.Management.Automation.Host.ChoiceDescription[]]($change_sets, $print_sets, $print_settings, $explain, $space, $generate, $exit)
 
     $done = $false
     while (!$done){
-        $decision = $host.ui.PromptForChoice("Py cache file generation", "Pick an option", $options, 4)
+        $decision = $host.ui.PromptForChoice("Py cache file generation", "Pick an option", $options, 5)
         switch ($decision)
         {
             0 {Choose-PyCacheFiles}
             1 {Print-PyCacheFiles}
             2 {Print-PySettings}
             3 {Print-PyExplanation}
-            5 {
+            4 {
+                Space-Mode
+                $done = $true
+            }
+            6 {
                 Write-Host "Exiting early, bye!"
                 Exit
             }

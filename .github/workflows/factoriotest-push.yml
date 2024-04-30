@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    - Frozen
     paths-ignore:
       - 'cached-configs/**'
 

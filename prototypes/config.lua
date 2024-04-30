@@ -107,6 +107,14 @@ if mods['pyalienlife'] then
     config.STARTING_ITEMS:add('guano')
 end
 
+if mods.pystellarexpedition then
+    for _, item in pairs(require '__pystellarexpedition__.prototypes.crash-site-items') do
+        config.STARTING_ITEMS:add(item.name)
+    end
+    config.STARTING_ITEMS:add('ice')
+    config.STARTING_ITEMS:add('silicate-stone')
+end
+
 if mods['pyalternativeenergy'] then
     config.ENTITY_SCRIPT_UNLOCKS['numal-reef-mk01'] = { 'numal-reef-mk01' }
     config.ENTITY_SCRIPT_UNLOCKS['numal-reef-mk02'] = { 'numal-reef-mk02' }

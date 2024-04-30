@@ -12,6 +12,9 @@ if mods['pyrawores'] then
     end
 end
 
+if mods["galdocs-manufacturing"] then
+    require("prototypes/functions/galdoc")
+end
 
 if mods['DeadlockLargerLamp'] then
     -- Originally these include electronic-circuits and are unlocked at optics, causing a deadlock in pymods
@@ -201,7 +204,7 @@ if mods['Transport_Drones'] then
     TECHNOLOGY('transport-drone-speed-4'):add_prereq('utility-science-pack')
     TECHNOLOGY('transport-drone-capacity-5'):add_prereq('space-science-pack')
     for r, depotrecipe in pairs(transportdepots) do
-        if data.raw.recipe[depotrecipe].ingredients['iron-plate'] then
+        if data.raw.recipe[depotrecipe] and data.raw.recipe[depotrecipe].ingredients['iron-plate'] then
             data.raw.recipe[depotrecipe].ingredients['iron-plate'].amount = data.raw.recipe[depotrecipe].ingredients['iron-plate'].amount / 2
         end
         RECIPE(depotrecipe):add_ingredient({type = 'item', name = 'electronic-circuit', amount = 1}):add_ingredient({type = 'item', name = 'solder', amount = 5})

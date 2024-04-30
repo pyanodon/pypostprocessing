@@ -28,7 +28,14 @@ data:extend(
         type = "bool-setting",
         name = "pypp-big-inventory-gui",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
+        order = "e",
+    },
+    {
+        type = "bool-setting",
+        name = "pypp-compactified-recipe-tooltips",
+        setting_type = "startup",
+        default_value = true,
         order = "e",
     }
 })
