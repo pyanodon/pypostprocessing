@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.24
+Date: 2024-??-??
+  Bugfixes:
+    - Fix productivity blacklist being overly general and including recipes like empty barrels
+---------------------------------------------------------------------------------------------------
 Version: 0.2.23
 Date: 2024-4-25
   Changes:
