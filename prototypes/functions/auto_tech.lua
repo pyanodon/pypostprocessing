@@ -311,8 +311,9 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     local ts = fz_topo.create(fg)
     local error_found, recipes_with_issues = ts:run(false, self.verbose_logging)
 
-    local error_message = ''
+    local error_message
     if error_found then
+        error_message = ""
         for key, _ in pairs(recipes_with_issues) do
             error_message = error_message .. "There was a dependency loop involving: " .. key .. "\n"
         end
