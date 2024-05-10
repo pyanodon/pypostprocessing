@@ -103,7 +103,25 @@ function fz_topo:run(check_ancestry, logging)
         end
     end
 
-    return table.any(self.graph.nodes, function (n) return not n.ignore_for_dependencies and not self.sorted[n.key] end), recipes_with_issues
+    local has_error = table.any(self.graph.nodes, function (n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
+
+    local errors = {}
+    if has_error then
+        for _, n in pairs(self.graph.nodes) do
+            if not n.ignore_for_dependencies and self.sorted[n.key] and n.key:find('recipe') then
+                for _, e in self.graph:iter_links_from(n) do
+                    local a = self.graph:get_node(e:from())
+                    local b = self.graph:get_node(e:to())
+                    local node = a == n and b or a
+                    if not node.ignore_for_dependencies and not self.sorted[node.key] then
+                        errors[n.key] = true
+                    end
+                end
+            end
+        end
+    end
+
+    return has_error, errors
 end
 
 

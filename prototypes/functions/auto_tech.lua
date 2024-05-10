@@ -315,7 +315,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
     if error_found then
         error_message = ""
         for key, _ in pairs(recipes_with_issues) do
-            error_message = error_message .. "There was a dependency loop involving: " .. key .. "\n"
+            error_message = error_message .. "Impossible to craft: " .. key .. "\n"
         end
     end
 
