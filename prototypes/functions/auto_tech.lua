@@ -123,30 +123,30 @@ function auto_tech:run()
     sp_ts:run()
 
     local fg2 = fg:copy()
-    local error_found
+    local error_message
 
-    error_found, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
+    error_message, ts = self:topo_sort_with_sp(fg, spg, parser.science_packs)
 
-    if error_found then
-        local msg = "\n\nERROR: Dependency loop detected in step 1\n"
+    if error_message then
+        local msg = "\n\nERROR: Dependency loop detected\n" .. error_message
         error(msg)
     end
 
     self:add_original_prerequisites(fg, fg2, ts.level)
 
-    error_found, ts = self:topo_sort_with_sp(fg2, spg, parser.science_packs)
+    error_message, ts = self:topo_sort_with_sp(fg2, spg, parser.science_packs)
 
-    if error_found then
-        local msg = "\n\nERROR: Dependency loop detected in step 2\n"
+    if error_message then
+        local msg = "\n\nERROR: Dependency loop detected\n" .. error_message
         error(msg)
     end
 
     local tg = self:extract_tech_graph(fg2)
     local tech_ts = fz_topo.create(tg)
-    error_found = tech_ts:run(false, false)
+    error_message = tech_ts:run(false, false)
 
-    if error_found then
-        local msg = "\n\nERROR: Dependency loop detected in step 3\n"
+    if error_message then
+        local msg = "\n\nERROR: Dependency loop detected\n" .. error_message
         error(msg)
     end
 
@@ -304,20 +304,21 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
         end
     end
 
-    local ts = fz_topo.create(fg)
-    local error_found = ts:run(false, self.verbose_logging)
-
     for _, link in pairs(sp_links) do
         fg:remove_link(link.from, link.to, link.from.name)
     end
 
+    local ts = fz_topo.create(fg)
+    local error_found, recipes_with_issues = ts:run(false, self.verbose_logging)
+
+    local error_message = ''
     if error_found then
-        log("RESTARTING without SP links")
-        ts = fz_topo.create(fg)
-        error_found = ts:run(false, self.verbose_logging)
+        for key, _ in pairs(recipes_with_issues) do
+            error_message = error_message .. "There was a dependency loop involving: " .. key .. "\n"
+        end
     end
 
-    return error_found, ts
+    return error_message, ts
 end
 
 

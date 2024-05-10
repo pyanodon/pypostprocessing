@@ -512,19 +512,6 @@ function data_parser:add_entity_dependencies(entity, recipe_node, recipe_name, i
                     end
                 end
             end
-        elseif energy_source.type == "electric" and not config.ELECTRICITY_PRODUCER_PROTOTYPES:contains(entity.type) then
-            recipe_node:add_label(LABEL_FUEL)
-            local fuel_node = self.fg:get_node(FUEL_ELECTRICITY, fz_graph.NT_ITEM)
-            self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
-        elseif energy_source.type == "heat" then
-            recipe_node:add_label(LABEL_FUEL)
-
-            for _, temp in pairs(self.heat_temps) do
-                if temp >= (energy_source.min_working_temperature or 15) and temp <= energy_source.max_temperature then
-                    local fuel_node = self.fg:get_node(data_parser.get_fluid_name(FUEL_HEAT, temp), fz_graph.NT_FLUID)
-                    self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
-                end
-            end
         end
     end
 
