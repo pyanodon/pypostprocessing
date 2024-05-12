@@ -156,12 +156,12 @@ function auto_tech:run()
 
     -- Set science pack order
     for _, node in pairs(spg.nodes) do
-        science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key]))
+        science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[node.key] or 0, ts.level[node.key]))
         local sp = data.raw.tool[node.name]
 
         sp.subgroup = "science-pack"
-        sp.order = string.format("%03d-%06d", sp_ts.level[node.key], ts.level[node.key])
-        sp_level[node.name] = sp_ts.level[node.key]
+        sp.order = string.format("%03d-%06d", sp_ts.level[node.key] or 0, ts.level[node.key])
+        sp_level[node.name] = sp_ts.level[node.key] or 0
 
         if sp_level[sp.name] > max_level then
             max_level = sp_level[sp.name]
@@ -304,18 +304,14 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
         end
     end
 
-    for _, link in pairs(sp_links) do
-        fg:remove_link(link.from, link.to, link.from.name)
-    end
-
     local ts = fz_topo.create(fg)
-    local error_found, recipes_with_issues = ts:run(false, self.verbose_logging)
+    local error_found, errors = ts:run(false, self.verbose_logging)
 
     local error_message
     if error_found then
         error_message = ""
-        for key, _ in pairs(recipes_with_issues) do
-            error_message = error_message .. "Impossible to craft: " .. key .. "\n"
+        for _, key in pairs(errors) do
+            error_message = error_message .. key .. "\n"
         end
     end
 
