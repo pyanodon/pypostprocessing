@@ -104,31 +104,7 @@ function fz_topo:run(check_ancestry, logging)
     end
 
     local has_error = table.any(self.graph.nodes, function (n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
-
-    local errors = {}
-    if has_error then
-        for to_key, _ in pairs(recipes_with_issues) do
-            if to_key:find('item|') then
-                local node = self.graph:get_node(to_key)
-                local i = 0
-                local j = 0
-                local has = ''
-                local missing = ''
-                for _, e in self.graph:iter_links_to(node) do
-                    if not self.sorted[e:from()] then
-                        j = j + 1
-                        missing = missing .. e:from() .. ' '
-                    else
-                        has = has .. e:from() .. ' '
-                        i = i + 1
-                    end
-                end
-                errors[#errors+1] = (to_key .. " has " .. i .. " dependencies and " .. j .. " missing dependencies. Missing: " .. missing)
-            end
-        end
-    end
-
-    return has_error, errors
+    return has_error, recipes_with_issues
 end
 
 
