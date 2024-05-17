@@ -1,4 +1,4 @@
-pypp_registered_cache_files = {}
+_G.pypp_registered_cache_files = {}
 
 -- Usage example (add in data-updates phase):
 -- register_cache_file({"pycoalprocessing", "pyfusionenergy"}, "__pyfusionenergy__/cached-configs/pycoalprocessing+pyfusionenergy.lua")
