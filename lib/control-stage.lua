@@ -181,3 +181,11 @@ py.format_energy = function(energy, watts_or_joules)
     end
 	return {'' , string.format('%.1f', energy), ' ', si_prefixes[prefix] and {si_prefixes[prefix]} or '* 10^'..(prefix*3)..' ', {watts_or_joules}}
 end
+
+---Returns the distance from 0,0
+---@param x number
+---@param y number
+---@return number
+py.distance = function(x, y)
+    return (x ^ 2 + y ^ 2) ^ 0.5
+end

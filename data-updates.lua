@@ -5,7 +5,7 @@ local function set_underground_recipe(underground, belt, prev_underground, prev_
     if prev_underground then
         prev_dist = data.raw['underground-belt'][prev_underground].max_distance + 1
         local recipe = data.raw.recipe[belt]:standardize()
-        local belt_count = recipe[1].amount
+        local belt_count = recipe.ingredients[1].amount
         local fluid = false
 
         for _, ing in pairs(recipe.ingredients) do

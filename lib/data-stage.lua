@@ -498,5 +498,27 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     return icons
 end
 
+---Blocks green modules from being used in an array of recipes categories
+---@param recipe_categories string[]
+py.disallow_effectivity = function(recipe_categories)
+    local modules = {}
+    for _, module in pairs(data.raw.module) do
+        if module.name:find('effectivity') then
+            table.insert(modules, module)
+            module.limitation_blacklist = module.limitation_blacklist or {}
+            if not module.limitation_message_key then module.limitation_message_key = 'effectivity-module-limitation-message' end
+        end
+    end
+
+	recipe_categories = table.invert(recipe_categories)
+	for _, recipe in pairs(data.raw.recipe) do
+		if recipe_categories[recipe.category] then
+            for _, module in pairs(modules) do
+                table.insert(module.limitation_blacklist, recipe.name)
+            end
+		end
+	end
+end
+
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function() end

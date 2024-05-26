@@ -386,12 +386,12 @@ if mods['yi_railway'] and mods['pyindustry'] then
 end
 
 if mods['Rocket-Silo-Construction'] then
-    RECIPE('rsc-construction-stage1').enabled = false:add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage2').enabled = false:add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage3').enabled = false:add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage4').enabled = false:add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage5').enabled = false:add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage6').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage1'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage2'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage3'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage4'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage5'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage6'):add_unlock('rocket-silo').enabled = false
 
     if mods['pyindustry'] and mods['pycoalprocessing'] then
         RECIPE('rsc-excavation-site'):replace_ingredient('pipe', 'niobium-pipe')

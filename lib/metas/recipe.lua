@@ -5,7 +5,7 @@
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public replace_ingredient fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype
 ---@field public add_ingredient fun(self: data.RecipePrototype, ingredient: string | data.IngredientPrototype): data.RecipePrototype
----@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype
+---@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
 ---@field public replace_result fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype
 ---@field public add_result fun(self: data.RecipePrototype, result: string | data.ProductPrototype): data.RecipePrototype
 ---@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype
@@ -236,11 +236,14 @@ metas.multiply_result_amount = function(self, result_name, percent)
         if result.name == result_name then
             local amount = result.amount or (result.amount_min + result.amount_max) / 2
             result.amount = math.ceil(amount * percent)
+            result.amount_min = nil
+            result.amount_max = nil
             return self
         end
     end
 
-    error('Result ' .. result_name .. ' not found in recipe ' .. self.name)
+    log('WARNING @ \'' .. self.name .. '\':multiply_result_amount(): Result ' .. result_name .. ' not found')
+    return self
 end
 
 metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
@@ -253,7 +256,8 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
         end
     end
 
-    error('Ingredient ' .. ingredient_name .. ' not found in recipe ' .. self.name)
+    log('WARNING @ \'' .. self.name .. '\':multiply_ingredient_amount(): Ingredient ' .. ingredient_name .. ' not found')
+    return self
 end
 
 metas.add_result_amount = function(self, result_name, increase)
@@ -266,7 +270,8 @@ metas.add_result_amount = function(self, result_name, increase)
         end
     end
 
-    error('Result ' .. result_name .. ' not found in recipe ' .. self.name)
+    log('WARNING @ \'' .. self.name .. '\':add_result_amount(): Result ' .. result_name .. ' not found')
+    return self
 end
 
 metas.add_ingredient_amount = function(self, ingredient_name, increase)
@@ -279,7 +284,8 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
         end
     end
 
-    error('Ingredient ' .. ingredient_name .. ' not found in recipe ' .. self.name)
+    log('WARNING @ \'' .. self.name .. '\':add_ingredient_amount(): Ingredient ' .. ingredient_name .. ' not found')
+    return self
 end
 
 return metas
