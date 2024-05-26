@@ -6,6 +6,7 @@ local collision_mask_util = require '__core__/lualib/collision-mask-util'
 ---@field public remove_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype
 ---@field public has_flag fun(self: data.EntityPrototype, flag: string): boolean
 
+local entity_types = defines.prototypes.entity
 ENTITY = setmetatable({}, {
     ---@param entity data.EntityPrototype
     __call = function(self, entity)
@@ -17,9 +18,12 @@ ENTITY = setmetatable({}, {
             end
         elseif etype == 'table' then
             if not entity.type then error('Tried to extend an entity ' .. entity.name .. ' without providing a type') end
+            if not entity_types[entity.type] then error('Tried to use ENTITY{} on a non-entity: ' .. entity.name) end
+
             data:extend{entity}
             return entity:standardize()
         else error('Invalid type ' .. etype) end
+        error('Entity ' .. tostring(entity) .. ' does not exist')
     end
 })
 

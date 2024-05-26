@@ -55,6 +55,7 @@ for ptype in pairs(defines.prototypes.item) do
 	metas[ptype] = {__index = lib.item}
 end
 metas.fluid = {__index = lib.fluid}
+metas.tile = {__index = lib.tile}
 
 for ptype, prototypes in pairs(data.raw) do
     local meta = metas[ptype]

@@ -3,6 +3,7 @@
 ---@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
 ---@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
 
+local item_prototypes = defines.prototypes.item
 ITEM = setmetatable({}, {
     ---@param item data.ItemPrototype
     __call = function(self, item)
@@ -14,9 +15,12 @@ ITEM = setmetatable({}, {
             end
         elseif itype == 'table' then
             if not item.type then error('Tried to extend an item ' .. item.name .. ' without providing a type') end
+            if not item_prototypes[item.type] then error('Tried to use ITEM{} on a non-item: ' .. item.name) end
+
             data:extend{item}
             return item
         else error('Invalid type ' .. itype) end
+        error('Item ' .. tostring(item) .. ' does not exist')
     end
 })
 

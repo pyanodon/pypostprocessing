@@ -149,3 +149,35 @@ py.find_grandparent = function(element, name)
 	end
 	error('Could not find parent gui element with name: ' .. name)
 end
+
+local si_prefixes = {
+    [0] = '',
+    'si-prefix-symbol-kilo',
+    'si-prefix-symbol-mega',
+    'si-prefix-symbol-giga',
+    'si-prefix-symbol-tera',
+    'si-prefix-symbol-peta',
+    'si-prefix-symbol-exa',
+    'si-prefix-symbol-zetta',
+    'si-prefix-symbol-yotta'
+}
+---formats a number into the amount of energy. Requires 'W' or 'J' as the second parameter
+---@param energy number
+---@param watts_or_joules string
+py.format_energy = function(energy, watts_or_joules)
+	if watts_or_joules == 'W' then
+        watts_or_joules = 'si-unit-symbol-watt'
+        energy = energy * 60
+    elseif watts_or_joules == 'J' then
+        watts_or_joules = 'si-unit-symbol-joule'
+    else
+        error()
+    end
+
+    local prefix = 0
+	while energy >= 1000 do
+        energy = energy / 1000
+        prefix = prefix + 1
+    end
+	return {'' , string.format('%.1f', energy), ' ', si_prefixes[prefix] and {si_prefixes[prefix]} or '* 10^'..(prefix*3)..' ', {watts_or_joules}}
+end

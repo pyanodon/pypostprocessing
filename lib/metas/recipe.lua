@@ -17,7 +17,7 @@ RECIPE = setmetatable(data.raw.recipe, {
         local rtype = type(recipe)
         if rtype == 'string' then
             recipe = data.raw.recipe[recipe]
-            if not recipe then error('Recipe ' .. recipe .. ' does not exist') end
+            if not recipe then error('Recipe ' .. tostring(recipe) .. ' does not exist') end
         elseif rtype == 'table' then
             recipe.type = 'recipe'
             data:extend{recipe}
@@ -84,7 +84,11 @@ end
 py.allow_productivity = function(recipe_names)
     productivity_modules = nil
     for _, recipe_name in pairs(recipe_names) do
-        RECIPE(recipe_name):allow_productivity()
+        if data.raw.recipe[recipe_name] then
+            RECIPE(recipe_name):allow_productivity()
+        else
+            log('WARNING @ allow_productivity(): Recipe ' .. recipe_name .. ' does not exist')
+        end
     end
 end
 
