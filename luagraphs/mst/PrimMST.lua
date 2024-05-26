@@ -6,8 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
-local minPQ = require('luagraphs.data.MinPQ')
+local list = require 'luagraphs.data.list'
+local minPQ = require 'luagraphs.data.MinPQ'
 
 local PrimMST = {}
 PrimMST.__index = PrimMST

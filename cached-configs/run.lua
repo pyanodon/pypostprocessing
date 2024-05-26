@@ -1,5 +1,3 @@
-local Table = require('__stdlib__/stdlib/utils/table')
-
 local function merge(table, value)
 	for k, v in pairs(value) do
 		if type(v) == 'table' and k ~= 'prerequisites' and k ~= 'ingredients' then
@@ -68,8 +66,8 @@ for _, cache_file_info in pairs(pypp_registered_cache_files) do
 		union_of_all_subsets[mod] = 1
 	end
 end
-union_of_all_subsets = Table.keys(union_of_all_subsets)
-local recognized_enabled_mods = Table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
+union_of_all_subsets = table.keys(union_of_all_subsets)
+local recognized_enabled_mods = table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
 table.sort(recognized_enabled_mods)
 
 if #recognized_enabled_mods == 0 then

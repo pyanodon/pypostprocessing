@@ -1,6 +1,4 @@
-local graph = require "luagraphs.data.graph"
-local table = require "__stdlib__.stdlib.utils.table"
-
+local graph = require 'luagraphs.data.graph'
 
 local fz_graph = {}
 fz_graph.__index = fz_graph
@@ -9,15 +7,15 @@ fz_graph.node = {}
 fz_graph.node.__index = fz_graph.node
 
 
-fz_graph.START_NODE_NAME = "__START__"
-fz_graph.NT_TECH_HEAD = "tech-h"
-fz_graph.NT_TECH_TAIL = "tech-t"
-fz_graph.NT_ITEM = "item"
-fz_graph.NT_FLUID = "fluid"
-fz_graph.NT_RECIPE = "recipe"
+fz_graph.START_NODE_NAME = '__START__'
+fz_graph.NT_TECH_HEAD = 'tech-h'
+fz_graph.NT_TECH_TAIL = 'tech-t'
+fz_graph.NT_ITEM = 'item'
+fz_graph.NT_FLUID = 'fluid'
+fz_graph.NT_RECIPE = 'recipe'
 
 
-fz_graph.node.property_names = table.array_to_dictionary {"virtual", "factorio_name", "tech_name", "ignore_for_dependencies", "internal", "original_key"}
+fz_graph.node.property_names = table.invert{'virtual', 'factorio_name', 'tech_name', 'ignore_for_dependencies', 'internal', 'original_key'}
 
 function fz_graph.node.create(name, type, properties)
     local n = {}
@@ -60,7 +58,7 @@ end
 
 
 function fz_graph.node.get_key(name, type)
-    return type .. "|" .. name
+    return type .. '|' .. name
 end
 
 
@@ -90,7 +88,7 @@ function fz_graph:copy()
     setmetatable(g, fz_graph)
 
     g.graph = self.graph:copy()
-    g.nodes = table.deep_copy(self.nodes)
+    g.nodes = table.deepcopy(self.nodes)
     g.start_node = g.nodes[self.start_node.key]
 
     return g
@@ -103,7 +101,7 @@ function fz_graph:create_subgraph(node_list)
 
     local keys = table.map(node_list, function () return true end)
     g.graph = self.graph:create_subgraph(keys)
-    g.nodes = table.deep_copy(node_list)
+    g.nodes = table.deepcopy(node_list)
     g.start_node = g.nodes[self.start_node.name]
 
     return g
@@ -138,7 +136,7 @@ end
 
 
 function fz_graph:add_link(from, to, label)
-    if not label or label == "" then error("Missing parameter: label") end
+    if not label or label == '' then error('Missing parameter: label') end
 
     if not self:link_exists(from, to, label) then
         self.graph:addEdge(from.key, to.key, 1, label)
@@ -174,7 +172,7 @@ function fz_graph:recursive_remove(filter, logging)
             found = true
 
             if logging then
-                log(" - Removed from dependency graph: " .. key)
+                log(' - Removed from dependency graph: ' .. key)
             end
         end
     until not found
@@ -214,7 +212,7 @@ function fz_graph:iter_links_from(node, label)
         function ()
             repeat
                 k, e = next(tab, k)
-            until (label or "") == "" or not k or e.label == label
+            until (label or '') == '' or not k or e.label == label
 
             return k, e
         end
@@ -229,7 +227,7 @@ function fz_graph:iter_links_to(node, label)
         function ()
             repeat
                 k, e = next(tab, k)
-            until (label or "") == "" or not k or e.label == label
+            until (label or '') == '' or not k or e.label == label
 
             return k, e
         end
@@ -237,12 +235,12 @@ end
 
 
 function fz_graph:has_label_from(node, label)
-    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
+    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= '' and (not label or e.label == label) end)
 end
 
 
 function fz_graph:has_label_to(node, label)
-    return table.any(self.graph:rev(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
+    return table.any(self.graph:rev(node.key), function (e) return e.label and e.label ~= '' and (not label or e.label == label) end)
 end
 
 
