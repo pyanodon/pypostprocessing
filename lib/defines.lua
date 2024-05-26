@@ -160,12 +160,3 @@ defines.color = {
     yellow = { r = 1.0000, g = 1.0000, b = 0.0000, a = 1 },
     yellowgreen = { r = 0.6039, g = 0.8039, b = 0.1961, a = 1 }
 }
-
-defines.color = {}
-
-for _, color in pairs(defines.color) do
-	color.r = color.r or 1
-	color.g = color.g or 1
-	color.b = color.b or 1
-	color.a = color.a or 1
-end
