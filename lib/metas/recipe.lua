@@ -10,14 +10,18 @@
 ---@field public add_result fun(self: data.RecipePrototype, result: string | data.ProductPrototype): data.RecipePrototype
 ---@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype
 ---@field public clear_ingredients fun(self: data.RecipePrototype): data.RecipePrototype
+---@field public multiply_result_amount fun(self: data.RecipePrototype, result_name: string, percent: number): data.RecipePrototype
+---@field public multiply_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, percent: number): data.RecipePrototype
+---@field public add_result_amount fun(self: data.RecipePrototype, result_name: string, increase: number): data.RecipePrototype
+---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 
 RECIPE = setmetatable(data.raw.recipe, {
     ---@param recipe data.RecipePrototype
     __call = function(self, recipe)
         local rtype = type(recipe)
         if rtype == 'string' then
-            recipe = data.raw.recipe[recipe]
-            if not recipe then error('Recipe ' .. tostring(recipe) .. ' does not exist') end
+            if not self[recipe] then error('Recipe ' .. tostring(recipe) .. ' does not exist') end
+            recipe = self[recipe]
         elseif rtype == 'table' then
             recipe.type = 'recipe'
             data:extend{recipe}
@@ -90,6 +94,10 @@ py.allow_productivity = function(recipe_names)
             log('WARNING @ allow_productivity(): Recipe ' .. recipe_name .. ' does not exist')
         end
     end
+
+    for module in pairs(productivity_modules or {}) do
+        module.limitation = table.dedupe(module.limitation)
+    end
 end
 
 metas.add_unlock = function(self, technology_name)
@@ -102,7 +110,7 @@ metas.add_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log('WARNING @ recipe:add_unlock(): Technology ' .. technology_name .. ' does not exist')
+        log('WARNING @ \'' .. self.name .. '\':add_unlock(): Technology ' .. technology_name .. ' does not exist')
         return self
     end
 
@@ -125,7 +133,7 @@ metas.remove_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log('WARNING @ recipe:remove_unlock(): Technology ' .. technology_name .. ' does not exist')
+        log('WARNING @ \'' .. self.name .. '\':remove_unlock(): Technology ' .. technology_name .. ' does not exist')
         return self
     end
 
@@ -219,6 +227,59 @@ end
 metas.clear_ingredients = function(self)
     self.ingredients = {}
     return self
+end
+
+metas.multiply_result_amount = function(self, result_name, percent)
+    self:standardize()
+
+    for _, result in pairs(self.results) do
+        if result.name == result_name then
+            local amount = result.amount or (result.amount_min + result.amount_max) / 2
+            result.amount = math.ceil(amount * percent)
+            return self
+        end
+    end
+
+    error('Result ' .. result_name .. ' not found in recipe ' .. self.name)
+end
+
+metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
+    self:standardize()
+
+    for _, ingredient in pairs(self.ingredients) do
+        if ingredient.name == ingredient_name then
+            ingredient.amount = math.ceil(ingredient.amount * percent)
+            return self
+        end
+    end
+
+    error('Ingredient ' .. ingredient_name .. ' not found in recipe ' .. self.name)
+end
+
+metas.add_result_amount = function(self, result_name, increase)
+    self:standardize()
+
+    for _, result in pairs(self.results) do
+        if result.name == result_name then
+            result.amount = result.amount + increase
+            return self
+        end
+    end
+
+    error('Result ' .. result_name .. ' not found in recipe ' .. self.name)
+end
+
+metas.add_ingredient_amount = function(self, ingredient_name, increase)
+    self:standardize()
+
+    for _, ingredient in pairs(self.ingredients) do
+        if ingredient.name == ingredient_name then
+            ingredient.amount = ingredient.amount + increase
+            return self
+        end
+    end
+
+    error('Ingredient ' .. ingredient_name .. ' not found in recipe ' .. self.name)
 end
 
 return metas

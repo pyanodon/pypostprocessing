@@ -193,7 +193,7 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
         }
     }
 
-    RECIPE(recipe):set_enabled(false)
+    RECIPE(recipe).enabled = false
 
     if original_tech then
         RECIPE(recipe):remove_unlock(original_tech)

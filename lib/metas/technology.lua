@@ -11,8 +11,8 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
     __call = function(self, technology)
         local ttype = type(technology)
         if ttype == 'string' then
-            technology = data.raw.technology[technology]
-            if not technology then error('Technology ' .. technology .. ' does not exist') end
+            if not self[technology] then error('Technology ' .. technology .. ' does not exist') end
+            technology = self[technology]
         elseif ttype == 'table' then
             technology.type = 'technology'
             data:extend{technology}
@@ -52,7 +52,7 @@ end
 metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
-        log('WARNING @ technology:add_prereq(): Technology ' .. prereq_technology_name .. ' does not exist')
+        log('WARNING @ \'' .. self.name .. '\':add_prereq(): Technology ' .. prereq_technology_name .. ' does not exist')
         return self
     end
 

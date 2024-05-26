@@ -85,7 +85,7 @@ if mods['deadlock_stacked_recipes'] then
 end
 
 if mods['LightedPolesPlus'] then
-    RECIPE('lighted-small-electric-pole'):add_unlock('optics'):remove_unlock('creosote'):set_enabled(false)
+    RECIPE('lighted-small-electric-pole'):add_unlock('optics'):remove_unlock('creosote').enabled = false
     if mods['pyalternativeenergy'] then
         RECIPE('lighted-medium-electric-pole'):remove_unlock('optics'):add_unlock('electric-energy-distribution-1')
         RECIPE('lighted-big-electric-pole'):remove_unlock('optics'):add_unlock('electric-energy-distribution-2')
@@ -386,12 +386,12 @@ if mods['yi_railway'] and mods['pyindustry'] then
 end
 
 if mods['Rocket-Silo-Construction'] then
-    RECIPE('rsc-construction-stage1'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage2'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage3'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage4'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage5'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage6'):set_enabled(false):add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage1').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage2').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage3').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage4').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage5').enabled = false:add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage6').enabled = false:add_unlock('rocket-silo')
 
     if mods['pyindustry'] and mods['pycoalprocessing'] then
         RECIPE('rsc-excavation-site'):replace_ingredient('pipe', 'niobium-pipe')

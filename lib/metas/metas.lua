@@ -21,6 +21,7 @@ for _, meta in pairs(lib) do
         local copy = table.deepcopy(self)
         if type(new_name) == 'function' then new_name = new_name(copy) end
         copy.name = new_name
+        data:extend{copy}
         return setmetatable(copy, getmetatable(self))
     end
 

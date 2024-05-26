@@ -3,8 +3,8 @@ TILE = setmetatable(data.raw.tile, {
     __call = function(self, tile)
         local ftype = type(tile)
         if ftype == 'string' then
-            tile = data.raw.tile[tile]
-            if not tile then error('Tile ' .. tostring(tile) .. ' does not exist') end
+            if not self[tile] then error('Tile ' .. tostring(tile) .. ' does not exist') end
+            tile = self[tile]
         elseif ftype == 'table' then
             tile.type = 'tile'
             data:extend{tile}

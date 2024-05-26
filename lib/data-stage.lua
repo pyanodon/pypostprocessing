@@ -438,5 +438,65 @@ py.global_item_replacer = function(old, new, blackrecipe)
     end
 end
 
+---adds a small icon to the top right corner of a recipe
+---@param recipe data.RecipePrototype
+---@param corner table
+py.add_corner_icon_to_recipe = function(recipe, corner)
+    local icon, icon_size, icons
+    local result = recipe.main_product or recipe.result or recipe.results[1][1] or recipe.results[1].name
+
+    -- Icon size finder
+    if recipe.icon_size ~= nil then
+        icon_size = recipe.icon_size
+    else
+        icon_size = 32 -- Set default to 32
+    end
+
+    -- Icon finder
+    if recipe.icon ~= nil then -- Found an icon
+        icon = recipe.icon
+    end
+
+    if icon == nil then -- (i.e. not found above)
+        -- Find it from result icon
+        icon = table.deepcopy(data.raw.item[result].icon)
+
+        -- Confirm icon_size
+        if data.raw.item[result] and data.raw.item[result].icon_size ~= nil then
+            icon_size = data.raw.item[result].icon_size
+        end
+    end
+
+    if recipe.icons then -- If it's already an icons
+        icons = recipe.icons
+        icons[#icons + 1] = corner
+    elseif data.raw.item[result] and data.raw.item[result].icons then
+        icons = table.deepcopy(data.raw.item[result].icons)
+        icons[#icons + 1] = corner
+    else -- No icons table, use icon found above
+        if icon == nil then
+            icon = '__base__/graphics/icons/blueprint.png'
+        end -- Fallback
+
+        icons = {
+            {icon = icon, icon_size = icon_size},
+            corner
+        }
+    end
+
+    -- Ensure icon sizes are installed in each icon level
+    for i, icon in pairs(icons) do
+        if not icon.icon_size then
+            if i == 1 then -- Allow first one to inherit, set all others to 32
+                icon.icon_size = icon_size or 32
+            else
+                icon.icon_size = 32
+            end
+        end
+    end
+
+    return icons
+end
+
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function() end
