@@ -24,6 +24,13 @@ ENTITY = setmetatable({}, {
             return entity:standardize()
         else error('Invalid type ' .. etype) end
         error('Entity ' .. tostring(entity) .. ' does not exist')
+    end,
+    __index = function(self, entity_name)
+        for ptype in pairs(defines.prototypes.entity) do
+            local result = data.raw[ptype][entity_name]
+            if result then return result:standardize() end
+        end
+        return nil
     end
 })
 

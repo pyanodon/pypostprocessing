@@ -180,13 +180,21 @@ do
     metas.replace_result = function(self, old_result, new_result)
         self:standardize()
         replacement_helper(self.results, old_result, new_result, new_amount)
+        if self.main_product == old_result then
+            self.main_product = type(new_result) == 'string' and new_result or new_result[1] or new_result.name
+        end
         return self
     end
 end
 
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
-    table.insert(self.ingredients, py.standardize_product(ingredient))
+    ingredient = py.standardize_product(ingredient)
+    if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
+        log('WARNING @ \'' .. self.name .. '\':add_ingredient(): Ingredient ' .. ingredient.name .. ' does not exist')
+    else
+        table.insert(self.ingredients, ingredient)
+    end
     return self
 end
 

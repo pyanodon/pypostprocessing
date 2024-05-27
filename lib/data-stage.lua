@@ -379,12 +379,24 @@ py.pipe_covers = function(n, s, w, e)
 end
 
 ---Standardizes a product or ingredient prototype to a common format.
----@param p data.IngredientPrototype | data.ProductPrototype
+---@param p data.IngredientPrototype | data.ProductPrototype | string
 ---@return data.IngredientPrototype | data.ProductPrototype
 py.standardize_product = function(p)
+    if type(p) == 'string' then p = {p, 1} end
+    local name = p.name or p[1]
+    local type = p.type
+    if not type and name then
+        if data.raw.fluid[name] then
+            log(name)
+            type = 'fluid'
+        else
+            type = 'item'
+        end
+    end
+
     return {
-        type = p.type or 'item',
-        name = p.name or p[1],
+        type = type,
+        name = name,
         amount = p.amount or p[2],
         probability = p.probability,
         amount_min = p.amount_min,

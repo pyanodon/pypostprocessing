@@ -21,6 +21,13 @@ ITEM = setmetatable({}, {
             return item
         else error('Invalid type ' .. itype) end
         error('Item ' .. tostring(item) .. ' does not exist')
+    end,
+    __index = function(self, item_name)
+        for ptype in pairs(defines.prototypes.item) do
+            local result = data.raw[ptype][item_name]
+            if result then return result end
+        end
+        return nil
     end
 })
 
