@@ -120,6 +120,8 @@ metas.add_unlock = function(self, technology_name)
 
     table.insert(technology.effects, {type = 'unlock-recipe', recipe = self.name})
 
+    self.enabled = false
+
     return self
 end
 
