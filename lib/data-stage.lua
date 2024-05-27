@@ -384,27 +384,20 @@ end
 py.standardize_product = function(p)
     if type(p) == 'string' then p = {p, 1} end
     local name = p.name or p[1]
-    local type = p.type
-    if not type and name then
+    if not p.type and name then
         if data.raw.fluid[name] then
-            type = 'fluid'
+            p.type = 'fluid'
         else
-            type = 'item'
+            p.type = 'item'
         end
     end
 
-    return {
-        type = type,
-        name = name,
-        amount = p.amount or p[2],
-        probability = p.probability,
-        amount_min = p.amount_min,
-        amount_max = p.amount_max,
-        catalyst_amount = p.catalyst_amount,
-        temperature = p.temperature,
-        min_temperature = p.minimum_temperature,
-        max_temperature = p.maximum_temperature
-    }
+    p.name = name
+    p.amount = p.amount or p[2] or 1
+    p[1] = nil
+    p[2] = nil
+
+    return p
 end
 
 ---Returns an iterator through all prototypes of a given supertype.
