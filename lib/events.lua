@@ -136,6 +136,7 @@ function py.execute_later(function_key, ticks, ...)
 	global._delayed_functions[script.register_on_entity_destroyed(flying_text)] = {function_key, ticks - highest, {...}}
 end
 py.on_event(defines.events.on_entity_destroyed, function(event)
+	if not global._delayed_functions then return end
 	local data = global._delayed_functions[event.registration_number]
 	if not data then return end
 	global._delayed_functions[event.registration_number] = nil
