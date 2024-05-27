@@ -1,8 +1,3 @@
-local powers_of_two = {}
-for i = 0, 20 do
-	powers_of_two[i] = 2 ^ i
-end
-
 if data then
 	local delays = {}
 	for _, n in pairs(powers_of_two) do
@@ -61,6 +56,11 @@ local function one_function_from_many(functions)
 			functions[i](arg)
 		end
 	end
+end
+
+local powers_of_two = {}
+for i = 0, 20 do
+	powers_of_two[i] = 2 ^ i
 end
 
 local finalized = false

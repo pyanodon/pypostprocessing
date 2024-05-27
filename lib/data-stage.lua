@@ -524,5 +524,17 @@ py.disallow_effectivity = function(recipe_categories)
 	end
 end
 
+local delays = {}
+for i = 0, 20 do
+    local n = 2 ^ i
+    delays[#delays + 1] = {
+        name = 'py-ticked-script-delay-' .. n,
+        type = 'flying-text',
+        time_to_live = n,
+        speed = 0,
+    }
+end
+data:extend(delays)
+
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function() end
