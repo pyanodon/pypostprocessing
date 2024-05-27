@@ -63,7 +63,10 @@ local function one_function_from_many(functions)
 	end
 end
 
+local finalized = false
 py.finalize_events = function()
+	if finalized then error('Events already finalized') end
+	local i = 0
 	for event, functions in pairs(events) do
 		local f = one_function_from_many(functions)
 		if type(event) == 'number' then
@@ -74,7 +77,10 @@ py.finalize_events = function()
 		else
 			script.on_event(tonumber(event) or event, f)
 		end
+		i = i + 1
 	end
+	finalized = true
+	log('Finalized ' .. i .. ' events for ' .. script.mod_name)
 end
 
 _G.gui_events = {

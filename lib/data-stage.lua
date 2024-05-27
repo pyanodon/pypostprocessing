@@ -387,7 +387,6 @@ py.standardize_product = function(p)
     local type = p.type
     if not type and name then
         if data.raw.fluid[name] then
-            log(name)
             type = 'fluid'
         else
             type = 'item'

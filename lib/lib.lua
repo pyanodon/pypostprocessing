@@ -4,7 +4,6 @@ require 'table'
 require 'string'
 require 'defines'
 require 'color'
-require 'events'
 require 'world-generation'
 
 if data and data.raw and not data.raw.item['iron-plate'] then

@@ -2,6 +2,8 @@
 
 local random = math.random
 
+require 'events'
+
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity
 ---@param sprite string
