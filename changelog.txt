@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.24
 Date: 2024-??-??
-  Bugfixes:
+  Changes:
+    - Whenever pyPP encounters a dependency cycle, it will now print the items involved in the cycle to the logs.
     - Fix productivity blacklist being overly general and including recipes like empty barrels
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.23

@@ -240,18 +240,26 @@ if dev_mode then
             science_packs[pack.name or pack[1]] = true
         end
     
-        add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
-    
-        if mods['pyalienlife'] then
-            add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
-            add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
-            add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
-            add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
-            add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
-        end
-    
-        if mods['pyalternativeenergy'] then
-            add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
+        if mods.pystellarexpedition then
+            for i = 1, #config.SCIENCE_PACKS - 1 do
+                local pack = config.SCIENCE_PACKS[i]
+                local next = config.SCIENCE_PACKS[i + 1]
+                add_science_pack_dep(tech, next, pack)
+            end
+        else
+            add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
+        
+            if mods['pyalienlife'] then
+                add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
+                add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
+                add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
+                add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
+                add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
+            end
+        
+            if mods['pyalternativeenergy'] then
+                add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
+            end
         end
     end
 
@@ -298,7 +306,7 @@ for _, tech in pairs(data.raw.technology) do
             tech_ingredients_to_use[pack] = ingredient.amount or ingredient[2]
         end
     end
-
+    
     -- Add any missing ingredients that we want present
     for _, ingredient in pairs(config.TC_TECH_INGREDIENTS_PER_LEVEL[highest_science_pack]) do
         tech_ingredients_to_use[ingredient.name or ingredient[1]] = ingredient.amount or ingredient[2]

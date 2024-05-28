@@ -113,6 +113,8 @@ if mods.pystellarexpedition then
     end
     config.STARTING_ITEMS:add('ice')
     config.STARTING_ITEMS:add('silicate-stone')
+    config.STARTING_ITEMS:add('cobalt-ore')
+    config.STARTING_ITEMS:add('organic-nexelit')
 end
 
 if mods['pyalternativeenergy'] then
