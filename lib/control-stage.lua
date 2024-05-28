@@ -49,7 +49,7 @@ end
 ---Intended to be called inside a build event. Cancels creation of the entity and returns its item_to_place
 ---@param entity LuaEntity
 ---@param player_index integer?
----@param message string?
+---@param message LocalisedString?
 ---@param color Color?
 py.cancel_creation = function(entity, player_index, message, color)
 	local inserted = 0
