@@ -1,12 +1,8 @@
---
 -- Created by IntelliJ IDEA.
 -- User: chen0
 -- Date: 26/6/2017
 -- Time: 12:48 AM
 -- To change this template use File | Settings | File Templates.
---
-
-local table = require "__stdlib__.stdlib.utils.table"
 
 local graph = {}
 graph.__index = graph
@@ -106,7 +102,7 @@ function graph.createFromVertexList(vertices, directed)
     local g = graph.create(0, directed)
     setmetatable(g, graph)
 
-    g.vertexList = table.deep_copy(vertices)
+    g.vertexList = table.deepcopy(vertices)
     g.adjList = {}
 
     for v, _ in pairs(g.vertexList) do

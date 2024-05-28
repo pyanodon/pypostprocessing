@@ -1,17 +1,14 @@
-local py_utils = require('prototypes.functions.utils')
-require('__stdlib__/stdlib/data/data').Util.create_data_globals()
-
 local function set_underground_recipe(underground, belt, prev_underground, prev_belt)
     local dist = data.raw['underground-belt'][underground].max_distance + 1
     local prev_dist = 0
 
     if prev_underground then
         prev_dist = data.raw['underground-belt'][prev_underground].max_distance + 1
-        local recipe_data = data.raw.recipe[belt].normal or data.raw.recipe[belt]
-        local belt_count = py_utils.standardize_products(recipe_data.results, nil, recipe_data.result, recipe_data.result_count)[1].amount
+        local recipe = data.raw.recipe[belt]:standardize()
+        local belt_count = recipe.ingredients[1].amount
         local fluid = false
 
-        for _, ing in pairs(py_utils.standardize_products(recipe_data.ingredients)) do
+        for _, ing in pairs(recipe.ingredients) do
             if ing.name ~= prev_belt then
                 RECIPE(underground):remove_ingredient(ing.name)
                     :add_ingredient{ type = ing.type, name = ing.name, amount = ing.amount * prev_dist / belt_count}

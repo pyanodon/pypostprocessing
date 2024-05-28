@@ -1,19 +1,16 @@
 -- Compatibility changes which need to modify data.raw should go here.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
-local py_utils = require 'prototypes.functions.utils'
-local table = require '__stdlib__.stdlib.utils.table'
-
 if mods['pyrawores'] then
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
+        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= 'coal-gas' then
             RECIPE(recipe):replace_ingredient('coal', 'raw-coal')
         end
     end
 end
 
-if mods["galdocs-manufacturing"] then
-    require("prototypes/functions/galdoc")
+if mods['galdocs-manufacturing'] then
+    require 'prototypes/functions/galdoc'
 end
 
 if mods['DeadlockLargerLamp'] then
@@ -23,7 +20,7 @@ if mods['DeadlockLargerLamp'] then
 end
 
 if mods['deadlock-beltboxes-loaders'] then
-    for item_name, item in py_utils.iter_prototypes('item') do
+    for item_name, item in py.iter_prototypes('item') do
         local stack = data.raw.item['deadlock-stack-' .. item_name]
         if stack then
             stack.ignore_for_dependencies = true
@@ -59,7 +56,7 @@ if mods['deadlock-beltboxes-loaders'] then
 end
 
 if mods['DeadlockCrating'] then
-    for item_name, item in py_utils.iter_prototypes('item') do
+    for item_name, item in py.iter_prototypes('item') do
         if data.raw.item['deadlock-crate-' .. item_name] ~= nil then
             data.raw.item['deadlock-crate-' .. item_name].ignore_for_dependencies = true
             data.raw.recipe['deadlock-packrecipe-' .. item_name].ignore_for_dependencies = true
@@ -88,7 +85,7 @@ if mods['deadlock_stacked_recipes'] then
 end
 
 if mods['LightedPolesPlus'] then
-    RECIPE('lighted-small-electric-pole'):add_unlock('optics'):remove_unlock('creosote'):set_enabled(false)
+    RECIPE('lighted-small-electric-pole'):add_unlock('optics'):remove_unlock('creosote').enabled = false
     if mods['pyalternativeenergy'] then
         RECIPE('lighted-medium-electric-pole'):remove_unlock('optics'):add_unlock('electric-energy-distribution-1')
         RECIPE('lighted-big-electric-pole'):remove_unlock('optics'):add_unlock('electric-energy-distribution-2')
@@ -97,9 +94,9 @@ if mods['LightedPolesPlus'] then
 end
 
 if mods['reverse-factory'] then
-    local cat = table.array_to_dictionary({ 'recycle-products', 'recycle-intermediates', 'recycle-with-fluids', 'recycle-productivity' }, true)
+    local cat = table.invert{'recycle-products', 'recycle-intermediates', 'recycle-with-fluids', 'recycle-productivity'}
 
-    for item_name, item in py_utils.iter_prototypes('item') do
+    for item_name, item in py.iter_prototypes('item') do
         local recipe_name = 'rf-' .. item_name
 
         if data.raw.recipe[recipe_name] and cat[data.raw.recipe[recipe_name].category] then
@@ -241,7 +238,7 @@ if mods['miniloader'] then
 end
 
 if mods['Flare Stack'] then
-    local cat = table.array_to_dictionary({ 'gas-venting', 'flaring', 'incineration', 'fuel-incineration' }, true)
+    local cat = table.invert{'gas-venting', 'flaring', 'incineration', 'fuel-incineration'}
 
     for recipe_name, recipe in pairs(data.raw.recipe) do
         if cat[recipe.category] then
@@ -389,12 +386,12 @@ if mods['yi_railway'] and mods['pyindustry'] then
 end
 
 if mods['Rocket-Silo-Construction'] then
-    RECIPE('rsc-construction-stage1'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage2'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage3'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage4'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage5'):set_enabled(false):add_unlock('rocket-silo')
-    RECIPE('rsc-construction-stage6'):set_enabled(false):add_unlock('rocket-silo')
+    RECIPE('rsc-construction-stage1'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage2'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage3'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage4'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage5'):add_unlock('rocket-silo').enabled = false
+    RECIPE('rsc-construction-stage6'):add_unlock('rocket-silo').enabled = false
 
     if mods['pyindustry'] and mods['pycoalprocessing'] then
         RECIPE('rsc-excavation-site'):replace_ingredient('pipe', 'niobium-pipe')
@@ -492,17 +489,17 @@ then
     end
 end
 
-if mods["aai-loaders"] then
-    TECHNOLOGY("aai-express-loader"):remove_prereq("advanced-electronics-2")
-    if mods["pyalienlife"] then
-        TECHNOLOGY("aai-fast-loader"):remove_prereq('advanced-electronics'):remove_pack('chemical-science-pack')
+if mods['aai-loaders'] then
+    TECHNOLOGY('aai-express-loader'):remove_prereq('advanced-electronics-2')
+    if mods['pyalienlife'] then
+        TECHNOLOGY('aai-fast-loader'):remove_prereq('advanced-electronics'):remove_pack('chemical-science-pack')
     end
 end
 
-if mods["cargo-ships"] then
-    TECHNOLOGY("water_transport"):remove_prereq("logistics-2"):remove_pack("logistic-science-pack")
-    TECHNOLOGY("cargo_ships"):remove_pack("logistic-science-pack")
-    TECHNOLOGY("automated_water_transport"):remove_pack("logistic-science-pack")
+if mods['cargo-ships'] then
+    TECHNOLOGY('water_transport'):remove_prereq('logistics-2'):remove_pack('logistic-science-pack')
+    TECHNOLOGY('cargo_ships'):remove_pack('logistic-science-pack')
+    TECHNOLOGY('automated_water_transport'):remove_pack('logistic-science-pack')
 end
 
 if mods['RenaiTransportation'] then
@@ -581,16 +578,16 @@ end
 
 if mods['jetpack'] and mods['pyrawores'] and mods['pypetroleumhandling'] then
     -- using remove_pack doesn't work, I don't understand why
-    local rocket_fuel = data.raw.technology["rocket-fuel"]
-    rocket_fuel.prerequisites = mods['pyalienlife'] and { "py-science-pack-mk01", "scrude", "electrolysis"} or {"scrude", "electrolysis"}
+    local rocket_fuel = data.raw.technology['rocket-fuel']
+    rocket_fuel.prerequisites = mods['pyalienlife'] and { 'py-science-pack-mk01', 'scrude', 'electrolysis'} or {'scrude', 'electrolysis'}
     rocket_fuel.unit = {
-        ingredients = {{ mods['pyalienlife'] and "py-science-pack-1" or "automation-science-pack", 1 }},
+        ingredients = {{ mods['pyalienlife'] and 'py-science-pack-1' or 'automation-science-pack', 1 }},
         count = 100,
         time = 30
     }
-    TECHNOLOGY("jetpack-1"):set_fields{prerequisites = {"rocket-fuel"}}:remove_pack("chemical-science-pack"):remove_pack("logistic-science-pack"):add_pack("py-science-pack-1")
-    RECIPE("jetpack-1"):add_ingredient({type = 'item', name = 'mechanical-parts-01', amount = 2}):replace_ingredient("electronic-circuit", "electronics-mk01")
-    TECHNOLOGY("jetpack-2"):set_fields{prerequisites = {"jetpack-1"}}:remove_pack("chemical-science-pack"):add_pack("py-science-pack-2"):add_prereq(mods['pyalienlife'] and 'py-science-pack-mk02' or 'logistic-science-pack')
-    TECHNOLOGY("jetpack-3"):set_fields{prerequisites = {"jetpack-2"}}:remove_pack("production-science-pack"):remove_pack("py-science-pack-4"):remove_pack("utility-science-pack"):add_pack("py-science-pack-3"):add_prereq(mods['pyalienlife'] and 'py-science-pack-mk03' or 'chemical-science-pack')
-    TECHNOLOGY("jetpack-4"):set_fields{prerequisites = {"jetpack-3"}}:remove_pack("space-science-pack"):add_prereq('utility-science-pack')
+    TECHNOLOGY('jetpack-1'):set_fields{prerequisites = {'rocket-fuel'}}:remove_pack('chemical-science-pack'):remove_pack('logistic-science-pack'):add_pack('py-science-pack-1')
+    RECIPE('jetpack-1'):add_ingredient({type = 'item', name = 'mechanical-parts-01', amount = 2}):replace_ingredient('electronic-circuit', 'electronics-mk01')
+    TECHNOLOGY('jetpack-2'):set_fields{prerequisites = {'jetpack-1'}}:remove_pack('chemical-science-pack'):add_pack('py-science-pack-2'):add_prereq(mods['pyalienlife'] and 'py-science-pack-mk02' or 'logistic-science-pack')
+    TECHNOLOGY('jetpack-3'):set_fields{prerequisites = {'jetpack-2'}}:remove_pack('production-science-pack'):remove_pack('py-science-pack-4'):remove_pack('utility-science-pack'):add_pack('py-science-pack-3'):add_prereq(mods['pyalienlife'] and 'py-science-pack-mk03' or 'chemical-science-pack')
+    TECHNOLOGY('jetpack-4'):set_fields{prerequisites = {'jetpack-3'}}:remove_pack('space-science-pack'):add_prereq('utility-science-pack')
 end

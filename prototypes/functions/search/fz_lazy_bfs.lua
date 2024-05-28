@@ -1,5 +1,4 @@
-local table = require "__stdlib__.stdlib.utils.table"
-local queue = require "__stdlib__.stdlib.misc.queue"
+local queue = require 'luagraphs.queue.queue'
 
 local lazy_bfs = {}
 lazy_bfs.__index = lazy_bfs

@@ -1,9 +1,5 @@
 local dev_mode = settings.startup['pypp-dev-mode'].value
 local create_cache_mode = settings.startup['pypp-create-cache'].value
-
-require('__stdlib__/stdlib/data/data').Util.create_data_globals()
-
-local table = require('__stdlib__/stdlib/utils/table')
 local config = require 'prototypes.config'
 
 for _, module in pairs(data.raw.module) do
@@ -16,7 +12,7 @@ for _, module in pairs(data.raw.module) do
     end
 
     if not table.is_empty(remove_recipe) then
-        local limit = table.array_to_dictionary(module.limitation, true)
+        local limit = table.invert(module.limitation)
 
         for r, _ in pairs(remove_recipe) do
             limit[r] = nil
@@ -34,7 +30,7 @@ for _, module in pairs(data.raw.module) do
     end
 
     if not table.is_empty(remove_recipe) then
-        local limit = table.array_to_dictionary(module.limitation_blacklist, true)
+        local limit = table.invert(module.limitation_blacklist)
 
         for r, _ in pairs(remove_recipe) do
             limit[r] = nil
@@ -197,7 +193,7 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
         }
     }
 
-    RECIPE(recipe):set_enabled(false)
+    RECIPE(recipe).enabled = false
 
     if original_tech then
         RECIPE(recipe):remove_unlock(original_tech)
@@ -217,11 +213,10 @@ if mods['PyBlock'] then
 end
 
 if mods.pycoalprocessing and not mods['extended-descriptions'] then
-    local FUN = require('__pycoalprocessing__/prototypes/functions/functions')
-    for _, recipe in pairs(data.raw.module['productivity-module'].limitation or {}) do
+        for _, recipe in pairs(data.raw.module['productivity-module'].limitation or {}) do
         recipe = data.raw.recipe[recipe]
         if recipe then
-            FUN.add_to_description('recipe', recipe, {'recipe-description.affected-by-productivity'})
+            py.add_to_description('recipe', recipe, {'recipe-description.affected-by-productivity'})
         end
     end
 end
@@ -261,7 +256,7 @@ if dev_mode then
     end
 
     log('AUTOTECH START')
-    local at = require('prototypes.functions.auto_tech').create()
+    local at = require 'prototypes.functions.auto_tech'.create()
     at:run()
     if create_cache_mode then
         at:create_cachefile_code()
@@ -274,7 +269,7 @@ end
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
-require('prototypes/functions/compatibility')
+require 'prototypes/functions/compatibility'
 
 ----------------------------------------------------
 -- TECHNOLOGY CHANGES
@@ -342,7 +337,7 @@ end
 
 -- YAFC
 if type(data.data_crawler) == 'string' and string.sub(data.data_crawler, 1, 5) == 'yafc ' then
-    require('prototypes/yafc')
+    require 'prototypes/yafc'
 end
 
 -- force mining drill speed to not increase with speed modules

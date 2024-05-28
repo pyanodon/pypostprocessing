@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local stack = require('luagraphs.data.stack')
+local stack = require 'luagraphs.data.stack'
 
 local DepthFirstSearch = {}
 DepthFirstSearch.__index = DepthFirstSearch
