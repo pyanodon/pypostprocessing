@@ -16,19 +16,19 @@ if mods['pyalienlife'] then
 
     -- List of all available smartfarming
     local farms = {
-        require('__pyalienlife__/scripts/smart-farm/farm-ralesia'),
-        require('__pyalienlife__/scripts/smart-farm/farm-rennea'),
-        require('__pyalienlife__/scripts/smart-farm/farm-tuuphra'),
-        require('__pyalienlife__/scripts/smart-farm/farm-grod'),
-        require('__pyalienlife__/scripts/smart-farm/farm-yotoi'),
-        require('__pyalienlife__/scripts/smart-farm/farm-kicalk'),
-        require('__pyalienlife__/scripts/smart-farm/farm-arum'),
-        require('__pyalienlife__/scripts/smart-farm/farm-yotoi-fruit'),
-        use_bioreserve_copy(require('__pyalienlife__/scripts/smart-farm/farm-bioreserve'))
+        require '__pyalienlife__/scripts/smart-farm/farm-ralesia',
+        require '__pyalienlife__/scripts/smart-farm/farm-rennea',
+        require '__pyalienlife__/scripts/smart-farm/farm-tuuphra',
+        require '__pyalienlife__/scripts/smart-farm/farm-grod',
+        require '__pyalienlife__/scripts/smart-farm/farm-yotoi',
+        require '__pyalienlife__/scripts/smart-farm/farm-kicalk',
+        require '__pyalienlife__/scripts/smart-farm/farm-arum',
+        require '__pyalienlife__/scripts/smart-farm/farm-yotoi-fruit',
+        use_bioreserve_copy(require '__pyalienlife__/scripts/smart-farm/farm-bioreserve')
     }
 
     if mods['pyalternativeenergy'] then
-        farms[#farms+1] = require('__pyalternativeenergy__/scripts/crops/farm-mova')
+        farms[#farms+1] = require '__pyalternativeenergy__/scripts/crops/farm-mova'
     end
 
     for _, farm in ipairs(farms) do

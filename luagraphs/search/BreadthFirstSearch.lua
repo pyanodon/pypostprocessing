@@ -6,8 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local queue = require('luagraphs.data.queue')
-local stack = require('luagraphs.data.stack')
+local queue = require 'luagraphs.data.queue'
+local stack = require 'luagraphs.data.stack'
 
 local BreadthFirstSearch = {}
 BreadthFirstSearch.__index = BreadthFirstSearch

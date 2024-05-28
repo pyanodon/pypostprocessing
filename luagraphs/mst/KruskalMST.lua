@@ -6,9 +6,9 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
-local minPQ = require('luagraphs.data.MinPQ')
-local unionFind = require('luagraphs.data.UnionFind')
+local list = require 'luagraphs.data.list'
+local minPQ = require 'luagraphs.data.MinPQ'
+local unionFind = require 'luagraphs.data.UnionFind'
 
 local KruskalMST = {}
 KruskalMST.__index = KruskalMST

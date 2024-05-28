@@ -1,5 +1,3 @@
-local table = require "__stdlib__.stdlib.utils.table"
-
 local tr = {}
 tr.__index = tr
 

@@ -1,6 +1,5 @@
-local table = require "__stdlib__.stdlib.utils.table"
-local queue = require "__stdlib__.stdlib.misc.queue"
-local fz_lazy_bfs = require "prototypes.functions.search.fz_lazy_bfs"
+local queue = require 'luagraphs.queue.queue'
+local fz_lazy_bfs = require 'prototypes.functions.search.fz_lazy_bfs'
 
 local fz_topo = {}
 fz_topo.__index = fz_topo

@@ -93,7 +93,7 @@ end
 
 
 function FordFulkerson:minCuts()
-    local result = require('luagraphs.data.list').create()
+    local result = require 'luagraphs.data.list'.create()
 
     for _, v in pairs(self.network.vertexList:enumerate()) do
         for _, e in pairs(self.network:adj(v):enumerate()) do
