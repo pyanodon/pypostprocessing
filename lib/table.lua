@@ -166,7 +166,7 @@ local function shuffle(t)
 
 	return keys
 end
----Like normal pairs(), but in randomized order
+---Like normal pairs(), but in deterministic randomized order
 ---@param t table
 ---@return fun():any, any
 function py.shuffled_pairs(t)

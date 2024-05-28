@@ -7,7 +7,7 @@ require 'autorecipes'
 ---@return table
 py.empty_image = function()
     return {
-        filename = '__pystellarexpeditiongraphics__/graphics/empty.png',
+        filename = '__pypostprocessing__/empty.png',
         size = 1,
         priority = 'high',
         direction_count = 1,
