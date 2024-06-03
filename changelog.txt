@@ -3,6 +3,7 @@ Version: 0.2.24
 Date: 2024-??-??
   Changes:
     - Whenever pyPP encounters a dependency cycle, it will now print the items involved in the cycle to the logs.
+    - Added an incompatiblity with the science-pack-dependencies mod. (https://github.com/pyanodon/pybugreports/issues/505)
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.23
 Date: 2024-4-25
