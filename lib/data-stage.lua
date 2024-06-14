@@ -393,7 +393,7 @@ py.standardize_product = function(p)
     end
 
     p.name = name
-    p.amount = p.amount or p[2] or 1
+    if not (p.amount_min and p.amount_max) then p.amount = p.amount or p[2] or 1 end
     p[1] = nil
     p[2] = nil
 
