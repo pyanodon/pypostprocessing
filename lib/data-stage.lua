@@ -448,6 +448,7 @@ end
 py.add_corner_icon_to_recipe = function(recipe, corner)
     local icon, icon_size, icons
     local result = recipe.main_product or recipe.result or recipe.results[1][1] or recipe.results[1].name
+    result = ITEM(result)
 
     -- Icon size finder
     if recipe.icon_size ~= nil then
@@ -463,19 +464,17 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
 
     if icon == nil then -- (i.e. not found above)
         -- Find it from result icon
-        icon = table.deepcopy(data.raw.item[result].icon)
+        icon = table.deepcopy(result.icon)
 
         -- Confirm icon_size
-        if data.raw.item[result] and data.raw.item[result].icon_size ~= nil then
-            icon_size = data.raw.item[result].icon_size
-        end
+        if result and result.icon_size then icon_size = result.icon_size end
     end
 
     if recipe.icons then -- If it's already an icons
         icons = recipe.icons
         icons[#icons + 1] = corner
-    elseif data.raw.item[result] and data.raw.item[result].icons then
-        icons = table.deepcopy(data.raw.item[result].icons)
+    elseif result and result.icons then
+        icons = table.deepcopy(result.icons)
         icons[#icons + 1] = corner
     else -- No icons table, use icon found above
         if icon == nil then
