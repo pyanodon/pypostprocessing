@@ -104,6 +104,15 @@ end
 ---@param tbl table
 ---@return any
 table.last = function(tbl)
+    local result
+    for _, v in pairs(tbl) do result = v end
+    return result
+end
+
+---Returns the last element of the array.
+---@param tbl any[]
+---@return any
+table.array_last = function(tbl)
     local size = #tbl
     if size == 0 then return nil end
     return tbl[size]
