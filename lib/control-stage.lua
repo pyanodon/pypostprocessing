@@ -191,3 +191,13 @@ end
 py.distance = function(x, y)
     return (x ^ 2 + y ^ 2) ^ 0.5
 end
+
+---Returns the squared distance between two points.
+---@param first Position
+---@param second Position
+---@return number
+py.distance_squared = function(first, second)
+	local x = first.x - second.x
+	local y = first.y - second.y
+	return x * x + y * y
+end
