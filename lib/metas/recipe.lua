@@ -151,12 +151,17 @@ metas.remove_unlock = function(self, technology_name)
 end
 
 do
-    local function replacement_helper(ingredients_or_results, old, new, new_amount)
+    local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
         local type = type(new)
         if type == 'string' then
+            if not FLUID[new] and not ITEM[new] then
+                log('WARNING @ \'' .. recipe.name .. '\':replace_ingredient(): Ingredient ' .. new .. ' does not exist')
+                return
+            end
             for _, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
                     ingredient.name = new
+                    ingredient.type = FLUID[new] and 'fluid' or 'item'
                     if new_amount then
                         ingredient.amount = new_amount
                         ingredient.amount_min = nil
@@ -175,13 +180,13 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        replacement_helper(self.ingredients, old_ingredient, new_ingredient, new_amount)
+        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
         return self
     end
 
     metas.replace_result = function(self, old_result, new_result)
         self:standardize()
-        replacement_helper(self.results, old_result, new_result, new_amount)
+        replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == 'string' and new_result or new_result[1] or new_result.name
         end
