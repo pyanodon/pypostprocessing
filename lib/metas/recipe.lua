@@ -1,3 +1,5 @@
+local table_insert = table.insert
+
 ---@class data.RecipePrototype
 ---@field public standardize fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public allow_productivity fun(self: data.RecipePrototype): data.RecipePrototype
@@ -79,7 +81,7 @@ metas.allow_productivity = function(self)
     end
 
     for module in pairs(productivity_modules) do
-        table.insert(module.limitation, self.name)
+        table_insert(module.limitation, self.name)
     end
 
     return self
@@ -118,7 +120,7 @@ metas.add_unlock = function(self, technology_name)
         technology.effects = {}
     end
 
-    table.insert(technology.effects, {type = 'unlock-recipe', recipe = self.name})
+    table_insert(technology.effects, {type = 'unlock-recipe', recipe = self.name})
 
     self.enabled = false
 
@@ -199,15 +201,28 @@ metas.add_ingredient = function(self, ingredient)
     ingredient = py.standardize_product(ingredient)
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
         log('WARNING @ \'' .. self.name .. '\':add_ingredient(): Ingredient ' .. ingredient.name .. ' does not exist')
-    else
-        table.insert(self.ingredients, ingredient)
+        return self
     end
+
+    -- Ensure that this ingredient does not already exist in this recipe.
+    -- If so, combine their amounts and catalyst amounts.
+    for _, existing in pairs(self.ingredients) do
+        if existing.name == ingredient.name and existing.type == ingredient.type then
+            if existing.amount and ingredient.amount then
+                existing.amount = existing.amount + ingredient.amount
+                existing.catalyst_amount = (existing.catalyst_amount or 0) + (ingredient.catalyst_amount or 0)
+                return self
+            end
+        end
+    end
+
+    table_insert(self.ingredients, ingredient)
     return self
 end
 
 metas.add_result = function(self, result)
     self:standardize()
-    table.insert(self.results, py.standardize_product(result))
+    table_insert(self.results, py.standardize_product(result))
     return self
 end
 
