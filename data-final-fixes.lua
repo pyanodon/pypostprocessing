@@ -193,10 +193,10 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
         }
     }
 
-    RECIPE(recipe).enabled = false
+    recipe.enabled = false
 
     if original_tech then
-        RECIPE(recipe):remove_unlock(original_tech)
+        recipe:remove_unlock(original_tech)
 
         if add_dependency then
             new_tech.dependencies = { original_tech }

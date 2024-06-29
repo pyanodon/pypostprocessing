@@ -4,7 +4,7 @@
 if mods['pyrawores'] then
     for _, recipe in pairs(data.raw.recipe) do
         if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= 'coal-gas' then
-            RECIPE(recipe):replace_ingredient('coal', 'raw-coal')
+            recipe:replace_ingredient('coal', 'raw-coal')
         end
     end
 end
@@ -481,10 +481,9 @@ if data.raw.recipe['electronic-circuit'].enabled == false
     and (data.raw.recipe['inductor1-2'].enabled == nil or data.raw.recipe['inductor1-2'].enabled == true)
 then
     for _, recipe in pairs(data.raw.recipe) do
-        local recipe_data = (recipe.normal and type(recipe.normal) == 'table' and recipe.normal) or recipe
-
-        if (recipe_data.enabled == nil or recipe_data.enabled == true) and not recipe.ignore_for_dependencies then
-            RECIPE(recipe):replace_ingredient('electronic-circuit', 'inductor1')
+        recipe:standardize()
+        if (recipe.enabled == nil or recipe.enabled == true) and not recipe.ignore_for_dependencies then
+            recipe:replace_ingredient('electronic-circuit', 'inductor1')
         end
     end
 end
