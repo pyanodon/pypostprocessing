@@ -103,13 +103,12 @@ function data_parser:run()
 
     -- starting items
     for _, item_name in pairs(config.STARTING_ITEMS:enumerate()) do
-        local item = ITEM(item_name)
-
+        local item = FLUID[item_name] or ITEM[item_name]
         if item or self.fg:node_exists(item_name, fz_graph.NT_ITEM) then
             local recipe = {
                 name = RECIPE_PREFIX_START .. item_name,
                 ingredients = {},
-                results = {{type = 'item', name = item_name, amount = 1}}
+                results = {{type = (item.type == 'fluid') and 'fluid' or 'item', name = item_name, amount = 1}},
             }
 
             local node = self:parse_recipe(fz_graph.START_NODE_NAME, recipe, true)
@@ -146,7 +145,7 @@ function data_parser:run()
 end
 
 function data_parser:parse_recipe(tech_name, recipe, no_crafting)
-    recipe:standardize()
+    if recipe.standardize then recipe:standardize() end
 
     local name = (tech_name and (tech_name .. ' / ') or '') .. recipe.name
     local node = self.fg:add_node(name, fz_graph.NT_RECIPE,
@@ -836,10 +835,11 @@ function data_parser:pre_process()
     end
 
     -- Starter items
-    for _, i in pairs(config.STARTING_ITEMS:enumerate()) do
-        local item = ITEM(i)
-        if item then
-            self:pre_process_item(item)
+    for _, name in pairs(config.STARTING_ITEMS:enumerate()) do
+        if FLUID[name] then
+            self:pre_process_fluid(FLUID(name))
+        else
+            self:pre_process_item(ITEM(name))
         end
     end
 
@@ -878,12 +878,11 @@ function data_parser:pre_process_techs()
             end
 
             -- Add dependencies for tech names ending in numbers to the prev tier
-            local split = tech.name:split('-')
-            local last = table.last(split)
-
-            if last:is_digit() and tonumber(last) > 1 then
-                split[#split] = tostring(tonumber(last) - 1)
-                local prev_tech = table.concat(split, '-')
+            local last_digit = tech.name:match('%d+$')
+            
+            if last_digit then
+                local rest_of_string = tech.name:sub(1, -#last_digit - 1)
+                local prev_tech = rest_of_string .. tostring(last_digit - 1)
 
                 if data.raw.technology[prev_tech] then
                     if not tech.dependencies then

@@ -198,6 +198,7 @@ function graph:removeEdge(v, w, label)
     end
 
     local adj_w = self.directed and self.revList[w] or self.adjList[w]
+    if not adj_w then error(w) end
 
     for k, e in pairs(adj_w) do
         if e:other(w) == v and (not label or label == "" or label == e.label) then
