@@ -342,6 +342,11 @@ end
 for _, type in pairs{'furnace', 'assembling-machine'} do
     for _, prototype in pairs(data.raw[type]) do
         prototype.match_animation_speed_to_activity = false
+        local name = prototype.name
+        local tier = tonumber(string.sub(name, -1))
+        if tier and data.raw.recipe[name] and data.raw.recipe[name].energy_required == .5 then
+            data.raw.recipe[name].energy_required = tier
+        end
     end
 end
 
