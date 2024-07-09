@@ -3,6 +3,7 @@
 local random = math.random
 
 require 'events'
+require 'vector'
 
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity
