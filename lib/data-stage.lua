@@ -21,75 +21,75 @@ end
 ---@param prototype data.AnyPrototype
 ---@param localised_string LocalisedString
 py.add_to_description = function(type, prototype, localised_string)
-	if prototype.localised_description and prototype.localised_description ~= '' then
-		prototype.localised_description = {'', prototype.localised_description, '\n', localised_string}
-		return
-	end
+    if prototype.localised_description and prototype.localised_description ~= '' then
+        prototype.localised_description = {'', prototype.localised_description, '\n', localised_string}
+        return
+    end
 
-	local place_result = prototype.place_result or prototype.placed_as_equipment_result
-	if type == 'item' and place_result then
-		for _, machine in pairs(data.raw) do
-			machine = machine[place_result]
-			if machine and machine.localised_description then
-				prototype.localised_description = {
-					'?',
-					{'', machine.localised_description, '\n', localised_string},
-					localised_string
-				}
-				return
-			end
-		end
+    local place_result = prototype.place_result or prototype.placed_as_equipment_result
+    if type == 'item' and place_result then
+        for _, machine in pairs(data.raw) do
+            machine = machine[place_result]
+            if machine and machine.localised_description then
+                prototype.localised_description = {
+                    '?',
+                    {'', machine.localised_description, '\n', localised_string},
+                    localised_string
+                }
+                return
+            end
+        end
 
-		local entity_type = prototype.place_result and 'entity' or 'equipment'
-		prototype.localised_description = {
-			'?',
-			{'', {entity_type .. '-description.' .. place_result}, '\n', localised_string},
-			{'', {type .. '-description.' .. prototype.name}, '\n', localised_string},
-			localised_string
-		}
-	else
-		prototype.localised_description = {
-			'?',
-			{'', {type .. '-description.' .. prototype.name}, '\n', localised_string},
-			localised_string
-		}
-	end
+        local entity_type = prototype.place_result and 'entity' or 'equipment'
+        prototype.localised_description = {
+            '?',
+            {'', {entity_type .. '-description.' .. place_result}, '\n', localised_string},
+            {'', {type .. '-description.' .. prototype.name},      '\n', localised_string},
+            localised_string
+        }
+    else
+        prototype.localised_description = {
+            '?',
+            {'', {type .. '-description.' .. prototype.name}, '\n', localised_string},
+            localised_string
+        }
+    end
 end
 
----adds a glow layer to any prototype with the 'icons' field.
----@param prototype data.AnyPrototype
+---adds a glow layer to any item prototype.
+---@param prototype data.ItemPrototype
 py.make_item_glowing = function(prototype)
-	if not prototype then
-		error('No prototype provided')
-	end
-	if prototype.pictures then
-		for _, picture in pairs(prototype.pictures) do
-			picture.draw_as_glow = true
-		end
-		return
-	end
-	if prototype.icon and not prototype.icons then
-		prototype.icons = {{icon = prototype.icon, icon_size = prototype.icon_size, icon_mipmaps = prototype.icon_mipmaps}}
-		prototype.icon = nil
-	end
-	if not prototype.icons then
-		error('No icon found for ' .. prototype.name)
-	end
-	local pictures = {}
-	for _, picture in pairs(table.deepcopy(prototype.icons)) do
-		picture.draw_as_glow = true
-		local icon_size = picture.icon_size or prototype.icon_size
-		picture.filename = picture.icon
-		picture.shift = {0, 0}
-		picture.width = icon_size
-		picture.height = icon_size
-		picture.scale = 16 / icon_size
-		picture.icon = nil
-		picture.icon_size = nil
-		picture.icon_mipmaps = nil
-		pictures[#pictures + 1] = picture
-	end
-	prototype.pictures = pictures
+    if not prototype then
+        error('No prototype provided')
+    end
+    if prototype.pictures then
+        for _, picture in pairs(prototype.pictures) do
+            picture.draw_as_glow = true
+        end
+        return
+    end
+    if prototype.icon and not prototype.icons then
+        prototype.icons = {{icon = prototype.icon, icon_size = prototype.icon_size, icon_mipmaps = prototype.icon_mipmaps}}
+        prototype.icon = nil
+    end
+    if not prototype.icons then
+        error('No icon found for ' .. prototype.name)
+    end
+    local pictures = {}
+    for _, picture in pairs(table.deepcopy(prototype.icons)) do
+        picture.draw_as_glow = true
+        local icon_size = picture.icon_size or prototype.icon_size
+        picture.filename = picture.icon
+        picture.shift = {0, 0}
+        picture.width = icon_size
+        picture.height = icon_size
+        picture.scale = 16 / icon_size
+        picture.icon = nil
+        picture.icon_size = nil
+        picture.icon_mipmaps = nil
+        pictures[#pictures + 1] = picture
+    end
+    prototype.pictures = pictures
 end
 
 ---Creates a new prototype by cloning 'old' and overwriting it with properties from 'new'. Provide 'nil' as a string in order to delete items inside 'old'
@@ -97,15 +97,15 @@ end
 ---@param new table
 ---@return data.AnyPrototype
 py.merge = function(old, new)
-	old = table.deepcopy(old)
-	for k, v in pairs(new) do
-		if v == 'nil' then
-			old[k] = nil
-		else
-			old[k] = v
-		end
-	end
-	return old
+    old = table.deepcopy(old)
+    for k, v in pairs(new) do
+        if v == 'nil' then
+            old[k] = nil
+        else
+            old[k] = v
+        end
+    end
+    return old
 end
 
 ---The purpose of the farm_speed functions is to remove the farm building itself
@@ -129,7 +129,7 @@ function py.farm_speed_derived(num_slots, base_entity_name)
     local mk1_slots = e.module_specification.module_slots
     local desired_mk1_speed = e.crafting_speed * (mk1_slots + 1)
     local speed_improvement_ratio = num_slots / mk1_slots
-    return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1/speed_improvement_ratio)
+    return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1 / speed_improvement_ratio)
 end
 
 ---Takes two prototype names (both must use the style of IconSpecification with icon = string_path), returns an IconSpecification with the icons as composites
@@ -235,7 +235,7 @@ py.pipe_covers = function(n, s, w, e)
     end
 
     n =
-    n and
+        n and
         {
             layers = {
                 {
@@ -270,7 +270,7 @@ py.pipe_covers = function(n, s, w, e)
         } or
         py.empty_image()
     e =
-    e and
+        e and
         {
             layers = {
                 {
@@ -305,7 +305,7 @@ py.pipe_covers = function(n, s, w, e)
         } or
         py.empty_image()
     s =
-    s and
+        s and
         {
             layers = {
                 {
@@ -340,7 +340,7 @@ py.pipe_covers = function(n, s, w, e)
         } or
         py.empty_image()
     w =
-    w and
+        w and
         {
             layers = {
                 {
@@ -375,7 +375,7 @@ py.pipe_covers = function(n, s, w, e)
         } or
         py.empty_image()
 
-    return { north = n, south = s, east = e, west = w }
+    return {north = n, south = s, east = e, west = w}
 end
 
 ---Standardizes a product or ingredient prototype to a common format.
@@ -407,7 +407,7 @@ function py.iter_prototypes(parent_type)
     local types = defines.prototypes[parent_type]
     local t, n, d
 
-    return function ()
+    return function()
         repeat
             if not t or not n then
                 n, d, t, _ = nil, nil, next(types, t)
@@ -513,14 +513,14 @@ py.disallow_effectivity = function(recipe_categories)
         end
     end
 
-	recipe_categories = table.invert(recipe_categories)
-	for _, recipe in pairs(data.raw.recipe) do
-		if recipe_categories[recipe.category] then
+    recipe_categories = table.invert(recipe_categories)
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe_categories[recipe.category] then
             for _, module in pairs(modules) do
                 table.insert(module.limitation_blacklist, recipe.name)
             end
-		end
-	end
+        end
+    end
 end
 
 local delays = {}
