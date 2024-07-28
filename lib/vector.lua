@@ -2,44 +2,40 @@
 ---@field x number
 ---@field y number
 ---@field z number
----@field cross fun(self, v: Pyvector): Pyvector
----@field dot fun(self, v: Pyvector): number
+---@field cross fun(self, v: Pyvector): Pyvector -- cross product
+---@field dot fun(self, v: Pyvector): number -- dot product
+---@field mag fun(self): number -- get the magnitude of a vector
+---@field normalized fun(self): Pyvector -- normalize the vector
 ---@field is_vector fun(self): boolean
----@operator call(): Pyvector
+---@field new fun(x: {x: number, y: number, z: number} | number, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
 ---@operator add(): Pyvector
 ---@operator sub(): Pyvector
 ---@operator mul(): Pyvector
 ---@operator div(): Pyvector
 ---@operator unm(): Pyvector
 py.vector = {
-    ---@return Pyvector
-    __call = function(_, x, y, z)
-        if type(x) == 'table' then
-            return setmetatable(x, py.vector)
-        end
-        return setmetatable({x = x or 0, y = y or 0, z = z or 0}, py.vector)
-    end,
-
     __add = function(self, v)
-        return py.vector(self.x + v.x, self.y + v.y, self.z + v.z)
+        return py.vector.new(self.x + v.x, self.y + v.y, self.z + v.z)
     end,
 
     __sub = function(self, v)
-        return py.vector(self.x - v.x, self.y - v.y, self.z - v.z)
+        return py.vector.new(self.x - v.x, self.y - v.y, self.z - v.z)
     end,
 
     __mul = function(self, v)
-        if type(v) == 'number' then v = py.vector(v,v,v) end
-        return py.vector(self.x * v.x, self.y * v.y, self.z * v.z)
+        if type(self) == 'number' then self = py.vector.new(self,self,self) end
+        if type(v) == 'number' then v = py.vector.new(v,v,v) end
+        return py.vector.new(self.x * v.x, self.y * v.y, self.z * v.z)
     end,
 
     __div = function(self, v)
-        if type(v) == 'number' then v = py.vector(v,v,v) end
-        return py.vector(self.x / v.x, self.y / v.y, self.z / v.z)
+        if type(self) == 'number' then self = py.vector.new(self,self,self) end
+        if type(v) == 'number' then v = py.vector.new(v,v,v) end
+        return py.vector.new(self.x / v.x, self.y / v.y, self.z / v.z)
     end,
 
     __unm = function(self)
-        return py.vector(self.x * -1, self.y * -1, self.z * -1)
+        return py.vector.new(self.x * -1, self.y * -1, self.z * -1)
     end,
 
     __tostring = function(self)
@@ -47,6 +43,14 @@ py.vector = {
     end,
 
     __index = {
+        ---@return Pyvector
+        new = function(x, y, z)
+            if type(x) == 'table' then
+                return setmetatable(x, py.vector)
+            end
+            return setmetatable({x = x or 0, y = y or 0, z = z or 0}, py.vector)
+        end,
+
         ---@return boolean
         is_vector = function(self)
             return getmetatable(self) == py.vector
@@ -66,9 +70,19 @@ py.vector = {
             out.x = b * v.z - c * v.y
             out.y = c * v.x - a * v.z
             out.z = a * v.y - b * v.x
-            return py.vector(out)
+            return py.vector.new(out)
         end,
+
+        mag = function(self)
+            return math.sqrt(self.x ^ 2 + self.y ^ 2 + self.z ^ 2)
+        end,
+
+        normalized = function(self)
+            local mag = self:mag()
+            return py.vector.new(self.x / mag, self.y / mag, self.z / mag)
+        end
     }
 }
 
 setmetatable(py.vector, py.vector)
+script.register_metatable('Pyvector_metatable', py.vector)
