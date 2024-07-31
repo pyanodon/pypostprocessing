@@ -351,7 +351,7 @@ for _, type in pairs{'furnace', 'assembling-machine', 'mining-drill', 'lab'} do
         local name = prototype.name
         local tier = tonumber(string.sub(name, -1)) or 1
         if data.raw.recipe[name] and data.raw.recipe[name].energy_required == .5 then
-            data.raw.recipe[name].energy_required = tier
+            data.raw.recipe[name].energy_required = math.max(tier, 1)
         end
     end
 end
