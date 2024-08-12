@@ -1,22 +1,9 @@
-if data then
-	local delays = {}
-	for _, n in pairs(powers_of_two) do
-		delays[#delays + 1] = {
-			name = 'py-ticked-script-delay-' .. n,
-			type = 'flying-text',
-			time_to_live = n,
-			speed = 0,
-		}
-	end
-	data:extend(delays)
-	return
-end
-
 local events = {}
 
 ---Drop-in replacement for script.on_event however it supports multiple handlers per event. You can also use 'on_built' 'on_destroyed' and 'on_init' as shortcuts for multiple events.
 ---@param event defines.events|defines.events[]|string
 ---@param f function
+---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function(event, f)
 	if event == 'on_built' then
 		py.on_event({defines.events.on_built_entity,
@@ -56,11 +43,6 @@ local function one_function_from_many(functions)
 			functions[i](arg)
 		end
 	end
-end
-
-local powers_of_two = {}
-for i = 0, 20 do
-	powers_of_two[i] = 2 ^ i
 end
 
 local finalized = false
@@ -108,47 +90,27 @@ for event, _ in pairs(gui_events) do
 	py.on_event(event, process_gui_event)
 end
 
-py.delayed_functions = {}
----use this to execute a script after a delay
----example:
----py.delayed_functions.my_delayed_func = function(param1, param2, param3) ... end
----py.execute_later('my_delayed_func', 60, param1, param2, param3)
----The above code will execute my_delayed_func after waiting for 60 ticks
----@param function_key string
----@param ticks integer
----@param ... any
-function py.execute_later(function_key, ticks, ...)
-	if ticks < 1 or ticks % 1 ~= 0 then error('Invalid delay: ' .. ticks) end
-	local highest = 1
-	for _, n in pairs(powers_of_two) do
-		if n <= ticks then
-			highest = n
-		else break end
-	end
-	local flying_text = game.surfaces.nauvis.create_entity{
-		name = 'py-ticked-script-delay-' .. highest,
-		position = {0, 0},
-		create_build_effect_smoke = false,
-		text = ''
-	}
-	if not flying_text then error() end
-	global._delayed_functions = global._delayed_functions or {}
-	global._delayed_functions[script.register_on_entity_destroyed(flying_text)] = {function_key, ticks - highest, {...}}
+---@type table<integer, table<function, any[]?>>
+py.on_tick = {}
+
+-- use this to register functions that run at a specific tick
+-- can replace on_nth_tick if you register the same function for a later tick
+-- pass parameters in a list
+---@param tick uint
+---@param func function
+---@param params any[]?
+function py.register_tick_event(tick, func, params)
+	params = params or {}
+	if type(params) ~= 'table' then params = {params} end
+	py.on_tick[tick] = py.on_tick[tick] or {}
+	py.on_tick[tick][func] = params
 end
-py.on_event(defines.events.on_entity_destroyed, function(event)
-	if not global._delayed_functions then return end
-	local data = global._delayed_functions[event.registration_number]
-	if not data then return end
-	global._delayed_functions[event.registration_number] = nil
 
-	local function_key = data[1]
-	local ticks = data[2]
-
-	if ticks == 0 then
-		local f = py.delayed_functions[function_key]
-		if not f then error('No function found for key: ' .. function_key) end
-		f(table.unpack(data[3]))
-	else
-		py.execute_later(function_key, ticks, table.unpack(data[3]))
+py.on_event(defines.events.on_tick, function(event)
+	local tick = event.tick
+	if not py.on_tick[tick] then return end
+	for func, params in pairs(py.on_tick[tick]) do
+		func(table.unpack(params))
 	end
+	py.on_tick[tick] = nil
 end)
