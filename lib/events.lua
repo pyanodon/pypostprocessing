@@ -90,27 +90,41 @@ for event, _ in pairs(gui_events) do
 	py.on_event(event, process_gui_event)
 end
 
----@type table<integer, table<function, any[]?>>
-py.on_tick = {}
+---@type table<integer, table<string, any[]?>>
+global.on_tick = global.on_tick or {}
+---@type table<string, function>
+py.on_tick_funcs = {}
 
 -- use this to register functions that run at a specific tick
 -- can replace on_nth_tick if you register the same function for a later tick
 -- pass parameters in a list
 ---@param tick uint
----@param func function
+---@param func_name string
 ---@param params any[]?
-function py.register_tick_event(tick, func, params)
+function py.register_tick_event(tick, func_name, params)
+	if tick < (game and game.tick or 0) then
+		error('invalid tick event registration with function ' .. func_name)
+		return
+	end
 	params = params or {}
 	if type(params) ~= 'table' then params = {params} end
-	py.on_tick[tick] = py.on_tick[tick] or {}
-	py.on_tick[tick][func] = params
+	global.on_tick[tick] = global.on_tick[tick] or {}
+	global.on_tick[tick][func_name] = params
+end
+
+-- register a function to use as a tick event
+---@param func_name string
+---@param func function
+function py.register_function(func_name, func)
+	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error('attempting to overwrite a registered function ' .. func_name) end
+	py.on_tick_funcs[func_name] = func
 end
 
 py.on_event(defines.events.on_tick, function(event)
 	local tick = event.tick
-	if not py.on_tick[tick] then return end
-	for func, params in pairs(py.on_tick[tick]) do
-		func(table.unpack(params))
+	if not global.on_tick[tick] then return end
+	for func_name, params in pairs(global.on_tick[tick]) do
+		py.on_tick_funcs[func_name](table.unpack(params))
 	end
-	py.on_tick[tick] = nil
+	global.on_tick[tick] = nil
 end)
