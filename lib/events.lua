@@ -90,7 +90,7 @@ for event, _ in pairs(gui_events) do
 	py.on_event(event, process_gui_event)
 end
 
----@type table<integer, table<string, any[]?>>
+---@type table<integer, table<int, {name: string, params: any[]?}>>
 global.on_tick = global.on_tick or {}
 ---@type table<string, function>
 py.on_tick_funcs = {}
@@ -109,7 +109,7 @@ function py.register_tick_event(tick, func_name, params)
 	params = params or {}
 	if type(params) ~= 'table' then params = {params} end
 	global.on_tick[tick] = global.on_tick[tick] or {}
-	global.on_tick[tick][func_name] = params
+	table.insert(global.on_tick[tick], {name = func_name, params = params})
 end
 
 -- register a function to use as a tick event
@@ -123,8 +123,8 @@ end
 py.on_event(defines.events.on_tick, function(event)
 	local tick = event.tick
 	if not global.on_tick[tick] then return end
-	for func_name, params in pairs(global.on_tick[tick]) do
-		py.on_tick_funcs[func_name](table.unpack(params))
+	for _, func_details in pairs(global.on_tick[tick]) do
+		py.on_tick_funcs[func_details.name](table.unpack(func_details.params))
 	end
 	global.on_tick[tick] = nil
 end)
