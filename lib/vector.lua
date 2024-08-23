@@ -15,23 +15,23 @@
 ---@operator unm(): Pyvector
 py.vector = {
     __add = function(self, v)
-        return py.vector.new(self.x + v.x, self.y + v.y, self.z + v.z)
+        return py.vector.new(self.x + v.x, self.y + v.y, self.z + (v.z or 0))
     end,
 
     __sub = function(self, v)
-        return py.vector.new(self.x - v.x, self.y - v.y, self.z - v.z)
+        return py.vector.new(self.x - v.x, self.y - v.y, self.z - (v.z or 0))
     end,
 
     __mul = function(self, v)
         if type(self) == 'number' then self = py.vector.new(self,self,self) end
         if type(v) == 'number' then v = py.vector.new(v,v,v) end
-        return py.vector.new(self.x * v.x, self.y * v.y, self.z * v.z)
+        return py.vector.new(self.x * v.x, self.y * v.y, self.z * (v.z or 0))
     end,
 
     __div = function(self, v)
         if type(self) == 'number' then self = py.vector.new(self,self,self) end
         if type(v) == 'number' then v = py.vector.new(v,v,v) end
-        return py.vector.new(self.x / v.x, self.y / v.y, self.z / v.z)
+        return py.vector.new(self.x / v.x, self.y / v.y, self.z / (v.z or 0))
     end,
 
     __unm = function(self)
@@ -59,7 +59,7 @@ py.vector = {
         ---@param v Pyvector
         ---@return Pyvector
         dot = function(self, v)
-            return self.x * v.x + self.y * v.y + self.z * v.z
+            return self.x * v.x + self.y * v.y + self.z * (v.z or 0)
         end,
 
         ---@param v Pyvector
@@ -67,8 +67,8 @@ py.vector = {
         cross = function(self, v)
             local out = {}
             local a, b, c = self.x, self.y, self.z
-            out.x = b * v.z - c * v.y
-            out.y = c * v.x - a * v.z
+            out.x = b * (v.z or 0) - c * v.y
+            out.y = c * v.x - a * (v.z or 0)
             out.z = a * v.y - b * v.x
             return py.vector.new(out)
         end,
