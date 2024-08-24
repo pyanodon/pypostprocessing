@@ -594,3 +594,7 @@ if mods['jetpack'] and mods['pyrawores'] and mods['pypetroleumhandling'] then
     TECHNOLOGY("jetpack-3"):set_fields{prerequisites = {"jetpack-2"}}:remove_pack("production-science-pack"):remove_pack("py-science-pack-4"):remove_pack("utility-science-pack"):add_pack("py-science-pack-3"):add_prereq(mods['pyalienlife'] and 'py-science-pack-mk03' or 'chemical-science-pack')
     TECHNOLOGY("jetpack-4"):set_fields{prerequisites = {"jetpack-3"}}:remove_pack("space-science-pack"):add_prereq('utility-science-pack')
 end
+
+if mods["extra-storage-tank-minibuffer"] then
+    TECHNOLOGY("minibuffer"):remove_pack("logistic-science-pack")
+end

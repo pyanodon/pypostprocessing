@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.27
-Date: 2024-???-???
+Date: 2024-8-23
   Bugfixes:
     - Fix productivity blacklist being overly general and including recipes like empty barrels
+    - add compatibility for minibuffer so its in automation science with storage tank tech
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.26
 Date: 2024-8-7
