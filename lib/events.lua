@@ -124,7 +124,8 @@ py.on_event(defines.events.on_tick, function(event)
 	local tick = event.tick
 	if not global.on_tick[tick] then return end
 	for _, func_details in pairs(global.on_tick[tick]) do
-		py.on_tick_funcs[func_details.name](table.unpack(func_details.params))
+		local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
+		if not success then error('error in on tick function ' .. func_details.name .. ': ' .. err) end
 	end
 	global.on_tick[tick] = nil
 end)
