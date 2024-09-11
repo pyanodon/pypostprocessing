@@ -62,7 +62,7 @@ for _, recipe in pairs(data.raw.recipe) do
             local name = result.name or result[1]
             local amount = result.amount or result[2]
             if not name or not config.NON_PRODDABLE_ITEMS[name] or result.catalyst_amount then
-                goto NEXT_INGREDIENT
+                goto NEXT_RESULT
             end
             -- Convert to an explicitly long-form result format
             if result[1] then
@@ -77,10 +77,46 @@ for _, recipe in pairs(data.raw.recipe) do
             else -- Just set the catalyst amount
                 result.catalyst_amount = amount
             end
-            ::NEXT_INGREDIENT::
+            ::NEXT_RESULT::
         end
     end
     ::NEXT_RECIPE::
+end
+
+-- Scan for cages
+if dev_mode then
+    for recipe_name, recipe in pairs(data.raw.recipe) do
+        if not recipe.ingredients then
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        local cage_input = false
+        local cage_output = false
+        for i, ingredient in pairs(recipe.ingredients) do
+            local item_name = ingredient[1] or ingredient.name
+            if item_name:find('caged') then
+                cage_input = true
+                break
+            end
+        end
+        if not cage_input then
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        if not recipe.results then
+            -- Don't log, probably a voiding recipe
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        for i, result in pairs(recipe.results) do
+            local item_name = result[1] or result.name
+            if item_name:find('cage') then -- could be the same caged animal or an empty cage
+                cage_output = true
+                break
+            end
+        end
+        if cage_input and not cage_output then
+            log(string.format('Recipe \'%s\' takes a caged animal as input but does not return a cage', recipe_name))
+        end
+        ::NEXT_RECIPE_CAGECHECK::
+    end
 end
 
 -------------------------------------------
