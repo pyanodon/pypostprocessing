@@ -1,10 +1,26 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.27
+Date: 2024-8-23
+  Bugfixes:
+    - Fix productivity blacklist being overly general and including recipes like empty barrels
+    - add compatibility for minibuffer so its in automation science with storage tank tech
+---------------------------------------------------------------------------------------------------
+Version: 0.2.26
+Date: 2024-8-7
+  Changes:
+    - Remove incompatibility with Science pack dependencies mod
+---------------------------------------------------------------------------------------------------
+Version: 0.2.25
+Date: 2024-8-4
+  Changes:
+    - Fix crash on load with pyblock
+---------------------------------------------------------------------------------------------------
 Version: 0.2.24
-Date: 2024-??-??
+Date: 2024-7-29
   Changes:
     - Whenever pyPP encounters a dependency cycle, it will now print the items involved in the cycle to the logs.
-    - Fix productivity blacklist being overly general and including recipes like empty barrels
     - Added an incompatiblity with the science-pack-dependencies mod. (https://github.com/pyanodon/pybugreports/issues/505)
+    - adjusted most entity recipe times for easier copy pasting to requester chests
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.23
 Date: 2024-4-25

@@ -304,6 +304,10 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
         end
     end
 
+    for _, link in pairs(sp_links) do
+        fg:remove_link(link.from, link.to, link.from.name)
+    end
+
     local ts = fz_topo.create(fg)
     local error_found, errors = ts:run(false, self.verbose_logging)
 

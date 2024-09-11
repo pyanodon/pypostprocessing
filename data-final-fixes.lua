@@ -43,26 +43,78 @@ end
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
+    local has_logged = false
     if recipe.results or recipe.result then
         if not recipe.results then
             recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = 'item'}}
             recipe.result = nil
             recipe.result_count = nil
         end
-        -- Skip if recipe only produces the item, not uses it as a catalyst. Fluids are probably blacklisted for other reasons.
-        if #recipe.results ~= 1 or recipe.results[1].type ~= 'fluid' then
-            for i, result in pairs(recipe.results) do
-                local name = result.name or result[1]
-                local amount = result.amount or result[2]
-                if name and config.NON_PRODDABLE_ITEMS[name] and not result.catalyst_amount then
-                    if result[1] then
-                        recipe.results[i] = {type = result.type or 'item', name = name, amount = amount, catalyst_amount = amount, [1] = nil, [2] = nil}
-                    else
-                        result.catalyst_amount = amount
-                    end
-                end
+        -- Skip if recipe only produces the item, not uses it as a catalyst.
+        if #recipe.results == 1 then
+            goto NEXT_RECIPE
+        end
+        for i, result in pairs(recipe.results) do
+            local name = result.name or result[1]
+            local amount = result.amount or result[2]
+            if not name or not config.NON_PRODDABLE_ITEMS[name] or result.catalyst_amount then
+                goto NEXT_RESULT
+            end
+            -- Convert to an explicitly long-form result format
+            if result[1] then
+                recipe.results[i] = {
+                    type = result.type or 'item',
+                    name = name,
+                    amount = amount,
+                    catalyst_amount = amount,
+                    [1] = nil,
+                    [2] = nil
+                }
+            else -- Just set the catalyst amount
+                result.catalyst_amount = amount
+            end
+            ::NEXT_RESULT::
+        end
+    end
+    ::NEXT_RECIPE::
+end
+
+-- Scan for cages
+if dev_mode then
+    for recipe_name, recipe in pairs(data.raw.recipe) do
+        if recipe_name:find('%-pyvoid$') or recipe_name:find('^biomass%-') then
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        if not recipe.ingredients then
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        local cage_input = false
+        local cage_output = false
+        for i, ingredient in pairs(recipe.ingredients) do
+            local item_name = ingredient[1] or ingredient.name
+            if item_name:find('caged') then
+                cage_input = true
+                break
             end
         end
+        if not cage_input then
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        if not recipe.results then
+            -- Don't log, probably a voiding recipe
+            goto NEXT_RECIPE_CAGECHECK
+        end
+        for i, result in pairs(recipe.results) do
+            local item_name = result[1] or result.name
+            if item_name:find('cage') then -- could be the same caged animal or an empty cage
+                cage_output = true
+                break
+            end
+        end
+        if cage_input and not cage_output then
+            log(string.format('Recipe \'%s\' takes a caged animal as input but does not return a cage', recipe_name))
+        end
+        ::NEXT_RECIPE_CAGECHECK::
     end
 end
 
@@ -340,6 +392,17 @@ end
 for _, type in pairs{'furnace', 'assembling-machine'} do
     for _, prototype in pairs(data.raw[type]) do
         prototype.match_animation_speed_to_activity = false
+    end
+end
+
+-- infrastructure times scale with tiers, makes pasting to requester chests and buffering inside assemblers better
+for _, type in pairs{'furnace', 'assembling-machine', 'mining-drill', 'lab'} do
+    for _, prototype in pairs(data.raw[type]) do
+        local name = prototype.name
+        local tier = tonumber(string.sub(name, -1)) or 1
+        if data.raw.recipe[name] and data.raw.recipe[name].energy_required == .5 then
+            data.raw.recipe[name].energy_required = math.max(tier, 1)
+        end
     end
 end
 
