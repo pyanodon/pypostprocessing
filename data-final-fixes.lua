@@ -86,6 +86,9 @@ end
 -- Scan for cages
 if dev_mode then
     for recipe_name, recipe in pairs(data.raw.recipe) do
+        if recipe_name:find('%-pyvoid$') or recipe_name:find('^biomass%-') then
+            goto NEXT_RECIPE_CAGECHECK
+        end
         if not recipe.ingredients then
             goto NEXT_RECIPE_CAGECHECK
         end
