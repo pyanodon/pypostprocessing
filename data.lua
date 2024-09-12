@@ -1,3 +1,5 @@
+require 'lib'
+
 _G.pypp_registered_cache_files = {}
 
 -- Usage example (add in data-updates phase):
