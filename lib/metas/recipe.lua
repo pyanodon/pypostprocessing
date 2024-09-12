@@ -22,7 +22,18 @@ RECIPE = setmetatable(data.raw.recipe, {
     __call = function(self, recipe)
         local rtype = type(recipe)
         if rtype == 'string' then
-            if not self[recipe] then error('Recipe ' .. tostring(recipe) .. ' does not exist') end
+            if not self[recipe] then
+                local dummyResult = {
+                    __index = function(self2)
+                        return self2
+                    end,
+                    __call = function(self2)
+                        return self2
+                    end
+                }
+                setmetatable(dummyResult, dummyResult)
+                return dummyResult
+            end
             recipe = self[recipe]
         elseif rtype == 'table' then
             recipe.type = 'recipe'
