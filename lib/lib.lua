@@ -4,7 +4,7 @@ require 'table'
 require 'string'
 require 'defines'
 require 'color'
-require 'world-generation'
+--require 'world-generation' --TODO: relearn noise
 
 if data and data.raw and not data.raw.item['iron-plate'] then
     py.stage = 'settings'
