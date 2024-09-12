@@ -276,7 +276,7 @@ end
 ----------------------------------------------------
 -- AUTOTECH
 ----------------------------------------------------
-
+--[[
 if dev_mode then
     -- correct tech dependencies before autotech happens
     for _, tech in pairs(data.raw.technology) do
@@ -325,6 +325,7 @@ if dev_mode then
 else
     require 'cached-configs.run'
 end
+--]]
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
