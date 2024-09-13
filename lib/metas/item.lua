@@ -27,8 +27,11 @@ ITEM = setmetatable({}, {
     end,
     __index = function(self, item_name)
         for ptype in pairs(defines.prototypes.item) do
-            local result = data.raw[ptype][item_name]
-            if result then return result end
+            --TODO:FIX this better. 
+            if ptype ~= "item-with-inventory" and ptype ~= "item-with-label" and ptype ~= "item-with-tags" and ptype ~= "space-platform-starter-pack" then
+                local result = data.raw[ptype][item_name]
+                if result then return result end
+            end
         end
         return nil
     end
