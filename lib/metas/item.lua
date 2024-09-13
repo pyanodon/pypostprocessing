@@ -10,8 +10,11 @@ ITEM = setmetatable({}, {
         local itype = type(item)
         if itype == 'string' then
             for ptype in pairs(defines.prototypes.item) do
+                --TODO:FIX this better. 
+                if ptype ~= "item-with-inventory" and ptype ~= "item-with-label" and ptype ~= "item-with-tags" then
                 local result = data.raw[ptype][item]
                 if result then return result end
+                end
             end
         elseif itype == 'table' then
             if not item.type then error('Tried to extend an item ' .. item.name .. ' without providing a type') end
