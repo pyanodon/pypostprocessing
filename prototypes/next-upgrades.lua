@@ -34,7 +34,7 @@ local function check_for_valid_minable_properties(entity)
 
     minable_result = ITEM(minable_result)
     if not minable_result then return false end
-    if minable_result:has_flag('hidden') then return false end
+    if minable_result.hidden then return false end
 
     return true
 end

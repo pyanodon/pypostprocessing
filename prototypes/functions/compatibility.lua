@@ -33,7 +33,7 @@ if mods['deadlock-beltboxes-loaders'] then
                 stack.burnt_result = 'deadlock-stack-ash'
             end
 
-            if ITEM(item):has_flag('hidden') then
+            if ITEM(item).hidden then
                 ITEM('deadlock-stack-' .. item_name):add_flag('hidden')
                 data.raw.recipe['deadlock-stacks-stack-' .. item_name].hidden = true
                 data.raw.recipe['deadlock-stacks-unstack-' .. item_name].hidden = true
@@ -63,7 +63,7 @@ if mods['DeadlockCrating'] then
             data.raw.recipe['deadlock-unpackrecipe-' .. item_name].ignore_for_dependencies = true
             data.raw.recipe['deadlock-unpackrecipe-' .. item_name].unlock_results = false
 
-            if ITEM(item):has_flag('hidden') then
+            if ITEM(item).hidden then
                 ITEM('deadlock-crate-' .. item_name):add_flag('hidden')
                 data.raw.recipe['deadlock-packrecipe-' .. item_name].hidden = true
                 data.raw.recipe['deadlock-unpackrecipe-' .. item_name].hidden = true
@@ -103,7 +103,7 @@ if mods['reverse-factory'] then
             data.raw.recipe[recipe_name].ignore_for_dependencies = true
             data.raw.recipe[recipe_name].unlock_results = false
 
-            if ITEM(item):has_flag('hidden') then
+            if ITEM(item).hidden then
                 data.raw.recipe[recipe_name].hidden = true
             end
         end
