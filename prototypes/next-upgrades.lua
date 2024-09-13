@@ -52,26 +52,30 @@ local function can_be_upgraded(entity)
     return true
 end
 
-for category_name in py.iter_prototypes('entity') do
+for category_name in pairs(defines.prototypes.entity) do
     local category = data.raw[category_name]
 
-    for name, prototype in pairs(category) do
-        if prototype.next_upgrade then goto continue end
-        if not can_be_upgraded(prototype) then goto continue end
+    if not category then
+        --TODO: See if SA launch version still has defines without data.raw categories if SA is disabled
+    else
+        for name, prototype in pairs(category) do
+            if prototype.next_upgrade then goto continue end
+            if not can_be_upgraded(prototype) then goto continue end
 
-        local next_upgrade = category[next_tier(name, category)]
-        if not can_be_upgraded(next_upgrade) then goto continue end
-        
-        if next_upgrade.fast_replaceable_group ~= prototype.fast_replaceable_group then goto continue end
+            local next_upgrade = category[next_tier(name, category)]
+            if not can_be_upgraded(next_upgrade) then goto continue end
+            
+            if next_upgrade.fast_replaceable_group ~= prototype.fast_replaceable_group then goto continue end
 
-        local mask_1 = collision_mask_util.get_mask(prototype)
-        local mask_2 = collision_mask_util.get_mask(next_upgrade)
-        if not collision_mask_util.masks_are_same(mask_1, mask_2) then goto continue end
-        
-        if serpent.line(prototype.collision_box) ~= serpent.line(next_upgrade.collision_box) then goto continue end
-        
-        prototype.next_upgrade = next_upgrade.name
-        
-        ::continue::
+            local mask_1 = collision_mask_util.get_mask(prototype)
+            local mask_2 = collision_mask_util.get_mask(next_upgrade)
+            if not collision_mask_util.masks_are_same(mask_1, mask_2) then goto continue end
+            
+            if serpent.line(prototype.collision_box) ~= serpent.line(next_upgrade.collision_box) then goto continue end
+            
+            prototype.next_upgrade = next_upgrade.name
+            
+            ::continue::
+        end
     end
 end

@@ -405,20 +405,23 @@ end
 ---@return function
 function py.iter_prototypes(parent_type)
     local types = defines.prototypes[parent_type]
-    local t, n, d
+    local cur_type, index, value
 
     return function()
         repeat
-            if not t or not n then
-                n, d, t, _ = nil, nil, next(types, t)
+            -- Returns the next item in our current table, if valid
+            if cur_type and data.raw[cur_type] then
+                index, value = next(data.raw[cur_type], index)
             end
 
-            if t and data.raw[t] then
-                n, d = next(data.raw[t], n)
+            -- We reached the end of the last table
+            if not cur_type or not index then
+                index, value, cur_type, _ = nil, nil, next(types, cur_type)
             end
-        until n or not t
+             -- cur_type will be nil here if we've reached the last prototype in the last table
+        until index or not cur_type
 
-        return n, d
+        return index, value
     end
 end
 
