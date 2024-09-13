@@ -1,6 +1,3 @@
-local noise = require 'noise'
-local tne = noise.to_noise_expression
-
 ---Returns a random number generator based on another generator.
 ---@param generator LuaRandomGenerator
 ---@return LuaRandomGenerator
@@ -23,7 +20,7 @@ end
 ---Data stage only. Gets a noise constant which can be accessed inside a named_noise_expression.
 ---@param i integer
 py.get_noise_constant = function(i)
-	return noise.get_control_setting('py-autoplace-control-' .. i).richness_multiplier
+	return "var('control-setting:py-autoplace-control-'" .. i .. ":richness:multiplier"
 end
 
 ---Returns a noise expression which is an approximation of perlin noise. The output ranges from -1.2 to 1.2.
@@ -31,17 +28,13 @@ end
 ---@param y NoiseExpression
 ---@param seed integer
 ---@param zoom number
-py.basis_noise = function(x, y, seed, zoom)
-	return {
-		type = 'function-application',
-		function_name = 'factorio-basis-noise',
-		arguments = {
-			x = x,
-			y = y,
-			seed0 = tne(noise.var('map_seed')),
-			seed1 = tne(seed),
-			input_scale = tne(0.9999728452) / zoom,
-			output_scale = tne(1.2 / 1.7717819213867)
-		}
-	}
+py.basis_noise = function(x, y, seed, zoom) -- todo: remove first two parameters in all uses.
+	return [[basis_noise{
+		x = x,
+		y = y,
+		seed0 = map_seed,
+		seed1 = ]] .. seed .. [[,
+		input_scale = 0.9999728452 / ]] .. zoom .. [[,
+		output_scale = 1.2 / 1.7717819213867
+	}]]
 end
