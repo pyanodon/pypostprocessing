@@ -413,7 +413,7 @@ function py.iter_prototypes(parent_type)
                 n, d, t, _ = nil, nil, next(types, t)
             end
 
-            if t then
+            if t and data.raw[t] then
                 n, d = next(data.raw[t], n)
             end
         until n or not t

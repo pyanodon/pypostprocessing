@@ -9,7 +9,7 @@ ITEM = setmetatable({}, {
     __call = function(self, item)
         local itype = type(item)
         if itype == 'string' then
-            for ptype in pairs(defines.prototypes.item) do
+            for ptype in py.iter_prototypes('item') do
                 local result = data.raw[ptype][item]
                 if result then return result end
             end
@@ -23,9 +23,11 @@ ITEM = setmetatable({}, {
         error('Item ' .. tostring(item) .. ' does not exist')
     end,
     __index = function(self, item_name)
-        for ptype in pairs(defines.prototypes.item) do
-            local result = data.raw[ptype][item_name]
-            if result then return result end
+        for ptype in py.iter_prototypes('item') do
+            if data.raw[ptype] then
+                local result = data.raw[ptype][item_name]
+                if result then return result end
+            end
         end
         return nil
     end

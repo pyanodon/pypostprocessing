@@ -12,7 +12,7 @@ ENTITY = setmetatable({}, {
     __call = function(self, entity)
         local etype = type(entity)
         if etype == 'string' then
-            for ptype in pairs(defines.prototypes.entity) do
+            for ptype in py.iter_prototypes('entity') do
                 local result = data.raw[ptype][entity]
                 if result then return result:standardize() end
             end
@@ -26,7 +26,7 @@ ENTITY = setmetatable({}, {
         error('Entity ' .. tostring(entity) .. ' does not exist')
     end,
     __index = function(self, entity_name)
-        for ptype in pairs(defines.prototypes.entity) do
+        for ptype in py.iter_prototypes('entity') do
             local result = data.raw[ptype][entity_name]
             if result then return result:standardize() end
         end
