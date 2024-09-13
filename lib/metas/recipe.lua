@@ -71,6 +71,9 @@ metas.standardize = function(self)
         self.results[k] = py.standardize_product(p)
     end
 
+    -- ingredients is optional
+    self.ingredients = self.ingredients or {}
+
     for k, p in pairs(self.ingredients) do
         self.ingredients[k] = py.standardize_product(p)
     end
