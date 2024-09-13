@@ -164,6 +164,7 @@ metas.remove_unlock = function(self, technology_name)
 end
 
 do
+    --old is a string
     local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
         local type = type(new)
         if type == 'string' then
@@ -183,9 +184,14 @@ do
                 end
             end
         elseif type == 'table' then
+            new = py.standardize_product(table.deepcopy(new))
+            if not FLUID[new.name] and not ITEM[new.name] then
+                log('WARNING @ \'' .. recipe.name .. '\':replace_ingredient(): Ingredient ' .. new.name .. ' does not exist')
+                return
+            end
             for k, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
-                    ingredients_or_results[k] = py.standardize_product(new)
+                    ingredients_or_results[k] = new
                 end
             end
         end
@@ -193,12 +199,14 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
+        new_ingredient = py.standardize_product(new_ingredient)
         replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
         return self
     end
 
     metas.replace_result = function(self, old_result, new_result)
         self:standardize()
+        new_result = py.standardize_product(new_result)
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == 'string' and new_result or new_result[1] or new_result.name
