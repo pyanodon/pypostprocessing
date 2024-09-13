@@ -38,9 +38,11 @@ metas.standardize = function(self)
 
     if not self.unit then self.unit = {ingredients = {}} end
 
+    --TODO: See if SA launch version still requires the shorthand spec
+    --[[
     for k, p in pairs(self.unit.ingredients) do
         self.unit.ingredients[k] = py.standardize_product(p)
-    end
+    end]]
 
     self.prerequisites = self.prerequisites or {}
     self.dependencies = self.dependencies or {}
@@ -80,7 +82,7 @@ metas.remove_pack = function(self, science_pack_name)
         return self
     end
 
-    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient.name ~= science_pack_name end)
+    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[0] ~= science_pack_name end)
 
     return self
 end

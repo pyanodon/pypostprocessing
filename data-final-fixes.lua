@@ -370,7 +370,7 @@ for _, tech in pairs(data.raw.technology) do
     -- Push a copy of our final list to .ingredients
     tech.unit.ingredients = {}
     for pack_name, pack_amount in pairs(tech_ingredients_to_use) do
-        tech.unit.ingredients[#tech.unit.ingredients+1] = {name = pack_name, amount = pack_amount}
+        tech.unit.ingredients[#tech.unit.ingredients+1] = {pack_name, pack_amount}
     end
     ::continue::
 end

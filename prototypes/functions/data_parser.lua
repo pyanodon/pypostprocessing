@@ -307,11 +307,11 @@ function data_parser:parse_tech(tech)
     local packs = {}
     -- Science packs
     for _, ing in pairs(tech.unit.ingredients) do
-        local item = ITEM(ing.name)
+        local item = ITEM(ing[1])
         local n_item = self:parse_item(item)
-        self.fg:add_link(n_item, node, ing.name)
-        table.insert(packs, ing.name)
-        insert_double_lookup(self.science_packs, ing.name, tech.name)
+        self.fg:add_link(n_item, node, ing[1])
+        table.insert(packs, ing[1])
+        insert_double_lookup(self.science_packs, ing[1], tech[1])
     end
 
     node:add_label(LABEL_CRAFTING_MACHINE)

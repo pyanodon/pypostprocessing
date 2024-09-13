@@ -200,16 +200,16 @@ function auto_tech:run()
             local highest_level = 0
 
             for _, sp in pairs(tech.unit.ingredients) do
-                if sp_level[sp.name] > highest_level then
-                    highest_level = sp_level[sp.name]
-                    highest_sp = sp.name
+                if sp_level[sp[1]] > highest_level then
+                    highest_level = sp_level[sp[1]]
+                    highest_sp = sp[1]
                 end
             end
 
             tech_highest_sp[tech.name] = highest_level
 
             for i, sp in pairs(tech.unit.ingredients) do
-                sp.amount = level_amount[highest_level - sp_level[sp.name] + 1]
+                sp.amount = level_amount[highest_level - sp_level[sp[1]] + 1]
                 set_tech_property(tech, {unit = {ingredients = {[i] = sp}}})
                 tech.unit.ingredients[i] = sp
             end
