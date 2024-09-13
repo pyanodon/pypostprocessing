@@ -400,6 +400,32 @@ py.standardize_product = function(p)
     return p
 end
 
+
+---Returns an iterator through all data.raw categories of a given supertype.
+---@param parent_type string
+---@return function<string, table>
+function py.iter_prototype_categories(parent_type)
+    local types = defines.prototypes[parent_type]
+    local child_type_name, value
+
+    return function()
+        if not types then
+            return nil, nil
+        end
+        repeat
+            -- Move to our next type
+            value, child_type_name, _ = nil, next(types, child_type_name)
+            -- Returns the next item in our current table, if valid
+            if child_type_name and data.raw[child_type_name] then
+                value = data.raw[child_type_name]
+            end
+             -- cur_type will be nil here if we've reached the last prototype in the last table
+        until value or not child_type_name
+
+        return child_type_name, value
+    end
+end
+
 ---Returns an iterator through all prototypes of a given supertype.
 ---@param parent_type string
 ---@return function

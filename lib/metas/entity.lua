@@ -12,12 +12,9 @@ ENTITY = setmetatable({}, {
     __call = function(self, entity)
         local etype = type(entity)
         if etype == 'string' then
-            for ptype in pairs(defines.prototypes.entity) do
-                --TODO: figure out why some ptypes arent good enough
-                if ptype ~= "agricultural-tower" then
+            for ptype in py.iter_prototype_categories('entity') do
                 local result = data.raw[ptype][entity]
                 if result then return result:standardize() end
-                end
             end
         elseif etype == 'table' then
             if not entity.type then error('Tried to extend an entity ' .. entity.name .. ' without providing a type') end

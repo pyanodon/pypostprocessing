@@ -9,12 +9,9 @@ ITEM = setmetatable({}, {
     __call = function(self, item)
         local itype = type(item)
         if itype == 'string' then
-            for ptype in pairs(defines.prototypes.item) do
-                --TODO:FIX this better. 
-                if ptype ~= "item-with-inventory" and ptype ~= "item-with-label" and ptype ~= "item-with-tags" and ptype ~= "space-platform-starter-pack" then
-                local result = data.raw[ptype][item]
+            for _, pdata in py.iter_prototype_categories('item') do
+                local result = pdata[item]
                 if result then return result end
-                end
             end
         elseif itype == 'table' then
             if not item.type then error('Tried to extend an item ' .. item.name .. ' without providing a type') end
@@ -26,12 +23,9 @@ ITEM = setmetatable({}, {
         error('Item ' .. tostring(item) .. ' does not exist')
     end,
     __index = function(self, item_name)
-        for ptype in pairs(defines.prototypes.item) do
-            --TODO:FIX this better. 
-            if ptype ~= "item-with-inventory" and ptype ~= "item-with-label" and ptype ~= "item-with-tags" and ptype ~= "space-platform-starter-pack" then
-                local result = data.raw[ptype][item_name]
-                if result then return result end
-            end
+        for _, pdata in py.iter_prototype_categories('item') do
+            local result = pdata[item_name]
+            if result then return result end
         end
         return nil
     end
