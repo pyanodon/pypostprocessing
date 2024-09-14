@@ -111,9 +111,6 @@ function auto_tech:run()
 
     log('PROCESS TECHS END')
 
-    -- log(serpent.block(fg.graph.revList[fg:get_node('fracking / frack-natural-gas', fz_graph.NT_RECIPE).key]))
-
-    -- self:process_tech(fg:get_node('tholin-mk01', fz_graph.NT_TECH_HEAD), fg)
     fg:recursive_remove(ifd_deadend_node, false)
 
     local spg = self:extract_science_pack_graph(fg, parser)

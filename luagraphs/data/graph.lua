@@ -142,7 +142,7 @@ function graph:removeVertex(v)
         local edges = table.merge({}, self.adjList[v])
 
         if self.directed then
-            table.merge(edges, self.revList[v])
+            edges = table.merge(edges, self.revList[v])
         end
 
         for _, e in pairs(edges) do
