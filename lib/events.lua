@@ -91,7 +91,7 @@ for event, _ in pairs(gui_events) do
 end
 
 ---@type table<integer, table<int, {name: string, params: any[]?}>>
-global.on_tick = global.on_tick or {}
+storage.on_tick = storage.on_tick or {}
 ---@type table<string, function>
 py.on_tick_funcs = {}
 
@@ -108,8 +108,8 @@ function py.register_tick_event(tick, func_name, params)
 	end
 	params = params or {}
 	if type(params) ~= 'table' then params = {params} end
-	global.on_tick[tick] = global.on_tick[tick] or {}
-	table.insert(global.on_tick[tick], {name = func_name, params = params})
+	storage.on_tick[tick] = storage.on_tick[tick] or {}
+	table.insert(storage.on_tick[tick], {name = func_name, params = params})
 end
 
 -- register a function to use as a tick event
@@ -122,10 +122,10 @@ end
 
 py.on_event(defines.events.on_tick, function(event)
 	local tick = event.tick
-	if not global.on_tick[tick] then return end
-	for _, func_details in pairs(global.on_tick[tick]) do
+	if not storage.on_tick[tick] then return end
+	for _, func_details in pairs(storage.on_tick[tick]) do
 		local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
 		if not success then error('error in on tick function ' .. func_details.name .. ': ' .. err) end
 	end
-	global.on_tick[tick] = nil
+	storage.on_tick[tick] = nil
 end)
