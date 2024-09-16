@@ -34,7 +34,7 @@ function tr:visit(node)
         for _, e in self.g:iter_links_to(node) do
             local p = self.g:get_node(e:from())
             self:visit(p)
-            table.merge(indirect, self.closure[p.key])
+            indirect = table.merge(indirect, self.closure[p.key])
         end
 
         self.closure[node.key] = table.merge({}, indirect)
