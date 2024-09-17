@@ -83,24 +83,13 @@ metas.standardize = function(self)
     return self
 end
 
-local productivity_modules = nil
-metas.allow_productivity = function(self)
-    self.allow_productivity = true
-    return self
-end
-
 py.allow_productivity = function(recipe_names)
-    productivity_modules = nil
     for _, recipe_name in pairs(recipe_names) do
         if data.raw.recipe[recipe_name] then
-            RECIPE(recipe_name):allow_productivity()
+            RECIPE(recipe_name).allow_productivity = true
         else
             log('WARNING @ allow_productivity(): Recipe ' .. recipe_name .. ' does not exist')
         end
-    end
-
-    for module in pairs(productivity_modules or {}) do
-        module.limitation = table.dedupe(module.limitation)
     end
 end
 
@@ -220,7 +209,7 @@ metas.add_ingredient = function(self, ingredient)
         if existing.name == ingredient.name and existing.type == ingredient.type then
             if existing.amount and ingredient.amount then
                 existing.amount = existing.amount + ingredient.amount
-                existing.catalyst_amount = (existing.catalyst_amount or 0) + (ingredient.catalyst_amount or 0)
+                existing.ignored_by_productivity = (existing.ignored_by_productivity or 0) + (ingredient.ignored_by_productivity or 0)
                 return self
             end
         end

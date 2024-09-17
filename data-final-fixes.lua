@@ -43,21 +43,20 @@ end
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
-    local has_logged = false
     if recipe.results or recipe.result then
         if not recipe.results then
             recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = 'item'}}
             recipe.result = nil
             recipe.result_count = nil
         end
-        -- Skip if recipe only produces the item, not uses it as a catalyst.
-        if #recipe.results == 1 then
+        -- Skip if recipe only produces the item, not uses it as a catalyst, or if it does not allow prod
+        if #recipe.results == 1 or not recipe.allow_productivity then
             goto NEXT_RECIPE
         end
         for i, result in pairs(recipe.results) do
             local name = result.name or result[1]
             local amount = result.amount or result[2]
-            if not name or not config.NON_PRODDABLE_ITEMS[name] or result.catalyst_amount then
+            if not name or not config.NON_PRODDABLE_ITEMS[name] or result.ignored_by_productivity then
                 goto NEXT_RESULT
             end
             -- Convert to an explicitly long-form result format
@@ -66,12 +65,12 @@ for _, recipe in pairs(data.raw.recipe) do
                     type = result.type or 'item',
                     name = name,
                     amount = amount,
-                    catalyst_amount = amount,
+                    ignored_by_productivity = amount,
                     [1] = nil,
                     [2] = nil
                 }
             else -- Just set the catalyst amount
-                result.catalyst_amount = amount
+                result.ignored_by_productivity = amount
             end
             ::NEXT_RESULT::
         end
@@ -432,3 +431,5 @@ for _, drill in pairs(data.raw['mining-drill']) do
         drill.animations = nil
     end
 end
+
+log(serpent.block(data.raw.recipe['empty-aromatics-canister']))
