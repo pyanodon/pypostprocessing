@@ -492,7 +492,7 @@ function data_parser:add_entity_dependencies(entity, recipe_node, recipe_name, i
         if energy_source.type == 'burner' then
             recipe_node:add_label(LABEL_FUEL)
 
-            for _, category in pairs(energy_source.fuel_categories or {(energy_source.fuel_category or 'chemical')}) do
+            for _, category in pairs(energy_source.fuel_categories or {'chemical'}) do
                 for fuel, _ in pairs(self.fuel_categories[category] or {}) do
                     local fuel_node = self.fg:add_node(fuel, fz_graph.NT_ITEM)
                     self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
@@ -967,7 +967,7 @@ function data_parser:pre_process_entity(entity)
     local energy_source = entity.burner or entity.energy_source
 
     if energy_source and (entity.burner or energy_source.type == 'burner') then
-        for _, category in pairs(energy_source.fuel_categories or {(energy_source.fuel_category or 'chemical')}) do
+        for _, category in pairs(energy_source.fuel_categories or {'chemical'}) do
             insert_double_lookup(self.fuel_burners, category, entity.name)
         end
     end

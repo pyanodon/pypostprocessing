@@ -286,7 +286,7 @@ if mods['yi_railway'] and mods['pyindustry'] then
                     data.raw.locomotive[resultname].braking_force = loco.braking_force
                     data.raw.locomotive[resultname].friction_force = loco.friction_force
                     data.raw.locomotive[resultname].air_resistance = loco.air_resistance
-                    data.raw.locomotive[resultname].burner.fuel_category = loco.burner.fuel_category
+                    data.raw.locomotive[resultname].burner.fuel_categories = table.deepcopy(loco.burner.fuel_categories)
                     data.raw.locomotive[resultname].burner.fuel_inventory_size = loco.burner.fuel_inventory_size
                     data.raw.locomotive[resultname].burner.burnt_inventory_size = loco.burner.burnt_inventory_size
                 else
@@ -312,7 +312,7 @@ if mods['yi_railway'] and mods['pyindustry'] then
                 data.raw.locomotive[resultname].braking_force = loco.braking_force
                 data.raw.locomotive[resultname].friction_force = loco.friction_force
                 data.raw.locomotive[resultname].air_resistance = loco.air_resistance
-                data.raw.locomotive[resultname].burner.fuel_category = loco.burner.fuel_category
+                data.raw.locomotive[resultname].burner.fuel_categories = table.deepcopy(loco.burner.fuel_categories)
                 data.raw.locomotive[resultname].burner.fuel_inventory_size = loco.burner.fuel_inventory_size
                 data.raw.locomotive[resultname].burner.burnt_inventory_size = loco.burner.burnt_inventory_size
 
