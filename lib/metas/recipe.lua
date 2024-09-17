@@ -85,19 +85,7 @@ end
 
 local productivity_modules = nil
 metas.allow_productivity = function(self)
-    if not productivity_modules then
-        productivity_modules = {}
-        for _, module in pairs(data.raw.module) do
-            if module.name:find('productivity%-module') and module.limitation then
-                productivity_modules[module] = true
-            end
-        end
-    end
-
-    for module in pairs(productivity_modules) do
-        table_insert(module.limitation, self.name)
-    end
-
+    self.allow_productivity = true
     return self
 end
 
