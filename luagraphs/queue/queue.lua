@@ -31,11 +31,11 @@ function Queue.new(...)
     return Queue.__call(nil, ...)
 end
 
----Load global.queue or queues during on_load, as metatables are not persisted.
--- <p>This is only needed if you are using the queue as an object and storing it in global.
+---Load storage.queue or queues during on_load, as metatables are not persisted.
+-- <p>This is only needed if you are using the queue as an object and storing it in storage.
 -- @tparam table queue (<span class="types">@{Queue}</span>,...)
--- @usage global.myqueue1 = Queue.new()
--- script.on_load(function() Queue.load(global.myqueue))
+-- @usage storage.myqueue1 = Queue.new()
+-- script.on_load(function() Queue.load(storage.myqueue))
 function Queue.load(queue)
     if type(queue) == 'table' and queue.first then
         return setmetatable(queue, meta)
