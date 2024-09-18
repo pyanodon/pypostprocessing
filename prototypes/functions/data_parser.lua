@@ -756,7 +756,8 @@ function data_parser:add_mining_recipe(entity)
         ingredients = entity.minable.required_fluid and {{type = 'fluid', name = entity.minable.required_fluid, amount = entity.minable.fluid_amount}} or {},
         results = entity.minable.results,
         result = entity.minable.result,
-        result_count = entity.minable.count
+        result_count = entity.minable.count,
+        standardize = getmetatable(data.raw.recipe['speed-module']).__index.standardize
     }
 
     local node = self:parse_recipe(nil, recipe, true)
@@ -803,7 +804,8 @@ function data_parser:add_rocket_product_recipe(item)
         name = RECIPE_PREFIX_ROCKET .. item.name,
         ingredients = {{type = 'item', name = item.name, amount = 1}},
         results = item.rocket_launch_products or {item.rocket_launch_product},
-        virtual = true
+        virtual = true,
+        standardize = getmetatable(data.raw.recipe['speed-module']).__index.standardize
     }
 
     local node = self:parse_recipe(nil, recipe, true)
