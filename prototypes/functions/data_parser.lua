@@ -751,14 +751,14 @@ function data_parser:add_reactor_recipe(reactor)
 end
 
 function data_parser:add_mining_recipe(entity)
-    local recipe = {
+    local recipe = setmetatable({
         name = RECIPE_PREFIX_MINING .. entity.name,
         ingredients = entity.minable.required_fluid and {{type = 'fluid', name = entity.minable.required_fluid, amount = entity.minable.fluid_amount}} or {},
         results = entity.minable.results,
         result = entity.minable.result,
         result_count = entity.minable.count,
-        standardize = getmetatable(data.raw.recipe['speed-module']).__index.standardize
-    }
+        standardize = py.metas.recipe.standardize
+    }, py.metas.recipe)
 
     local node = self:parse_recipe(nil, recipe, true)
 
@@ -800,13 +800,12 @@ function data_parser:add_bonus_dependencies(tech_node, effect, entity_type, cond
 end
 
 function data_parser:add_rocket_product_recipe(item)
-    local recipe = {
+    local recipe = setmetatable({
         name = RECIPE_PREFIX_ROCKET .. item.name,
         ingredients = {{type = 'item', name = item.name, amount = 1}},
         results = item.rocket_launch_products or {item.rocket_launch_product},
-        virtual = true,
-        standardize = getmetatable(data.raw.recipe['speed-module']).__index.standardize
-    }
+        virtual = true
+    },  py.metas.recipe)
 
     local node = self:parse_recipe(nil, recipe, true)
     -- local tech_node = self.fg:add_node(tech_name or fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD)

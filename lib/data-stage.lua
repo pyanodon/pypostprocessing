@@ -1,6 +1,6 @@
 -- Adds helper functions for data stage. Shared across all pymods
 
-require 'metas.metas'
+py.metas = require 'metas.metas'
 require 'autorecipes'
 
 ---Returns a 1x1 empty image.

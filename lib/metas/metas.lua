@@ -83,3 +83,5 @@ data.extend = function(self, prototypes)
         end
     end
 end
+
+return metas
