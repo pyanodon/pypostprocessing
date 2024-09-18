@@ -756,8 +756,7 @@ function data_parser:add_mining_recipe(entity)
         ingredients = entity.minable.required_fluid and {{type = 'fluid', name = entity.minable.required_fluid, amount = entity.minable.fluid_amount}} or {},
         results = entity.minable.results,
         result = entity.minable.result,
-        result_count = entity.minable.count,
-        standardize = py.metas.recipe.standardize
+        result_count = entity.minable.count
     }, py.metas.recipe)
 
     local node = self:parse_recipe(nil, recipe, true)
