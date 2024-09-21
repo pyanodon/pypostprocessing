@@ -33,10 +33,9 @@ metas.standardize = function(self)
             if not self[k] then self[k] = v end
         end
     end
-    self.normal = nil
-    self.expensive = nil
 
-    if not self.unit then self.unit = {ingredients = {}} end
+    -- unit is not mandatory is 2.0
+    -- if not self.unit then self.unit = {ingredients = {}} end
 
     --TODO: See if SA launch version still requires the shorthand spec
     --[[
