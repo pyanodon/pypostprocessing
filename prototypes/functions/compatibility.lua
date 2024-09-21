@@ -161,7 +161,7 @@ end
 if mods['Teleporters'] and mods['pyhightech'] then
     RECIPE('teleporter'):replace_ingredient('advanced-circuit', 'electronic-circuit')
     -- Remove prereqs and let autotech figure it out
-    TECHNOLOGY('teleporter'):remove_pack('chemical-science-pack'):remove_prereq('advanced-electronics')
+    TECHNOLOGY('teleporter'):remove_pack('chemical-science-pack'):remove_prereq('advanced-circuit')
     if mods['pyalienlife'] then
         TECHNOLOGY('teleporter'):remove_pack('py-science-pack-2')
     end
@@ -430,7 +430,7 @@ if mods['scattergun_turret'] then
 end
 
 if mods['nixie-tubes'] then
-    TECHNOLOGY('cathodes'):remove_pack('logistic-science-pack'):remove_prereq('advanced-electronics')
+    TECHNOLOGY('cathodes'):remove_pack('logistic-science-pack'):remove_prereq('advanced-circuit')
 end
 
 if mods['Teleporters'] and mods['pyalternativeenergy'] then
@@ -489,9 +489,9 @@ then
 end
 
 if mods['aai-loaders'] then
-    TECHNOLOGY('aai-express-loader'):remove_prereq('advanced-electronics-2')
+    TECHNOLOGY('aai-express-loader'):remove_prereq('processing-unit')
     if mods['pyalienlife'] then
-        TECHNOLOGY('aai-fast-loader'):remove_prereq('advanced-electronics'):remove_pack('chemical-science-pack')
+        TECHNOLOGY('aai-fast-loader'):remove_prereq('advanced-circuit'):remove_pack('chemical-science-pack')
     end
 end
 
@@ -530,12 +530,12 @@ if mods['RenaiTransportation'] then
     end
 
     if mods['pyhightech'] then
-        TECHNOLOGY('RTImpactTech'):remove_prereq('advanced-electronics')
-        TECHNOLOGY('RTSimonSays'):remove_prereq('advanced-electronics'):add_prereq('circuit-network')
+        TECHNOLOGY('RTImpactTech'):remove_prereq('advanced-circuit')
+        TECHNOLOGY('RTSimonSays'):remove_prereq('advanced-circuit'):add_prereq('circuit-network')
         TECHNOLOGY('RTZiplineTech'):add_prereq('vacuum-tube-electronics'):remove_prereq('steel-processing')
         TECHNOLOGY('RTZiplineTech2'):remove_prereq('logistic-science-pack')
         TECHNOLOGY('RTZiplineTech3'):add_prereq('basic-electronics')
-        TECHNOLOGY('RTZiplineTech4'):remove_prereq('advanced-electronics-2'):add_prereq('advanced-electronics')
+        TECHNOLOGY('RTZiplineTech4'):remove_prereq('processing-unit'):add_prereq('advanced-circuit')
 
         RECIPE('RTImpactUnloaderRecipe'):replace_ingredient('advanced-circuit', 'electronic-circuit')
         RECIPE('RTMagnetTrainRampRecipe'):replace_ingredient('advanced-circuit', 'electronic-circuit')
