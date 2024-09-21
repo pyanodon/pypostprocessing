@@ -35,7 +35,7 @@ local checked_mods = {
 commands.add_command('check-technology-consistency', {'command-help.check-technology-consistency'}, function()
 	local prototypes = {}
 	-- Build a list of base-game techs
-	for name, prototype in pairs(game.technology_prototypes) do
+	for name, prototype in pairs(prototypes.technology) do
 		local history = script.get_prototype_history('technology', name)
 		if checked_mods[history.created] then
 			prototypes[name] = prototype
