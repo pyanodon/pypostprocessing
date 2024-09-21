@@ -34,7 +34,7 @@ if mods['deadlock-beltboxes-loaders'] then
             end
 
             if ITEM(item).hidden then
-                ITEM('deadlock-stack-' .. item_name):add_flag('hidden')
+                ITEM('deadlock-stack-' .. item_name).hidden = true
                 data.raw.recipe['deadlock-stacks-stack-' .. item_name].hidden = true
                 data.raw.recipe['deadlock-stacks-unstack-' .. item_name].hidden = true
             end
@@ -64,7 +64,7 @@ if mods['DeadlockCrating'] then
             data.raw.recipe['deadlock-unpackrecipe-' .. item_name].unlock_results = false
 
             if ITEM(item).hidden then
-                ITEM('deadlock-crate-' .. item_name):add_flag('hidden')
+                ITEM('deadlock-crate-' .. item_name).hidden = true
                 data.raw.recipe['deadlock-packrecipe-' .. item_name].hidden = true
                 data.raw.recipe['deadlock-unpackrecipe-' .. item_name].hidden = true
             end
