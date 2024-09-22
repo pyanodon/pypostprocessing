@@ -49,7 +49,11 @@ for _, prototype in pairs{'assembling-machine', 'furnace'} do
         if not x or not xx or not y or not yy then goto continue end
         local area = (xx - x) * (yy - y)
         if area <= 9 then goto continue end
-        entity.scale_entity_info_icon = true
+        local scale = math.floor(math.sqrt(area) / 3 + 0.5)
+        entity.alert_icon_scale = scale
+        entity.icon_draw_specification = {
+            scale = scale
+        }
         ::continue::
     end
 end
