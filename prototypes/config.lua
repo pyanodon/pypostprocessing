@@ -82,7 +82,7 @@ local config = {
 
     NON_PRODDABLE_ITEMS = {
         ['empty-barrel-milk'] = true,
-        ['empty-barrel'] = true,
+        ['barrel'] = true,
         ['methanol-gas-canister'] = true,
         ['empty-gas-canister'] = true,
         ['cage'] = true,
@@ -278,7 +278,7 @@ end
 
 -- PRIMARY_PRODUCTION_RECIPE means the recipe that unlocks first.
 -- This is only for performance improvement for the auto-tech for items which have many different sources
-config.PRIMARY_PRODUCTION_RECIPE['empty-barrel'] = 'empty-barrel'
+config.PRIMARY_PRODUCTION_RECIPE['barrel'] = 'barrel'
 config.PRIMARY_PRODUCTION_RECIPE['cage'] = 'cage'
 config.PRIMARY_PRODUCTION_RECIPE['empty-fuel-canister'] = 'empty-jerry-can'
 config.PRIMARY_PRODUCTION_RECIPE['biomass'] = 'biomass-log'

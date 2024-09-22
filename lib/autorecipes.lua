@@ -70,7 +70,7 @@ end
 
 local function modify_recipe_tables(item, items_table, previous_item_names, result_table) -- TODO: this is spaghetti. needs a refactor
     local barrel
-    if string.match(item.name, '%-barrel') and string.match(item.name, 'empty-barrel') == nil or string.match(item.name, 'empty-milk-barrel') then
+    if string.match(item.name, '%-barrel') and string.match(item.name, 'barrel') == nil or string.match(item.name, 'empty-milk-barrel') then
         barrel = string.gsub(item.name, '%-barrel', '')
     end
 
@@ -111,7 +111,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
                     if string.match(item.name, '%-barrel') and string.match(item.name, 'empty%-barrel') == nil or string.match(item.name, 'empty%-milk%-barrel') == nil then
                         local barrel_name
                         if string.match(item.name, 'barrel') then
-                            barrel_name = 'empty-barrel'
+                            barrel_name = 'barrel'
                         elseif string.match(item.name, 'canister') then
                             barrel_name = 'empty-fuel-canister'
                         end
@@ -185,7 +185,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         local item_type = 'item'
         local name
         if string.match(item.name, 'barrel') then
-            name = 'empty-barrel'
+            name = 'barrel'
         elseif string.match(item.name, 'canister') then
             name = 'empty-fuel-canister'
         end
