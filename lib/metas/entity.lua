@@ -40,13 +40,14 @@ metas.standardize = function(self)
     local minable = self.minable
     if minable then
         if minable.results and type(minable.results) == 'table' then
-            minable.result = nil
-            minable.count = nil
+            -- nothing to do
         elseif minable.result then
             minable.results = {{type = 'item', name = minable.result, amount = minable.count or 1}}
         else
             minable.results = {}
         end
+        minable.result = nil
+        minable.count = nil
 
         for k, p in pairs(minable.results) do
             minable.results[k] = py.standardize_product(p)
