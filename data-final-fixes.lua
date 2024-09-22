@@ -431,5 +431,3 @@ for _, drill in pairs(data.raw['mining-drill']) do
         drill.animations = nil
     end
 end
-
-log(serpent.block(data.raw.recipe['empty-aromatics-canister']))
