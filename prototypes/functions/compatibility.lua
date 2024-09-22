@@ -570,7 +570,7 @@ if mods['RenaiTransportation'] then
 
         data.raw.recipe['RTZiplineRecipe5'].ingredients = table.deepcopy(data.raw.recipe['exoskeleton-equipment'].ingredients)
 
-        RECIPE('RTZiplineRecipe5'):add_ingredient({type = 'item', name = 'fusion-reactor-equipment', amount = 1}):add_ingredient({type = 'item', name = 'RTZiplineItem4', amount = 1}):add_ingredient({type = 'item', name = 'nuclear-fuel', amount = 5})
+        RECIPE('RTZiplineRecipe5'):add_ingredient({type = 'item', name = 'fission-reactor-equipment', amount = 1}):add_ingredient({type = 'item', name = 'RTZiplineItem4', amount = 1}):add_ingredient({type = 'item', name = 'nuclear-fuel', amount = 5})
     end
 end
 
