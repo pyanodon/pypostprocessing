@@ -431,3 +431,11 @@ for _, drill in pairs(data.raw['mining-drill']) do
         drill.animations = nil
     end
 end
+
+-- remove for logging unused attributes
+for _, category in pairs(data.raw) do
+    for _, prototype in pairs(category) do
+        prototype.dependencies = nil
+        prototype.ignore_for_dependencies = nil
+    end
+end
