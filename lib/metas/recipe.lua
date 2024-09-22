@@ -17,6 +17,8 @@ local table_insert = table.insert
 ---@field public add_result_amount fun(self: data.RecipePrototype, result_name: string, increase: number): data.RecipePrototype
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 
+local metas = {}
+
 RECIPE = setmetatable(data.raw.recipe, {
     ---@param recipe data.RecipePrototype
     __call = function(self, recipe)
@@ -34,7 +36,7 @@ RECIPE = setmetatable(data.raw.recipe, {
                 setmetatable(dummyResult, dummyResult)
                 return dummyResult
             end
-            recipe = self[recipe]
+            recipe = setmetatable(self[recipe], {__index = metas})
         elseif rtype == 'table' then
             recipe.type = 'recipe'
             data:extend{recipe}
@@ -42,8 +44,6 @@ RECIPE = setmetatable(data.raw.recipe, {
         return recipe:standardize()
     end
 })
-
-local metas = {}
 
 metas.standardize = function(self)
     if self.normal then
