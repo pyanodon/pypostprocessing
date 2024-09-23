@@ -54,7 +54,8 @@ end
 ---@param color Color?
 py.cancel_creation = function(entity, player_index, message, color)
 	local inserted = 0
-	local item_to_place = entity.prototype.items_to_place_this[1]
+	local items_to_place_this = entity.prototype.items_to_place_this
+	local item_to_place = items_to_place_this and items_to_place_this[1]
 	local surface = entity.surface
 	local position = entity.position
 
@@ -68,29 +69,30 @@ py.cancel_creation = function(entity, player_index, message, color)
 	end
 
 	if inserted == 0 and item_to_place then
-		surface.spill_item_stack(
-			position,
-			item_to_place,
-			true,
-			entity.force_index,
-			false
-		)
+		surface.spill_item_stack {
+			position = position,
+			stack = item_to_place,
+			enable_looted = true,
+			force = entity.force_index,
+			allow_belts = false
+		}
 	end
 
-	entity.destroy{raise_destroy = true}
+	entity.destroy {raise_destroy = true}
 
 	if not message then return end
 
 	local tick = game.tick
 	local last_message = storage._last_cancel_creation_message or 0
 	if last_message + 60 < tick then
-		surface.create_entity{
-			name = 'flying-text',
-			position = position,
-			text = message,
-			render_player_index = player_index,
-            color = color
-		}
+		for _, player in pairs(game.connected_players) do
+			player.create_local_flying_text {
+				text = message,
+				position = position,
+				color = color,
+				create_at_cursor = player.index == player_index
+			}
+		end
 		storage._last_cancel_creation_message = game.tick
 	end
 end

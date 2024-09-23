@@ -816,7 +816,6 @@ return {
       ["flame-thrower-explosion"] = 0,
       ["fluid-turret"] = 0,
       ["fluid-wagon"] = 0,
-      ["flying-text"] = 0,
       furnace = 0,
       gate = 0,
       generator = 0,
