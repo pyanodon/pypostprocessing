@@ -286,9 +286,9 @@ if mods['yi_railway'] and mods['pyindustry'] then
                     data.raw.locomotive[resultname].braking_force = loco.braking_force
                     data.raw.locomotive[resultname].friction_force = loco.friction_force
                     data.raw.locomotive[resultname].air_resistance = loco.air_resistance
-                    data.raw.locomotive[resultname].burner.fuel_categories = table.deepcopy(loco.burner.fuel_categories)
-                    data.raw.locomotive[resultname].burner.fuel_inventory_size = loco.burner.fuel_inventory_size
-                    data.raw.locomotive[resultname].burner.burnt_inventory_size = loco.burner.burnt_inventory_size
+                    data.raw.locomotive[resultname].energy_source.fuel_categories = table.deepcopy(loco.energy_source.fuel_categories)
+                    data.raw.locomotive[resultname].energy_source.fuel_inventory_size = loco.energy_source.fuel_inventory_size
+                    data.raw.locomotive[resultname].energy_source.burnt_inventory_size = loco.energy_source.burnt_inventory_size
                 else
                     --log('can't find ' .. resultname)
                 end
@@ -312,9 +312,9 @@ if mods['yi_railway'] and mods['pyindustry'] then
                 data.raw.locomotive[resultname].braking_force = loco.braking_force
                 data.raw.locomotive[resultname].friction_force = loco.friction_force
                 data.raw.locomotive[resultname].air_resistance = loco.air_resistance
-                data.raw.locomotive[resultname].burner.fuel_categories = table.deepcopy(loco.burner.fuel_categories)
-                data.raw.locomotive[resultname].burner.fuel_inventory_size = loco.burner.fuel_inventory_size
-                data.raw.locomotive[resultname].burner.burnt_inventory_size = loco.burner.burnt_inventory_size
+                data.raw.locomotive[resultname].energy_source.fuel_categories = table.deepcopy(loco.energy_source.fuel_categories)
+                data.raw.locomotive[resultname].energy_source.fuel_inventory_size = loco.energy_source.fuel_inventory_size
+                data.raw.locomotive[resultname].energy_source.burnt_inventory_size = loco.energy_source.burnt_inventory_size
 
             elseif recipe.subgroup == 'yir_cargowagons' or recipe.subgroup == 'yir_cargowagons_4A' or
                 recipe.subgroup == 'yir_cargowagons_2A2' then
