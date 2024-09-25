@@ -93,10 +93,6 @@ py.allow_productivity = function(recipe_names)
     end
 end
 
-metas.allow_productivity = function(self)
-    py.allow_productivity({self.name})
-end
-
 metas.add_unlock = function(self, technology_name)
     if type(technology_name) == 'table' then
         for _, tech in pairs(technology_name) do
