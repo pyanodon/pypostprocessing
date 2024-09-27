@@ -277,7 +277,7 @@ return {
     on_difficulty_settings_changed = 61,
     on_entity_cloned = 121,
     on_entity_damaged = 100,
-    on_entity_destroyed = 157,
+    on_object_destroyed = 157,
     on_entity_died = 4,
     on_entity_logistic_slot_changed = 170,
     on_entity_renamed = 58,
