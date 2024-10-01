@@ -179,14 +179,14 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        new_ingredient = py.standardize_product(new_ingredient)
+        if type(new_ingredient) == "table" then new_ingredient = py.standardize_product(new_ingredient) end
         replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
         return self
     end
 
-    metas.replace_result = function(self, old_result, new_result)
+    metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        new_result = py.standardize_product(new_result)
+        if type(new_result) == "table" then new_result = py.standardize_product(new_result) end
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == 'string' and new_result or new_result[1] or new_result.name
