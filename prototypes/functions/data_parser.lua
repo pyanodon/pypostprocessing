@@ -268,7 +268,7 @@ function data_parser:add_recipe_result_item(item_name, recipe_name, recipe_node,
             self:add_entity_dependencies(ENTITY(entity_name), recipe_node, recipe_name, item, ingredients)
         end
 
-        if item and (item.rocket_launch_products or item.rocket_launch_product) then
+        if item and item.rocket_launch_products then
             self:add_rocket_product_recipe(item)
         end
 
@@ -802,7 +802,7 @@ function data_parser:add_rocket_product_recipe(item)
     local recipe = {
         name = RECIPE_PREFIX_ROCKET .. item.name,
         ingredients = {{type = 'item', name = item.name, amount = 1}},
-        results = item.rocket_launch_products or {item.rocket_launch_product},
+        results = item.rocket_launch_products,
         virtual = true
     }
 
