@@ -156,6 +156,9 @@ do
                 if ingredient.name == old then
                     ingredient.name = new
                     ingredient.type = FLUID[new] and 'fluid' or 'item'
+                    ingredient.minimum_temperature = nil
+                    ingredient.maximum_temperature = nil
+                    ingredient.temperature = nil
                     if new_amount then
                         ingredient.amount = new_amount
                         ingredient.amount_min = nil
