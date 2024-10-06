@@ -9,6 +9,9 @@
   "description": "Post-processing steps for Pyanodons modpack. Overhauls the technology tree to make sure prerequisites are set based on unlocked recipes.",
   "dependencies": [
     "base >= 1.2.0",
+    "! space-age",
+    "! quality",
+    "elevated-rails",
     "? pycoalprocessing",
     "? pyindustry",
     "? pyfusionenergy",
@@ -36,5 +39,10 @@
   "package": {
     "ignore": [],
     "scripts": {}
-  }
+  },
+  "quality_required": false,
+  "space_travel_required": false,
+  "spoiling_required": false,
+  "freezing_required": false,
+  "segmented_units_required": false
 }
