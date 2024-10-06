@@ -123,8 +123,9 @@ end
 py.on_event(defines.events.on_tick, function(event)
 	local tick = event.tick
 	if not py.nth_tick_setup then init_nth_tick() end
-	local max_funcs_per_tick = math.ceil(py.nth_tick_total * 5)
+	local max_funcs_per_tick = math.ceil(py.nth_tick_total * 3)
 	local this_tick_total = 0
+	local delayed = 0
 	for _, order in pairs(storage.nth_tick_order[tick] or {}) do
 		if not py.nth_tick_funcs[order.func] then goto continue end
 		this_tick_total = this_tick_total + 1
@@ -135,9 +136,10 @@ py.on_event(defines.events.on_tick, function(event)
 			if not storage.nth_tick_order[next_tick] then storage.nth_tick_order[next_tick] = {} end
 			table.insert(storage.nth_tick_order[next_tick], order)
 		else
+			delayed = delayed + 1
 			if not storage.nth_tick_order[tick+1] then storage.nth_tick_order[tick+1] = {} end
 			order.delay = order.delay + 1
-			table.insert(storage.nth_tick_order[tick+1], order)
+			table.insert(storage.nth_tick_order[tick+1], delayed, order)
 		end
 		::continue::
 	end
