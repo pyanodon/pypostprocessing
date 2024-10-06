@@ -401,4 +401,4 @@ for _, category in pairs(data.raw) do
     end
 end
 
-if dev_mode then require "prototypes.tests" end
+if dev_mode then require "tests.data" end

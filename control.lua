@@ -55,3 +55,6 @@ commands.add_command('check-technology-consistency', {'command-help.check-techno
 	end
 	game.print({'command-output.consistency-check-complete'})
 end)
+
+local dev_mode = settings.startup['pypp-dev-mode'].value
+if dev_mode then require "tests.control" end
