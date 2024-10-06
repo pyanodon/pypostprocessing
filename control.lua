@@ -33,18 +33,18 @@ local checked_mods = {
 }
 
 commands.add_command('check-technology-consistency', {'command-help.check-technology-consistency'}, function()
-	local prototypes = {}
 	-- Build a list of base-game techs
+	local filtered_prototypes = {}
 	for name, prototype in pairs(prototypes.technology) do
-		local history = script.get_prototype_history('technology', name)
+		local history = prototypes.get_history('technology', name)
 		if checked_mods[history.created] then
-			prototypes[name] = prototype
+			filtered_prototypes[name] = prototype
 		end
 	end
 	-- Iterate and verify
 	for _, force in pairs(game.forces) do
 		local force_techs = force.technologies
-		for name, prototype in pairs(prototypes) do
+		for name, prototype in pairs(filtered_prototypes) do
 			local tech = force_techs[name]
 			if tech.enabled ~= prototype.enabled then
 				tech.enabled = prototype.enabled

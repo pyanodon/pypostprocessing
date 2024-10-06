@@ -1,7 +1,7 @@
 local function test_localised_strings()
     local excluded_categories = {}
     local localised_strings = {}
-    for _, recipe in pairs(prototypes.get_recipe_filtered{}) do
+    for _, recipe in pairs(prototypes.recipe) do
         if not excluded_categories[recipe.category] then table.insert(localised_strings, recipe.localised_name) end
     end
     game.players[1].request_translations(localised_strings)
