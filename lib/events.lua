@@ -96,12 +96,15 @@ storage.on_tick = storage.on_tick or {}
 py.on_tick_funcs = {}
 
 -- use this to register functions that run at a specific tick
--- can replace on_nth_tick if you register the same function for a later tick
 -- pass parameters in a list
 ---@param tick uint
 ---@param func_name string
+---@param func function
 ---@param params any[]?
-function py.register_tick_event(tick, func_name, params)
+py.register_tick_event = function(tick, func_name, func, params)
+	log('registered tick_event function ' .. func_name)
+	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error('attempting to overwrite a registered function ' .. func_name) end
+	py.on_tick_funcs[func_name] = func
 	if tick < (game and game.tick or 0) then
 		error('invalid tick event registration with function ' .. func_name)
 		return
@@ -112,17 +115,28 @@ function py.register_tick_event(tick, func_name, params)
 	table.insert(storage.on_tick[tick], {name = func_name, params = params})
 end
 
--- register a function to use as a tick event
+local on_nth_tick_init = false
+local function_list = {}
+
+py.mod_nth_tick_funcs = {}
+
+---use instead of script.on_nth_tick
+---@param tick int
 ---@param func_name string
+---@param mod string
 ---@param func function
-function py.register_function(func_name, func)
-	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error('attempting to overwrite a registered function ' .. func_name) end
-	py.on_tick_funcs[func_name] = func
+py.register_on_nth_tick = function(tick, func_name, mod, func)
+	function_list[func_name] = {tick=tick, mod=mod}
+	py.mod_nth_tick_funcs[func_name] = func
 end
 
 py.on_event(defines.events.on_tick, function(event)
+	if not on_nth_tick_init then
+		remote.call("on_nth_tick", "add", function_list)
+		on_nth_tick_init = true
+	end
 	local tick = event.tick
-	if not storage.on_tick[tick] then return end
+	if not (storage.on_tick and storage.on_tick[tick]) then return end
 	for _, func_details in pairs(storage.on_tick[tick]) do
 		local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
 		if not success then error('error in on tick function ' .. func_details.name .. ': ' .. err) end
