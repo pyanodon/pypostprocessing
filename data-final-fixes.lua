@@ -43,6 +43,7 @@ end
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
+    if not recipe.maximum_productivity then recipe.maximum_productivity = 1000000 end -- Disable the max productivity cap
     if recipe.results or recipe.result then
         if not recipe.results then
             recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = 'item'}}
@@ -65,11 +66,13 @@ for _, recipe in pairs(data.raw.recipe) do
                     type = result.type or 'item',
                     name = name,
                     amount = amount,
+                    ignored_by_stats = amount,
                     ignored_by_productivity = amount,
                     [1] = nil,
                     [2] = nil
                 }
             else -- Just set the catalyst amount
+                result.ignored_by_stats = amount
                 result.ignored_by_productivity = amount
             end
             ::NEXT_RESULT::
