@@ -29,11 +29,6 @@ py.on_event = function(event, f)
 	end
 end
 
-py.on_nth_tick = function(event, f)
-	events[event] = events[event] or {}
-	table.insert(events[event], f)
-end
-
 local function one_function_from_many(functions)
 	local l = #functions
 	if l == 1 then return functions[1] end
@@ -132,10 +127,13 @@ py.register_on_nth_tick = function(tick, func_name, mod, func)
 end
 
 py.on_event(defines.events.on_tick, function(event)
+	-- on_nth_tick
 	if not on_nth_tick_init then
 		remote.call("on_nth_tick", "add", function_list)
 		on_nth_tick_init = true
 	end
+
+	-- delayed funcs
 	local tick = event.tick
 	if not (storage.on_tick and storage.on_tick[tick]) then return end
 	for _, func_details in pairs(storage.on_tick[tick]) do
