@@ -93,7 +93,6 @@ py.nth_tick_total = 0
 ---@param func_list NthTickFunc[]
 local register_on_nth_tick = function(func_list)
 	for func_name, details in pairs(func_list) do
-		if py.nth_tick_funcs[func_name] then error("py.register_on_nth_tick: function with name " .. func_name .. " is already registered") end
 		log("registered on_nth_tick function " .. func_name .. " from mod " .. details.mod)
 		py.nth_tick_total = py.nth_tick_total + 1 / details.tick
 		py.nth_tick_funcs[func_name] = {mod=details.mod, tick=details.tick}

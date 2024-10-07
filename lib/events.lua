@@ -126,6 +126,7 @@ py.mod_nth_tick_funcs = {}
 ---@param mod string
 ---@param func function
 py.register_on_nth_tick = function(tick, func_name, mod, func)
+	if py.mod_nth_tick_funcs[func_name] then error("py.register_on_nth_tick: function with name " .. func_name .. " is already registered") end
 	function_list[func_name] = {tick=tick, mod=mod}
 	py.mod_nth_tick_funcs[func_name] = func
 end
