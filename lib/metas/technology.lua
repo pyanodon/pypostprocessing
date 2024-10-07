@@ -81,7 +81,7 @@ metas.remove_pack = function(self, science_pack_name)
         return self
     end
 
-    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[0] ~= science_pack_name end)
+    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[1] ~= science_pack_name end)
 
     return self
 end
