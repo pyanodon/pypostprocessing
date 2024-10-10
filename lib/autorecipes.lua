@@ -54,15 +54,15 @@ py.autorecipes { -- is a function call can be many per file is the same as RECIP
  +,-,*,/: if an item with the same name exist in the mats above this recipe it will preform the set math operation on that amount useing the new value (i.e. old amount + new amount). if this is a new item being added it will perform the math operation on the default value of the item from the items table.
 R: will clear this entry from the ingredients/results table it is in
 numbers: sets amount to this value no matter what it was before
-]]--
+]] --
 --if you use the icon part its set to want a size 64 icon right now. if you want to use the size 32 ones ill need to add icon size in because i cant detect the icons size in the code
 
 local function ensure_contiguous(tbl)
-    if not tbl or type(tbl) ~= 'table' then return tbl end
+    if not tbl or type(tbl) ~= "table" then return tbl end
     local contiguous_table = {}
     for _, v in pairs(tbl) do
         if v ~= nil then
-            contiguous_table[#contiguous_table+1] = v
+            contiguous_table[#contiguous_table + 1] = v
         end
     end
     return contiguous_table
@@ -70,17 +70,17 @@ end
 
 local function modify_recipe_tables(item, items_table, previous_item_names, result_table) -- TODO: this is spaghetti. needs a refactor
     local barrel
-    if string.match(item.name, '%-barrel') and string.match(item.name, 'barrel') == nil or string.match(item.name, 'empty-milk-barrel') then
-        barrel = string.gsub(item.name, '%-barrel', '')
+    if string.match(item.name, "%-barrel") and string.match(item.name, "barrel") == nil or string.match(item.name, "empty-milk-barrel") then
+        barrel = string.gsub(item.name, "%-barrel", "")
     end
 
     local name
     if data.raw.item[item.name] or data.raw.module[item.name] or data.raw.fluid[item.name] then
         name = item.name
-    elseif type(item.fallback) == 'string' then
+    elseif type(item.fallback) == "string" then
         name = item.fallback
         item.name = name
-    elseif type(item.fallback) == 'table' and item.fallback.name then
+    elseif type(item.fallback) == "table" and item.fallback.name then
         name = item.fallback.name
         item.name = name
         if item.fallback.amount then
@@ -93,13 +93,13 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
     if previous_item_names[name] ~= true then
         local item_type
         if data.raw.item[name] or data.raw.module[name] then
-            item_type = 'item'
+            item_type = "item"
         elseif data.raw.fluid[name] then
-            item_type = 'fluid'
+            item_type = "fluid"
         end
         item.type = item_type
 
-        if item.amount and type(item.amount) == 'number' then
+        if item.amount and type(item.amount) == "number" then
             table.insert(items_table, item)
         elseif item.amount_min and item.amount_max then
             table.insert(items_table, item)
@@ -108,12 +108,12 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         if item.remove_item and item.remove_item == true then
             for p, pre in pairs(items_table) do
                 if pre.name == name then
-                    if string.match(item.name, '%-barrel') and string.match(item.name, 'empty%-barrel') == nil or string.match(item.name, 'empty%-milk%-barrel') == nil then
+                    if string.match(item.name, "%-barrel") and string.match(item.name, "empty%-barrel") == nil or string.match(item.name, "empty%-milk%-barrel") == nil then
                         local barrel_name
-                        if string.match(item.name, 'barrel') then
-                            barrel_name = 'barrel'
-                        elseif string.match(item.name, 'canister') then
-                            barrel_name = 'empty-fuel-canister'
+                        if string.match(item.name, "barrel") then
+                            barrel_name = "barrel"
+                        elseif string.match(item.name, "canister") then
+                            barrel_name = "empty-fuel-canister"
                         end
                         local amount = items_table[p].amount
                         if result_table and next(result_table) then
@@ -135,7 +135,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
                 for _, pre in pairs(items_table) do
                     if pre.name == name then
                         if pre.amount then
-                        pre.amount = item.add_amount + pre.amount
+                            pre.amount = item.add_amount + pre.amount
                         elseif pre.amount_min and pre.amount_max then
                             pre.amount_min = pre.amount_min + item.add_amount
                             pre.amount_max = pre.amount_max + item.add_amount
@@ -172,9 +172,9 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         local name = item.return_item.name
         local amount = item.return_item.amount or item.amount or item.add_amount
         if data.raw.item[name] or data.raw.module[name] then
-            item_type = 'item'
+            item_type = "item"
         elseif data.raw.fluid[name] then
-            item_type = 'fluid'
+            item_type = "fluid"
         end
         return_item = {type = item_type, name = name, amount = amount}
         table.insert(result_table, return_item)
@@ -182,12 +182,12 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
 
     local return_barrel
     if item.return_barrel and item.return_barrel == true then
-        local item_type = 'item'
+        local item_type = "item"
         local name
-        if string.match(item.name, 'barrel') then
-            name = 'barrel'
-        elseif string.match(item.name, 'canister') then
-            name = 'empty-fuel-canister'
+        if string.match(item.name, "barrel") then
+            name = "barrel"
+        elseif string.match(item.name, "canister") then
+            name = "empty-fuel-canister"
         end
         local amount = item.amount or item.add_amount
         return_barrel = {type = item_type, name = name, amount = amount}
@@ -209,7 +209,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
 end
 
 --handles all adjustments for each ingredient and result changes in autorecipe
-local function recipe_item_builder(ingredients,results,previous_ingredients,previous_results)
+local function recipe_item_builder(ingredients, results, previous_ingredients, previous_results)
     local ing_table = table.deepcopy(previous_ingredients)
     local result_table = table.deepcopy(previous_results)
 
@@ -248,13 +248,13 @@ py.autorecipes = function(params)
         local i, numbered_name = 0, nil
         repeat
             i = i + 1
-            numbered_name = params.name .. '-' .. i
+            numbered_name = params.name .. "-" .. i
         until not data.raw.recipe[numbered_name]
 
         local recipe_name = tier.name or numbered_name
 
         local recipe = RECIPE {
-            type = 'recipe',
+            type = "recipe",
             name = recipe_name,
             category = params.category,
             enabled = tier.tech == nil,

@@ -17,13 +17,11 @@ function tr.create(graph)
     return t
 end
 
-
 function tr:run()
     for _, node in pairs(self.g.nodes) do
         self:visit(node)
     end
 end
-
 
 function tr:visit(node)
     if not self.visited[node.key] then

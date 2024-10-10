@@ -5,7 +5,7 @@ local events = {}
 ---@param f function
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function(event, f)
-	if event == 'on_built' then
+	if event == "on_built" then
 		py.on_event({defines.events.on_built_entity,
 			defines.events.on_robot_built_entity,
 			defines.events.script_raised_built,
@@ -13,7 +13,7 @@ py.on_event = function(event, f)
 		}, f)
 		return
 	end
-	if event == 'on_destroyed' then
+	if event == "on_destroyed" then
 		py.on_event({
 			defines.events.on_player_mined_entity,
 			defines.events.on_robot_mined_entity,
@@ -22,7 +22,7 @@ py.on_event = function(event, f)
 		}, f)
 		return
 	end
-	for _, event in pairs(type(event) == 'table' and event or {event}) do
+	for _, event in pairs(type(event) == "table" and event or {event}) do
 		event = tostring(event)
 		events[event] = events[event] or {}
 		table.insert(events[event], f)
@@ -42,13 +42,13 @@ end
 
 local finalized = false
 py.finalize_events = function()
-	if finalized then error('Events already finalized') end
+	if finalized then error("Events already finalized") end
 	local i = 0
 	for event, functions in pairs(events) do
 		local f = one_function_from_many(functions)
-		if type(event) == 'number' then
+		if type(event) == "number" then
 			script.on_nth_tick(event, f)
-		elseif event == 'on_init' then
+		elseif event == "on_init" then
 			script.on_init(f)
 			script.on_configuration_changed(f)
 		else
@@ -57,7 +57,7 @@ py.finalize_events = function()
 		i = i + 1
 	end
 	finalized = true
-	log('Finalized ' .. i .. ' events for ' .. script.mod_name)
+	log("Finalized " .. i .. " events for " .. script.mod_name)
 end
 
 _G.gui_events = {
@@ -76,7 +76,9 @@ _G.gui_events = {
 local function process_gui_event(event)
 	if event.element and event.element.valid then
 		for pattern, f in pairs(gui_events[event.name]) do
-			if event.element.name:match(pattern) then f(event); return end
+			if event.element.name:match(pattern) then
+				f(event); return
+			end
 		end
 	end
 end
@@ -97,15 +99,15 @@ py.on_tick_funcs = {}
 ---@param func function
 ---@param params any[]?
 py.register_tick_event = function(tick, func_name, func, params)
-	log('registered tick_event function ' .. func_name)
-	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error('attempting to overwrite a registered function ' .. func_name) end
+	log("registered tick_event function " .. func_name)
+	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error("attempting to overwrite a registered function " .. func_name) end
 	py.on_tick_funcs[func_name] = func
 	if tick < (game and game.tick or 0) then
-		error('invalid tick event registration with function ' .. func_name)
+		error("invalid tick event registration with function " .. func_name)
 		return
 	end
 	params = params or {}
-	if type(params) ~= 'table' then params = {params} end
+	if type(params) ~= "table" then params = {params} end
 	storage.on_tick[tick] = storage.on_tick[tick] or {}
 	table.insert(storage.on_tick[tick], {name = func_name, params = params})
 end
@@ -122,7 +124,7 @@ py.mod_nth_tick_funcs = {}
 ---@param func function
 py.register_on_nth_tick = function(tick, func_name, mod, func)
 	if py.mod_nth_tick_funcs[func_name] then error("py.register_on_nth_tick: function with name " .. func_name .. " is already registered") end
-	function_list[func_name] = {tick=tick, mod=mod}
+	function_list[func_name] = {tick = tick, mod = mod}
 	py.mod_nth_tick_funcs[mod .. "-" .. func_name] = func
 end
 
@@ -138,7 +140,7 @@ py.on_event(defines.events.on_tick, function(event)
 	if not (storage.on_tick and storage.on_tick[tick]) then return end
 	for _, func_details in pairs(storage.on_tick[tick]) do
 		local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
-		if not success then error('error in on tick function ' .. func_details.name .. ': ' .. err) end
+		if not success then error("error in on tick function " .. func_details.name .. ": " .. err) end
 	end
 	storage.on_tick[tick] = nil
 end)

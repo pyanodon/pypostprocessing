@@ -27,26 +27,21 @@ function graph.Edge.create(v, w, weight, label)
     return s
 end
 
-
 function graph.Edge:from()
     return self.v
 end
-
 
 function graph.Edge:to()
     return self.w
 end
 
-
 function graph.Edge:either()
     return self.v
 end
 
-
 function graph.Edge:label()
     return self.label
 end
-
 
 function graph.Edge:other(x)
     if x == self.v then
@@ -54,9 +49,7 @@ function graph.Edge:other(x)
     else
         return self.v
     end
-
 end
-
 
 function graph.create(V, directed)
     local g = {}
@@ -73,7 +66,7 @@ function graph.create(V, directed)
         g.revList = {}
     end
 
-    for v = 0, V-1 do
+    for v = 0, V - 1 do
         g.vertexList[v] = true
         g.adjList[v] = {}
 
@@ -87,16 +80,13 @@ function graph.create(V, directed)
     return g
 end
 
-
 function graph:vertexCount()
     return table.size(self.vertexList)
 end
 
-
 function graph:vertices()
     return self.vertexList
 end
-
 
 function graph.createFromVertexList(vertices, directed)
     local g = graph.create(0, directed)
@@ -118,7 +108,6 @@ function graph.createFromVertexList(vertices, directed)
     return g
 end
 
-
 function graph:addVertexIfNotExists(v)
     if self.vertexList[v] then
         return false
@@ -133,7 +122,6 @@ function graph:addVertexIfNotExists(v)
         return true
     end
 end
-
 
 function graph:removeVertex(v)
     if self.vertexList[v] then
@@ -157,21 +145,17 @@ function graph:removeVertex(v)
     end
 end
 
-
 function graph:containsVertex(v)
     return self.vertexList[v] or false
 end
-
 
 function graph:adj(v)
     return self.adjList[v]
 end
 
-
 function graph:rev(v)
     return self.directed and self.revList[v] or nil
 end
-
 
 function graph:addEdge(v, w, weight, label)
     local e = graph.Edge.create(v, w, weight, label)
@@ -185,7 +169,6 @@ function graph:addEdge(v, w, weight, label)
         table.insert(self.revList[w], e)
     end
 end
-
 
 function graph:removeEdge(v, w, label)
     local adj_v = self.adjList[v]
@@ -208,7 +191,6 @@ function graph:removeEdge(v, w, label)
     end
 end
 
-
 function graph:reverse()
     local g = graph.createFromVertexList(self.vertexList, self.directed)
 
@@ -223,7 +205,6 @@ function graph:reverse()
     return g
 end
 
-
 function graph:copy()
     local g = graph.createFromVertexList(self.vertexList, self.directed)
 
@@ -237,7 +218,6 @@ function graph:copy()
 
     return g
 end
-
 
 function graph:create_subgraph(vertexList)
     local g = graph.createFromVertexList(vertexList, self.directed)
@@ -255,7 +235,6 @@ function graph:create_subgraph(vertexList)
     return g
 end
 
-
 function graph:edges()
     local l = {}
 
@@ -271,7 +250,6 @@ function graph:edges()
 
     return l
 end
-
 
 function graph:hasEdge(v, w)
     local adj_v = self:adj(v)

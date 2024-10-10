@@ -8,22 +8,24 @@ ITEM = setmetatable({}, {
     ---@param item data.ItemPrototype
     __call = function(self, item)
         local itype = type(item)
-        if itype == 'string' then
-            for _, pdata in py.iter_prototype_categories('item') do
+        if itype == "string" then
+            for _, pdata in py.iter_prototype_categories("item") do
                 local result = pdata[item]
                 if result then return result end
             end
-        elseif itype == 'table' then
-            if not item.type then error('Tried to extend an item ' .. item.name .. ' without providing a type') end
-            if not item_prototypes[item.type] then error('Tried to use ITEM{} on a non-item: ' .. item.name) end
+        elseif itype == "table" then
+            if not item.type then error("Tried to extend an item " .. item.name .. " without providing a type") end
+            if not item_prototypes[item.type] then error("Tried to use ITEM{} on a non-item: " .. item.name) end
 
-            data:extend{item}
+            data:extend {item}
             return item
-        else error('Invalid type ' .. itype) end
-        error('Item ' .. tostring(item) .. ' does not exist')
+        else
+            error("Invalid type " .. itype)
+        end
+        error("Item " .. tostring(item) .. " does not exist")
     end,
     __index = function(self, item_name)
-        for _, pdata in py.iter_prototype_categories('item') do
+        for _, pdata in py.iter_prototype_categories("item") do
             local result = pdata[item_name]
             if result then return result end
         end

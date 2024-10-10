@@ -1,5 +1,5 @@
-local queue = require 'luagraphs.queue.queue'
-local fz_lazy_bfs = require 'prototypes.functions.search.fz_lazy_bfs'
+local queue = require "luagraphs.queue.queue"
+local fz_lazy_bfs = require "prototypes.functions.search.fz_lazy_bfs"
 
 local fz_topo = {}
 fz_topo.__index = fz_topo
@@ -19,7 +19,6 @@ function fz_topo.create(g)
 
     return s
 end
-
 
 function fz_topo:run(check_ancestry, logging)
     self.queue(self.work_graph.start_node)
@@ -102,9 +101,8 @@ function fz_topo:run(check_ancestry, logging)
         end
     end
 
-    local has_error = table.any(self.graph.nodes, function (n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
+    local has_error = table.any(self.graph.nodes, function(n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
     return has_error, recipes_with_issues
 end
-
 
 return fz_topo

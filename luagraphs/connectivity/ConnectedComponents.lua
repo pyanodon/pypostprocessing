@@ -21,12 +21,11 @@ function ConnectedComponents.create()
     return s
 end
 
-
 function ConnectedComponents:run(G)
     self.marked = {}
     self.id = {}
 
-    for i = 0, G:vertexCount()-1 do
+    for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
         self.marked[v] = false
         self.id[v] = -1
@@ -34,7 +33,7 @@ function ConnectedComponents:run(G)
 
     self.count = 0
 
-    for i = 0, G:vertexCount()-1 do
+    for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
 
         if self.marked[v] == false then
@@ -44,14 +43,13 @@ function ConnectedComponents:run(G)
     end
 end
 
-
 function ConnectedComponents:dfs(G, v)
     self.marked[v] = true
     self.id[v] = self.count
 
     local adj_v = G:adj(v)
 
-    for i = 0, adj_v:size()-1 do
+    for i = 0, adj_v:size() - 1 do
         local e = adj_v:get(i)
         local w = e:other(v)
 
@@ -61,11 +59,8 @@ function ConnectedComponents:dfs(G, v)
     end
 end
 
-
 function ConnectedComponents:component(v)
     return self.id[v]
 end
 
-
 return ConnectedComponents
-

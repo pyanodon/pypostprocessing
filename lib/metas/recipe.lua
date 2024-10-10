@@ -23,7 +23,7 @@ RECIPE = setmetatable(data.raw.recipe, {
     ---@param recipe data.RecipePrototype
     __call = function(self, recipe)
         local rtype = type(recipe)
-        if rtype == 'string' then
+        if rtype == "string" then
             if not self[recipe] then
                 local dummyResult = {
                     __index = function(self2)
@@ -37,10 +37,12 @@ RECIPE = setmetatable(data.raw.recipe, {
                 return dummyResult
             end
             recipe = setmetatable(self[recipe], {__index = metas})
-        elseif rtype == 'table' then
-            recipe.type = 'recipe'
-            data:extend{recipe}
-        else error('Invalid type ' .. rtype) end
+        elseif rtype == "table" then
+            recipe.type = "recipe"
+            data:extend {recipe}
+        else
+            error("Invalid type " .. rtype)
+        end
         return recipe:standardize()
     end
 })
@@ -58,11 +60,11 @@ metas.standardize = function(self)
     self.normal = nil
     self.expensive = nil
 
-    if self.results and type(self.results) == 'table' then
+    if self.results and type(self.results) == "table" then
         self.result = nil
         self.result_count = nil
     elseif self.result then
-        self.results = {{type = 'item', name = self.result, amount = self.result_count or 1}}
+        self.results = {{type = "item", name = self.result, amount = self.result_count or 1}}
     else
         self.results = {}
     end
@@ -88,13 +90,13 @@ py.allow_productivity = function(recipe_names)
         if data.raw.recipe[recipe_name] then
             RECIPE(recipe_name).allow_productivity = true
         else
-            log('WARNING @ allow_productivity(): Recipe ' .. recipe_name .. ' does not exist')
+            log("WARNING @ allow_productivity(): Recipe " .. recipe_name .. " does not exist")
         end
     end
 end
 
 metas.add_unlock = function(self, technology_name)
-    if type(technology_name) == 'table' then
+    if type(technology_name) == "table" then
         for _, tech in pairs(technology_name) do
             self:add_unlock(tech)
         end
@@ -103,7 +105,7 @@ metas.add_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log('WARNING @ \'' .. self.name .. '\':add_unlock(): Technology ' .. technology_name .. ' does not exist')
+        log("WARNING @ \'" .. self.name .. "\':add_unlock(): Technology " .. technology_name .. " does not exist")
         return self
     end
 
@@ -111,7 +113,7 @@ metas.add_unlock = function(self, technology_name)
         technology.effects = {}
     end
 
-    table_insert(technology.effects, {type = 'unlock-recipe', recipe = self.name})
+    table_insert(technology.effects, {type = "unlock-recipe", recipe = self.name})
 
     self.enabled = false
 
@@ -119,7 +121,7 @@ metas.add_unlock = function(self, technology_name)
 end
 
 metas.remove_unlock = function(self, technology_name)
-    if type(technology_name) == 'table' then
+    if type(technology_name) == "table" then
         for _, tech in pairs(technology_name) do
             self:remove_unlock(tech)
         end
@@ -128,7 +130,7 @@ metas.remove_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log('WARNING @ \'' .. self.name .. '\':remove_unlock(): Technology ' .. technology_name .. ' does not exist')
+        log("WARNING @ \'" .. self.name .. "\':remove_unlock(): Technology " .. technology_name .. " does not exist")
         return self
     end
 
@@ -147,15 +149,15 @@ do
     --old is a string
     local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
         local type = type(new)
-        if type == 'string' then
+        if type == "string" then
             if not FLUID[new] and not ITEM[new] then
-                log('WARNING @ \'' .. recipe.name .. '\':replace_ingredient(): Ingredient ' .. new .. ' does not exist')
+                log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
                 return
             end
             for _, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
                     ingredient.name = new
-                    ingredient.type = FLUID[new] and 'fluid' or 'item'
+                    ingredient.type = FLUID[new] and "fluid" or "item"
                     ingredient.minimum_temperature = nil
                     ingredient.maximum_temperature = nil
                     ingredient.temperature = nil
@@ -166,10 +168,10 @@ do
                     end
                 end
             end
-        elseif type == 'table' then
+        elseif type == "table" then
             new = py.standardize_product(table.deepcopy(new))
             if not FLUID[new.name] and not ITEM[new.name] then
-                log('WARNING @ \'' .. recipe.name .. '\':replace_ingredient(): Ingredient ' .. new.name .. ' does not exist')
+                log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return
             end
             for k, ingredient in pairs(ingredients_or_results) do
@@ -192,7 +194,7 @@ do
         if type(new_result) == "table" then new_result = py.standardize_product(new_result) end
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
-            self.main_product = type(new_result) == 'string' and new_result or new_result[1] or new_result.name
+            self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
         end
         return self
     end
@@ -202,7 +204,7 @@ metas.add_ingredient = function(self, ingredient)
     self:standardize()
     ingredient = py.standardize_product(ingredient)
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
-        log('WARNING @ \'' .. self.name .. '\':add_ingredient(): Ingredient ' .. ingredient.name .. ' does not exist')
+        log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
         return self
     end
 
@@ -274,7 +276,7 @@ metas.multiply_result_amount = function(self, result_name, percent)
         end
     end
 
-    log('WARNING @ \'' .. self.name .. '\':multiply_result_amount(): Result ' .. result_name .. ' not found')
+    log("WARNING @ \'" .. self.name .. "\':multiply_result_amount(): Result " .. result_name .. " not found")
     return self
 end
 
@@ -288,7 +290,7 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
         end
     end
 
-    log('WARNING @ \'' .. self.name .. '\':multiply_ingredient_amount(): Ingredient ' .. ingredient_name .. ' not found')
+    log("WARNING @ \'" .. self.name .. "\':multiply_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
     return self
 end
 
@@ -302,7 +304,7 @@ metas.add_result_amount = function(self, result_name, increase)
         end
     end
 
-    log('WARNING @ \'' .. self.name .. '\':add_result_amount(): Result ' .. result_name .. ' not found')
+    log("WARNING @ \'" .. self.name .. "\':add_result_amount(): Result " .. result_name .. " not found")
     return self
 end
 
@@ -316,7 +318,7 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
         end
     end
 
-    log('WARNING @ \'' .. self.name .. '\':add_ingredient_amount(): Ingredient ' .. ingredient_name .. ' not found')
+    log("WARNING @ \'" .. self.name .. "\':add_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
     return self
 end
 

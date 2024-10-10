@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
+local list = require("luagraphs.data.list")
 
 local stack = {}
 stack.__index = stack
@@ -25,7 +25,6 @@ function stack.Node.create(value)
     return s
 end
 
-
 function stack.create()
     local s = {};
     setmetatable(s, stack)
@@ -36,7 +35,6 @@ function stack.create()
     return s
 end
 
-
 function stack:push(val)
     local oldFirst = self.first
     self.first = stack.Node.create(val)
@@ -44,16 +42,13 @@ function stack:push(val)
     self.N = self.N + 1
 end
 
-
 function stack:size()
     return self.N
 end
 
-
 function stack:isEmpty()
     return self.N == 0
 end
-
 
 function stack:pop()
     if self.N == 0 then
@@ -70,7 +65,6 @@ function stack:pop()
     return val
 end
 
-
 function stack:toList()
     local result = list.create()
     local x = self.first
@@ -82,6 +76,5 @@ function stack:toList()
 
     return result
 end
-
 
 return stack

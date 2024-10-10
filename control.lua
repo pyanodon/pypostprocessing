@@ -1,17 +1,16 @@
 script.on_configuration_changed(function()
-
 	for _, force in pairs(game.forces) do
-	   force.reset_recipes()
-	   force.reset_technologies()
-	   force.reset_technology_effects()
+		force.reset_recipes()
+		force.reset_technologies()
+		force.reset_technology_effects()
 	end
 
-	if remote.interfaces['pywiki_turd_page'] then
-		for _, force in pairs(game.forces) do remote.call('pywiki_turd_page', 'reapply_turd_bonuses', force) end
+	if remote.interfaces["pywiki_turd_page"] then
+		for _, force in pairs(game.forces) do remote.call("pywiki_turd_page", "reapply_turd_bonuses", force) end
 	end
 
-	if remote.interfaces['pyse_start_seqence'] then
-		for _, force in pairs(game.forces) do remote.call('pyse_start_seqence', 'update_force', force) end
+	if remote.interfaces["pyse_start_seqence"] then
+		for _, force in pairs(game.forces) do remote.call("pyse_start_seqence", "update_force", force) end
 	end
 end)
 
@@ -31,11 +30,11 @@ local checked_mods = {
 	pyrawores = true
 }
 
-commands.add_command('check-technology-consistency', {'command-help.check-technology-consistency'}, function()
+commands.add_command("check-technology-consistency", {"command-help.check-technology-consistency"}, function()
 	-- Build a list of base-game techs
 	local filtered_prototypes = {}
 	for name, prototype in pairs(prototypes.technology) do
-		local history = prototypes.get_history('technology', name)
+		local history = prototypes.get_history("technology", name)
 		if checked_mods[history.created] then
 			filtered_prototypes[name] = prototype
 		end
@@ -47,18 +46,18 @@ commands.add_command('check-technology-consistency', {'command-help.check-techno
 			local tech = force_techs[name]
 			if tech.enabled ~= prototype.enabled then
 				tech.enabled = prototype.enabled
-				local localised_name = tech.localised_name or ('technology-name.' .. name)
-				game.print({'command-output.fixed-technology', localised_name})
+				local localised_name = tech.localised_name or ("technology-name." .. name)
+				game.print {"command-output.fixed-technology", localised_name}
 			end
 		end
 	end
-	game.print({'command-output.consistency-check-complete'})
+	game.print {"command-output.consistency-check-complete"}
 end)
 
-local dev_mode = settings.startup['pypp-dev-mode'].value
+local dev_mode = settings.startup["pypp-dev-mode"].value
 if dev_mode then require "tests.control" end
 
-require 'lib'
+require "lib"
 
 -- delayed functions
 ---@type table<integer, table<int, {name: string, params: any[]?}>>
@@ -70,7 +69,7 @@ py.on_event(defines.events.on_tick, function(event)
 	if not storage.on_tick[tick] then return end
 	for _, func_details in pairs(storage.on_tick[tick]) do
 		local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
-		if not success then error('error in on tick function ' .. func_details.name .. ': ' .. err) end
+		if not success then error("error in on tick function " .. func_details.name .. ": " .. err) end
 	end
 	storage.on_tick[tick] = nil
 end)
@@ -95,7 +94,7 @@ local register_on_nth_tick = function(func_list)
 	for func_name, details in pairs(func_list) do
 		log("registered on_nth_tick function " .. func_name .. " from mod " .. details.mod)
 		py.nth_tick_total = py.nth_tick_total + 1 / details.tick
-		py.nth_tick_funcs[details.mod .. "-" .. func_name] = {mod=details.mod, tick=details.tick}
+		py.nth_tick_funcs[details.mod .. "-" .. func_name] = {mod = details.mod, tick = details.tick}
 	end
 end
 
@@ -112,7 +111,7 @@ local function init_nth_tick()
 		if not added_funcs[name] then
 			next_tick = math.ceil(game.tick / details.tick) * details.tick
 			if not storage.nth_tick_order[next_tick] then storage.nth_tick_order[next_tick] = {} end
-			table.insert(storage.nth_tick_order[next_tick], {func=name, delay=0})
+			table.insert(storage.nth_tick_order[next_tick], {func = name, delay = 0})
 		end
 	end
 	py.nth_tick_setup = true
@@ -140,9 +139,9 @@ py.on_event(defines.events.on_tick, function(event)
 			table.insert(storage.nth_tick_order[next_tick], order)
 		else
 			delayed = delayed + 1
-			if not storage.nth_tick_order[tick+1] then storage.nth_tick_order[tick+1] = {} end
+			if not storage.nth_tick_order[tick + 1] then storage.nth_tick_order[tick + 1] = {} end
 			order.delay = order.delay + 1
-			table.insert(storage.nth_tick_order[tick+1], delayed, order)
+			table.insert(storage.nth_tick_order[tick + 1], delayed, order)
 		end
 		::continue::
 	end

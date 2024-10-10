@@ -27,18 +27,15 @@ function IndexedMinPQ.create(comparator)
     return s;
 end
 
-
 function IndexedMinPQ:less(a1, a2)
     return self.comparator(a1, a2) < 0
 end
-
 
 function IndexedMinPQ:exchange(a, i, j)
     local temp = a[i]
     a[i] = a[j]
     a[j] = temp
 end
-
 
 function IndexedMinPQ:add(index, key)
     self.keys[index] = key
@@ -48,7 +45,6 @@ function IndexedMinPQ:add(index, key)
 
     self:swim(self.N)
 end
-
 
 function IndexedMinPQ:swim(k)
     while k > 1 do
@@ -64,16 +60,13 @@ function IndexedMinPQ:swim(k)
     end
 end
 
-
 function IndexedMinPQ:minKey()
     return self.keys[self.pq[1]]
 end
 
-
 function IndexedMinPQ:minIndex()
     return self.pq[1]
 end
-
 
 function IndexedMinPQ:delMin()
     if self.N == 0 then
@@ -91,12 +84,11 @@ function IndexedMinPQ:delMin()
     return key
 end
 
-
 function IndexedMinPQ:sink(k)
     while k * 2 <= self.N do
         local child = k * 2
 
-        if child < self.N and self:less(self.keys[self.pq[child+1]], self.keys[self.pq[child]]) then
+        if child < self.N and self:less(self.keys[self.pq[child + 1]], self.keys[self.pq[child]]) then
             child = child + 1
         end
 
@@ -110,7 +102,6 @@ function IndexedMinPQ:sink(k)
     end
 end
 
-
 function IndexedMinPQ:decreaseKey(index, key)
     if self:less(key, self.keys[index]) then
         local position = self.qp[index]
@@ -119,21 +110,16 @@ function IndexedMinPQ:decreaseKey(index, key)
     end
 end
 
-
 function IndexedMinPQ:contains(index)
     return self.keys[index] ~= nil
 end
-
 
 function IndexedMinPQ:size()
     return self.N
 end
 
-
 function IndexedMinPQ:isEmpty()
     return self.N == 0
 end
 
-
 return IndexedMinPQ
-

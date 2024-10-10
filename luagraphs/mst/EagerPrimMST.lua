@@ -6,8 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require 'luagraphs.data.list'
-local intexedMinPQ = require 'luagraphs.data.IndexedMinPQ'
+local list = require "luagraphs.data.list"
+local intexedMinPQ = require "luagraphs.data.IndexedMinPQ"
 
 local EagerPrimMST = {}
 EagerPrimMST.__index = EagerPrimMST
@@ -23,7 +23,6 @@ function EagerPrimMST.create()
     return s
 end
 
-
 function EagerPrimMST:run(G)
     self.path = list.create()
     self.marked = {}
@@ -35,14 +34,13 @@ function EagerPrimMST:run(G)
     local pq = intexedMinPQ.create(function(e1, e2) return e1.weight - e2.weight end)
     self:visit(G, 0, pq)
 
-    while self.path:size() < G:vertexCount() -1 and pq:isEmpty() == false do
+    while self.path:size() < G:vertexCount() - 1 and pq:isEmpty() == false do
         local w = pq:minIndex()
         local e = pq:delMin()
         self.path:add(e)
         self:visit(G, w, pq)
     end
 end
-
 
 function EagerPrimMST:visit(G, v, pq)
     self.marked[v] = true
@@ -60,6 +58,4 @@ function EagerPrimMST:visit(G, v, pq)
     end
 end
 
-
 return EagerPrimMST
-

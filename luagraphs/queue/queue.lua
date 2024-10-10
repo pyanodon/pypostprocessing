@@ -16,9 +16,9 @@ local t_size = table_size
 local meta = {}
 
 function Queue.__call(_, ...)
-    local queue = { first = 1, last = 0, objects = {} }
+    local queue = {first = 1, last = 0, objects = {}}
     setmetatable(queue, meta)
-    for _, push in pairs { ... } do
+    for _, push in pairs {...} do
         queue(push)
     end
     return queue
@@ -37,7 +37,7 @@ end
 -- @usage storage.myqueue1 = Queue.new()
 -- script.on_load(function() Queue.load(storage.myqueue))
 function Queue.load(queue)
-    if type(queue) == 'table' and queue.first then
+    if type(queue) == "table" and queue.first then
         return setmetatable(queue, meta)
     end
 end
@@ -46,7 +46,7 @@ end
 -- @tparam Queue queue the queue to push an element to
 -- @tparam Mixed value the element to push
 function Queue.push_first(queue, ...)
-    for _, value in pairs { ... } do
+    for _, value in pairs {...} do
         queue.first = queue.first - 1
         queue.objects[queue.first] = value
     end
@@ -57,7 +57,7 @@ end
 -- @tparam Queue queue the queue to push an element to
 -- @tparam Mixed ... the element(s) to push
 function Queue.push_last(queue, ...)
-    for _, value in pairs { ... } do
+    for _, value in pairs {...} do
         queue.last = queue.last + 1
         queue.objects[queue.last] = value
     end
@@ -196,8 +196,8 @@ function Queue.find(queue, find)
 end
 
 local function _sort_func(a, b)
-    local lhs = type(a) == 'table' and '{' or tostring(a)
-    local rhs = type(b) == 'table' and '{' or tostring(b)
+    local lhs = type(a) == "table" and "{" or tostring(a)
+    local rhs = type(b) == "table" and "{" or tostring(b)
     return lhs < rhs
 end
 
@@ -287,7 +287,7 @@ function Queue.rpairs(queue, pop)
 end
 
 do
-    meta.__class = 'queue'
+    meta.__class = "queue"
     meta.__len = Queue.size
     meta.__unm = Queue.pop
     meta.__parent = Queue
@@ -295,7 +295,7 @@ do
 
     -- Allows queue[3] to return the item at queue.objects[3]
     meta.__index = function(self, k)
-        if type(k) == 'number' then
+        if type(k) == "number" then
             return self:peek_at(k)
         else
             local v = rawget(self, k)
@@ -307,11 +307,11 @@ do
     end
 
     meta.__newindex = function(self, k, v)
-        if type(k) == 'number' then
+        if type(k) == "number" then
             if v ~= nil then
                 self:push_at(k, v)
             else
-                error('Attempt to modify Queue structure')
+                error("Attempt to modify Queue structure")
             end
         else
             rawset(self, k, v)

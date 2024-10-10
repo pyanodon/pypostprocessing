@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local stack = require 'luagraphs.data.stack'
+local stack = require "luagraphs.data.stack"
 
 local DepthFirstSearch = {}
 DepthFirstSearch.__index = DepthFirstSearch
@@ -22,7 +22,6 @@ function DepthFirstSearch.create()
     return s
 end
 
-
 function DepthFirstSearch:run(G, s)
     self.s = s
 
@@ -33,7 +32,6 @@ function DepthFirstSearch:run(G, s)
 
     self:dfs(G, s)
 end
-
 
 function DepthFirstSearch:dfs(G, v)
     self.marked[v] = true
@@ -48,11 +46,9 @@ function DepthFirstSearch:dfs(G, v)
     end
 end
 
-
 function DepthFirstSearch:hasPathTo(v)
     return self.marked[v]
 end
-
 
 function DepthFirstSearch:getPathTo(v)
     local path = stack.create()
@@ -67,6 +63,5 @@ function DepthFirstSearch:getPathTo(v)
 
     return path
 end
-
 
 return DepthFirstSearch

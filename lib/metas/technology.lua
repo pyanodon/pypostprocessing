@@ -10,13 +10,15 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
     ---@param tech data.TechnologyPrototype
     __call = function(self, technology)
         local ttype = type(technology)
-        if ttype == 'string' then
-            if not self[technology] then error('Technology ' .. technology .. ' does not exist') end
+        if ttype == "string" then
+            if not self[technology] then error("Technology " .. technology .. " does not exist") end
             technology = self[technology]
-        elseif ttype == 'table' then
-            technology.type = 'technology'
-            data:extend{technology}
-        else error('Invalid type ' .. ttype) end
+        elseif ttype == "table" then
+            technology.type = "technology"
+            data:extend {technology}
+        else
+            error("Invalid type " .. ttype)
+        end
         return technology:standardize()
     end
 })
@@ -53,7 +55,7 @@ end
 metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
-        log('WARNING @ \'' .. self.name .. '\':add_prereq(): Technology ' .. prereq_technology_name .. ' does not exist')
+        log("WARNING @ \'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
         return self
     end
 
@@ -91,7 +93,7 @@ metas.add_pack = function(self, science_pack_name)
         self.unit = {ingredients = {}}
     end
 
-    table.insert(self.unit.ingredients, {type = 'item', name = science_pack_name, amount = 1})
+    table.insert(self.unit.ingredients, {type = "item", name = science_pack_name, amount = 1})
 
     return self
 end

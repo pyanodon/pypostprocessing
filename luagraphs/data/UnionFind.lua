@@ -17,14 +17,13 @@ function UnionFind.create(V)
     s.id = {}
     s.count = {}
 
-    for v = 0, V-1 do
+    for v = 0, V - 1 do
         s.id[v] = v
         s.count[v] = 1
     end
 
     return s
 end
-
 
 function UnionFind.createFromVertexList(vertices)
     local s = {}
@@ -41,7 +40,6 @@ function UnionFind.createFromVertexList(vertices)
     return s
 end
 
-
 function UnionFind:root(v)
     local x = v
 
@@ -52,7 +50,6 @@ function UnionFind:root(v)
 
     return x
 end
-
 
 function UnionFind:union(v, w)
     local v_root = self:root(v)
@@ -69,11 +66,8 @@ function UnionFind:union(v, w)
     end
 end
 
-
 function UnionFind:connected(v, w)
     return self:root(v) == self:root(w)
 end
 
-
 return UnionFind
-

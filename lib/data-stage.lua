@@ -1,15 +1,15 @@
 -- Adds helper functions for data stage. Shared across all pymods
 
-require 'metas.metas'
-require 'autorecipes'
+require "metas.metas"
+require "autorecipes"
 
 ---Returns a 1x1 empty image.
 ---@return table
 py.empty_image = function()
     return {
-        filename = '__pypostprocessing__/empty.png',
+        filename = "__pypostprocessing__/empty.png",
         size = 1,
-        priority = 'high',
+        priority = "high",
         direction_count = 1,
         frame_count = 1,
         line_length = 1
@@ -21,36 +21,36 @@ end
 ---@param prototype data.AnyPrototype
 ---@param localised_string LocalisedString
 py.add_to_description = function(type, prototype, localised_string)
-    if prototype.localised_description and prototype.localised_description ~= '' then
-        prototype.localised_description = {'', prototype.localised_description, '\n', localised_string}
+    if prototype.localised_description and prototype.localised_description ~= "" then
+        prototype.localised_description = {"", prototype.localised_description, "\n", localised_string}
         return
     end
 
     local place_result = prototype.place_result or prototype.placed_as_equipment_result
-    if type == 'item' and place_result then
+    if type == "item" and place_result then
         for _, machine in pairs(data.raw) do
             machine = machine[place_result]
             if machine and machine.localised_description then
                 prototype.localised_description = {
-                    '?',
-                    {'', machine.localised_description, '\n', localised_string},
+                    "?",
+                    {"", machine.localised_description, "\n", localised_string},
                     localised_string
                 }
                 return
             end
         end
 
-        local entity_type = prototype.place_result and 'entity' or 'equipment'
+        local entity_type = prototype.place_result and "entity" or "equipment"
         prototype.localised_description = {
-            '?',
-            {'', {entity_type .. '-description.' .. place_result}, '\n', localised_string},
-            {'', {type .. '-description.' .. prototype.name},      '\n', localised_string},
+            "?",
+            {"", {entity_type .. "-description." .. place_result}, "\n", localised_string},
+            {"", {type .. "-description." .. prototype.name},      "\n", localised_string},
             localised_string
         }
     else
         prototype.localised_description = {
-            '?',
-            {'', {type .. '-description.' .. prototype.name}, '\n', localised_string},
+            "?",
+            {"", {type .. "-description." .. prototype.name}, "\n", localised_string},
             localised_string
         }
     end
@@ -60,7 +60,7 @@ end
 ---@param prototype data.ItemPrototype
 py.make_item_glowing = function(prototype)
     if not prototype then
-        error('No prototype provided')
+        error("No prototype provided")
     end
     if prototype.pictures then
         for _, picture in pairs(prototype.pictures) do
@@ -73,7 +73,7 @@ py.make_item_glowing = function(prototype)
         prototype.icon = nil
     end
     if not prototype.icons then
-        error('No icon found for ' .. prototype.name)
+        error("No icon found for " .. prototype.name)
     end
     local pictures = {}
     for _, picture in pairs(table.deepcopy(prototype.icons)) do
@@ -99,7 +99,7 @@ end
 py.merge = function(old, new)
     old = table.deepcopy(old)
     for k, v in pairs(new) do
-        if v == 'nil' then
+        if v == "nil" then
             old[k] = nil
         else
             old[k] = v
@@ -125,7 +125,7 @@ end
 ---@param base_entity_name string
 ---@return number
 function py.farm_speed_derived(num_slots, base_entity_name)
-    local e = data.raw['assembling-machine'][base_entity_name]
+    local e = data.raw["assembling-machine"][base_entity_name]
     local mk1_slots = e.module_slots
     local desired_mk1_speed = e.crafting_speed * (mk1_slots + 1)
     local speed_improvement_ratio = num_slots / mk1_slots
@@ -177,8 +177,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
     local new_pictures = {
         north = shift_north and
             {
-                filename = '__base__/graphics/entity/' .. pictures .. '/' .. pictures .. '-pipe-N.png',
-                priority = 'extra-high',
+                filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-N.png",
+                priority = "extra-high",
                 width = 35,
                 height = 18,
                 shift = shift_north
@@ -186,8 +186,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             py.empty_image(),
         south = shift_south and
             {
-                filename = '__base__/graphics/entity/' .. pictures .. '/' .. pictures .. '-pipe-S.png',
-                priority = 'extra-high',
+                filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-S.png",
+                priority = "extra-high",
                 width = 44,
                 height = 31,
                 shift = shift_south
@@ -195,8 +195,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             py.empty_image(),
         west = shift_west and
             {
-                filename = '__base__/graphics/entity/' .. pictures .. '/' .. pictures .. '-pipe-W.png',
-                priority = 'extra-high',
+                filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-W.png",
+                priority = "extra-high",
                 width = 19,
                 height = 37,
                 shift = shift_west
@@ -204,8 +204,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             py.empty_image(),
         east = shift_east and
             {
-                filename = '__base__/graphics/entity/' .. pictures .. '/' .. pictures .. '-pipe-E.png',
-                priority = 'extra-high',
+                filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-E.png",
+                priority = "extra-high",
                 width = 20,
                 height = 38,
                 shift = shift_east
@@ -213,7 +213,7 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             py.empty_image()
     }
     for direction, image in pairs(replacements or {}) do
-        if not (new_pictures[direction].filename == '__core__/graphics/empty.png') then
+        if not (new_pictures[direction].filename == "__core__/graphics/empty.png") then
             new_pictures[direction].filename = image.filename
             new_pictures[direction].width = image.width
             new_pictures[direction].height = image.height
@@ -239,15 +239,15 @@ py.pipe_covers = function(n, s, w, e)
         {
             layers = {
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-north.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-north.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5
                 },
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-north-shadow.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-north-shadow.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5,
@@ -261,15 +261,15 @@ py.pipe_covers = function(n, s, w, e)
         {
             layers = {
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-east.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-east.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5
                 },
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-east-shadow.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-east-shadow.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5,
@@ -283,15 +283,15 @@ py.pipe_covers = function(n, s, w, e)
         {
             layers = {
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-south.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-south.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5
                 },
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-south-shadow.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-south-shadow.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5,
@@ -305,15 +305,15 @@ py.pipe_covers = function(n, s, w, e)
         {
             layers = {
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-west.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-west.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5
                 },
                 {
-                    filename = '__base__/graphics/entity/pipe-covers/pipe-cover-west-shadow.png',
-                    priority = 'extra-high',
+                    filename = "__base__/graphics/entity/pipe-covers/pipe-cover-west-shadow.png",
+                    priority = "extra-high",
                     width = 128,
                     height = 128,
                     scale = 0.5,
@@ -330,13 +330,13 @@ end
 ---@param p data.IngredientPrototype | data.ProductPrototype | string
 ---@return data.IngredientPrototype | data.ProductPrototype
 py.standardize_product = function(p)
-    if type(p) == 'string' then p = {p, 1} end
+    if type(p) == "string" then p = {p, 1} end
     local name = p.name or p[1]
     if not p.type and name then
         if data.raw.fluid[name] then
-            p.type = 'fluid'
+            p.type = "fluid"
         else
-            p.type = 'item'
+            p.type = "item"
         end
     end
 
@@ -367,7 +367,7 @@ function py.iter_prototype_categories(parent_type)
             if child_type_name and data.raw[child_type_name] then
                 value = data.raw[child_type_name]
             end
-             -- cur_type will be nil here if we've reached the last prototype in the last table
+            -- cur_type will be nil here if we've reached the last prototype in the last table
         until value or not child_type_name
 
         return child_type_name, value
@@ -392,7 +392,7 @@ function py.iter_prototypes(parent_type)
             if not cur_type or not index then
                 index, value, cur_type, _ = nil, nil, next(types, cur_type)
             end
-             -- cur_type will be nil here if we've reached the last prototype in the last table
+            -- cur_type will be nil here if we've reached the last prototype in the last table
         until index or not cur_type
 
         return index, value
@@ -405,10 +405,10 @@ end
 ---@param new string
 ---@param blackrecipe (string | table)?
 py.global_item_replacer = function(old, new, blackrecipe)
-    if not data.raw.item[old] and not data.raw.fluid[old] then error('Could not find item or fluid ' .. old) end
-    if not data.raw.item[new] and not data.raw.fluid[new] then error('Could not find item or fluid ' .. new) end
+    if not data.raw.item[old] and not data.raw.fluid[old] then error("Could not find item or fluid " .. old) end
+    if not data.raw.item[new] and not data.raw.fluid[new] then error("Could not find item or fluid " .. new) end
 
-    if type(blackrecipe) == 'string' then blackrecipe = {blackrecipe} end
+    if type(blackrecipe) == "string" then blackrecipe = {blackrecipe} end
     blackrecipe = table.invert(blackrecipe or {})
 
     for _, recipe in pairs(data.raw.recipe) do
@@ -455,7 +455,7 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
         icons[#icons + 1] = corner
     else -- No icons table, use icon found above
         if icon == nil then
-            icon = '__base__/graphics/icons/blueprint.png'
+            icon = "__base__/graphics/icons/blueprint.png"
         end -- Fallback
 
         icons = {
@@ -483,10 +483,10 @@ end
 py.disallow_effectivity = function(recipe_categories)
     local modules = {}
     for _, module in pairs(data.raw.module) do
-        if module.name:find('effectivity') then
+        if module.name:find("effectivity") then
             table.insert(modules, module)
             module.limitation_blacklist = module.limitation_blacklist or {}
-            if not module.limitation_message_key then module.limitation_message_key = 'efficiency-module-limitation-message' end
+            if not module.limitation_message_key then module.limitation_message_key = "efficiency-module-limitation-message" end
         end
     end
 

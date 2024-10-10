@@ -25,14 +25,12 @@ function MinPQ.create(comparator)
     return s
 end
 
-
 function MinPQ:add(item)
     self.N = self.N + 1
     self.a[self.N] = item
 
     self:swim(self.N)
 end
-
 
 function MinPQ:delMin()
     if self.N == 0 then
@@ -48,12 +46,11 @@ function MinPQ:delMin()
     return item
 end
 
-
 function MinPQ:sink(k)
     while k * 2 <= self.N do
         local child = k * 2
 
-        if child < self.N and self:less(self.a[child+1], self.a[child]) then
+        if child < self.N and self:less(self.a[child + 1], self.a[child]) then
             child = child + 1
         end
 
@@ -64,19 +61,15 @@ function MinPQ:sink(k)
             break
         end
     end
-
 end
-
 
 function MinPQ:size()
     return self.N
 end
 
-
 function MinPQ:isEmpty()
     return self.N == 0
 end
-
 
 function MinPQ:swim(k)
     while k > 1 do
@@ -90,17 +83,14 @@ function MinPQ:swim(k)
     end
 end
 
-
 function MinPQ:less(a1, a2)
     return self.comparator(a1, a2) < 0
 end
-
 
 function MinPQ:exchange(a, i, j)
     local temp = a[i]
     a[i] = a[j]
     a[j] = temp
 end
-
 
 return MinPQ

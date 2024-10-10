@@ -1,4 +1,4 @@
-local queue = require 'luagraphs.queue.queue'
+local queue = require "luagraphs.queue.queue"
 
 local lazy_bfs = {}
 lazy_bfs.__index = lazy_bfs
@@ -27,7 +27,6 @@ function lazy_bfs.create(g, start_node, strong, reverse, stop_filter)
 
     return b
 end
-
 
 function lazy_bfs:run(target_node, logging, max_level)
     if self.finished or (target_node and self.marked[target_node.key]) then return end
@@ -100,13 +99,11 @@ function lazy_bfs:run(target_node, logging, max_level)
     self.finished = true
 end
 
-
 function lazy_bfs:has_path_to(target_node, logging, max_level)
     self:run(target_node, logging, max_level)
 
     return self.marked[target_node.key] or false
 end
-
 
 function lazy_bfs:get_path_to(target_node, logging)
     self:run(target_node, logging)

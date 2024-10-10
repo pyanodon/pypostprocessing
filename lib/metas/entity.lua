@@ -1,4 +1,4 @@
-local collision_mask_util = require '__core__/lualib/collision-mask-util'
+local collision_mask_util = require "__core__/lualib/collision-mask-util"
 
 ---@class data.EntityPrototype
 ---@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype
@@ -11,19 +11,21 @@ ENTITY = setmetatable({}, {
     ---@param entity data.EntityPrototype
     __call = function(self, entity)
         local etype = type(entity)
-        if etype == 'string' then
-            for ptype in py.iter_prototype_categories('entity') do
+        if etype == "string" then
+            for ptype in py.iter_prototype_categories("entity") do
                 local result = data.raw[ptype][entity]
                 if result then return result:standardize() end
             end
-        elseif etype == 'table' then
-            if not entity.type then error('Tried to extend an entity ' .. entity.name .. ' without providing a type') end
-            if not entity_types[entity.type] then error('Tried to use ENTITY{} on a non-entity: ' .. entity.name) end
+        elseif etype == "table" then
+            if not entity.type then error("Tried to extend an entity " .. entity.name .. " without providing a type") end
+            if not entity_types[entity.type] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
 
-            data:extend{entity}
+            data:extend {entity}
             return entity:standardize()
-        else error('Invalid type ' .. etype) end
-        error('Entity ' .. tostring(entity) .. ' does not exist')
+        else
+            error("Invalid type " .. etype)
+        end
+        error("Entity " .. tostring(entity) .. " does not exist")
     end,
     __index = function(self, entity_name)
         for ptype in pairs(defines.prototypes.entity) do
@@ -39,10 +41,10 @@ local metas = {}
 metas.standardize = function(self)
     local minable = self.minable
     if minable then
-        if minable.results and type(minable.results) == 'table' then
+        if minable.results and type(minable.results) == "table" then
             -- nothing to do
         elseif minable.result then
-            minable.results = {{type = 'item', name = minable.result, amount = minable.count or 1}}
+            minable.results = {{type = "item", name = minable.result, amount = minable.count or 1}}
         else
             minable.results = {}
         end

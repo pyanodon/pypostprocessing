@@ -23,14 +23,14 @@ py.vector = {
     end,
 
     __mul = function(self, v)
-        if type(self) == 'number' then self = py.vector.new(self,self,self) end
-        if type(v) == 'number' then v = py.vector.new(v,v,v) end
+        if type(self) == "number" then self = py.vector.new(self, self, self) end
+        if type(v) == "number" then v = py.vector.new(v, v, v) end
         return py.vector.new(self.x * v.x, self.y * v.y, self.z * (v.z or 0))
     end,
 
     __div = function(self, v)
-        if type(self) == 'number' then self = py.vector.new(self,self,self) end
-        if type(v) == 'number' then v = py.vector.new(v,v,v) end
+        if type(self) == "number" then self = py.vector.new(self, self, self) end
+        if type(v) == "number" then v = py.vector.new(v, v, v) end
         return py.vector.new(self.x / v.x, self.y / v.y, self.z / (v.z or 0))
     end,
 
@@ -39,13 +39,13 @@ py.vector = {
     end,
 
     __tostring = function(self)
-        return string.format('(%f, %f, %f)', self.x, self.y, self.z)
+        return string.format("(%f, %f, %f)", self.x, self.y, self.z)
     end,
 
     __index = {
         ---@return Pyvector
         new = function(x, y, z)
-            if type(x) == 'table' then
+            if type(x) == "table" then
                 return setmetatable(x, py.vector)
             end
             return setmetatable({x = x or 0, y = y or 0, z = z or 0}, py.vector)
@@ -85,4 +85,4 @@ py.vector = {
 }
 
 setmetatable(py.vector, py.vector)
-script.register_metatable('Pyvector_metatable', py.vector)
+script.register_metatable("Pyvector_metatable", py.vector)

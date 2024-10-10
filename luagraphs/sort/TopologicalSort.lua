@@ -13,20 +13,19 @@ function TopologicalSort.create()
     local s = {}
     setmetatable(s, TopologicalSort)
 
-    s.reversedPostOrder = require 'luagraphs.data.stack'.create()
+    s.reversedPostOrder = require "luagraphs.data.stack".create()
     s.marked = {}
 
     return s
 end
 
 function TopologicalSort:run(G)
-
-    for i = 0,G:vertexCount()-1 do
+    for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
         self.marked[v] = false
     end
 
-    for i = 0, G:vertexCount()-1 do
+    for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
         if self.marked[v] == false then
             self:dfs(G, v)
@@ -39,7 +38,7 @@ function TopologicalSort:dfs(G, v)
 
     local adj_v = G:adj(v)
 
-    for i = 0, adj_v:size()-1 do
+    for i = 0, adj_v:size() - 1 do
         local e = adj_v:get(i)
         local w = e:other(v)
         if self.marked[w] == false then
@@ -56,4 +55,3 @@ function TopologicalSort:path()
 end
 
 return TopologicalSort
-
