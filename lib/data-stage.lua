@@ -428,14 +428,14 @@ end
 ---@param corner table
 py.add_corner_icon_to_recipe = function(recipe, corner)
     local icon, icon_size, icons
-    local result = recipe.main_product or recipe.result or recipe.results[1][1] or recipe.results[1].name
+    local result = recipe.main_product or recipe.results[1].name
     result = ITEM(result)
 
     -- Icon size finder
     if recipe.icon_size ~= nil then
         icon_size = recipe.icon_size
     else
-        icon_size = 32 -- Set default to 32
+        icon_size = 64 -- Set default to 64
     end
 
     -- Icon finder
@@ -471,10 +471,10 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     -- Ensure icon sizes are installed in each icon level
     for i, icon in pairs(icons) do
         if not icon.icon_size then
-            if i == 1 then -- Allow first one to inherit, set all others to 32
-                icon.icon_size = icon_size or 32
+            if i == 1 then -- Allow first one to inherit, set all others to 64
+                icon.icon_size = icon_size or 64
             else
-                icon.icon_size = 32
+                icon.icon_size = 64
             end
         end
     end
