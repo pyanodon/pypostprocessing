@@ -179,36 +179,40 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-N.png",
                 priority = "extra-high",
-                width = 35,
-                height = 18,
-                shift = shift_north
+                width = 71,
+                height = 38,
+                shift = shift_north,
+                scale = 0.5
             } or
             py.empty_image(),
         south = shift_south and
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-S.png",
                 priority = "extra-high",
-                width = 44,
-                height = 31,
-                shift = shift_south
+                width = 88,
+                height = 61,
+                shift = shift_south,
+                scale = 0.5
             } or
             py.empty_image(),
         west = shift_west and
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-W.png",
                 priority = "extra-high",
-                width = 19,
-                height = 37,
-                shift = shift_west
+                width = 39,
+                height = 73,
+                shift = shift_west,
+                scale = 0.5
             } or
             py.empty_image(),
         east = shift_east and
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-E.png",
                 priority = "extra-high",
-                width = 20,
-                height = 38,
-                shift = shift_east
+                width = 42,
+                height = 76,
+                shift = shift_east,
+                scale = 0.5
             } or
             py.empty_image()
     }
