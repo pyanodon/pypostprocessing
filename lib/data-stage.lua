@@ -26,7 +26,7 @@ py.add_to_description = function(type, prototype, localised_string)
         return
     end
 
-    local place_result = prototype.place_result or prototype.placed_as_equipment_result
+    local place_result = prototype.place_result or prototype.place_as_equipment_result
     if type == "item" and place_result then
         for _, machine in pairs(data.raw) do
             machine = machine[place_result]

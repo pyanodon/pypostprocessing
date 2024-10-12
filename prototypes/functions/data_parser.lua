@@ -1042,8 +1042,8 @@ function data_parser:pre_process_item(item)
         self:pre_process_entity(ENTITY(entity_name))
     end
 
-    if item.placed_as_equipment_result then
-        insert_double_lookup(self.placed_by, item.placed_as_equipment_result, item.name)
+    if item.place_as_equipment_result then
+        insert_double_lookup(self.placed_by, item.place_as_equipment_result, item.name)
     end
 
     if item.type == "module" then
