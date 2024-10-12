@@ -44,12 +44,48 @@ for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
     if not recipe.maximum_productivity then recipe.maximum_productivity = 1000000 end -- Disable the max productivity cap
-    if recipe.results or recipe.result then
-        if not recipe.results then
-            recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = "item"}}
-            recipe.result = nil
-            recipe.result_count = nil
+
+    -- fallback for localised names
+    if recipe.results then
+        if not recipe.localised_name then
+            local fallback = recipe.main_product or (#recipe.results == 1 and recipe.results[1].name)
+            if fallback and fallback ~= "" then
+                local product_type = data.raw.fluid[fallback] and "fluid" or "item"
+                local localised_name = {"?", {"recipe-name." .. recipe.name}}
+                if product_type == "item" then
+                    local product = ITEM(fallback)
+                    if product.localised_name then
+                        table.insert(localised_name, product.localised_name)
+                    else
+                        table.insert(localised_name, {"item-name." .. product.name})
+                    end
+                    if product.place_result then
+                        if ENTITY(product.place_result).localised_name then
+                            table.insert(localised_name, ENTITY(product.place_result).localised_name)
+                        else
+                            table.insert(localised_name, {"entity-name." .. product.place_result})
+                        end
+                    end
+                    if product.place_as_tile then
+                        if TILE(product.place_as_tile.result).localised_name then
+                            table.insert(localised_name, TILE(product.place_as_tile.result).localised_name)
+                        else
+                            table.insert(localised_name, {"tile-name." .. product.place_as_tile.result})
+                        end
+                    end
+                    if product.place_as_equipment_result then table.insert(localised_name, {"equipment-name." .. product.place_as_equipment_result}) end
+                else
+                    local product = FLUID(fallback)
+                    if product.localised_name then
+                        table.insert(localised_name, product.localised_name)
+                    else
+                        table.insert(localised_name, {"fluid-name." .. product.name})
+                    end
+                end
+                recipe.localised_name = localised_name
+            end
         end
+
         -- Skip if recipe only produces the item, not uses it as a catalyst, or if it does not allow prod
         if #recipe.results == 1 or not recipe.allow_productivity then
             goto NEXT_RECIPE
