@@ -45,8 +45,8 @@ for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_made_in = true
     if not recipe.maximum_productivity then recipe.maximum_productivity = 1000000 end -- Disable the max productivity cap
 
-    -- fallback for localised names
     if recipe.results then
+        -- fallback for localised names
         if not recipe.localised_name and not recipe.hidden then
             local fallback = recipe.main_product or (#recipe.results == 1 and recipe.results[1].name)
             if fallback and fallback ~= "" then
