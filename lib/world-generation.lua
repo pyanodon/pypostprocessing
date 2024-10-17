@@ -20,7 +20,7 @@ end
 ---Data stage only. Gets a noise constant which can be accessed inside a named_noise_expression.
 ---@param i integer
 py.get_noise_constant = function(i)
-	return "var('control-setting:py-autoplace-control-'" .. i .. ":richness:multiplier"
+	return "var('control:py-autoplace-control-'" .. i .. ":richness"
 end
 
 ---Returns a noise expression which is an approximation of perlin noise. The output ranges from -1.2 to 1.2.
