@@ -265,7 +265,8 @@ py.autorecipes = function(params)
             order = params.order,
             allowed_module_categories = params.allowed_module_categories,
             icons = tier.icons,
-            main_product = tier.main_product or params.main_product
+            main_product = tier.main_product or params.main_product,
+            allow_productivity = true,
         }
         if tier.tech then recipe:add_unlock(tier.tech) end
 
