@@ -2,44 +2,6 @@ local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
 
-for _, module in pairs(data.raw.module) do
-    local remove_recipe = {}
-
-    for _, r in pairs(module.limitation or {}) do
-        if not data.raw.recipe[r] then
-            remove_recipe[r] = true
-        end
-    end
-
-    if not table.is_empty(remove_recipe) then
-        local limit = table.invert(module.limitation)
-
-        for r, _ in pairs(remove_recipe) do
-            limit[r] = nil
-        end
-
-        module.limitation = table.keys(limit)
-    end
-
-    remove_recipe = {}
-
-    for _, r in pairs(module.limitation_blacklist or {}) do
-        if not data.raw.recipe[r] then
-            remove_recipe[r] = true
-        end
-    end
-
-    if not table.is_empty(remove_recipe) then
-        local limit = table.invert(module.limitation_blacklist)
-
-        for r, _ in pairs(remove_recipe) do
-            limit[r] = nil
-        end
-
-        module.limitation_blacklist = table.keys(limit)
-    end
-end
-
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
@@ -425,3 +387,10 @@ for _, category in pairs(data.raw) do
 end
 
 if dev_mode then require "tests.data" end
+
+local default_mods = {"productivity", "speed", "efficiency"}
+for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon"} do
+    for _, prototype in pairs(data.raw[value]) do
+        prototype.allowed_module_categories = prototype.allowed_module_categories or default_mods
+    end
+end
