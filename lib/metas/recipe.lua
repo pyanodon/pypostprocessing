@@ -220,6 +220,10 @@ metas.add_ingredient = function(self, ingredient)
         end
     end
 
+    if (not self.category or self.category == 'crafting') and ingredient.type == 'fluid' then
+        self.category = 'crafting-with-fluid'
+    end
+
     table_insert(self.ingredients, ingredient)
     return self
 end
