@@ -378,6 +378,20 @@ for _, drill in pairs(data.raw["mining-drill"]) do
     end
 end
 
+if not data.raw["module-category"]["quality"] then
+    data:extend {{
+        type = "module-category",
+        name = "quality"
+    }}
+end
+
+local default_mods = {"productivity", "speed", "efficiency", "quality"}
+for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon", "rocket-silo"} do
+    for _, prototype in pairs(data.raw[value]) do
+        prototype.allowed_module_categories = prototype.allowed_module_categories or default_mods
+    end
+end
+
 -- remove for logging unused attributes
 for _, category in pairs(data.raw) do
     for _, prototype in pairs(category) do
@@ -387,10 +401,3 @@ for _, category in pairs(data.raw) do
 end
 
 if dev_mode then require "tests.data" end
-
-local default_mods = {"productivity", "speed", "efficiency", "pollution", "quality"}
-for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon", "rocket-silo"} do
-    for _, prototype in pairs(data.raw[value]) do
-        prototype.allowed_module_categories = prototype.allowed_module_categories or default_mods
-    end
-end
