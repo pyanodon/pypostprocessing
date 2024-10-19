@@ -31,7 +31,7 @@ py.finalize_events = function()
 		local f = one_function_from_many(functions)
 		if type(event) == "number" then
 			script.on_nth_tick(event, f)
-		elseif event == py.events.on_init then
+		elseif event == py.events.on_init() then
 			script.on_init(f)
 			script.on_configuration_changed(f)
 		else
