@@ -388,8 +388,8 @@ end
 
 if dev_mode then require "tests.data" end
 
-local default_mods = {"productivity", "speed", "efficiency"}
-for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon"} do
+local default_mods = {"productivity", "speed", "efficiency", "pollution", "quality"}
+for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon", "rocket-silo"} do
     for _, prototype in pairs(data.raw[value]) do
         prototype.allowed_module_categories = prototype.allowed_module_categories or default_mods
     end
