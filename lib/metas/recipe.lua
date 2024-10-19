@@ -38,6 +38,10 @@ RECIPE = setmetatable(data.raw.recipe, {
             end
             recipe = setmetatable(self[recipe], {__index = metas})
         elseif rtype == "table" then
+            local old_recipe = data.raw.recipe[recipe.name]
+            if old_recipe then
+                recipe.allow_productivity = recipe.allow_productivity or old_recipe.allow_productivity
+            end
             recipe.type = "recipe"
             data:extend {recipe}
         else
@@ -88,7 +92,7 @@ end
 py.allow_productivity = function(recipe_names)
     for _, recipe_name in pairs(recipe_names) do
         if data.raw.recipe[recipe_name] then
-            RECIPE(recipe_name).allow_productivity = true
+            data.raw.recipe[recipe_name].allow_productivity = true
         else
             log("WARNING @ allow_productivity(): Recipe " .. recipe_name .. " does not exist")
         end
