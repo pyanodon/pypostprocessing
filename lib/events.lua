@@ -163,6 +163,22 @@ py.events = {
 			defines.events.on_space_platform_mined_entity
 		}
 	end,
+	--- Called after a tile is built.
+	on_built_tile = function()
+		return {
+			defines.events.on_robot_built_tile,
+			defines.events.script_raised_set_tiles,
+			defines.events.on_player_built_tile,
+			defines.events.on_space_platform_built_tile
+		}
+	end,
+	on_mined_tile = function()
+		return {
+			defines.events.on_player_mined_tile,
+			defines.events.on_robot_mined_tile,
+			defines.events.on_space_platform_mined_tile,
+		}
+	end,
 	--- Called for on_init and on_configuration_changed
 	on_init = function()
 		return "ON INIT EVENT"
