@@ -5,23 +5,6 @@ local events = {}
 ---@param f function
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function(event, f)
-	if event == "on_built" then
-		py.on_event({defines.events.on_built_entity,
-			defines.events.on_robot_built_entity,
-			defines.events.script_raised_built,
-			defines.events.script_raised_revive
-		}, f)
-		return
-	end
-	if event == "on_destroyed" then
-		py.on_event({
-			defines.events.on_player_mined_entity,
-			defines.events.on_robot_mined_entity,
-			defines.events.on_entity_died,
-			defines.events.script_raised_destroy
-		}, f)
-		return
-	end
 	for _, event in pairs(type(event) == "table" and event or {event}) do
 		event = tostring(event)
 		events[event] = events[event] or {}
@@ -48,7 +31,7 @@ py.finalize_events = function()
 		local f = one_function_from_many(functions)
 		if type(event) == "number" then
 			script.on_nth_tick(event, f)
-		elseif event == "on_init" then
+		elseif event == py.events.on_init then
 			script.on_init(f)
 			script.on_configuration_changed(f)
 		else
@@ -144,3 +127,48 @@ py.on_event(defines.events.on_tick, function(event)
 	end
 	storage.on_tick[tick] = nil
 end)
+
+--- Sentinel values for defining groups of events
+py.events = {
+	--- Called after an entity is constructed.
+	--- Note: Using this event may be bad practice. Consider instead defining `created_effect` in the entity prototype.
+	--- 
+	--- entity.created_effect = {
+	--- 	type = 'direct',
+	--- 	action_delivery = {
+	--- 		type = 'instant',
+	--- 		source_effects = {
+	--- 			type = 'script',
+	--- 			effect_id = 'on_built_[ENTITY NAME]'
+	--- 		}
+	--- 	}
+	--- }
+	on_built = function()
+		return {
+			defines.events.on_built_entity,
+			defines.events.on_robot_built_entity,
+			defines.events.script_raised_built,
+			defines.events.script_raised_revive,
+			defines.events.on_space_platform_built_entity,
+			defines.events.on_biter_base_built
+		}
+	end,
+	--- Called after the results of an entity being mined are collected just before the entity is destroyed. [...]
+	on_destroyed = function()
+		return {
+			defines.events.on_player_mined_entity,
+			defines.events.on_robot_mined_entity,
+			defines.events.on_entity_died,
+			defines.events.script_raised_destroy,
+			defines.events.on_space_platform_mined_entity
+		}
+	end,
+	--- Called for on_init and on_configuration_changed
+	on_init = function()
+		return "ON INIT EVENT"
+	end,
+	--- Custom event for when a player clicks on an entity
+	on_entity_clicked = function()
+		return "open-gui"
+	end
+}
