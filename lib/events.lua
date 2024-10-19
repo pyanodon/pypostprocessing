@@ -167,9 +167,8 @@ py.events = {
 	on_built_tile = function()
 		return {
 			defines.events.on_robot_built_tile,
-			defines.events.script_raised_set_tiles,
 			defines.events.on_player_built_tile,
-			defines.events.on_space_platform_built_tile
+			defines.events.on_space_platform_built_tile,
 		}
 	end,
 	on_mined_tile = function()
