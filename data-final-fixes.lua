@@ -400,4 +400,17 @@ for _, category in pairs(data.raw) do
     end
 end
 
+-- add circuit connections to machines
+for _, crafting_machine_prototype in pairs{"assembling-machine", "rocket-silo", "furnace"} do
+    for _, crafting_machine in pairs(data.raw[crafting_machine_prototype]) do
+        if crafting_machine.hidden then goto continue end
+        if crafting_machine.circuit_connector then goto continue end
+
+        crafting_machine.circuit_connector = table.deepcopy(data.raw["assembling-machine"]["assembling-machine-1"].circuit_connector)
+        crafting_machine.circuit_wire_max_distance = crafting_machine.circuit_wire_max_distance or 14
+
+        ::continue::
+    end
+end
+
 if dev_mode then require "tests.data" end
