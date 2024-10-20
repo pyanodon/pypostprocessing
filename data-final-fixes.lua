@@ -399,6 +399,12 @@ for _, category in pairs(data.raw) do
     end
 end
 
+for _, vehicle_prototype in pairs{"car", "locomotive", "spider-vehicle"} do
+    for _, vehicle in pairs(data.raw[vehicle_prototype]) do
+        vehicle.allow_remote_driving = true
+    end
+end
+
 -- add circuit connections to machines
 for _, crafting_machine_prototype in pairs{"assembling-machine", "rocket-silo", "furnace"} do
     for _, crafting_machine in pairs(data.raw[crafting_machine_prototype]) do
