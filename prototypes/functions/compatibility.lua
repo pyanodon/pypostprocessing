@@ -424,10 +424,6 @@ if mods["scattergun_turret"] then
     end
 end
 
-if mods["nixie-tubes"] then
-    TECHNOLOGY("cathodes"):remove_pack("logistic-science-pack"):remove_prereq("advanced-circuit")
-end
-
 if mods["Teleporters"] and mods["pyalternativeenergy"] then
     TECHNOLOGY("teleporter"):remove_prereq("battery"):add_prereq("battery-mk01")
 end
