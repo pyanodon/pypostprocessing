@@ -217,58 +217,74 @@ if mods.pycoalprocessing and not mods["extended-descriptions"] then
     end
 end
 
-----------------------------------------------------
+--------------------------------------------------
 -- AUTOTECH
-----------------------------------------------------
--- if dev_mode then
---     -- correct tech dependencies before autotech happens
---     for _, tech in pairs(data.raw.technology) do
---         local science_packs = {}
---         local function add_science_pack_dep(t, science_pack, dep_pack)
---             if science_packs[science_pack] and not science_packs[dep_pack] then
---                 TECHNOLOGY(t):add_pack(dep_pack)
---                 science_packs[dep_pack] = true
---             end
---         end
+--------------------------------------------------
+if dev_mode then
+    -- correct tech dependencies before autotech happens
+    for _, tech in pairs(data.raw.technology) do
+        local science_packs = {}
+        local function add_science_pack_dep(t, science_pack, dep_pack)
+            if science_packs[science_pack] and not science_packs[dep_pack] then
+                TECHNOLOGY(t):add_pack(dep_pack)
+                science_packs[dep_pack] = true
+            end
+        end
 
---         for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
---             science_packs[pack.name or pack[1]] = true
---         end
+        for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
+            science_packs[pack.name or pack[1]] = true
+        end
 
---         if mods.pystellarexpedition then
---             for i = 1, #config.SCIENCE_PACKS - 1 do
---                 local pack = config.SCIENCE_PACKS[i]
---                 local next = config.SCIENCE_PACKS[i + 1]
---                 add_science_pack_dep(tech, next, pack)
---             end
---         else
---             add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
+        if mods.pystellarexpedition then
+            for i = 1, #config.SCIENCE_PACKS - 1 do
+                local pack = config.SCIENCE_PACKS[i]
+                local next = config.SCIENCE_PACKS[i + 1]
+                add_science_pack_dep(tech, next, pack)
+            end
+        else
+            add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
 
---             if mods['pyalienlife'] then
---                 add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
---                 add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
---                 add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
---                 add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
---                 add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
---             end
+            if mods['pyalienlife'] then
+                add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
+                add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
+                add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
+                add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
+                add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
+            end
 
---             if mods['pyalternativeenergy'] then
---                 add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
---             end
---         end
---     end
+            if mods['pyalternativeenergy'] then
+                add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
+            end
+        end
+    end
 
---     log('AUTOTECH START')
---     local at = require 'prototypes.functions.auto_tech'.create()
---     at:run()
---     if create_cache_mode then
---         at:create_cachefile_code()
---     end
---     log('AUTOTECH END')
--- else
---     require 'cached-configs.run'
--- end
---]]
+    log('AUTOTECH START')
+    local at = require 'prototypes.functions.auto_tech'.create()
+    at:run()
+    if create_cache_mode then
+        at:create_cachefile_code()
+    end
+    log('AUTOTECH END')
+else
+    require 'cached-configs.run'
+
+    -- some quick and dirty manual fixes until quintuples autotech rewrite is finished
+    data.raw.technology['follower-robot-count-5'].unit.count = nil
+    local techs_with_broken_prereqs = {
+        "inserter-capacity-bonus-1",
+        "utility-science-pack",
+        "automation-3",
+        "rocket-silo",
+        "diet-beacon",
+        "machines-mk04",
+        "microbiology-mk01",
+        "crusher-2",
+        "bhoddos-upgrade",
+    }
+    for _, t in pairs(techs_with_broken_prereqs) do
+        if data.raw.technology[t] then data.raw.technology[t].prerequisites = {} end
+    end
+end
 
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
