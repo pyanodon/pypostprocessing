@@ -50,7 +50,7 @@ for _, prototype in pairs {"assembling-machine", "furnace"} do
         local area = (xx - x) * (yy - y)
         if area <= 9 then goto continue end
         local scale = math.floor(math.sqrt(area) / 3 + 0.5)
-        entity.alert_icon_scale = scale
+        --entity.alert_icon_scale = scale
         entity.icon_draw_specification = {
             scale = scale
         }
