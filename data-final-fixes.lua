@@ -1,3 +1,5 @@
+require "prototypes.quality"
+
 local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
