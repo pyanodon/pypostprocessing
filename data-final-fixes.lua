@@ -244,34 +244,34 @@ if dev_mode then
                 add_science_pack_dep(tech, next, pack)
             end
         else
-            add_science_pack_dep(tech, 'utility-science-pack', 'military-science-pack')
+            add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
 
-            if mods['pyalienlife'] then
-                add_science_pack_dep(tech, 'utility-science-pack', 'py-science-pack-4')
-                add_science_pack_dep(tech, 'production-science-pack', 'py-science-pack-3')
-                add_science_pack_dep(tech, 'chemical-science-pack', 'py-science-pack-2')
-                add_science_pack_dep(tech, 'logistic-science-pack', 'py-science-pack-1')
-                add_science_pack_dep(tech, 'py-science-pack-4', 'military-science-pack')
+            if mods["pyalienlife"] then
+                add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
+                add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
+                add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
+                add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
+                add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
             end
 
-            if mods['pyalternativeenergy'] then
-                add_science_pack_dep(tech, 'production-science-pack', 'military-science-pack')
+            if mods["pyalternativeenergy"] then
+                add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
             end
         end
     end
 
-    log('AUTOTECH START')
-    local at = require 'prototypes.functions.auto_tech'.create()
+    log("AUTOTECH START")
+    local at = require "prototypes.functions.auto_tech".create()
     at:run()
     if create_cache_mode then
         at:create_cachefile_code()
     end
-    log('AUTOTECH END')
+    log("AUTOTECH END")
 else
-    require 'cached-configs.run'
+    require "cached-configs.run"
 
     -- some quick and dirty manual fixes until quintuples autotech rewrite is finished
-    data.raw.technology['follower-robot-count-5'].unit.count = nil
+    data.raw.technology["follower-robot-count-5"].unit.count = nil
     for _, t in pairs(data.raw.technology) do
         local new_prereqs = {}
         for _, prereq in pairs(t.prerequisites or {}) do
@@ -281,6 +281,22 @@ else
         end
         t.prerequisites = new_prereqs
     end
+
+    local starting_techs = {
+        "automation",
+        "coal-processing-1",
+        "gun-turret",
+        "soil-washing",
+        "stone-wall",
+    }
+
+    for _, t in pairs(starting_techs) do
+        t = data.raw.technology[t]
+        if t then t.prerequisites = {"automation-science-pack"} end
+        ::continue::
+    end
+
+    data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
 end
 
 ----------------------------------------------------
@@ -412,14 +428,14 @@ for _, category in pairs(data.raw) do
     end
 end
 
-for _, vehicle_prototype in pairs{"car", "locomotive", "spider-vehicle"} do
+for _, vehicle_prototype in pairs {"car", "locomotive", "spider-vehicle"} do
     for _, vehicle in pairs(data.raw[vehicle_prototype]) do
         vehicle.allow_remote_driving = true
     end
 end
 
 -- add circuit connections to machines
-for _, crafting_machine_prototype in pairs{"assembling-machine", "rocket-silo", "furnace"} do
+for _, crafting_machine_prototype in pairs {"assembling-machine", "rocket-silo", "furnace"} do
     for _, crafting_machine in pairs(data.raw[crafting_machine_prototype]) do
         if crafting_machine.hidden then goto continue end
         if crafting_machine.circuit_connector then goto continue end
