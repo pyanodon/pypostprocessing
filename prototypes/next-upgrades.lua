@@ -44,6 +44,7 @@ end
 ---@return boolean
 local function can_be_upgraded(entity)
     if not entity then return false end
+    if entity.hidden then return false end
     if entity.joint_distance then return false end -- Exclude all trains.
     if entity:has_flag("not-upgradable") then return false end
     if not entity.fast_replaceable_group then return false end
