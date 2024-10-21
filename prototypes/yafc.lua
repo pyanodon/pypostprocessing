@@ -93,7 +93,7 @@ if mods["pyalienlife"] then
         {"navens",         "navens-culture-mk01"},
         {"phagnot",        "phagnot-corral-mk01"},
         {"phadai",         "phadai-enclosure-mk01"},
-        {"ralesias",       "ralesia-plantation-mk01"},
+        {"ralesia",       "ralesia-plantation-mk01"},
         {"rennea",         "rennea-plantation-mk01"},
         {"seaweed",        "seaweed-crop-mk01"},
         {"sea-sponge",     "sponge-culture-mk01"},
