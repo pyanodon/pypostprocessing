@@ -270,19 +270,14 @@ else
 
     -- some quick and dirty manual fixes until quintuples autotech rewrite is finished
     data.raw.technology['follower-robot-count-5'].unit.count = nil
-    local techs_with_broken_prereqs = {
-        "inserter-capacity-bonus-1",
-        "utility-science-pack",
-        "automation-3",
-        "rocket-silo",
-        "diet-beacon",
-        "machines-mk04",
-        "microbiology-mk01",
-        "crusher-2",
-        "bhoddos-upgrade",
-    }
-    for _, t in pairs(techs_with_broken_prereqs) do
-        if data.raw.technology[t] then data.raw.technology[t].prerequisites = {} end
+    for _, t in pairs(data.raw.technology) do
+        local new_prereqs = {}
+        for _, prereq in pairs(t.prerequisites or {}) do
+            if data.raw.technology[prereq] then
+                new_prereqs[#new_prereqs + 1] = prereq
+            end
+        end
+        t.prerequisites = new_prereqs
     end
 end
 
