@@ -222,6 +222,7 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             new_pictures[direction].width = image.width
             new_pictures[direction].height = image.height
             new_pictures[direction].priority = image.priority or new_pictures[direction].priority
+            new_pictures[direction].scale = 1 or new_pictures[direction].scale
         end
     end
     return new_pictures
