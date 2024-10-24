@@ -57,7 +57,7 @@ if mods["pyalienlife"] then
 
     -- Collector and harvester need a fluid box - an empty table is enough for YAFC
     data.raw["mining-drill"]["harvester"].input_fluid_box = {}
-    data.raw["mining-drill"]["collector"].input_fluid_box = {}
+    data.raw["mining-drill"]["flora-collector-mk01"].input_fluid_box = {}
 
     -- No rocket launches in farm, make it a normal assembling machine
     data.raw["rocket-silo"]["mega-farm"].type = "assembling-machine"
