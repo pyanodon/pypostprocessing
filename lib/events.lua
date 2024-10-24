@@ -75,22 +75,28 @@ storage.on_tick = storage.on_tick or {}
 ---@type table<string, function>
 py.on_tick_funcs = {}
 
--- use this to register functions that run at a specific tick
--- pass parameters in a list
----@param tick uint
+---register delayed functions
 ---@param func_name string
 ---@param func function
----@param params any[]?
-py.register_tick_event = function(tick, func_name, func, params)
-	log("registered tick_event function " .. func_name)
+py.register_delayed_function = function(func_name, func)
+	log("registered delayed_event function " .. func_name)
 	if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error("attempting to overwrite a registered function " .. func_name) end
 	py.on_tick_funcs[func_name] = func
-	if tick < (game and game.tick or 0) then
-		error("invalid tick event registration with function " .. func_name)
+end
+
+-- use this to call functions after a delay
+-- pass parameters in a list
+---@param delay uint
+---@param func_name string
+---@param params any[]?
+py.delayed_event = function(delay, func_name, params)
+	if delay < 0 then
+		error("invalid event delay with function " .. func_name)
 		return
 	end
 	params = params or {}
 	if type(params) ~= "table" then params = {params} end
+	local tick = game.tick + delay
 	storage.on_tick[tick] = storage.on_tick[tick] or {}
 	table.insert(storage.on_tick[tick], {name = func_name, params = params})
 end
@@ -132,7 +138,7 @@ end)
 py.events = {
 	--- Called after an entity is constructed.
 	--- Note: Using this event may be bad practice. Consider instead defining `created_effect` in the entity prototype.
-	--- 
+	---
 	--- entity.created_effect = {
 	--- 	type = 'direct',
 	--- 	action_delivery = {
