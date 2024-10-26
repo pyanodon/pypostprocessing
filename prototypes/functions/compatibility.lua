@@ -508,7 +508,7 @@ if mods["RenaiTransportation"] then
     end
 
     if mods["pyfusionenergy"] then
-        TECHNOLOGY("RTZiplineTech5"):remove_prereq("uranium-mining")
+        TECHNOLOGY("RTZiplineTech5"):remove_prereq("uranium-processing")
     end
 
     if mods["pyrawores"] then
