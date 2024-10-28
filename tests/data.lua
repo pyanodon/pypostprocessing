@@ -126,6 +126,8 @@ local function test_entity_graphics()
     for i = 1, 4, 1 do
         excluded_entities["aerial-blimp-mk0" .. i .. "-accumulator"] = true
     end
+
+    log("test entity graphics:")
     for entity_type, _ in pairs(defines.prototypes.entity) do
         for name, entity in pairs((excluded_types[entity_type] and {}) or (data.raw[entity_type] or {})) do
             if not excluded_entities[name] then
@@ -156,8 +158,12 @@ local function test_entity_graphics()
 end
 
 local function scan_for_cages()
+    log("test cage recipes:")
     for recipe_name, recipe in pairs(data.raw.recipe) do
-        if recipe_name:find("%-pyvoid$") or recipe_name:find("^biomass%-") then
+        if recipe_name:find("%-pyvoid$")
+            or recipe_name:find("^biomass%-")
+            or recipe_name:find("^vonix")
+            or recipe_name:find("^space%-dingrit") then
             goto NEXT_RECIPE_CAGECHECK
         end
         if not recipe.ingredients then
