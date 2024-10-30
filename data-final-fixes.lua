@@ -206,9 +206,9 @@ local function create_tmp_tech(recipe, original_tech, add_dependency)
 end
 
 if mods["PyBlock"] then
-    create_tmp_tech("fake-bioreserve-ore")
+    -- create_tmp_tech("fake-bioreserve-ore")
     --aluminium
-    create_tmp_tech("borax-mine", "glass")
+    -- create_tmp_tech("borax-mine", "glass")
 end
 
 if mods.pycoalprocessing and not mods["extended-descriptions"] then
