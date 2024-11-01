@@ -172,45 +172,6 @@ for category_name, proto in pairs(data.raw["resource-category"]) do
 end
 -- End resource category locale builder
 
-local function create_tmp_tech(recipe, original_tech, add_dependency)
-    local new_tech = TECHNOLOGY {
-        type = "technology",
-        name = "tmp-" .. recipe .. "-tech",
-        icon = "__pypostprocessing__/graphics/placeholder.png",
-        icon_size = 128,
-        order = "c-a",
-        prerequisites = {},
-        effects = {
-            {type = "unlock-recipe", recipe = recipe}
-        },
-        unit = {
-            count = 30,
-            ingredients = {
-                {"automation-science-pack", 1}
-            },
-            time = 30
-        }
-    }
-
-    recipe.enabled = false
-
-    if original_tech then
-        recipe:remove_unlock(original_tech)
-
-        if add_dependency then
-            new_tech.dependencies = {original_tech}
-        end
-    end
-
-    return new_tech
-end
-
-if mods["PyBlock"] then
-    create_tmp_tech("fake-bioreserve-ore")
-    --aluminium
-    create_tmp_tech("borax-mine", "glass")
-end
-
 if mods.pycoalprocessing and not mods["extended-descriptions"] then
     for _, recipe in pairs(data.raw.recipe) do
         if recipe.allow_productivity then

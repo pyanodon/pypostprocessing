@@ -28,6 +28,7 @@ local function check_for_valid_minable_properties(entity)
 
     local minable = entity.minable
     if not minable.result and not minable.results then return false end
+    if minable.results and table_size(minable.results) >= 0 then return false end
     local minable_result = minable.result or minable.results[1].name or minable.results[1][1]
     if not minable_result then return false end
     if minable_result ~= entity.name then return false end
@@ -46,7 +47,7 @@ local function can_be_upgraded(entity)
     if not entity then return false end
     if entity.hidden then return false end
     if entity.joint_distance then return false end -- Exclude all trains.
-    if entity:has_flag("not-upgradable") then return false end
+    if ENTITY(entity):has_flag("not-upgradable") then return false end
     if not entity.fast_replaceable_group then return false end
     if not entity.collision_box then return false end
     if not check_for_valid_minable_properties(entity) then return false end
