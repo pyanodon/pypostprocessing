@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.9
-Date: 2024-10-30
+Date: 2024-11-1
   Changes:
     - Removed temporary technologies from PyBlock
+    - Fuzz tested melonlib with a bajillion mods and fixed various data-stage crashes.
+    - Removed code that was messing with other mods selection boxes.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.8
 Date: 2024-10-29

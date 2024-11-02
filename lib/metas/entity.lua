@@ -56,7 +56,6 @@ metas.standardize = function(self)
         end
     end
 
-    self.selection_box = self.selection_box or self.collision_box
     self.collision_mask = self.collision_mask or collision_mask_util.get_mask(self)
 
     return self
