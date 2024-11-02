@@ -2,6 +2,7 @@
 ---@field public add_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
 ---@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
 ---@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
+---@field public spoil fun(self: data.ItemPrototype, spoil_result: (string | table), spoil_ticks: number): data.ItemPrototype
 
 local item_prototypes = defines.prototypes.item
 ITEM = setmetatable({}, {
@@ -55,6 +56,45 @@ metas.has_flag = function(self, flag)
         if f == flag then return true end
     end
     return false
+end
+
+py.spoil_triggers = {
+    -- typically used for items that evaporate at room temperature
+    puff_of_smoke = function()
+        return {
+            trigger = {
+                type = "direct",
+                action_delivery = {
+                    type = "instant",
+                    source_effects = {
+                        type = "create-trivial-smoke",
+                        smoke_name = "smoke-building",
+                        repeat_count = 4,
+                        affects_target = true,
+                        offset_deviation = {{-0.2, -0.2}, {0.2, 0.2}},
+                        starting_frame_deviation = 5,
+                        speed_from_center = 0.03
+                    }
+                }
+            },
+            items_per_trigger = 1,
+        }
+    end
+}
+
+metas.spoil = function(self, spoil_result, spoil_ticks)
+    if not feature_flags.space_travel then return end
+    if not spoil_ticks then error("No spoil ticks provided for item " .. self.name) end
+    
+    if type(spoil_result) == "string" then
+        self.spoil_result = spoil_result
+    elseif type(spoil_result) == "table" and spoil_result.trigger then
+        self.spoil_to_trigger_result = spoil_result
+    else
+        error("Invalid spoil result provided for item " .. self.name)
+    end
+
+    self.spoil_ticks = spoil_ticks
 end
 
 return metas
