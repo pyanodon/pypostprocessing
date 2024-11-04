@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.11
+Date: 2024-11-3
+  Changes:
+    - Fixed quality compat being a bit over-eager and deleting any recipes with "recycling" in the name.
+---------------------------------------------------------------------------------------------------
 Version: 3.0.10
 Date: 2024-11-3
   Changes:
