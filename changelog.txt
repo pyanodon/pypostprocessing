@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.10
-Date: when postprocessing is finished
+Date: 2024-11-3
   Changes:
     - Ukrainian translation (by bootseller)
     - Added NOTHING
