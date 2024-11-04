@@ -8,7 +8,6 @@
   "homepage": "https://mods.factorio.com/mods/pyanodon/pytech",
   "description": "Post-processing steps for Pyanodons modpack. Overhauls the technology tree to make sure prerequisites are set based on unlocked recipes.",
   "dependencies": [
-    "! space-age",
     "? quality",
     "? elevated-rails",
     "? pycoalprocessing",
