@@ -40,7 +40,7 @@ local big_recipe_icons_blacklist = {
     ["rc-mk04"] = true,
 }
 
-for _, prototype in pairs {"assembling-machine", "furnace"} do
+for _, prototype in pairs {"assembling-machine", "furnace", "container", "logistic-container"} do
     for _, entity in pairs(data.raw[prototype]) do
         if not entity.name or big_recipe_icons_blacklist[entity.name] then goto continue end
         local box = entity.selection_box or entity.collision_box
@@ -49,10 +49,12 @@ for _, prototype in pairs {"assembling-machine", "furnace"} do
         if not x or not xx or not y or not yy then goto continue end
         local area = (xx - x) * (yy - y)
         if area <= 9 then goto continue end
-        local scale = math.floor(math.sqrt(area) / 3 + 0.5)
+        -- Drop to two rounded decimal points of precision
+        local scale = math.floor(math.sqrt(area) / 3 * 100 + 0.5) / 100
         --entity.alert_icon_scale = scale
         entity.icon_draw_specification = {
-            scale = scale
+            scale = scale,
+            scale_for_many = scale
         }
         ::continue::
     end
