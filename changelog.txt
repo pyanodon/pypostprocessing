@@ -4,6 +4,8 @@ Date: ?
   Changes:
     - Applied alt-mode scaling to large containers
     - Fixed feature flag check for library function :spoil
+    - Added a specialized crash message explaining correct installation steps for when space age is installed.
+    - Standardized the mod incompatiblity list across all py mods. Current list is "! wret-beacon-rebalance-mod", "! BigBags", "! ResearchFog", and "! omnimatter_energy"
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.11
 Date: 2024-11-3
