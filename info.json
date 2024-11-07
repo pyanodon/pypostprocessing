@@ -31,7 +31,10 @@
     "(?) DeadlocksStackingForPyanadon",
     "(?) LightedPolesPlus",
     "(?) jetpack",
-    "! ResearchFog"
+    "! wret-beacon-rebalance-mod",
+    "! BigBags",
+    "! ResearchFog",
+    "! omnimatter_energy"
   ],
   "package": {
     "ignore": [],
