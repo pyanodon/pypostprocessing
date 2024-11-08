@@ -539,7 +539,7 @@ if mods["RenaiTransportation"] then
         TECHNOLOGY("RTDeliverThePayload"):add_prereq("military-science-pack")
         TECHNOLOGY("EjectorHatchRTTech"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTFlyingFreight"):remove_pack("logistic-science-pack")
-        TECHNOLOGY("SignalPlateTech"):remove_pack("logistic-science-pack")
+        --TECHNOLOGY("SignalPlateTech"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTFreightPlates"):remove_pack("logistic-science-pack")
         TECHNOLOGY("PrimerPlateTech"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTImpactTech"):remove_pack("logistic-science-pack")
