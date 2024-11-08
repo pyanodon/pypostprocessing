@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.12
-Date: ?
+Date: 2024-11-7
   Changes:
     - Applied alt-mode scaling to large containers
     - Fixed feature flag check for library function :spoil

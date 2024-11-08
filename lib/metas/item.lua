@@ -95,6 +95,8 @@ metas.spoil = function(self, spoil_result, spoil_ticks)
     end
 
     self.spoil_ticks = spoil_ticks
+
+    return self
 end
 
 return metas
