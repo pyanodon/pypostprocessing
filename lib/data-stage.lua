@@ -10,8 +10,6 @@ py.empty_image = function()
         filename = "__pypostprocessing__/empty.png",
         size = 1,
         priority = "high",
-        direction_count = 1,
-        frame_count = 1,
         line_length = 1
     }
 end
