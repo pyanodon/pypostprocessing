@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.13
-Date: ?
+Date: 2024-11-9
   Changes:
     - Fixed crash on load with the "renai transportation" mod.
     - Fixed 1000s of lines of log spam due to "unused property direction_count" and "unused property frame_count"
@@ -11,8 +11,10 @@ Date: ?
     - Removed all code related to FluidPrototype.flow_to_energy_ratio
     - Removed all code related to FluidPrototype.pressure_to_speed_ratio
     - Fixed all code related to ProductPrototype.catalyst_amount into the 2.0 format.
-    - Removed all code related to fluidbox.base_level
-    - Remove all code related to icon_mipmaps
+    - Removed all code related to fluidbox.base_level.
+    - Removed all code related to icon_mipmaps.
+    - Removed all code related to AssemblingMachine.match_animation_speed_to_activity.
+    - Deleted all code related to Module.limitation_blacklist
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.12
 Date: 2024-11-7
