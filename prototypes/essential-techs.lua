@@ -49,3 +49,9 @@ make_essential("genetics-mk05")
 make_essential("coal-processing-1")
 make_essential("coal-processing-2")
 make_essential("coal-processing-3")
+
+-- raw ores progression
+make_essential("big-mines")
+
+-- fusion energy progression
+make_essential("fusion-mk01")
