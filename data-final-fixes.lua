@@ -391,4 +391,11 @@ for _, crafting_machine_prototype in pairs {"assembling-machine", "rocket-silo",
     end
 end
 
+-- fix render layers for construction and logistic bots alt-mode icons
+for _, bot_type in pairs{"construction-robot", "logistic-robot"} do
+    for _, bot in pairs(data.raw[bot_type]) do
+        bot.icon_draw_specification = bot.icon_draw_specification or {shift = {0, -0.2}, scale = 0.8, render_layer = "air-entity-info-icon"}
+    end
+end
+
 if dev_mode then require "tests.data" end
