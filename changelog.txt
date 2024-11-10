@@ -4,6 +4,15 @@ Date: ?
   Changes:
     - Fixed crash on load with the "renai transportation" mod.
     - Fixed 1000s of lines of log spam due to "unused property direction_count" and "unused property frame_count"
+    - Migrated 1.1 drawing_box parameter into 2.0 drawing_box_vertical_extension for all machines.
+    - Rewrote all code related to LuaEntity.circuit_wire_connection_points for all machines.
+    - Added vehicle impact sound to all machines. Resolves https://github.com/pyanodon/pybugreports/issues/697
+    - Removed all code related to FluidPrototype.base_flow_rate
+    - Removed all code related to FluidPrototype.flow_to_energy_ratio
+    - Removed all code related to FluidPrototype.pressure_to_speed_ratio
+    - Fixed all code related to ProductPrototype.catalyst_amount into the 2.0 format.
+    - Removed all code related to fluidbox.base_level
+    - Remove all code related to icon_mipmaps
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.12
 Date: 2024-11-7
