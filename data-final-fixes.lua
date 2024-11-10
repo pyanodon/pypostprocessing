@@ -347,24 +347,7 @@ end
 
 -- force mining drill speed to not increase with speed modules
 for _, drill in pairs(data.raw["mining-drill"]) do
-    if drill.wet_mining_graphics_set then
-        drill.wet_mining_graphics_set.max_animation_progress = drill.wet_mining_graphics_set.animation_progress or 1
-        drill.wet_mining_graphics_set.min_animation_progress = drill.wet_mining_graphics_set.animation_progress or 1
-    end
-    if drill.graphics_set then
-        drill.graphics_set.max_animation_progress = drill.graphics_set.animation_progress or 1
-        drill.graphics_set.min_animation_progress = drill.graphics_set.animation_progress or 1
-    elseif drill.animations then
-        drill.graphics_set = {
-            animation = drill.animations,
-            max_animation_progress = 1,
-            min_animation_progress = 1
-        }
-        if not drill.wet_mining_graphics_set then
-            drill.wet_mining_graphics_set = drill.graphics_set
-        end
-        drill.animations = nil
-    end
+    drill.perceived_performance = drill.perceived_performance or {maximum = 1.5, performance_to_activity_rate = 0.2}
 end
 
 if not data.raw["module-category"]["quality"] then
