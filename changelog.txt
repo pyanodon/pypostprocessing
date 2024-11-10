@@ -3,6 +3,7 @@ Version: 3.0.14
 Date: ?
   Changes:
     - Fixed the cargo icon of construction bots is obscured by the bot itself. Resolves https://github.com/pyanodon/pybugreports/issues/698
+    - Added support for the "show essential techs" checkbox in the tech tree.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.13
 Date: 2024-11-9
