@@ -485,7 +485,6 @@ py.disallow_effectivity = function(recipe_categories)
         if module.name:find("effectivity") then
             table.insert(modules, module)
             module.limitation_blacklist = module.limitation_blacklist or {}
-            if not module.limitation_message_key then module.limitation_message_key = "efficiency-module-limitation-message" end
         end
     end
 
