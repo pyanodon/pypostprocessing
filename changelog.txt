@@ -5,6 +5,7 @@ Date: ?
     - Fixed the cargo icon of construction bots is obscured by the bot itself. Resolves https://github.com/pyanodon/pybugreports/issues/698
     - Added support for the "show essential techs" checkbox in the tech tree.
     - Fixed most entities not having their next_upgrade field set.
+    - Added space age as an optional dependency (no it's still not compatible).
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.13
 Date: 2024-11-9

@@ -10,6 +10,7 @@
   "dependencies": [
     "? quality",
     "? elevated-rails",
+    "? space-age",
     "? pycoalprocessing",
     "? pyindustry",
     "? pyfusionenergy",
