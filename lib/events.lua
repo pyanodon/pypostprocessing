@@ -106,13 +106,13 @@ local function_list = {}
 
 py.mod_nth_tick_funcs = {}
 
----use instead of script.on_nth_tick
+---use instead of script.on_nth_tick, avoids multiple functions running on the same tick
 ---@param tick int
 ---@param func_name string
 ---@param mod string
 ---@param func function
 py.register_on_nth_tick = function(tick, func_name, mod, func)
-	if py.mod_nth_tick_funcs[func_name] then error("py.register_on_nth_tick: function with name " .. func_name .. " is already registered") end
+	if py.mod_nth_tick_funcs[mod .. "-" .. func_name] then error("py.register_on_nth_tick: function with name " .. mod .. "-" .. func_name .. " is already registered") end
 	function_list[func_name] = {tick = tick, mod = mod}
 	py.mod_nth_tick_funcs[mod .. "-" .. func_name] = func
 end
