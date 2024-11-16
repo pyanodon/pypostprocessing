@@ -46,7 +46,7 @@ if mods["pyalienlife"] then
         }
         resource.minable.required_fluid = fluid_name
         resource.minable.fluid_amount = 10
-        resource.autoplace = {}
+        resource.autoplace = { control = "trees" }
 
         for _, recipe_data in ipairs(farm.recipes) do
             local recipe = RECIPE(recipe_data.recipe_name)
