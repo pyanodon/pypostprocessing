@@ -93,18 +93,18 @@ local config = {
 -- If an item unlocks an entity(s) that're not in its place_result:
 -- config.ENTITY_SCRIPT_UNLOCKS[<item name>] = { <entity name 1>, <entity name 2> }
 if mods["pypetroleumhandling"] then
-    config.ENTITY_SCRIPT_UNLOCKS["bitumen-seep-mk01"] = {"oil-derrick-mk01", "oil-mk01"}
-    config.ENTITY_SCRIPT_UNLOCKS["bitumen-seep-mk02"] = {"oil-derrick-mk02", "oil-mk02"}
-    config.ENTITY_SCRIPT_UNLOCKS["bitumen-seep-mk03"] = {"oil-derrick-mk03", "oil-mk03"}
-    config.ENTITY_SCRIPT_UNLOCKS["bitumen-seep-mk04"] = {"oil-derrick-mk04", "oil-mk04"}
-    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-seep-mk01"] = {"natural-gas-extractor-mk01", "natural-gas-mk01"}
-    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-seep-mk02"] = {"natural-gas-extractor-mk02", "natural-gas-mk01"}
-    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-seep-mk03"] = {"natural-gas-extractor-mk03", "natural-gas-mk01"}
-    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-seep-mk04"] = {"natural-gas-extractor-mk04", "natural-gas-mk01"}
-    config.ENTITY_SCRIPT_UNLOCKS["tar-seep-mk01"] = {"tar-extractor-mk01", "tar-patch"}
-    config.ENTITY_SCRIPT_UNLOCKS["tar-seep-mk02"] = {"tar-extractor-mk02", "tar-patch"}
-    config.ENTITY_SCRIPT_UNLOCKS["tar-seep-mk03"] = {"tar-extractor-mk03", "tar-patch"}
-    config.ENTITY_SCRIPT_UNLOCKS["tar-seep-mk04"] = {"tar-extractor-mk04", "tar-patch"}
+    config.ENTITY_SCRIPT_UNLOCKS["bitumen-extractor-mk01"] = {"oil-mk01"}
+    config.ENTITY_SCRIPT_UNLOCKS["bitumen-extractor-mk02"] = {"oil-mk02"}
+    config.ENTITY_SCRIPT_UNLOCKS["bitumen-extractor-mk03"] = {"oil-mk03"}
+    config.ENTITY_SCRIPT_UNLOCKS["bitumen-extractor-mk04"] = {"oil-mk04"}
+    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-derrick-mk01"] = {"natural-gas-mk01"}
+    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-derrick-mk02"] = {"natural-gas-mk01"}
+    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-derrick-mk03"] = {"natural-gas-mk01"}
+    config.ENTITY_SCRIPT_UNLOCKS["natural-gas-derrick-mk04"] = {"natural-gas-mk01"}
+    config.ENTITY_SCRIPT_UNLOCKS["tar-extractor-mk01"] = {"tar-patch"}
+    config.ENTITY_SCRIPT_UNLOCKS["tar-extractor-mk02"] = {"tar-patch"}
+    config.ENTITY_SCRIPT_UNLOCKS["tar-extractor-mk03"] = {"tar-patch"}
+    config.ENTITY_SCRIPT_UNLOCKS["tar-extractor-mk04"] = {"tar-patch"}
 end
 
 if mods["pyalienlife"] then
