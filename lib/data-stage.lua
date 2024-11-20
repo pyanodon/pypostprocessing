@@ -423,8 +423,17 @@ end
 ---@param corner table
 py.add_corner_icon_to_recipe = function(recipe, corner)
     local icon, icon_size, icons
-    local result = recipe.main_product or recipe.results[1].name
-    result = ITEM(result)
+    local result
+    if recipe.main_product then
+        result = ITEM(recipe.main_product)
+    elseif recipe.results then
+        local result = recipe.results[1]
+        if result.type == "fluid" then
+            result = FLUID(result.name)
+        else
+            result = ITEM(result.name)
+        end
+    end
 
     -- Icon size finder
     if recipe.icon_size ~= nil then
@@ -438,12 +447,12 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
         icon = recipe.icon
     end
 
-    if icon == nil then -- (i.e. not found above)
+    if icon == nil and result and result.icon then -- (i.e. not found above)
         -- Find it from result icon
         icon = table.deepcopy(result.icon)
 
         -- Confirm icon_size
-        if result and result.icon_size then icon_size = result.icon_size end
+        if result.icon_size then icon_size = result.icon_size end
     end
 
     if recipe.icons then -- If it's already an icons
