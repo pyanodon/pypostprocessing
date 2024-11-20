@@ -258,6 +258,8 @@ else
     end
 
     data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
+
+    data.raw["technology"]["inserter-capacity-bonus-1"].prerequisites = {mods.pyalienlife and "py-science-pack-mk02" or "chemical-science-pack"}
 end
 
 ----------------------------------------------------

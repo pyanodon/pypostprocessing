@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.17
+Date: ?
+  Changes:
+    - Fixed various issues in the tech tree. Resolves https://github.com/pyanodon/pybugreports/issues/634
+---------------------------------------------------------------------------------------------------
 Version: 3.0.16
 Date: 2024-11-18
   Changes:
