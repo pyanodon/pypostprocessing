@@ -511,10 +511,37 @@ py.finite_state_machine_working_visualisations = function(params)
     local working_visualisations = {}
     local graphics_set = {states = params.states, working_visualisations = working_visualisations, animation = params.shadow}
 
+    local function fit_frame_sequence_to_frame_count(layer)
+        local frame_count = layer.frame_count * (layer.repeat_count or 1)
+        local new_frame_sequence = {}
+        for _, frame in pairs(layer.frame_sequence) do
+            new_frame_sequence[#new_frame_sequence + 1] = frame % layer.frame_count + 1
+        end
+        layer.frame_sequence = new_frame_sequence
+        layer.repeat_count = nil
+        layer.animation_speed = nil
+        if layer.run_mode == "backward" then
+            layer.run_mode = nil
+            local frame_sequence_backwards = {}
+            for _, frame in pairs(new_frame_sequence) do
+                frame_sequence_backwards[#frame_sequence_backwards + 1] = frame_count - frame + 1
+            end
+            layer.frame_sequence = frame_sequence_backwards
+        end
+    end
+
     for _, visualization in pairs(params.working_visualisations) do
         for _, state in pairs(states) do
             local visualization = table.deepcopy(visualization)
-            visualization.animation.frame_sequence = table.deepcopy(state.frame_sequence)
+            if visualization.animation.layers then
+                for _, layer in pairs(visualization.animation.layers) do
+                    layer.frame_sequence = table.deepcopy(state.frame_sequence)
+                    fit_frame_sequence_to_frame_count(layer)
+                end
+            else
+                visualization.animation.frame_sequence = table.deepcopy(state.frame_sequence)
+                fit_frame_sequence_to_frame_count(visualization.animation)
+            end
             visualization.draw_in_states = {state.name}
             visualization.draw_when_state_filter_matches = true
             visualization.always_draw = true
