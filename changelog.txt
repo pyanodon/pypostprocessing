@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.17
-Date: ?
+Date: 2024-11-20
   Changes:
     - Fixed various issues in the tech tree. Resolves https://github.com/pyanodon/pybugreports/issues/634
     - Fixed crash in the py.add_corner_icon_to_recipe() function. Resolves https://github.com/pyanodon/pybugreports/issues/565
+    - Added a finite state algorithm for machine animations to melonlib. Resolves https://github.com/pyanodon/pybugreports/issues/588
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.16
 Date: 2024-11-18

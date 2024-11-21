@@ -486,5 +486,51 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     return icons
 end
 
+---Retruns a version of graphics_set with the following properties:
+---The machine will follow a binary finite state machine (bfsm) to determine the current active animation.
+---Example (sinter machine): https://github.com/pyanodon/pybugreports/issues/588
+---@param states data.VisualState[]
+---@param raw_working_visualisations data.WorkingVisualisation[]
+---@param shadow data.Animation?
+py.finite_state_machine_working_visualisations = function(params)
+    local states = params.states
+
+    local state_count = table_size(states)
+    if state_count < 2 or state_count > 32 then
+        error("Finite state machine must have between 2 and 32 states")
+    end
+
+    if states[1].name ~= "idle" then
+        error("First state must be 'idle'")
+    end
+
+    if table_size(states[1].frame_sequence) ~= 1 then
+        error("First state must have only one frame")
+    end
+
+    local working_visualisations = {}
+    local graphics_set = {states = params.states, working_visualisations = working_visualisations, animation = params.shadow}
+
+    for _, visualization in pairs(params.working_visualisations) do
+        for _, state in pairs(states) do
+            local visualization = table.deepcopy(visualization)
+            visualization.animation.frame_sequence = table.deepcopy(state.frame_sequence)
+            visualization.draw_in_states = {state.name}
+            visualization.draw_when_state_filter_matches = true
+            visualization.always_draw = true
+            working_visualisations[#working_visualisations + 1] = visualization
+        end
+    end
+
+    for _, state in pairs(states) do
+        state.duration = math.ceil(table_size(state.frame_sequence) * 2 / (state.speed or 1))
+        state.frame_sequence = nil
+    end
+
+    states[1].duration = 1
+    
+    return graphics_set
+end
+
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function() end
