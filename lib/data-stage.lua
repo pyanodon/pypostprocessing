@@ -524,6 +524,7 @@ py.finite_state_machine_working_visualisations = function(params)
 
     for _, state in pairs(states) do
         state.duration = math.ceil(table_size(state.frame_sequence) * 2 / (state.speed or 1))
+        state.speed = nil
         state.frame_sequence = nil
     end
 
