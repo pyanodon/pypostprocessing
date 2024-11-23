@@ -84,21 +84,32 @@ if create_signal_mode then
     for _, alternatives in pairs(signal_recipes) do
         if #alternatives > 1 then
             for _, recipe in pairs(alternatives) do
+                if((recipe.name and string.find(recipe.name, "-canister")) or (recipe.subgroup and string.find(recipe.subgroup, "-compost"))) then
+                    break
+                end
                 recipe.show_amount_in_title = false
                 amt = 0
                 for _, result in pairs(recipe.results) do
-                    if result.name and result.amount then
-                        if recipe.main_product and result.name == recipe.main_product then
-                            amt = result.amount
+                    if result.name  then
+                        local is_main_product = recipe.main_product and result.name == recipe.main_product
+                        if is_main_product and result.probability and result.probability < 1 then
+                            amt = result.probability
                             break
+                        elseif is_main_product and result.amount_min and result.amount_max then
+                            amt = (result.amount_min + result.amount_max)/2
+                            break
+                        elseif result.amount then
+                            if is_main_product then
+                                amt = result.amount
+                                break
+                            end
+                            amt = math.max(amt, result.amount)
                         end
-                        amt = math.max(amt, result.amount)
                     end
                 end
                 for i, name in pairs(recipe.localised_name) do
-                    if i > 1 and amt > 1 then
+                    if i > 1 and amt ~= 1 then
                         recipe.localised_name[i] = {"", "(×", tostring(amt), ") ", name}
-                        break -- avoid repeating output display on compost recipes
                     end
                 end
                 recipe.hide_from_signal_gui = false
