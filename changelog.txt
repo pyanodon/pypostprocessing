@@ -4,6 +4,7 @@ Date: ?
   Changes:
     - FSM improvements.
     - Fix crash on load with some minable .results specs
+    - Added a setting to display recipe signals in combinators.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.17
 Date: 2024-11-20

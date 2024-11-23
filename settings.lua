@@ -36,5 +36,12 @@ data:extend{
         setting_type = "startup",
         default_value = true,
         order = "e",
+    },
+    {
+        type = "bool-setting",
+        name = "pypp-extended-recipe-signals",
+        setting_type = "startup",
+        default_value = false,
+        order = "e",
     }
 }

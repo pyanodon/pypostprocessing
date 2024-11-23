@@ -4,6 +4,10 @@ local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
 
+local signal_recipes = {
+}
+local create_signal_mode = settings.startup["pypp-extended-recipe-signals"].value
+
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
@@ -63,6 +67,44 @@ for _, recipe in pairs(data.raw.recipe) do
         end
     end
     ::NEXT_RECIPE::
+
+    if create_signal_mode and recipe.results then
+        local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
+        if product and product ~= "" and recipe.localised_name then
+            if signal_recipes[product] == nil then
+                signal_recipes[product] = { recipe }
+            else
+                table.insert(signal_recipes[product], recipe)
+            end
+        end
+    end  
+end
+
+if create_signal_mode then
+    for _, alternatives in pairs(signal_recipes) do
+        if #alternatives > 1 then
+            for _, recipe in pairs(alternatives) do
+                recipe.show_amount_in_title = false
+                amt = 0
+                for _, result in pairs(recipe.results) do
+                    if result.name and result.amount then
+                        if recipe.main_product and result.name == recipe.main_product then
+                            amt = result.amount
+                            break
+                        end
+                        amt = math.max(amt, result.amount)
+                    end
+                end
+                for i, name in pairs(recipe.localised_name) do
+                    if i > 1 and amt > 1 then
+                        recipe.localised_name[i] = {"", "(×", tostring(amt), ") ", name}
+                        break -- avoid repeating output display on compost recipes
+                    end
+                end
+                recipe.hide_from_signal_gui = false
+            end
+        end
+    end
 end
 
 -------------------------------------------
