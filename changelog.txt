@@ -4,6 +4,7 @@ Date: ?
   Changes:
     - FSM improvements.
     - Fix crash on load with some minable .results specs
+    - Fixed Incorrect Casting Icons. Resolves https://github.com/pyanodon/pybugreports/issues/738
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.17
 Date: 2024-11-20
