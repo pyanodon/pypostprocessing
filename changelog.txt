@@ -6,6 +6,7 @@ Date: ?
     - Fix crash on load with some minable .results specs
     - Fixed Incorrect Casting Icons. Resolves https://github.com/pyanodon/pybugreports/issues/738
     - Fixed crash with bobs inserters. Resolves https://github.com/pyanodon/pybugreports/issues/656
+    - Fixed the steel axe tech unlock requirements. Resolves https://github.com/pyanodon/pybugreports/issues/630
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.17
 Date: 2024-11-20
