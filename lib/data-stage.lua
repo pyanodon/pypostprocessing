@@ -426,8 +426,8 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     local result
     if recipe.main_product then
         result = ITEM(recipe.main_product)
-    elseif recipe.results then
-        local result = recipe.results[1]
+    elseif recipe.results and table_size(recipe.results) >= 1 then
+        result = recipe.results[1]
         if result.type == "fluid" then
             result = FLUID(result.name)
         else
@@ -463,8 +463,8 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
         icons[#icons + 1] = corner
     else -- No icons table, use icon found above
         if icon == nil then
-            icon = "__base__/graphics/icons/blueprint.png"
-        end -- Fallback
+            error("No icons found for recipe " .. serpent.block(result) .. serpent.block(recipe))
+        end
 
         icons = {
             {icon = icon, icon_size = icon_size},
