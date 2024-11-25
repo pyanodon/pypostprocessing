@@ -68,6 +68,7 @@ for _, recipe in pairs(data.raw.recipe) do
     end
     ::NEXT_RECIPE::
 
+    -- Build table of recipes that may need signals
     if create_signal_mode and recipe.results then
         local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
         if product and product ~= "" and recipe.localised_name then
@@ -80,14 +81,19 @@ for _, recipe in pairs(data.raw.recipe) do
     end  
 end
 
+-------------------------------------------
+-- Recipe signals --
+-------------------------------------------
+
 if create_signal_mode then
     for _, alternatives in pairs(signal_recipes) do
         if #alternatives > 1 then
             for _, recipe in pairs(alternatives) do
-                if((recipe.name and string.find(recipe.name, "-canister")) or (recipe.subgroup and string.find(recipe.subgroup, "-compost"))) then
+                -- Skip recipe categories where signals aren't useful for any recipe
+                if(recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
                     break
                 end
-                recipe.show_amount_in_title = false
+                -- Determine amount of main product to display in signal name
                 amt = 0
                 for _, result in pairs(recipe.results) do
                     if result.name  then
@@ -103,13 +109,18 @@ if create_signal_mode then
                                 amt = result.amount
                                 break
                             end
+                            -- Fallback that determines main product based on highest output
                             amt = math.max(amt, result.amount)
                         end
                     end
                 end
-                for i, name in pairs(recipe.localised_name) do
-                    if i > 1 and amt ~= 1 then
-                        recipe.localised_name[i] = {"", "(×", tostring(amt), ") ", name}
+                -- Inject recipe output into each localised name parameter, since native output display is not consistently shown
+                if recipe.localised_name[1] == "?" then
+                    recipe.show_amount_in_title = false
+                    for i, name in pairs(recipe.localised_name) do
+                        if i > 1 and amt ~= 1 then
+                            recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
+                        end
                     end
                 end
                 recipe.hide_from_signal_gui = false
