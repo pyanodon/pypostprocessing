@@ -256,9 +256,11 @@ else
         if t then t.prerequisites = {"automation-science-pack"} end
         ::continue::
     end
-
-    data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
-
+    
+    if not mods["PyBlock"] then
+      data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
+    end
+    
     data.raw["technology"]["inserter-capacity-bonus-1"].prerequisites = {mods.pyalienlife and "py-science-pack-mk02" or "chemical-science-pack"}
 
     data.raw.technology["steel-axe"].unit = nil
