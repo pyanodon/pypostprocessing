@@ -4,6 +4,10 @@ local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
 
+local signal_recipes = {
+}
+local create_signal_mode = settings.startup["pypp-extended-recipe-signals"].value
+
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
@@ -63,6 +67,66 @@ for _, recipe in pairs(data.raw.recipe) do
         end
     end
     ::NEXT_RECIPE::
+
+    -- Build table of recipes that may need signals
+    if create_signal_mode and recipe.results then
+        local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
+        if product and product ~= "" and recipe.localised_name then
+            if signal_recipes[product] == nil then
+                signal_recipes[product] = { recipe }
+            else
+                table.insert(signal_recipes[product], recipe)
+            end
+        end
+    end  
+end
+
+-------------------------------------------
+-- Recipe signals --
+-------------------------------------------
+
+if create_signal_mode then
+    for _, alternatives in pairs(signal_recipes) do
+        if #alternatives > 1 then
+            for _, recipe in pairs(alternatives) do
+                -- Skip recipe categories where signals aren't useful for any recipe
+                if(recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
+                    break
+                end
+                -- Determine amount of main product to display in signal name
+                amt = 0
+                for _, result in pairs(recipe.results) do
+                    if result.name  then
+                        local is_main_product = recipe.main_product and result.name == recipe.main_product
+                        if is_main_product and result.probability and result.probability < 1 then
+                            amt = result.probability
+                            break
+                        elseif is_main_product and result.amount_min and result.amount_max then
+                            amt = (result.amount_min + result.amount_max)/2
+                            break
+                        elseif result.amount then
+                            if is_main_product then
+                                amt = result.amount
+                                break
+                            end
+                            -- Fallback that determines main product based on highest output
+                            amt = math.max(amt, result.amount)
+                        end
+                    end
+                end
+                -- Inject recipe output into each localised name parameter, since native output display is not consistently shown
+                if recipe.localised_name[1] == "?" then
+                    recipe.show_amount_in_title = false
+                    for i, name in pairs(recipe.localised_name) do
+                        if i > 1 and amt ~= 1 then
+                            recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
+                        end
+                    end
+                end
+                recipe.hide_from_signal_gui = false
+            end
+        end
+    end
 end
 
 -------------------------------------------
