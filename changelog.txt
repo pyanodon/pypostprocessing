@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.18
-Date: ?
+Date: 2024-11-29
   Changes:
     - FSM improvements.
     - Fix crash on load with some minable .results specs.
