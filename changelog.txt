@@ -3,11 +3,13 @@ Version: 3.0.18
 Date: ?
   Changes:
     - FSM improvements.
-    - Fix crash on load with some minable .results specs
+    - Fix crash on load with some minable .results specs.
+    - Added a setting to display recipe signals in combinators.
     - Fixed Incorrect Casting Icons. Resolves https://github.com/pyanodon/pybugreports/issues/738
     - Fixed crash with bobs inserters. Resolves https://github.com/pyanodon/pybugreports/issues/656
     - Fixed the steel axe tech unlock requirements. Resolves https://github.com/pyanodon/pybugreports/issues/630
     - Improved support for the undo queue.
+    - Fixed automation science pack relying on steam power when PyBlock is installed. Resolves https://github.com/pyanodon/pybugreports/issues/704
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.17
 Date: 2024-11-20
