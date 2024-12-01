@@ -70,7 +70,7 @@ end
 
 local function modify_recipe_tables(item, items_table, previous_item_names, result_table) -- TODO: this is spaghetti. needs a refactor
     local barrel
-    if string.match(item.name, "%-barrel") and string.match(item.name, "barrel") == nil or string.match(item.name, "empty-milk-barrel") then
+    if string.match(item.name, "%-barrel") and string.match(item.name, "empty%-barrel") == nil or string.match(item.name, "empty-milk-barrel") then
         barrel = string.gsub(item.name, "%-barrel", "")
     end
 
