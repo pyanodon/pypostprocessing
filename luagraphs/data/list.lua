@@ -15,13 +15,12 @@ function list.ArrayList.create()
     local s = {}
     setmetatable(s, list.ArrayList)
 
-    s.a = { nil }
+    s.a = {nil}
     s.aLen = 1
     s.N = 0
 
     return s
 end
-
 
 function list.ArrayList.createWith(a, aLen, N)
     local s = {}
@@ -34,7 +33,6 @@ function list.ArrayList.createWith(a, aLen, N)
     return s
 end
 
-
 function list.ArrayList.fromArray(a)
     local s = {}
     setmetatable(s, list.ArrayList)
@@ -46,21 +44,17 @@ function list.ArrayList.fromArray(a)
     return s
 end
 
-
 function list.create()
     return list.ArrayList.create()
 end
-
 
 function list.createWith(a, aLen, N)
     return list.ArrayList.createWith(a, aLen, N)
 end
 
-
 function list.fromArray(a)
     return list.ArrayList.fromArray(a)
 end
-
 
 function list.ArrayList:makeCopy()
     local temp = {}
@@ -71,7 +65,6 @@ function list.ArrayList:makeCopy()
 
     return list.ArrayList.createWith(temp, self.aLen, self.N)
 end
-
 
 function list.ArrayList:add(value)
     self.a[self.N] = value
@@ -84,11 +77,9 @@ function list.ArrayList:add(value)
     return self.N - 1
 end
 
-
-function list.ArrayList:set(index,value)
+function list.ArrayList:set(index, value)
     self.a[index] = value
 end
-
 
 function list.ArrayList:get(index)
     local temp = self.a[index]
@@ -96,15 +87,14 @@ function list.ArrayList:get(index)
     return temp
 end
 
-
 function list.ArrayList:removeAt(index)
-    if index == self.N-1 then
+    if index == self.N - 1 then
         self.N = self.N - 1
         return
     end
 
-    for i = index+1, self.N-1 do
-        self.a[i-1] = self.a[i]
+    for i = index + 1, self.N - 1 do
+        self.a[i - 1] = self.a[i]
     end
 
     self.N = self.N - 1
@@ -114,13 +104,12 @@ function list.ArrayList:removeAt(index)
     end
 end
 
-
 function list.ArrayList:indexOf(value)
     if self.N == 0 then
         return -1
     end
 
-    for i = 0, self.N-1 do
+    for i = 0, self.N - 1 do
         if self.a[i] == value then
             return i
         end
@@ -129,22 +118,19 @@ function list.ArrayList:indexOf(value)
     return -1
 end
 
-
 function list.ArrayList:contains(value)
     return self:indexOf(value) ~= -1
 end
-
 
 function list.ArrayList:remove(value)
     local index = self:indexOf(value)
     self:removeAt(index)
 end
 
-
 function list.ArrayList:resize(newSize)
     local temp = {}
 
-    for i = 0,(newSize-1) do
+    for i = 0, (newSize - 1) do
         temp[i] = self.a[i]
     end
 
@@ -152,48 +138,42 @@ function list.ArrayList:resize(newSize)
     self.aLen = newSize
 end
 
-
 function list.ArrayList:size()
     return self.N
 end
-
 
 function list.ArrayList:isEmpty()
     return self.N == 0
 end
 
-
 function list.ArrayList:enumerate()
     local temp = {}
 
-    for i = 0, (self.N-1) do
+    for i = 0, (self.N - 1) do
         temp[i] = self.a[i]
     end
 
     return temp
 end
 
-
 function list.ArrayList:isSortedAscendingly(comparator)
-    for i = 0, (self:size()-2) do
-        if comparator(self.a:get(i), self.a:get(i+1)) > 0 then
+    for i = 0, (self:size() - 2) do
+        if comparator(self.a:get(i), self.a:get(i + 1)) > 0 then
             return false
         end
     end
 
     return true
 end
-
 
 function list.ArrayList:isSortedDescendingly(comparator)
-    for i = 0, (self:size()-2) do
-        if comparator(self.a:get(i), self.a:get(i+1)) < 0 then
+    for i = 0, (self:size() - 2) do
+        if comparator(self.a:get(i), self.a:get(i + 1)) < 0 then
             return false
         end
     end
 
     return true
 end
-
 
 return list

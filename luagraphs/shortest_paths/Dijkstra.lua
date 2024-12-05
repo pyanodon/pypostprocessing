@@ -27,14 +27,14 @@ function Dijkstra:run(G, s)
     self.marked = {}
     self.source = s
 
-    for i = 0, G:vertexCount()-1 do
+    for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
         self.marked[v] = false
         self.edgeTo[v] = -1
         self.cost[v] = Dijkstra.MAX_VALUE
     end
 
-    local pq = require('luagraphs.data.IndexedMinPQ').create()
+    local pq = require "luagraphs.data.IndexedMinPQ".create()
     self.cost[s] = 0
     pq:add(s, self.cost[s])
 
@@ -43,11 +43,10 @@ function Dijkstra:run(G, s)
         pq:delMin()
         self.marked[v] = true
         local adj_v = G:adj(v)
-        for i=0,adj_v:size()-1 do
+        for i = 0, adj_v:size() - 1 do
             local e = adj_v:get(i)
             self:relax(G, e, pq)
         end
-
     end
 end
 
@@ -68,7 +67,6 @@ function Dijkstra:relax(G, e, pq)
             pq:add(w, self.cost[w])
         end
     end
-
 end
 
 function Dijkstra:hasPathTo(v)
@@ -80,7 +78,7 @@ function Dijkstra:getPathLength(v)
 end
 
 function Dijkstra:getPathTo(v)
-    local stack = require('luagraphs.data.stack').create()
+    local stack = require "luagraphs.data.stack".create()
     local x = v
     while x ~= self.source do
         local e = self.edgeTo[x]
@@ -90,6 +88,4 @@ function Dijkstra:getPathTo(v)
     return stack:toList()
 end
 
-
 return Dijkstra
-

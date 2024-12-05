@@ -6,8 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local queue = require('luagraphs.data.queue')
-local stack = require('luagraphs.data.stack')
+local queue = require "luagraphs.data.queue"
+local stack = require "luagraphs.data.stack"
 
 local BreadthFirstSearch = {}
 BreadthFirstSearch.__index = BreadthFirstSearch
@@ -22,7 +22,6 @@ function BreadthFirstSearch.create()
 
     return s
 end
-
 
 function BreadthFirstSearch:run(G, s, stop_filter)
     self.s = s
@@ -47,11 +46,9 @@ function BreadthFirstSearch:run(G, s, stop_filter)
     end
 end
 
-
 function BreadthFirstSearch:hasPathTo(v)
     return self.marked[v]
 end
-
 
 function BreadthFirstSearch:getPathTo(v)
     local path = stack.create()
@@ -66,6 +63,5 @@ function BreadthFirstSearch:getPathTo(v)
 
     return path
 end
-
 
 return BreadthFirstSearch

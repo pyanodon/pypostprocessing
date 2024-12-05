@@ -1,5 +1,4 @@
-local table = require "__stdlib__.stdlib.utils.table"
-local queue = require "__stdlib__.stdlib.misc.queue"
+local queue = require "luagraphs.queue.queue"
 local fz_lazy_bfs = require "prototypes.functions.search.fz_lazy_bfs"
 
 local fz_topo = {}
@@ -21,10 +20,10 @@ function fz_topo.create(g)
     return s
 end
 
-
 function fz_topo:run(check_ancestry, logging)
     self.queue(self.work_graph.start_node)
     self.level[self.work_graph.start_node.key] = 1
+    local recipes_with_issues = {}
 
     while not queue.is_empty(self.queue) do
         local node = self.queue()
@@ -89,17 +88,21 @@ function fz_topo:run(check_ancestry, logging)
                 self.queue(to_node)
                 self.level[to_node.key] = self.level[node.key] + 1
                 if logging then log("  - Queued: " .. to_key) end
-            elseif logging then
-                log("  - Not queued: " .. to_key)
-                for _, e in self.work_graph:iter_links_to(to_node) do
-                    log("    - " .. e:from() .. " : " .. e.label)
+                recipes_with_issues[to_key] = nil
+            else
+                recipes_with_issues[to_key] = true
+                if logging then
+                    log("  - Not queued: " .. to_key)
+                    for _, e in self.work_graph:iter_links_to(to_node) do
+                        log("    - " .. e:from() .. " : " .. e.label)
+                    end
                 end
             end
         end
     end
 
-    return table.any(self.graph.nodes, function (n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
+    local has_error = table.any(self.graph.nodes, function(n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
+    return has_error, recipes_with_issues
 end
-
 
 return fz_topo

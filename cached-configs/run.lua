@@ -1,8 +1,6 @@
-local Table = require('__stdlib__/stdlib/utils/table')
-
 local function merge(table, value)
 	for k, v in pairs(value) do
-		if type(v) == 'table' and k ~= 'prerequisites' and k ~= 'ingredients' then
+		if type(v) == "table" and k ~= "prerequisites" and k ~= "ingredients" then
 			table[k] = table[k] or {}
 			merge(table[k], v)
 		else
@@ -22,45 +20,45 @@ end
 
 function _G.science_pack_order(science_pack, order)
 	local sp = data.raw.tool[science_pack]
-	sp.subgroup = 'science-pack'
+	sp.subgroup = "science-pack"
 	sp.order = order
 end
 
 local function register_cache_file_pypp(subset)
 	table.sort(subset)
-	local cache_file = table.concat(subset, '+')
+	local cache_file = table.concat(subset, "+")
 	pypp_registered_cache_files[#pypp_registered_cache_files + 1] =
 	{
-		subset=subset,
-		cache_file=cache_file,
+		subset = subset,
+		cache_file = cache_file,
 		is_fallback_from_pypp = true,
 	}
 end
 
 -- simple py
-register_cache_file_pypp{'pycoalprocessing'}
-register_cache_file_pypp{'pyindustry'}
-register_cache_file_pypp{'pyindustry', 'pycoalprocessing'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry'}
+register_cache_file_pypp {"pycoalprocessing"}
+register_cache_file_pypp {"pyindustry"}
+register_cache_file_pypp {"pyindustry", "pycoalprocessing"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry"}
 
 -- medium py
-register_cache_file_pypp{'pycoalprocessing', 'pyindustry', 'pyrawores'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pypetroleumhandling', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyhightech'}
+register_cache_file_pypp {"pycoalprocessing", "pyindustry", "pyrawores"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pypetroleumhandling"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyhightech"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pyhightech"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pypetroleumhandling", "pyhightech"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling", "pyhightech"}
 
 -- full py
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech'}
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy'}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling", "pyalienlife"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling", "pyalienlife", "pyhightech"}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling", "pyalienlife", "pyhightech", "pyalternativeenergy"}
 
 -- PyBlock
-register_cache_file_pypp{'pycoalprocessing', 'pyfusionenergy', 'pyindustry', 'pyrawores', 'pypetroleumhandling', 'pyalienlife', 'pyhightech', 'pyalternativeenergy', 'PyBlock'}
+register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "pyrawores", "pypetroleumhandling", "pyalienlife", "pyhightech", "pyalternativeenergy", "PyBlock"}
 
 local union_of_all_subsets = {}
 for _, cache_file_info in pairs(pypp_registered_cache_files) do
@@ -68,8 +66,8 @@ for _, cache_file_info in pairs(pypp_registered_cache_files) do
 		union_of_all_subsets[mod] = 1
 	end
 end
-union_of_all_subsets = Table.keys(union_of_all_subsets)
-local recognized_enabled_mods = Table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
+union_of_all_subsets = table.keys(union_of_all_subsets)
+local recognized_enabled_mods = table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
 table.sort(recognized_enabled_mods)
 
 if #recognized_enabled_mods == 0 then

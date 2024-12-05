@@ -25,7 +25,6 @@ function FordFulkerson.create()
     return s
 end
 
-
 function FordFulkerson:run(network, s, t)
     self.value = 0
     self.edgeTo = {}
@@ -62,12 +61,12 @@ function FordFulkerson:hasPath()
     self.edgeTo = {}
     self.marked = {}
 
-    for i = 0, self.network:vertexCount()-1 do
+    for i = 0, self.network:vertexCount() - 1 do
         local v = self.network:vertexAt(i)
         self.marked[v] = false
     end
 
-    local queue = require('luagraphs.data.queue').create()
+    local queue = require("luagraphs.data.queue").create()
     queue:enqueue(self.source)
 
     while queue:isEmpty() == false do
@@ -91,9 +90,8 @@ function FordFulkerson:hasPath()
     return false
 end
 
-
 function FordFulkerson:minCuts()
-    local result = require('luagraphs.data.list').create()
+    local result = require "luagraphs.data.list".create()
 
     for _, v in pairs(self.network.vertexList:enumerate()) do
         for _, e in pairs(self.network:adj(v):enumerate()) do
@@ -107,4 +105,3 @@ function FordFulkerson:minCuts()
 end
 
 return FordFulkerson
-

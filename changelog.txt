@@ -1,9 +1,215 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.19
+Date: ?
+  Changes:
+    - Adjusted autorecipes check for barrels. Affects Arqad Nest 3, 4 and Vonix Eggs 2, 3.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.18
+Date: 2024-11-29
+  Changes:
+    - FSM improvements.
+    - Fix crash on load with some minable .results specs.
+    - Added a setting to display recipe signals in combinators.
+    - Fixed Incorrect Casting Icons. Resolves https://github.com/pyanodon/pybugreports/issues/738
+    - Fixed crash with bobs inserters. Resolves https://github.com/pyanodon/pybugreports/issues/656
+    - Fixed the steel axe tech unlock requirements. Resolves https://github.com/pyanodon/pybugreports/issues/630
+    - Improved support for the undo queue.
+    - Fixed automation science pack relying on steam power when PyBlock is installed. Resolves https://github.com/pyanodon/pybugreports/issues/704
+---------------------------------------------------------------------------------------------------
+Version: 3.0.17
+Date: 2024-11-20
+  Changes:
+    - Fixed various issues in the tech tree. Resolves https://github.com/pyanodon/pybugreports/issues/634
+    - Fixed crash in the py.add_corner_icon_to_recipe() function. Resolves https://github.com/pyanodon/pybugreports/issues/565
+    - Added a finite state algorithm for machine animations to melonlib. Resolves https://github.com/pyanodon/pybugreports/issues/588
+---------------------------------------------------------------------------------------------------
+Version: 3.0.16
+Date: 2024-11-18
+  Changes:
+    - Improved YAFC support. https://github.com/pyanodon/pypostprocessing/commit/e9e016a3ae5190422c1b88107b8f17728e0bb661
+---------------------------------------------------------------------------------------------------
+Version: 3.0.15
+Date: 2024-11-14
+  Changes:
+    - Added custom module alt-mode draw instructions for every machine in the game.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.14
+Date: 2024-11-14
+  Changes:
+    - Fixed the cargo icon of construction bots is obscured by the bot itself. Resolves https://github.com/pyanodon/pybugreports/issues/698
+    - Added support for the "show essential techs" checkbox in the tech tree.
+    - Fixed most entities not having their next_upgrade field set.
+    - Added space age as an optional dependency (no it's still not compatible).
+---------------------------------------------------------------------------------------------------
+Version: 3.0.13
+Date: 2024-11-9
+  Changes:
+    - Fixed crash on load with the "renai transportation" mod.
+    - Fixed 1000s of lines of log spam due to "unused property direction_count" and "unused property frame_count"
+    - Migrated 1.1 drawing_box parameter into 2.0 drawing_box_vertical_extension for all machines.
+    - Rewrote all code related to LuaEntity.circuit_wire_connection_points for all machines.
+    - Added vehicle impact sound to all machines. Resolves https://github.com/pyanodon/pybugreports/issues/697
+    - Removed all code related to FluidPrototype.base_flow_rate
+    - Removed all code related to FluidPrototype.flow_to_energy_ratio
+    - Removed all code related to FluidPrototype.pressure_to_speed_ratio
+    - Fixed all code related to ProductPrototype.catalyst_amount into the 2.0 format.
+    - Removed all code related to fluidbox.base_level.
+    - Removed all code related to icon_mipmaps.
+    - Removed all code related to AssemblingMachine.match_animation_speed_to_activity.
+    - Deleted all code related to Module.limitation_blacklist
+---------------------------------------------------------------------------------------------------
+Version: 3.0.12
+Date: 2024-11-7
+  Changes:
+    - Applied alt-mode scaling to large containers
+    - Fixed feature flag check for library function :spoil
+    - Added a specialized crash message explaining correct installation steps for when space age is installed.
+    - Standardized the mod incompatiblity list across all py mods. Current list is "! wret-beacon-rebalance-mod", "! BigBags", "! ResearchFog", and "! omnimatter_energy"
+---------------------------------------------------------------------------------------------------
+Version: 3.0.11
+Date: 2024-11-3
+  Changes:
+    - Fixed quality compat being a bit over-eager and deleting any recipes with "recycling" in the name.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.10
+Date: 2024-11-3
+  Changes:
+    - Ukrainian translation (by bootseller)
+    - Added NOTHING
+---------------------------------------------------------------------------------------------------
+Version: 3.0.9
+Date: 2024-11-1
+  Changes:
+    - Removed temporary technologies from PyBlock
+    - Fuzz tested melonlib with a bajillion mods and fixed various data-stage crashes.
+    - Removed code that was messing with other mods selection boxes.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.8
+Date: 2024-10-29
+  Changes:
+    - Renai Transportation technology fix.
+    - Removed ash
+---------------------------------------------------------------------------------------------------
+Version: 3.0.7
+Date: 2024-10-22
+  Changes:
+    - Changed code to reflect upstream internal name changes.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.6
+Date: 2024-10-21
+  Changes:
+    - All technologies now depend on "automation science pack" as the root node.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.5
+Date: 2024-10-21
+  Changes:
+    - Fixed a crash related to the upgrade planner.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.4
+Date: 2024-10-21
+  Changes:
+    - Fixed crash when paired with the editor extensions mod.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.3
+Date: 2024-10-21
+  Changes:
+    - Removed crashy compatibility patch with the nixie tubes mod.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.2
+Date: 2024-10-21
+  Changes:
+    - Fixed certian technologies missing tech prerequisites.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.1
+Date: 2024-10-21
+  Changes:
+    - updated ralesia name
+---------------------------------------------------------------------------------------------------
+Version: 3.0.0
+Date: 2024-10-20
+  Changes:
+    - updated to factorio 2.0
+---------------------------------------------------------------------------------------------------
+Version: 0.2.27
+Date: 2024-8-23
+  Bugfixes:
+    - Fix productivity blacklist being overly general and including recipes like empty barrels
+    - add compatibility for minibuffer so its in automation science with storage tank tech
+---------------------------------------------------------------------------------------------------
+Version: 0.2.26
+Date: 2024-8-7
+  Changes:
+    - Remove incompatibility with Science pack dependencies mod
+---------------------------------------------------------------------------------------------------
+Version: 0.2.25
+Date: 2024-8-4
+  Changes:
+    - Fix crash on load with pyblock
+---------------------------------------------------------------------------------------------------
+Version: 0.2.24
+Date: 2024-7-29
+  Changes:
+    - Whenever pyPP encounters a dependency cycle, it will now print the items involved in the cycle to the logs.
+    - Added an incompatiblity with the science-pack-dependencies mod. (https://github.com/pyanodon/pybugreports/issues/505)
+    - adjusted most entity recipe times for easier copy pasting to requester chests
+---------------------------------------------------------------------------------------------------
+Version: 0.2.23
+Date: 2024-4-25
+  Changes:
+    - Changed the big inventory GUI startup setting from default OFF -> default ON
+    - Added a new startup setting to compactify recipe descriptions. Default ON.
+    - Ulric man is no longer shown in the "made-in" section of recipe tooltips.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.22
+Date: 2024-4-15
+  Changes:
+    - Made sure very early techs are not effected by tech cost multiplier (https://github.com/pyanodon/pybugreports/issues/467)
+    - Fixed duplicate "affected-by-productivity" text on recipe descriptions when combined with the extended-descriptions mod.
+    - Added open/close SFX to all machines (https://github.com/pyanodon/pybugreports/issues/421)
+    - Fixed a crash with the transport drones compatibility
+---------------------------------------------------------------------------------------------------
+Version: 0.2.21
+Date: 2024-4-1
+  Changes:
+    - Added some basic compatibility with Galdoc Manufacturing mod
+---------------------------------------------------------------------------------------------------
+Version: 0.2.20
+Date: 2024-3-13
+  Changes:
+    - Added compatibility with Jetpacks mod
+---------------------------------------------------------------------------------------------------
+Version: 0.2.19
+Date: 2024-2-28
+  Changes:
+    - Fix crash with pyCP is missing
+    - Fix compatibility with Renai Transportation affecting exoskeleton recipe
+---------------------------------------------------------------------------------------------------
+Version: 0.2.18
+Date: 2024-1-20
+  Changes:
+    - Capped the animation speed of all mining drills to stop them from spazzing out at one zillion% speed when given beacons.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.17
+Date: 2024-1-19
+  Changes:
+    - T.U.R.D. tech costs are now determined by their science packs unlocks only.
+    - Fix crash when using a 'remove productivity limitation' mod
+---------------------------------------------------------------------------------------------------
+Version: 0.2.16
+Date: 2024-1-8
+  Changes:
+    - Fixed crash with transport drones compatibility
+    - Fixed crash with train factory mod
+    - Removed the backup cache files, except for PyBlock
+    - Added 'Affected by Productivity' to relavant recipe descriptions
+---------------------------------------------------------------------------------------------------
 Version: 0.2.15
-Date: 2023-??-??
+Date: 2023-11-21
   Changes:
     - Fix accidentally linking unit.ingredients[n] between different techs (re-use of a table reference)
     - Fix crash on load caused by the above creating duplicate technology ingredients
+    - fixed compatibility.lua being loaded after pyPP tech tree changes (https://github.com/pyanodon/pybugreports/issues/333)
+    - added compatibiltiy for RenaiTransportation, AAI Loaders, and Transport drones mods
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.14
 Date: 2023-10-8

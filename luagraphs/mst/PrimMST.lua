@@ -6,8 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
-local minPQ = require('luagraphs.data.MinPQ')
+local list = require "luagraphs.data.list"
+local minPQ = require "luagraphs.data.MinPQ"
 
 local PrimMST = {}
 PrimMST.__index = PrimMST
@@ -22,7 +22,6 @@ function PrimMST.create()
 
     return s
 end
-
 
 function PrimMST:run(G)
     self.marked = {}
@@ -67,6 +66,4 @@ function PrimMST:run(G)
     end
 end
 
-
 return PrimMST
-

@@ -1,6 +1,4 @@
 local graph = require "luagraphs.data.graph"
-local table = require "__stdlib__.stdlib.utils.table"
-
 
 local fz_graph = {}
 fz_graph.__index = fz_graph
@@ -17,7 +15,7 @@ fz_graph.NT_FLUID = "fluid"
 fz_graph.NT_RECIPE = "recipe"
 
 
-fz_graph.node.property_names = table.array_to_dictionary {"virtual", "factorio_name", "tech_name", "ignore_for_dependencies", "internal", "original_key"}
+fz_graph.node.property_names = table.invert {"virtual", "factorio_name", "tech_name", "ignore_for_dependencies", "internal", "original_key"}
 
 function fz_graph.node.create(name, type, properties)
     local n = {}
@@ -33,7 +31,6 @@ function fz_graph.node.create(name, type, properties)
 
     return n
 end
-
 
 function fz_graph.node:update(properties)
     if not properties then return end
@@ -53,16 +50,13 @@ function fz_graph.node:update(properties)
     end
 end
 
-
 function fz_graph.node:add_label(label)
     self.labels[label] = true
 end
 
-
 function fz_graph.node.get_key(name, type)
     return type .. "|" .. name
 end
-
 
 function fz_graph.node:inherit_ignore_for_dependencies(parent_node)
     if parent_node.ignore_for_dependencies and self.ignore_for_dependencies == nil then
@@ -72,43 +66,39 @@ function fz_graph.node:inherit_ignore_for_dependencies(parent_node)
     end
 end
 
-
 function fz_graph.create()
     local g = {}
     setmetatable(g, fz_graph)
 
     g.graph = graph.create(0, true)
     g.nodes = {}
-    g.start_node = g:add_node(fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD, { virtual = true , tech_name = fz_graph.START_NODE_NAME })
+    g.start_node = g:add_node(fz_graph.START_NODE_NAME, fz_graph.NT_TECH_HEAD, {virtual = true, tech_name = fz_graph.START_NODE_NAME})
 
     return g
 end
-
 
 function fz_graph:copy()
     local g = {}
     setmetatable(g, fz_graph)
 
     g.graph = self.graph:copy()
-    g.nodes = table.deep_copy(self.nodes)
+    g.nodes = table.deepcopy(self.nodes)
     g.start_node = g.nodes[self.start_node.key]
 
     return g
 end
 
-
 function fz_graph:create_subgraph(node_list)
     local g = {}
     setmetatable(g, fz_graph)
 
-    local keys = table.map(node_list, function () return true end)
+    local keys = table.map(node_list, function() return true end)
     g.graph = self.graph:create_subgraph(keys)
-    g.nodes = table.deep_copy(node_list)
+    g.nodes = table.deepcopy(node_list)
     g.start_node = g.nodes[self.start_node.name]
 
     return g
 end
-
 
 function fz_graph:add_node(name, type, properties)
     local key = fz_graph.node.get_key(name, type)
@@ -125,17 +115,14 @@ function fz_graph:add_node(name, type, properties)
     return node
 end
 
-
 function fz_graph:get_node(name, type)
     local key = type and fz_graph.node.get_key(name, type) or name
     return self.nodes[key]
 end
 
-
 function fz_graph:node_exists(name, type)
     return self:get_node(name, type) ~= nil and true or false
 end
-
 
 function fz_graph:add_link(from, to, label)
     if not label or label == "" then error("Missing parameter: label") end
@@ -149,11 +136,9 @@ function fz_graph:add_link(from, to, label)
     end
 end
 
-
 function fz_graph:remove_link(from, to, label)
     self.graph:removeEdge(from.key, to.key, label)
 end
-
 
 function fz_graph:remove_node(node)
     if self.nodes[node.key] then
@@ -161,7 +146,6 @@ function fz_graph:remove_node(node)
         self.nodes[node.key] = nil
     end
 end
-
 
 function fz_graph:recursive_remove(filter, logging)
     local found
@@ -180,38 +164,32 @@ function fz_graph:recursive_remove(filter, logging)
     until not found
 end
 
-
 function fz_graph:has_links_from(node)
     return not table.is_empty(self.graph:adj(node.key))
 end
-
 
 function fz_graph:has_links_to(node)
     return not table.is_empty(self.graph:rev(node.key))
 end
 
-
 function fz_graph:get_links_from(node, label)
-    return table.filter(self.graph:adj(node.key), function (e) return not label or e.label == label end)
+    return table.filter(self.graph:adj(node.key), function(e) return not label or e.label == label end)
 end
-
 
 function fz_graph:get_links_to(node, label)
-    return table.filter(self.graph:rev(node.key), function (e) return not label or e.label == label end)
+    return table.filter(self.graph:rev(node.key), function(e) return not label or e.label == label end)
 end
-
 
 function fz_graph:link_exists(from, to, label)
-    return table.any(self.graph.adjList[from.key], function (e) return e:to() == to.key and e.label == label end)
+    return table.any(self.graph.adjList[from.key], function(e) return e:to() == to.key and e.label == label end)
 end
-
 
 function fz_graph:iter_links_from(node, label)
     local tab = self.graph:adj(node.key)
     local k, e
 
     return
-        function ()
+        function()
             repeat
                 k, e = next(tab, k)
             until (label or "") == "" or not k or e.label == label
@@ -219,14 +197,13 @@ function fz_graph:iter_links_from(node, label)
             return k, e
         end
 end
-
 
 function fz_graph:iter_links_to(node, label)
     local tab = self.graph:rev(node.key)
     local k, e
 
     return
-        function ()
+        function()
             repeat
                 k, e = next(tab, k)
             until (label or "") == "" or not k or e.label == label
@@ -235,16 +212,13 @@ function fz_graph:iter_links_to(node, label)
         end
 end
 
-
 function fz_graph:has_label_from(node, label)
-    return table.any(self.graph:adj(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
+    return table.any(self.graph:adj(node.key), function(e) return e.label and e.label ~= "" and (not label or e.label == label) end)
 end
-
 
 function fz_graph:has_label_to(node, label)
-    return table.any(self.graph:rev(node.key), function (e) return e.label and e.label ~= "" and (not label or e.label == label) end)
+    return table.any(self.graph:rev(node.key), function(e) return e.label and e.label ~= "" and (not label or e.label == label) end)
 end
-
 
 function fz_graph:clone_node(source_node, name)
     local node = self:add_node(name, source_node.type)

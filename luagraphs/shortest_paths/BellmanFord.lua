@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local stack = require('luagraphs.data.stack').create()
+local stack = require "luagraphs.data.stack".create()
 
 local BellmanFord = {}
 
@@ -26,7 +26,6 @@ function BellmanFord.create()
     return s
 end
 
-
 function BellmanFord:run(g, s)
     self.source = s
     self.edgeTo = {}
@@ -40,23 +39,23 @@ function BellmanFord:run(g, s)
 
     self.costs[s] = 0
 
-    for i = 0, g:vertexCount()-1 do
-        for k = 0, g:vertexCount()-1 do
+    for i = 0, g:vertexCount() - 1 do
+        for k = 0, g:vertexCount() - 1 do
             local v = g:vertexAt(k)
             local adj_v = g:adj(v)
 
-            for j = 0, adj_v:size()-1 do
+            for j = 0, adj_v:size() - 1 do
                 local e = adj_v:get(j)
                 self:relax(g, e)
             end
         end
     end
 
-    for i = 0, g:vertexCount()-1 do
+    for i = 0, g:vertexCount() - 1 do
         local v = g:vertexAt(i)
         local adj_v = g:adj(v)
 
-        for j = 0, adj_v:size()-1 do
+        for j = 0, adj_v:size() - 1 do
             local e = adj_v:get(j)
 
             if self:relax(g, e) then
@@ -65,7 +64,6 @@ function BellmanFord:run(g, s)
         end
     end
 end
-
 
 function BellmanFord:relax(g, e)
     local w = e:to()
@@ -77,21 +75,17 @@ function BellmanFord:relax(g, e)
     end
 end
 
-
 function BellmanFord:hasPathTo(v)
     return self.costs[v] < BellmanFord.MAX_VALUE
 end
-
 
 function BellmanFord:hasNegativeCycle()
     return self.negativeCycle
 end
 
-
 function BellmanFord:getPathLength(v)
     return self.costs[v]
 end
-
 
 function BellmanFord:getPathTo(v)
     local x = v
@@ -105,6 +99,4 @@ function BellmanFord:getPathTo(v)
     return stack:toList()
 end
 
-
 return BellmanFord
-

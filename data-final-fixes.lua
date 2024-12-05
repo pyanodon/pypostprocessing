@@ -1,67 +1,129 @@
+require "prototypes.quality"
+
 local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
-
-require('__stdlib__/stdlib/data/data').Util.create_data_globals()
-
-local table = require('__stdlib__/stdlib/utils/table')
 local config = require "prototypes.config"
 
-for _, module in pairs(data.raw.module) do
-    local remove_recipe = {}
-
-    for _, r in pairs(module.limitation or {}) do
-        if not data.raw.recipe[r] then
-            remove_recipe[r] = true
-        end
-    end
-
-    if not table.is_empty(remove_recipe) then
-        local limit = table.array_to_dictionary(module.limitation, true)
-
-        for r, _ in pairs(remove_recipe) do
-            limit[r] = nil
-        end
-
-        module.limitation = table.keys(limit)
-    end
-
-    remove_recipe = {}
-
-    for _, r in pairs(module.limitation_blacklist or {}) do
-        if not data.raw.recipe[r] then
-            remove_recipe[r] = true
-        end
-    end
-
-    if not table.is_empty(remove_recipe) then
-        local limit = table.array_to_dictionary(module.limitation_blacklist, true)
-
-        for r, _ in pairs(remove_recipe) do
-            limit[r] = nil
-        end
-
-        module.limitation_blacklist = table.keys(limit)
-    end
-end
+local signal_recipes = {
+}
+local create_signal_mode = settings.startup["pypp-extended-recipe-signals"].value
 
 for _, recipe in pairs(data.raw.recipe) do
     recipe.always_show_products = true
     recipe.always_show_made_in = true
-    if recipe.results or recipe.result then
-        if not recipe.results then
-            recipe.results = {{name = recipe.result, amount = recipe.result_count or 1, type = 'item'}}
-            recipe.result = nil
-            recipe.result_count = nil
+    if not recipe.maximum_productivity then recipe.maximum_productivity = 1000000 end -- Disable the max productivity cap
+
+    if recipe.results then
+        -- fallback for localised names
+        if not recipe.localised_name and not recipe.hidden then
+            local fallback = recipe.main_product or (#recipe.results == 1 and recipe.results[1].name)
+            if fallback and fallback ~= "" then
+                local product_type = data.raw.fluid[fallback] and "fluid" or "item"
+                local localised_name = {"?", {"recipe-name." .. recipe.name}}
+                if product_type == "item" then
+                    local product = ITEM(fallback)
+                    table.insert(localised_name, product.localised_name or {"item-name." .. product.name})
+                    if product.place_result then
+                        table.insert(localised_name, ENTITY(product.place_result).localised_name or {"entity-name." .. product.place_result})
+                    end
+                    if product.place_as_tile then
+                        table.insert(localised_name, TILE(product.place_as_tile.result).localised_name or {"tile-name." .. product.place_as_tile.result})
+                    end
+                    if product.place_as_equipment_result then table.insert(localised_name, {"equipment-name." .. product.place_as_equipment_result}) end
+                else
+                    local product = FLUID(fallback)
+                    table.insert(localised_name, product.localised_name or {"fluid-name." .. product.name})
+                end
+                recipe.localised_name = localised_name
+            end
+        end
+
+        -- Skip if recipe only produces the item, not uses it as a catalyst, or if it does not allow prod
+        if #recipe.results == 1 or not recipe.allow_productivity then
+            goto NEXT_RECIPE
         end
         for i, result in pairs(recipe.results) do
             local name = result.name or result[1]
             local amount = result.amount or result[2]
-            if name and config.NON_PRODDABLE_ITEMS[name] and not result.catalyst_amount then
-                if result[1] then
-                    recipe.results[i] = {type = result.type or 'item', name = name, amount = amount, catalyst_amount = amount}
-                else
-                    result.catalyst_amount = amount
+            if not name or not config.NON_PRODDABLE_ITEMS[name] or result.ignored_by_productivity then
+                goto NEXT_RESULT
+            end
+            -- Convert to an explicitly long-form result format
+            if result[1] then
+                recipe.results[i] = {
+                    type = result.type or "item",
+                    name = name,
+                    amount = amount,
+                    ignored_by_stats = amount,
+                    ignored_by_productivity = amount,
+                    [1] = nil,
+                    [2] = nil
+                }
+            else -- Just set the catalyst amount
+                result.ignored_by_stats = amount
+                result.ignored_by_productivity = amount
+            end
+            ::NEXT_RESULT::
+        end
+    end
+    ::NEXT_RECIPE::
+
+    -- Build table of recipes that may need signals
+    if create_signal_mode and recipe.results then
+        local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
+        if product and product ~= "" and recipe.localised_name then
+            if signal_recipes[product] == nil then
+                signal_recipes[product] = { recipe }
+            else
+                table.insert(signal_recipes[product], recipe)
+            end
+        end
+    end  
+end
+
+-------------------------------------------
+-- Recipe signals --
+-------------------------------------------
+
+if create_signal_mode then
+    for _, alternatives in pairs(signal_recipes) do
+        if #alternatives > 1 then
+            for _, recipe in pairs(alternatives) do
+                -- Skip recipe categories where signals aren't useful for any recipe
+                if(recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
+                    break
                 end
+                -- Determine amount of main product to display in signal name
+                amt = 0
+                for _, result in pairs(recipe.results) do
+                    if result.name  then
+                        local is_main_product = recipe.main_product and result.name == recipe.main_product
+                        if is_main_product and result.probability and result.probability < 1 then
+                            amt = result.probability
+                            break
+                        elseif is_main_product and result.amount_min and result.amount_max then
+                            amt = (result.amount_min + result.amount_max)/2
+                            break
+                        elseif result.amount then
+                            if is_main_product then
+                                amt = result.amount
+                                break
+                            end
+                            -- Fallback that determines main product based on highest output
+                            amt = math.max(amt, result.amount)
+                        end
+                    end
+                end
+                -- Inject recipe output into each localised name parameter, since native output display is not consistently shown
+                if recipe.localised_name[1] == "?" then
+                    recipe.show_amount_in_title = false
+                    for i, name in pairs(recipe.localised_name) do
+                        if i > 1 and amt ~= 1 then
+                            recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
+                        end
+                    end
+                end
+                recipe.hide_from_signal_gui = false
             end
         end
     end
@@ -74,79 +136,79 @@ end
 -- List below only includes py resource category names
 local category_data = {
     --borax = {'raw-borax', 'ore-quartz'}
-    ['borax'] = {''},
-    ['niobium'] = {''},
-    ['volcanic-pipe'] = {''},
-    ['molybdenum'] = {''},
-    ['regolite'] = {''},
-    ['ore-quartz'] = {''},
-    ['salt-rock'] = {''},
-    ['phosphate-rock-02'] = {''},
-    ['iron-rock'] = {''},
-    ['coal-rock'] = {''},
-    ['lead-rock'] = {''},
-    ['quartz-rock'] = {''},
-    ['aluminium-rock'] = {''},
-    ['chromium-rock'] = {''},
-    ['copper-rock'] = {''},
-    ['nexelit-rock'] = {''},
-    ['nickel-rock'] = {''},
-    ['tin-rock'] = {''},
-    ['titanium-rock'] = {''},
-    ['uranium-rock'] = {''},
-    ['zinc-rock'] = {''},
-    ['phosphate'] = {''},
-    ['rare-earth'] = {''},
-    ['oil-sand'] = {''},
-    ['oil-mk01'] = {''},
-    ['oil-mk02'] = {''},
-    ['tar-patch'] = {''},
-    ['sulfur-patch'] = {''},
-    ['oil-mk03'] = {''},
-    ['oil-mk04'] = {''},
-    ['bitumen-seep'] = {''},
-    ['natural-gas'] = {''},
-    ['ralesia-flowers'] = {''},
-    ['tuuphra-tuber'] = {''},
-    ['rennea-flowers'] = {''},
-    ['grod-flower'] = {''},
-    ['yotoi-tree'] = {''},
-    ['yotoi-tree-fruit'] = {''},
-    ['kicalk-tree'] = {''},
-    ['arum'] = {''},
-    ['ore-bioreserve'] = {''},
-    ['ore-nexelit'] = {''},
-    ['geothermal-crack'] = {''},
-    ['ree'] = {''},
-    ['antimonium'] = {''},
-    ['mova'] = {''}
+    ["borax"] = {""},
+    ["niobium"] = {""},
+    ["volcanic-pipe"] = {""},
+    ["molybdenum"] = {""},
+    ["regolite"] = {""},
+    ["ore-quartz"] = {""},
+    ["salt-rock"] = {""},
+    ["phosphate-rock-02"] = {""},
+    ["iron-rock"] = {""},
+    ["coal-rock"] = {""},
+    ["lead-rock"] = {""},
+    ["quartz-rock"] = {""},
+    ["aluminium-rock"] = {""},
+    ["chromium-rock"] = {""},
+    ["copper-rock"] = {""},
+    ["nexelit-rock"] = {""},
+    ["nickel-rock"] = {""},
+    ["tin-rock"] = {""},
+    ["titanium-rock"] = {""},
+    ["uranium-rock"] = {""},
+    ["zinc-rock"] = {""},
+    ["phosphate"] = {""},
+    ["rare-earth"] = {""},
+    ["oil-sand"] = {""},
+    ["oil-mk01"] = {""},
+    ["oil-mk02"] = {""},
+    ["tar-patch"] = {""},
+    ["sulfur-patch"] = {""},
+    ["oil-mk03"] = {""},
+    ["oil-mk04"] = {""},
+    ["bitumen-seep"] = {""},
+    ["natural-gas"] = {""},
+    ["ralesia-flowers"] = {""},
+    ["tuuphra-tuber"] = {""},
+    ["rennea-flowers"] = {""},
+    ["grod-flower"] = {""},
+    ["yotoi-tree"] = {""},
+    ["yotoi-tree-fruit"] = {""},
+    ["kicalk-tree"] = {""},
+    ["arum"] = {""},
+    ["ore-bioreserve"] = {""},
+    ["ore-nexelit"] = {""},
+    ["geothermal-crack"] = {""},
+    ["ree"] = {""},
+    ["antimonium"] = {""},
+    ["mova"] = {""}
 }
 for resource, proto in pairs(data.raw.resource) do
-    local category_name = proto.category or 'basic-solid'
+    local category_name = proto.category or "basic-solid"
     local entry = category_data[category_name]
     if entry then
         -- Add our autoplace control name which helpfully has the icon
-        entry[#entry+1] = {
-            '?',
+        entry[#entry + 1] = {
+            "?",
             {
-                '',
-                #entry > 1 and ', ' or '',
+                "",
+                #entry > 1 and ", " or "",
                 {
-                    '?',
+                    "?",
                     {
-                        'autoplace-control-names.' .. resource
+                        "autoplace-control-names." .. resource
                     },
                     {
-                        '',
-                        '[img=entity.' .. resource .. ']',
-                        {'entity-name.' .. resource}
+                        "",
+                        "[img=entity." .. resource .. "]",
+                        {"entity-name." .. resource}
                     }
                 }
             }
         }
     end
 end
-for category_name, proto in pairs(data.raw['resource-category']) do
+for category_name, proto in pairs(data.raw["resource-category"]) do
     local resource_list = category_data[category_name]
     if resource_list then
         -- Just one entry besides the string concat
@@ -154,17 +216,17 @@ for category_name, proto in pairs(data.raw['resource-category']) do
             -- resource name, not autoplace - no icon. absolutely cursed indexing.
             local ore_locale = resource_list[2][2][3][3][3][1]
             -- {'!'} here just functions to tell '?' to skip the entry
-            proto.localised_name = {'?', proto.localised_name or {'!'}, {ore_locale}}
+            proto.localised_name = {"?", proto.localised_name or {"!"}, {ore_locale}}
             -- resource description just transposed here
-            ore_locale = ore_locale:gsub('%-name%.', '-description.')
-            proto.localised_description = {'?', proto.localised_description or {'!'}, {ore_locale}}
+            ore_locale = ore_locale:gsub("%-name%.", "-description.")
+            proto.localised_description = {"?", proto.localised_description or {"!"}, {ore_locale}}
         else
             proto.localised_description = {
-                '?',
+                "?",
                 {
-                    '',
-                    proto.localised_description or {'resource-category-description.' .. category_name},
-                    '\n',
+                    "",
+                    proto.localised_description or {"resource-category-description." .. category_name},
+                    "\n",
                     resource_list
                 },
                 resource_list
@@ -174,49 +236,17 @@ for category_name, proto in pairs(data.raw['resource-category']) do
 end
 -- End resource category locale builder
 
-local function create_tmp_tech(recipe, original_tech, add_dependency)
-    local new_tech = TECHNOLOGY {
-        type = "technology",
-        name = "tmp-" .. recipe .. "-tech",
-        icon = "__pypostprocessing__/graphics/placeholder.png",
-        icon_size = 128,
-        order = "c-a",
-        prerequisites = {},
-        effects = {
-            { type = "unlock-recipe", recipe = recipe }
-        },
-        unit = {
-            count = 30,
-            ingredients = {
-                {"automation-science-pack", 1}
-            },
-            time = 30
-        }
-    }
-
-    RECIPE(recipe):set_enabled(false)
-
-    if original_tech then
-        RECIPE(recipe):remove_unlock(original_tech)
-
-        if add_dependency then
-            new_tech.dependencies = { original_tech }
+if mods.pycoalprocessing and not mods["extended-descriptions"] then
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe.allow_productivity then
+            py.add_to_description("recipe", recipe, {"recipe-description.affected-by-productivity"})
         end
     end
-
-    return new_tech
 end
 
-if mods["PyBlock"] then
-    create_tmp_tech("fake-bioreserve-ore")
-    --aluminium
-    create_tmp_tech("borax-mine", "glass")
-end
-
-----------------------------------------------------
+--------------------------------------------------
 -- AUTOTECH
-----------------------------------------------------
-
+--------------------------------------------------
 if dev_mode then
     -- correct tech dependencies before autotech happens
     for _, tech in pairs(data.raw.technology) do
@@ -227,28 +257,36 @@ if dev_mode then
                 science_packs[dep_pack] = true
             end
         end
-    
+
         for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
             science_packs[pack.name or pack[1]] = true
         end
-    
-        add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
-    
-        if mods["pyalienlife"] then
-            add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
-            add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
-            add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
-            add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
-            add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
-        end
-    
-        if mods["pyalternativeenergy"] then
-            add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+
+        if mods.pystellarexpedition then
+            for i = 1, #config.SCIENCE_PACKS - 1 do
+                local pack = config.SCIENCE_PACKS[i]
+                local next = config.SCIENCE_PACKS[i + 1]
+                add_science_pack_dep(tech, next, pack)
+            end
+        else
+            add_science_pack_dep(tech, "utility-science-pack", "military-science-pack")
+
+            if mods["pyalienlife"] then
+                add_science_pack_dep(tech, "utility-science-pack", "py-science-pack-4")
+                add_science_pack_dep(tech, "production-science-pack", "py-science-pack-3")
+                add_science_pack_dep(tech, "chemical-science-pack", "py-science-pack-2")
+                add_science_pack_dep(tech, "logistic-science-pack", "py-science-pack-1")
+                add_science_pack_dep(tech, "py-science-pack-4", "military-science-pack")
+            end
+
+            if mods["pyalternativeenergy"] then
+                add_science_pack_dep(tech, "production-science-pack", "military-science-pack")
+            end
         end
     end
 
     log("AUTOTECH START")
-    local at = require("prototypes.functions.auto_tech").create()
+    local at = require "prototypes.functions.auto_tech".create()
     at:run()
     if create_cache_mode then
         at:create_cachefile_code()
@@ -256,7 +294,46 @@ if dev_mode then
     log("AUTOTECH END")
 else
     require "cached-configs.run"
+
+    -- some quick and dirty manual fixes until quintuples autotech rewrite is finished
+    data.raw.technology["follower-robot-count-5"].unit.count = nil
+    for _, t in pairs(data.raw.technology) do
+        local new_prereqs = {}
+        for _, prereq in pairs(t.prerequisites or {}) do
+            if data.raw.technology[prereq] then
+                new_prereqs[#new_prereqs + 1] = prereq
+            end
+        end
+        t.prerequisites = new_prereqs
+    end
+
+    local starting_techs = {
+        "automation",
+        "coal-processing-1",
+        "gun-turret",
+        "soil-washing",
+        "stone-wall",
+    }
+
+    for _, t in pairs(starting_techs) do
+        t = data.raw.technology[t]
+        if t then t.prerequisites = {"automation-science-pack"} end
+        ::continue::
+    end
+    
+    if not mods["PyBlock"] then
+      data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
+    end
+    
+    data.raw["technology"]["inserter-capacity-bonus-1"].prerequisites = {mods.pyalienlife and "py-science-pack-mk02" or "chemical-science-pack"}
+
+    data.raw.technology["steel-axe"].unit = nil
 end
+
+----------------------------------------------------
+-- THIRD PARTY COMPATIBILITY
+----------------------------------------------------
+require "prototypes/functions/compatibility"
 
 ----------------------------------------------------
 -- TECHNOLOGY CHANGES
@@ -271,7 +348,7 @@ for _, tech in pairs(data.raw.technology) do
     local tech_ingredients_to_use = {}
 
     local add_military_science = false
-    local highest_science_pack = 'automation-science-pack'
+    local highest_science_pack = "automation-science-pack"
     -- Add the current ingredients for the technology
     for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
         local pack = ingredient.name or ingredient[1]
@@ -297,35 +374,170 @@ for _, tech in pairs(data.raw.technology) do
     -- Push a copy of our final list to .ingredients
     tech.unit.ingredients = {}
     for pack_name, pack_amount in pairs(tech_ingredients_to_use) do
-        tech.unit.ingredients[#tech.unit.ingredients+1] = {name = pack_name, amount = pack_amount}
+        tech.unit.ingredients[#tech.unit.ingredients + 1] = {pack_name, pack_amount}
     end
     ::continue::
 end
 
 
 for _, lab in pairs(data.raw.lab) do
-    table.sort(lab.inputs, function (i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
+    table.sort(lab.inputs, function(i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
 end
 
-if mods['pycoalprocessing'] then
-    for _, subgroup in pairs(data.raw['item-subgroup']) do
-        if subgroup.group == 'intermediate-products' then
-            subgroup.group = 'coal-processing'
-            subgroup.order = 'b'
+if mods["pycoalprocessing"] then
+    for _, subgroup in pairs(data.raw["item-subgroup"]) do
+        if subgroup.group == "intermediate-products" then
+            subgroup.group = "coal-processing"
+            subgroup.order = "b"
         end
     end
 end
 
-for _, type in pairs{'furnace', 'assembling-machine'} do
+for _, type in pairs {"furnace", "assembling-machine"} do
     for _, prototype in pairs(data.raw[type]) do
         prototype.match_animation_speed_to_activity = false
     end
 end
 
-----------------------------------------------------
--- THIRD PARTY COMPATIBILITY
-----------------------------------------------------
-require('prototypes/functions/compatibility')
-if type(data.data_crawler) == 'string' and string.sub(data.data_crawler, 1, 5) == 'yafc ' then
-    require('prototypes/yafc')
+-- infrastructure times scale with tiers, makes pasting to requester chests and buffering inside assemblers better
+for _, type in pairs {"furnace", "assembling-machine", "mining-drill", "lab"} do
+    for _, prototype in pairs(data.raw[type]) do
+        local name = prototype.name
+        local tier = tonumber(string.sub(name, -1)) or 1
+        if data.raw.recipe[name] and data.raw.recipe[name].energy_required == .5 then
+            data.raw.recipe[name].energy_required = math.max(tier, 1)
+        end
+    end
 end
+
+-- YAFC
+if type(data.data_crawler) == "string" and string.sub(data.data_crawler, 1, 5) == "yafc " then
+    require "prototypes/yafc"
+end
+
+-- force mining drill speed to not increase with speed modules
+for _, drill in pairs(data.raw["mining-drill"]) do
+    drill.perceived_performance = drill.perceived_performance or {maximum = 1.5, performance_to_activity_rate = 0.2}
+end
+
+-- custom module alt-mode draw positioning
+for prototype_name, inventory in pairs{
+    ["mining-drill"] = defines.inventory.mining_drill_modules,
+    ["assembling-machine"] = defines.inventory.assembling_machine_modules,
+    ["furnace"] = defines.inventory.furnace_modules,
+    ["lab"] = defines.inventory.lab_modules,
+    ["rocket-silo"] = defines.inventory.rocket_silo_modules,
+    ["beacon"] = defines.inventory.beacon_modules,
+} do
+    for _, machine in pairs(data.raw[prototype_name] or {}) do
+        local collision_box = machine.selection_box or machine.collision_box
+        if not collision_box then goto continue end
+
+        local left_top = collision_box[1] or collision_box.left_top
+        local right_bottom = collision_box[2] or collision_box.right_bottom
+        if not left_top or not right_bottom then goto continue end
+
+        local x1, y1 = left_top[1] or left_top.x, left_top[2] or left_top.y
+        local x2, y2 = right_bottom[1] or right_bottom.x, right_bottom[2] or right_bottom.y
+        local width, height = x2 - x1, y2 - y1
+        local area = width * height
+
+        if not machine.module_slots or machine.module_slots == 0 then goto continue end
+
+        local scale_factors = { 1 }
+        for i = 1, 20 do scale_factors[i+1] = scale_factors[i] * 0.95 end
+
+        if width > 4 then table.insert(scale_factors, 1, 1.25) end
+        if width > 5 then table.insert(scale_factors, 1, 1.5) end
+        if width > 12 then table.insert(scale_factors, 1, 2) end
+        if width > 22 then table.insert(scale_factors, 1, 2.5) end
+        if width > 32 then table.insert(scale_factors, 1, 3) end
+
+        for _, scale in pairs(scale_factors) do
+            local module_alt_mode_width = 1.1 * scale -- width and height of the module icon in tiles
+
+            local area_covered_by_modules = (math.ceil(machine.module_slots ^ 0.5) ^ 2) * (module_alt_mode_width ^ 2)
+            if area_covered_by_modules > area * 0.4 then goto too_big end
+
+            local max_icons_per_row = machine.module_slots
+            while max_icons_per_row * module_alt_mode_width > width do
+                if max_icons_per_row <= 2 then break end
+                max_icons_per_row = max_icons_per_row - 1
+            end
+
+            local num_module_rows = math.ceil(machine.module_slots / max_icons_per_row)
+            if num_module_rows ~= 1 and num_module_rows * module_alt_mode_width > height * 0.35 then goto too_big end
+
+            -- make it as even a square as possible
+            while true do
+                max_icons_per_row = max_icons_per_row - 1
+                local new_rows = math.ceil(machine.module_slots / max_icons_per_row)
+                if num_module_rows ~= new_rows then
+                    max_icons_per_row = max_icons_per_row + 1
+                    break
+                end
+            end
+
+            local y = y2 - (num_module_rows * module_alt_mode_width)
+            local shift = {0, y}
+
+            machine.icons_positioning = {
+                {inventory_index = inventory, shift = shift, scale = scale, max_icons_per_row = max_icons_per_row},
+            }
+            break
+
+            ::too_big::
+        end
+        ::continue::
+    end
+end
+
+if not data.raw["module-category"]["quality"] then
+    data:extend {{
+        type = "module-category",
+        name = "quality"
+    }}
+end
+
+local default_mods = {"productivity", "speed", "efficiency", "quality"}
+for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "beacon", "rocket-silo"} do
+    for _, prototype in pairs(data.raw[value]) do
+        prototype.allowed_module_categories = prototype.allowed_module_categories or default_mods
+    end
+end
+
+-- remove for logging unused attributes
+for _, category in pairs(data.raw) do
+    for _, prototype in pairs(category) do
+        prototype.dependencies = nil
+        prototype.ignore_for_dependencies = nil
+    end
+end
+
+for _, vehicle_prototype in pairs {"car", "locomotive", "spider-vehicle"} do
+    for _, vehicle in pairs(data.raw[vehicle_prototype]) do
+        vehicle.allow_remote_driving = true
+    end
+end
+
+-- add circuit connections to machines
+for _, crafting_machine_prototype in pairs {"assembling-machine", "rocket-silo", "furnace"} do
+    for _, crafting_machine in pairs(data.raw[crafting_machine_prototype]) do
+        if crafting_machine.hidden then goto continue end
+        if crafting_machine.circuit_connector then goto continue end
+
+        crafting_machine.circuit_connector = table.deepcopy(data.raw["assembling-machine"]["assembling-machine-1"].circuit_connector)
+        crafting_machine.circuit_wire_max_distance = crafting_machine.circuit_wire_max_distance or 14
+
+        ::continue::
+    end
+end
+
+-- fix render layers for construction and logistic bots alt-mode icons
+for _, bot_type in pairs{"construction-robot", "logistic-robot"} do
+    for _, bot in pairs(data.raw[bot_type]) do
+        bot.icon_draw_specification = bot.icon_draw_specification or {shift = {0, -0.2}, scale = 0.8, render_layer = "air-entity-info-icon"}
+    end
+end
+
+if dev_mode then require "tests.data" end

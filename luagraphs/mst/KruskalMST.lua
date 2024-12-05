@@ -6,9 +6,9 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local list = require('luagraphs.data.list')
-local minPQ = require('luagraphs.data.MinPQ')
-local unionFind = require('luagraphs.data.UnionFind')
+local list = require "luagraphs.data.list"
+local minPQ = require "luagraphs.data.MinPQ"
+local unionFind = require "luagraphs.data.UnionFind"
 
 local KruskalMST = {}
 KruskalMST.__index = KruskalMST
@@ -24,7 +24,6 @@ function KruskalMST.create()
     return s
 end
 
-
 function KruskalMST:run(G)
     self.marked = {}
     self.path = list.create()
@@ -36,7 +35,7 @@ function KruskalMST:run(G)
 
     local edges = G:edges()
 
-    for i = 0, edges:size()-1 do
+    for i = 0, edges:size() - 1 do
         local e = edges:get(i)
         pq:add(e)
     end
@@ -55,6 +54,4 @@ function KruskalMST:run(G)
     end
 end
 
-
 return KruskalMST
-
