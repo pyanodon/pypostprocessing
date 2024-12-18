@@ -540,4 +540,8 @@ for _, bot_type in pairs{"construction-robot", "logistic-robot"} do
     end
 end
 
+-- https://github.com/pyanodon/pybugreports/issues/787
+data.raw["tips-and-tricks-item"]["copy-paste"].trigger = nil
+data.raw["tips-and-tricks-item"]["copy-paste"].skip_trigger = nil
+
 if dev_mode then require "tests.data" end
