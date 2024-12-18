@@ -506,14 +506,6 @@ for _, value in pairs {"furnace", "assembling-machine", "mining-drill", "lab", "
     end
 end
 
--- remove for logging unused attributes
-for _, category in pairs(data.raw) do
-    for _, prototype in pairs(category) do
-        prototype.dependencies = nil
-        prototype.ignore_for_dependencies = nil
-    end
-end
-
 for _, vehicle_prototype in pairs {"car", "locomotive", "spider-vehicle"} do
     for _, vehicle in pairs(data.raw[vehicle_prototype]) do
         vehicle.allow_remote_driving = true
@@ -539,9 +531,5 @@ for _, bot_type in pairs{"construction-robot", "logistic-robot"} do
         bot.icon_draw_specification = bot.icon_draw_specification or {shift = {0, -0.2}, scale = 0.8, render_layer = "air-entity-info-icon"}
     end
 end
-
--- https://github.com/pyanodon/pybugreports/issues/787
-data.raw["tips-and-tricks-item"]["copy-paste"].trigger = nil
-data.raw["tips-and-tricks-item"]["copy-paste"].skip_trigger = nil
 
 if dev_mode then require "tests.data" end
