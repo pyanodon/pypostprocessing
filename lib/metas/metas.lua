@@ -75,6 +75,10 @@ end
 
 local extend = data.extend
 data.extend = function(self, prototypes)
+    -- Wube made it so data:extend and data.extend are the same
+    if self ~= prototypes and prototypes == nil then
+        prototypes = self
+    end
     extend(self, prototypes)
     for _, prototype in pairs(prototypes) do
         local meta = metas[prototype.type]
