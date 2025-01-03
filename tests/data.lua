@@ -127,7 +127,8 @@ local function test_entity_graphics()
         excluded_entities["aerial-blimp-mk0" .. i .. "-accumulator"] = true
     end
 
-    log("test entity graphics:")
+    local success = true
+    log("\ntest entity graphics:")
     for entity_type, _ in pairs(defines.prototypes.entity) do
         for name, entity in pairs((excluded_types[entity_type] and {}) or (data.raw[entity_type] or {})) do
             if not excluded_entities[name] then
@@ -151,14 +152,17 @@ local function test_entity_graphics()
                 end
                 if not graphics_exist then
                     log("WARNING: entity type " .. entity_type .. ", name: " .. name .. " is missing required graphics")
+                    success = false
                 end
             end
         end
     end
+    if success then log("graphics check successful") end
 end
 
 local function scan_for_cages()
-    log("test cage recipes:")
+    local success = true
+    log("\ntest cage recipes:")
     for recipe_name, recipe in pairs(data.raw.recipe) do
         if recipe_name:find("%-pyvoid$")
             or recipe_name:find("^biomass%-")
@@ -194,9 +198,11 @@ local function scan_for_cages()
         end
         if cage_input and not cage_output then
             log(string.format("Recipe \'%s\' takes a caged animal as input but does not return a cage", recipe_name))
+            success = false
         end
         ::NEXT_RECIPE_CAGECHECK::
     end
+    if success then log("cage check successful") end
 end
 
 test_entity_graphics()

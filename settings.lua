@@ -1,4 +1,4 @@
-data:extend{
+data:extend {
     {
         type = "bool-setting",
         name = "pypp-dev-mode",
@@ -43,5 +43,13 @@ data:extend{
         setting_type = "startup",
         default_value = false,
         order = "e",
-    }
+    },
+    {
+        type = "bool-setting",
+        name = "pypp-tests",
+        setting_type = "startup",
+        default_value = false,
+        hidden = true,
+        order = "e",
+    },
 }

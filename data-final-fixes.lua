@@ -73,12 +73,12 @@ for _, recipe in pairs(data.raw.recipe) do
         local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
         if product and product ~= "" and recipe.localised_name then
             if signal_recipes[product] == nil then
-                signal_recipes[product] = { recipe }
+                signal_recipes[product] = {recipe}
             else
                 table.insert(signal_recipes[product], recipe)
             end
         end
-    end  
+    end
 end
 
 -------------------------------------------
@@ -90,19 +90,19 @@ if create_signal_mode then
         if #alternatives > 1 then
             for _, recipe in pairs(alternatives) do
                 -- Skip recipe categories where signals aren't useful for any recipe
-                if(recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
+                if (recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
                     break
                 end
                 -- Determine amount of main product to display in signal name
                 amt = 0
                 for _, result in pairs(recipe.results) do
-                    if result.name  then
+                    if result.name then
                         local is_main_product = recipe.main_product and result.name == recipe.main_product
                         if is_main_product and result.probability and result.probability < 1 then
                             amt = result.probability
                             break
                         elseif is_main_product and result.amount_min and result.amount_max then
-                            amt = (result.amount_min + result.amount_max)/2
+                            amt = (result.amount_min + result.amount_max) / 2
                             break
                         elseif result.amount then
                             if is_main_product then
@@ -320,11 +320,11 @@ else
         if t then t.prerequisites = {"automation-science-pack"} end
         ::continue::
     end
-    
+
     if not mods["PyBlock"] then
-      data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
+        data.raw.technology["automation-science-pack"].prerequisites = {"steam-power"}
     end
-    
+
     data.raw["technology"]["inserter-capacity-bonus-1"].prerequisites = {mods.pyalienlife and "py-science-pack-mk02" or "chemical-science-pack"}
 
     data.raw.technology["steel-axe"].unit = nil
@@ -421,7 +421,7 @@ for _, drill in pairs(data.raw["mining-drill"]) do
 end
 
 -- custom module alt-mode draw positioning
-for prototype_name, inventory in pairs{
+for prototype_name, inventory in pairs {
     ["mining-drill"] = defines.inventory.mining_drill_modules,
     ["assembling-machine"] = defines.inventory.assembling_machine_modules,
     ["furnace"] = defines.inventory.furnace_modules,
@@ -444,8 +444,8 @@ for prototype_name, inventory in pairs{
 
         if not machine.module_slots or machine.module_slots == 0 then goto continue end
 
-        local scale_factors = { 1 }
-        for i = 1, 20 do scale_factors[i+1] = scale_factors[i] * 0.95 end
+        local scale_factors = {1}
+        for i = 1, 20 do scale_factors[i + 1] = scale_factors[i] * 0.95 end
 
         if width > 4 then table.insert(scale_factors, 1, 1.25) end
         if width > 5 then table.insert(scale_factors, 1, 1.5) end
@@ -526,10 +526,10 @@ for _, crafting_machine_prototype in pairs {"assembling-machine", "rocket-silo",
 end
 
 -- fix render layers for construction and logistic bots alt-mode icons
-for _, bot_type in pairs{"construction-robot", "logistic-robot"} do
+for _, bot_type in pairs {"construction-robot", "logistic-robot"} do
     for _, bot in pairs(data.raw[bot_type]) do
         bot.icon_draw_specification = bot.icon_draw_specification or {shift = {0, -0.2}, scale = 0.8, render_layer = "air-entity-info-icon"}
     end
 end
 
-if dev_mode then require "tests.data" end
+if settings.startup["pypp-tests"].value then require "tests.data" end
