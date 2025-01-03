@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.21
-Date: 2024-12-23
+Date: 2025-1-2
   Changes:
     - French translation (by d-stephane)
+    - Fixed all pyAL tiered recipes and slaughterhouses allowing prod when not on the allow list.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.20
 Date: 2024-12-18
