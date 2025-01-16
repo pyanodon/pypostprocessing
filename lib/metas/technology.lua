@@ -26,24 +26,7 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
 local metas = {}
 
 metas.standardize = function(self)
-    if self.normal then
-        for k, v in pairs(self.normal) do
-            if not self[k] then self[k] = v end
-        end
-    elseif self.expensive then
-        for k, v in pairs(self.expensive) do
-            if not self[k] then self[k] = v end
-        end
-    end
-
-    -- unit is not mandatory is 2.0
-    -- if not self.unit then self.unit = {ingredients = {}} end
-
-    --TODO: See if SA launch version still requires the shorthand spec
-    --[[
-    for k, p in pairs(self.unit.ingredients) do
-        self.unit.ingredients[k] = py.standardize_product(p)
-    end]]
+    if not self.unit then self.unit = {ingredients = {}} end
 
     self.prerequisites = self.prerequisites or {}
     self.dependencies = self.dependencies or {}

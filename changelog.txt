@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.22
+Date: ?
+  Changes:
+    - Fixed multiple melonlib functions still check for .expensive and .normal. Resolves https://github.com/pyanodon/pybugreports/issues/773
+---------------------------------------------------------------------------------------------------
 Version: 3.0.21
 Date: 2025-1-2
   Changes:

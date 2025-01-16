@@ -52,18 +52,6 @@ RECIPE = setmetatable(data.raw.recipe, {
 })
 
 metas.standardize = function(self)
-    if self.normal then
-        for k, v in pairs(self.normal) do
-            if not self[k] then self[k] = v end
-        end
-    elseif self.expensive then
-        for k, v in pairs(self.expensive) do
-            if not self[k] then self[k] = v end
-        end
-    end
-    self.normal = nil
-    self.expensive = nil
-
     if self.results and type(self.results) == "table" then
         self.result = nil
         self.result_count = nil
