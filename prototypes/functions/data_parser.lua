@@ -498,7 +498,7 @@ function data_parser:add_entity_dependencies(entity, recipe_node, recipe_name, i
                     self.fg:add_link(fuel_node, recipe_node, LABEL_FUEL)
                 end
             end
-        elseif energy_source.type == "fluid" and energy_source.fluid_box.filter ~= "void" then
+        elseif energy_source.type == "fluid" and not data.raw.fluid[energy_source.fluid_box.filter].hidden then
             recipe_node:add_label(LABEL_FUEL)
 
             local fluid_name = energy_source.fluid_box.filter
