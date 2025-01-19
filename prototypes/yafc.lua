@@ -46,7 +46,7 @@ if mods["pyalienlife"] then
         }
         resource.minable.required_fluid = fluid_name
         resource.minable.fluid_amount = 10
-        resource.autoplace = { control = "trees" }
+        resource.autoplace = {control = "trees"}
 
         for _, recipe_data in ipairs(farm.recipes) do
             local recipe = RECIPE(recipe_data.recipe_name)
@@ -93,7 +93,7 @@ if mods["pyalienlife"] then
         {"navens",         "navens-culture-mk01"},
         {"phagnot",        "phagnot-corral-mk01"},
         {"phadai",         "phadai-enclosure-mk01"},
-        {"ralesia",       "ralesia-plantation-mk01"},
+        {"ralesia",        "ralesia-plantation-mk01"},
         {"rennea",         "rennea-plantation-mk01"},
         {"seaweed",        "seaweed-crop-mk01"},
         {"sea-sponge",     "sponge-culture-mk01"},

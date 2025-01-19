@@ -391,7 +391,7 @@ py.finite_state_machine_working_visualisations = function(params)
     end
 
     states[1].duration = 1
-    
+
     return graphics_set
 end
 

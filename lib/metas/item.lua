@@ -85,7 +85,7 @@ py.spoil_triggers = {
 metas.spoil = function(self, spoil_result, spoil_ticks)
     if not feature_flags.spoiling then return end
     if not spoil_ticks then error("No spoil ticks provided for item " .. self.name) end
-    
+
     if type(spoil_result) == "string" then
         self.spoil_result = spoil_result
     elseif type(spoil_result) == "table" and spoil_result.trigger then
