@@ -5,6 +5,7 @@ Date: ?
     - Fixed multiple melonlib functions still check for .expensive and .normal. Resolves https://github.com/pyanodon/pybugreports/issues/773
     - Added compatibility with the compaktcircuit mod.
     - Added new melonlib function for great looking pipe connection graphics.
+    - Fixed compatibility with aai-vehicles-miner whenever pyAL was not installed. Resolves https://github.com/pyanodon/pybugreports/issues/821
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.21
 Date: 2025-1-2

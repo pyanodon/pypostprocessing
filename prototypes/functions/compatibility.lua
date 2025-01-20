@@ -614,3 +614,7 @@ end
 if mods["extra-storage-tank-minibuffer"] then
     TECHNOLOGY("minibuffer"):remove_pack("logistic-science-pack")
 end
+
+if mods["aai-vehicles-miner"] and not mods["pyalienlife"] then
+    TECHNOLOGY("vehicle-miner-2"):remove_prereq("electric-mining-drill")
+end
