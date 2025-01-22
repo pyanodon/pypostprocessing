@@ -1,11 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.24
+Date: ?
+  Changes:
+    - Migrated the internal name of the "vacuum-tube-electronics" technology to "electronics". Resolves https://github.com/pyanodon/pybugreports/issues/453
+---------------------------------------------------------------------------------------------------
 Version: 3.0.23
-Date: 2024-1-20
+Date: 2025-1-20
   Changes:
     - Fixed YAFC integration.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.22
-Date: 2024-1-20
+Date: 2025-1-20
   Changes:
     - Fixed multiple melonlib functions still check for .expensive and .normal. Resolves https://github.com/pyanodon/pybugreports/issues/773
     - Added compatibility with the compaktcircuit mod.

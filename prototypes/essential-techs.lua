@@ -22,7 +22,7 @@ make_essential("quantum")
 make_essential("pyrrhic")
 
 -- high tech progression
-make_essential("vacuum-tube-electronics")
+make_essential("electronics")
 make_essential("basic-electronics")
 make_essential("advanced-circuit")
 make_essential("nano-tech")

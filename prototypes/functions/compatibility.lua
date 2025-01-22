@@ -219,7 +219,7 @@ if mods["Transport_Drones"] then
         TECHNOLOGY("fast-road"):add_prereq("kerogen"):remove_pack("chemical-science-pack"):remove_pack("logistic-science-pack")
     end
     if mods["pyhightech"] then
-        TECHNOLOGY("transport-system"):remove_pack("logistic-science-pack"):remove_pack("py-science-pack-1"):add_prereq("vacuum-tube-electronics")
+        TECHNOLOGY("transport-system"):remove_pack("logistic-science-pack"):remove_pack("py-science-pack-1"):add_prereq("electronics")
     end
     if mods["pyalienlife"] then
         TECHNOLOGY("transport-depot-circuits"):remove_pack("logistic-science-pack")
@@ -549,7 +549,7 @@ if mods["RenaiTransportation"] then
     if mods["pyhightech"] then
         TECHNOLOGY("RTImpactTech"):remove_prereq("advanced-circuit")
         TECHNOLOGY("RTSimonSays"):remove_prereq("advanced-circuit"):add_prereq("circuit-network")
-        TECHNOLOGY("RTZiplineTech"):add_prereq("vacuum-tube-electronics"):remove_prereq("steel-processing")
+        TECHNOLOGY("RTZiplineTech"):add_prereq("electronics"):remove_prereq("steel-processing")
         TECHNOLOGY("RTZiplineTech2"):remove_prereq("logistic-science-pack")
         TECHNOLOGY("RTZiplineTech3"):add_prereq("basic-electronics")
         TECHNOLOGY("RTZiplineTech4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
