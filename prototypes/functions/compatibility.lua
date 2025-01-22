@@ -135,7 +135,6 @@ if mods["pyindustry"] then
 
     if mods["railloader"] then
         TECHNOLOGY("railloader"):remove_pack("logistic-science-pack")
-        data.raw.technology["railloader"].prerequisites = {"railway-mk01"}
     end
 
     if mods["train-pubsub"] then
@@ -274,7 +273,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 recipe.energy_required = data.raw.recipe["locomotive"].energy_required
                 recipe.ingredients = data.raw.recipe["locomotive"].ingredients -- I know what this does and I don't care
 
-                RECIPE(recipe_name):add_unlock("railway-mk01")
+                RECIPE(recipe_name):add_unlock("railway")
 
                 local resultname = recipe.results[1]["name"]
                 local loco = data.raw.locomotive["locomotive"]
@@ -322,7 +321,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 recipe.energy_required = data.raw.recipe["cargo-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["cargo-wagon"].ingredients
 
-                RECIPE(recipe_name):add_unlock("railway-mk01")
+                RECIPE(recipe_name):add_unlock("railway")
 
                 local resultname = recipe.results[1]["name"]
                 local wagon = data.raw["cargo-wagon"]["cargo-wagon"]
@@ -341,7 +340,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 recipe.energy_required = data.raw.recipe["fluid-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["fluid-wagon"].ingredients
 
-                RECIPE(recipe_name):add_unlock("railway-mk01")
+                RECIPE(recipe_name):add_unlock("railway")
 
                 local resultname = recipe.results[1]["name"]
                 local wagon = data.raw["fluid-wagon"]["fluid-wagon"]
@@ -523,8 +522,8 @@ end
 
 if mods["RenaiTransportation"] then
     if mods["pyindustry"] then
-        TECHNOLOGY("RTFlyingFreight"):remove_prereq("railway"):remove_prereq("concrete"):add_prereq("railway-mk01")
-        TECHNOLOGY("RTImpactTech"):remove_prereq("railway"):remove_prereq("concrete"):add_prereq("railway-mk01")
+        TECHNOLOGY("RTFlyingFreight"):remove_prereq("concrete")
+        TECHNOLOGY("RTImpactTech"):remove_prereq("concrete")
     end
 
     if mods["pycoalprocessing"] then
