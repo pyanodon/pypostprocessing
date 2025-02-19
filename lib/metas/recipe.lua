@@ -139,6 +139,12 @@ metas.remove_unlock = function(self, technology_name)
     return self
 end
 
+metas.replace_unlock = function(self, technology_old, technology_new)
+    self:remove_unlock(technology_old):add_unlock(technology_new)
+
+    return self
+end
+
 do
     --old is a string
     local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
