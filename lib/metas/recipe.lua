@@ -57,6 +57,8 @@ metas.standardize = function(self)
         self.result_count = nil
     elseif self.result then
         self.results = {{type = "item", name = self.result, amount = self.result_count or 1}}
+        self.result = nil
+        self.result_count = nil
     else
         self.results = {}
     end
