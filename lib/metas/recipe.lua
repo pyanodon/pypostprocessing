@@ -326,4 +326,32 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
     return self
 end
 
+metas.set_result_amount = function(self, result_name, amount)
+    self:standardize()
+
+    for _, result in pairs(self.results) do
+        if result.name == result_name then
+            result.amount = amount
+            return self
+        end
+    end
+
+    log("WARNING @ \'" .. self.name .. "\':set_result_amount(): Result " .. result_name .. " not found")
+    return self
+end
+
+metas.set_ingredient_amount = function(self, ingredient_name, amount)
+    self:standardize()
+
+    for _, ingredient in pairs(self.ingredients) do
+        if ingredient.name == ingredient_name then
+            ingredient.amount = amount
+            return self
+        end
+    end
+
+    log("WARNING @ \'" .. self.name .. "\':set_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
+    return self
+end
+
 return metas
