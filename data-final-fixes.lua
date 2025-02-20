@@ -3,6 +3,7 @@ require "prototypes.quality"
 local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
+local defines = require "prototypes.functions.defines"
 
 local signal_recipes = {
 }
@@ -123,6 +124,37 @@ if create_signal_mode then
                         end
                     end
                 end
+                -- Move recipes to the end of the list in signal selection ui
+                local old_subgroup = recipe.subgroup
+                if not old_subgroup then
+                    local product
+                    if recipe.main_product then
+                        product = recipe.main_product
+                    else
+                        product = recipe.results[1].name
+                    end
+                    local types = defines.prototypes.item
+                    types["fluid"] = 0
+                    for ttype, _ in pairs(types) do
+                        if data.raw[ttype] and data.raw[ttype][product] then
+                            old_subgroup = data.raw[ttype][product].subgroup
+                            break
+                        end
+                    end
+                end
+                if data.raw["item-subgroup"][old_subgroup] then
+                    local new_subgroup = "recipes-"..(old_subgroup)
+                    if not data.raw["item-subgroup"][new_subgroup] then
+                        data:extend{{
+                            type = "item-subgroup",
+                            name = new_subgroup,
+                            group = data.raw["item-subgroup"][old_subgroup].group,
+                            order = "zz-"..(data.raw["item-subgroup"][old_subgroup].order or "")
+                        }}
+                    end
+                    recipe.subgroup = new_subgroup
+                end
+
                 recipe.hide_from_signal_gui = false
             end
         end
