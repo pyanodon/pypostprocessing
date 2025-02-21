@@ -5,6 +5,7 @@ local table_insert = table.insert
 ---@field public allow_productivity fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public add_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
+---@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype
 ---@field public replace_ingredient fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype
 ---@field public add_ingredient fun(self: data.RecipePrototype, ingredient: string | data.IngredientPrototype): data.RecipePrototype
 ---@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
@@ -16,6 +17,8 @@ local table_insert = table.insert
 ---@field public multiply_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, percent: number): data.RecipePrototype
 ---@field public add_result_amount fun(self: data.RecipePrototype, result_name: string, increase: number): data.RecipePrototype
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
+---@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype
+---@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype
 
 local metas = {}
 
@@ -57,6 +60,8 @@ metas.standardize = function(self)
         self.result_count = nil
     elseif self.result then
         self.results = {{type = "item", name = self.result, amount = self.result_count or 1}}
+        self.result = nil
+        self.result_count = nil
     else
         self.results = {}
     end
@@ -133,6 +138,12 @@ metas.remove_unlock = function(self, technology_name)
     technology.effects = table.filter(technology.effects, function(effect)
         return effect.recipe ~= self.name
     end)
+
+    return self
+end
+
+metas.replace_unlock = function(self, technology_old, technology_new)
+    self:remove_unlock(technology_old):add_unlock(technology_new)
 
     return self
 end
@@ -315,6 +326,16 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
     end
 
     log("WARNING @ \'" .. self.name .. "\':add_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
+    return self
+end
+
+metas.set_result_amount = function(self, result_name, amount)
+    self:replace_result(ingredient_name, ingredient_name, amount)
+    return self
+end
+
+metas.set_ingredient_amount = function(self, ingredient_name, amount)
+    self:replace_ingredient(ingredient_name, ingredient_name, amount)
     return self
 end
 
