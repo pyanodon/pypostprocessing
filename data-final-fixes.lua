@@ -124,37 +124,6 @@ if create_signal_mode then
                         end
                     end
                 end
-                -- Move recipes to the end of the list in signal selection ui
-                local old_subgroup = recipe.subgroup
-                if not old_subgroup then
-                    local product
-                    if recipe.main_product then
-                        product = recipe.main_product
-                    else
-                        product = recipe.results[1].name
-                    end
-                    local types = defines.prototypes.item
-                    types["fluid"] = 0
-                    for ttype, _ in pairs(types) do
-                        if data.raw[ttype] and data.raw[ttype][product] then
-                            old_subgroup = data.raw[ttype][product].subgroup
-                            break
-                        end
-                    end
-                end
-                if data.raw["item-subgroup"][old_subgroup] then
-                    local new_subgroup = "recipes-"..(old_subgroup)
-                    if not data.raw["item-subgroup"][new_subgroup] then
-                        data:extend{{
-                            type = "item-subgroup",
-                            name = new_subgroup,
-                            group = data.raw["item-subgroup"][old_subgroup].group,
-                            order = "zz-"..(data.raw["item-subgroup"][old_subgroup].order or "")
-                        }}
-                    end
-                    recipe.subgroup = new_subgroup
-                end
-
                 recipe.hide_from_signal_gui = false
             end
         end
@@ -422,6 +391,48 @@ if mods["pycoalprocessing"] then
             subgroup.group = "coal-processing"
             subgroup.order = "b"
         end
+    end
+end
+
+-- Move recipes to the end of the list in signal selection ui
+if create_signal_mode then
+    for _, recipe in pairs(data.raw["recipe"]) do
+        if (not recipe.results or not recipe.results[1]) and not recipe.subgroup then
+            -- This only triggers because of "recipe-unknown". All other recipes are required to have a subgroup if they dont have products defined
+            log("WARNING: invalid recipe definition "..recipe.name)
+            goto continue
+        end
+        local old_subgroup = recipe.subgroup
+        if not old_subgroup then
+            local product
+            if recipe.main_product then
+                product = recipe.main_product
+            else
+                product = recipe.results[1].name
+            end
+            local types = defines.prototypes.item
+            types["fluid"] = 0
+            for ttype, _ in pairs(types) do
+                if data.raw[ttype] and data.raw[ttype][product] then
+                    old_subgroup = data.raw[ttype][product].subgroup
+                    break
+                end
+            end
+        end
+        if data.raw["item-subgroup"][old_subgroup] then
+            local new_subgroup = "recipe-"..(old_subgroup)
+            if not data.raw["item-subgroup"][new_subgroup] then
+                data:extend{{
+                    type = "item-subgroup",
+                    name = new_subgroup,
+                    group = data.raw["item-subgroup"][old_subgroup].group,
+                    order = "zz-"..(data.raw["item-subgroup"][old_subgroup].order or "")
+                }}
+            end
+            recipe.subgroup = new_subgroup
+        end
+
+        ::continue::
     end
 end
 
