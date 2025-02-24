@@ -395,11 +395,11 @@ if mods["pycoalprocessing"] then
 end
 
 -- Move recipes to the end of the list in signal selection ui
+-- https://github.com/pyanodon/pypostprocessing/pull/67
 if create_signal_mode then
     for _, recipe in pairs(data.raw["recipe"]) do
         if (not recipe.results or not recipe.results[1]) and not recipe.subgroup then
-            -- This only triggers because of "recipe-unknown". All other recipes are required to have a subgroup if they dont have products defined
-            log("WARNING: invalid recipe definition "..recipe.name)
+            log("WARNING: recipe without a subgroup \""..recipe.name.."\"")
             goto continue
         end
         local old_subgroup = recipe.subgroup
