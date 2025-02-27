@@ -5,6 +5,7 @@ Date: ?
     - Migrated the internal name of the "vacuum-tube-electronics" technology to "electronics". Resolves https://github.com/pyanodon/pybugreports/issues/453
     - Migrated the internal name of the "railway-mk01" technology to "railway". Resolves https://github.com/pyanodon/pybugreports/issues/453
     - Fixed a crash with AAI loaders with setting "graphics only". Resolves https://github.com/pyanodon/pybugreports/issues/847
+    - Barrels are now sorted at the end of item lists. Resolves https://github.com/pyanodon/pybugreports/issues/865
     - Updated Ukrainian translation.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.23

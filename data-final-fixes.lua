@@ -394,6 +394,11 @@ if mods["pycoalprocessing"] then
     end
 end
 
+-- move barrels below everything else in intermediate tab
+-- https://github.com/pyanodon/pybugreports/issues/865
+data.raw["item-subgroup"]["fill-barrel"].order = "y"
+data.raw["item-subgroup"]["barrel"].order = "z"
+
 -- Move recipes to the end of the list in signal selection ui
 -- https://github.com/pyanodon/pypostprocessing/pull/67
 if create_signal_mode then
