@@ -505,8 +505,10 @@ then
 end
 
 if mods["aai-loaders"] then
-    TECHNOLOGY("aai-express-loader"):remove_prereq("processing-unit")
-    if mods["pyalienlife"] then
+    if data.raw.technology["aai-express-loader"] then
+        TECHNOLOGY("aai-express-loader"):remove_prereq("processing-unit")
+    end
+    if data.raw.technology["aai-fast-loader"] and mods["pyalienlife"] then
         TECHNOLOGY("aai-fast-loader"):remove_prereq("advanced-circuit"):remove_pack("chemical-science-pack")
     end
 end

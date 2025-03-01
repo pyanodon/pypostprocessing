@@ -3,6 +3,7 @@ require "prototypes.quality"
 local dev_mode = settings.startup["pypp-dev-mode"].value
 local create_cache_mode = settings.startup["pypp-create-cache"].value
 local config = require "prototypes.config"
+local defines = require "prototypes.functions.defines"
 
 local signal_recipes = {
 }
@@ -390,6 +391,53 @@ if mods["pycoalprocessing"] then
             subgroup.group = "coal-processing"
             subgroup.order = "b"
         end
+    end
+end
+
+-- move barrels below everything else in intermediate tab
+-- https://github.com/pyanodon/pybugreports/issues/865
+data.raw["item-subgroup"]["fill-barrel"].order = "y"
+data.raw["item-subgroup"]["barrel"].order = "z"
+
+-- Move recipes to the end of the list in signal selection ui
+-- https://github.com/pyanodon/pypostprocessing/pull/67
+if create_signal_mode then
+    for _, recipe in pairs(data.raw["recipe"]) do
+        if (not recipe.results or not recipe.results[1]) and not recipe.subgroup then
+            log("WARNING: recipe without a subgroup \"" .. recipe.name .. "\"")
+            goto continue
+        end
+        local old_subgroup = recipe.subgroup
+        if not old_subgroup then
+            local product
+            if recipe.main_product then
+                product = recipe.main_product
+            else
+                product = recipe.results[1].name
+            end
+            local types = defines.prototypes.item
+            types["fluid"] = 0
+            for ttype, _ in pairs(types) do
+                if data.raw[ttype] and data.raw[ttype][product] then
+                    old_subgroup = data.raw[ttype][product].subgroup
+                    break
+                end
+            end
+        end
+        if data.raw["item-subgroup"][old_subgroup] then
+            local new_subgroup = "recipe-" .. (old_subgroup)
+            if not data.raw["item-subgroup"][new_subgroup] then
+                data:extend {{
+                    type = "item-subgroup",
+                    name = new_subgroup,
+                    group = data.raw["item-subgroup"][old_subgroup].group,
+                    order = "zz-" .. (data.raw["item-subgroup"][old_subgroup].order or "")
+                }}
+            end
+            recipe.subgroup = new_subgroup
+        end
+
+        ::continue::
     end
 end
 
