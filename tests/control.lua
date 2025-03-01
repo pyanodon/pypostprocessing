@@ -8,7 +8,7 @@ local function test_localised_strings()
     local excluded_types = {}
     for _, category in pairs {"item", "fluid", "entity"} do
         for _, item in pairs(prototypes[category]) do
-            if not excluded_types[item.type] and not item.hidden and not string.find(item.name, "thrower-inserter-projectile") then table.insert(localised_strings, item.localised_name) end
+            if not excluded_types[item.type] and not item.hidden then table.insert(localised_strings, item.localised_name) end
         end
     end
     game.players[1].request_translations(localised_strings)
