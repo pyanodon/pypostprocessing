@@ -205,10 +205,11 @@ local function scan_for_cages()
     if success then log("cage check successful") end
 end
 
-local function factoriopedia_recipes()
+local function factoriopedia_recipes(check_absent_recipes)
     local success = true
     log("\ntest factoriopedia:")
     local science_pack_order = {
+        ["none"] = 0,
         ["automation-science-pack"] = 1,
         ["py-science-pack-1"] = 2,
         ["logistic-science-pack"] = 3,
@@ -224,13 +225,39 @@ local function factoriopedia_recipes()
     }
     local unlocks = {}
     local barreling = {["py-barreling"] = true, ["py-unbarreling"] = true}
-    for name, tech in pairs(data.raw["technology"]) do
+    for _, tech in pairs(data.raw["technology"]) do
+        local unit_tech = table.deepcopy(tech)
         local science
-        if not tech.unit then goto continue end
+        while not unit_tech.unit do
+            if #unit_tech.prerequisites == 0 then
+                science = "none"
+                break
+            end
+            local tiers = {}
+            for _, tech_name in pairs(unit_tech.prerequisites) do
+                local technology = data.raw["technology"][tech_name]
+                if not technology.unit then
+                    table.insert(tiers, {tech_name, "none"})
+                else
+                    for _, pack in pairs(technology.unit.ingredients) do
+                        if pack[2] == 1 then
+                            table.insert(tiers, {tech_name, pack[1]})
+                        end
+                    end
+                end
+            end
+            local max = -1
+            for _, tier in pairs(tiers) do
+                if science_pack_order[tier[2]] > max then
+                    max = science_pack_order[tier[2]]
+                    unit_tech = table.deepcopy(data.raw["technology"][tier[1]])
+                end
+            end
+        end
         for _, modifier in pairs(tech.effects) do
             if modifier.type == "unlock-recipe" and not barreling[data.raw["recipe"][modifier.recipe].category] then
                 if not science then
-                    for _, pack in pairs(tech.unit.ingredients) do
+                    for _, pack in pairs(unit_tech.unit.ingredients) do
                         if pack[2] == 1 then
                             science = pack[1]
                         end
@@ -242,7 +269,6 @@ local function factoriopedia_recipes()
                 end
             end
         end
-        ::continue::
     end
     for name, recipe in pairs(data.raw["recipe"]) do
         if recipe.enabled ~= false and not recipe.category == "py-incineration" and not recipe.hidden then
@@ -258,7 +284,7 @@ local function factoriopedia_recipes()
         local tier = table_size(science_pack_order) + 1
         for _, unlock_data in pairs(unlock_table) do
             if unlock_data.recipe == item_name then
-                tier = unlock_data.science
+                tier = math.min(tier, unlock_data.science)
             end
             if unlock_data.science < min_tier then
                 min_tier = unlock_data.science
@@ -266,8 +292,10 @@ local function factoriopedia_recipes()
             end
         end
         if tier > table_size(science_pack_order) then
-            success = false
-            log(item_name .. " has no default recipe, should be " .. min_recipe)
+            if check_absent_recipes then
+                success = false
+                log(item_name .. " has no default recipe, should be " .. min_recipe)
+            end
         elseif min_tier < tier then
             success = false
             log(item_name .. " has wrong default recipe, should be " .. min_recipe)
@@ -280,4 +308,4 @@ test_entity_graphics()
 scan_for_cages()
 -- factoriopedia default recipe assignment currently isn't good enough to properly define them to every item in the game
 -- probably best to wait for that to change, unless someone wants to make a giga migration and still have some things wrong
--- factoriopedia_recipes()
+factoriopedia_recipes(false)
