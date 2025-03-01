@@ -404,7 +404,7 @@ data.raw["item-subgroup"]["barrel"].order = "z"
 if create_signal_mode then
     for _, recipe in pairs(data.raw["recipe"]) do
         if (not recipe.results or not recipe.results[1]) and not recipe.subgroup then
-            log("WARNING: recipe without a subgroup \""..recipe.name.."\"")
+            log("WARNING: recipe without a subgroup \"" .. recipe.name .. "\"")
             goto continue
         end
         local old_subgroup = recipe.subgroup
@@ -425,13 +425,13 @@ if create_signal_mode then
             end
         end
         if data.raw["item-subgroup"][old_subgroup] then
-            local new_subgroup = "recipe-"..(old_subgroup)
+            local new_subgroup = "recipe-" .. (old_subgroup)
             if not data.raw["item-subgroup"][new_subgroup] then
-                data:extend{{
+                data:extend {{
                     type = "item-subgroup",
                     name = new_subgroup,
                     group = data.raw["item-subgroup"][old_subgroup].group,
-                    order = "zz-"..(data.raw["item-subgroup"][old_subgroup].order or "")
+                    order = "zz-" .. (data.raw["item-subgroup"][old_subgroup].order or "")
                 }}
             end
             recipe.subgroup = new_subgroup
