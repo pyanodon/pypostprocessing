@@ -112,22 +112,29 @@ end
 ---Returns the correct farm speed for a mk1 farm based on number of modules and desired speed using mk1 modules
 ---@param num_slots integer
 ---@param desired_speed number
+---@param module_bonus number?
 ---@return number
-function py.farm_speed(num_slots, desired_speed)
-    -- mk1 modules are 100% bonus speed. The farm itself then counts as much as one module
-    return desired_speed / (num_slots + 1)
+function py.farm_speed(num_slots, desired_speed, module_bonus)
+    module_bonus = module_bonus or 1
+    -- mk1 modules are 100% bonus speed * module_bonus. The farm itself then counts as much as one module
+    return desired_speed / (num_slots + 1 / module_bonus) / module_bonus
 end
 
----Returns the correct farm speed for a mk2+ farm based on the number of modules and the mk1 speed
+---Returns the correct farm speed for a mk2+ farm based on the number of modules and the mk1 speed.
+---Optionally gets tier 1 module speed (default: 1) and current module speed (default: current_module_slots / base_module_slots * base_module_speed)
 ---@param num_slots integer
 ---@param base_entity_name string
+---@param base_module_bonus number?
+---@param this_bonus number?
 ---@return number
-function py.farm_speed_derived(num_slots, base_entity_name)
+function py.farm_speed_derived(num_slots, base_entity_name, base_module_bonus, this_bonus)
+    base_module_bonus = base_module_bonus or 1
     local e = data.raw["assembling-machine"][base_entity_name]
     local mk1_slots = e.module_slots
-    local desired_mk1_speed = e.crafting_speed * (mk1_slots + 1)
+    local desired_mk1_speed = e.crafting_speed * (mk1_slots * base_module_bonus + 1)
     local speed_improvement_ratio = num_slots / mk1_slots
-    return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1 / speed_improvement_ratio)
+    this_bonus = this_bonus or speed_improvement_ratio * base_module_bonus
+    return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1 / this_bonus) / base_module_bonus
 end
 
 ---Takes two prototype names (both must use the style of IconSpecification with icon = string_path), returns an IconSpecification with the icons as composites
