@@ -28,7 +28,6 @@ ForEach($ModCombination in $ModCombinations){
     $ModList = $ModCombination -split "\+"
     $BaseMods = @(
         "base",
-        "stdlib",
         "pypostprocessing",
         "pyalienlifegraphics",
         "pyalienlifegraphics2",

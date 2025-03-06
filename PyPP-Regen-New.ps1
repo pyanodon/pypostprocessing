@@ -359,7 +359,6 @@ Set-Content -Path $PyPPConfigPath -Value $PyPPConfig -Encoding UTF8 -NoNewline
 $FactorioArgs = "--mod-directory $FactorioModsPath --benchmark notafile" #Stand in for "load then exit"
 $BaseMods = @(
     "base",
-    "stdlib",
     "pypostprocessing"
 )
 $GraphicModsLookup = @{
