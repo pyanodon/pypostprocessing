@@ -472,7 +472,7 @@ if mods["compaktcircuit"] then
     RECIPE("compaktcircuit-processor_1x1"):remove_ingredient("processing-unit")
     TECHNOLOGY("compaktcircuit-tech").prerequisites = {"py-science-pack-mk02"}
     TECHNOLOGY("compaktcircuit-tech").unit.ingredients = {
-        {"py-science-pack-2", 1}
+        mods["pyalienlife"] and {"py-science-pack-2", 1} or {"logistic-science-pack", 1}
     }
 end
 

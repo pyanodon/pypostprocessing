@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.26
+Date: ?
+  Changes:
+    - Fix crash with the compakt circuits mod. Resolves https://github.com/pyanodon/pybugreports/issues/912
+---------------------------------------------------------------------------------------------------
 Version: 3.0.25
 Date: 2025-3-3
   Changes:
