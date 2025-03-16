@@ -5,6 +5,13 @@ if mods["space-age"] and not mods["pystellarexpedition"] then
     error("\n\n\n\n[font=default-semibold]" .. message .. "[/font]\n\n\n\n")
 end
 
+-- Log all mods & versions, Alien Biomes already does this so we skip if it is active
+if not mods["alien-biomes"] then
+    log("MODSET:\n" .. serpent.block(mods, {sortkeys=false}))
+end
+-- Log all settings, we disable sort here to hopefully keep it grouped by mod
+log("SETTINGS:\n" .. serpent.block(settings, {sortkeys=false}))
+
 require "lib"
 
 _G.pypp_registered_cache_files = {}
