@@ -246,8 +246,13 @@ if mods["Flare Stack"] then
     end
 end
 
-if mods["bobinserters"] and mods["pyalienlife"] then
-    TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
+local bobInsertersVersion = mods["bobinserters"]
+if not not bobInsertersVersion and mods["pyalienlife"] then
+    if bobInsertersVersion:sub(1, 1) == "1" then
+        TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
+    else
+        TECHNOLOGY("bob-more-inserters-1"):add_pack("py-science-pack-2")
+    end
 end
 
 if mods["robot-recall"] and mods["pyindustry"] then
