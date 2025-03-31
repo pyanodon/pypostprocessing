@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.26
-Date: ?
+Date: 2025-3-31
   Changes:
     - Fix crash with the compakt circuits mod. Resolves https://github.com/pyanodon/pybugreports/issues/912
     - Log active mods & settings for easier troubleshooting of logs
