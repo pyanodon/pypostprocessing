@@ -247,7 +247,7 @@ if mods["Flare Stack"] then
 end
 
 local bobInsertersVersion = mods["bobinserters"]
-if not not bobInsertersVersion and mods["pyalienlife"] then
+if bobInsertersVersion and mods["pyalienlife"] then
     if bobInsertersVersion:sub(1, 1) == "1" then
         TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
     else

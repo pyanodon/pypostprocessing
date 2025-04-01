@@ -12,3 +12,9 @@ if mods["Transport_Drones"] then
         data.raw["string-setting"]["fuel-fluid"].default_value = "gasoline"
     end
 end
+
+if mods["bobmining"] then
+    data.raw["bool-setting"]["bobmods-mining-pumpjacks"].hidden = true
+    data.raw["bool-setting"]["bobmods-mining-pumpjacks"].allowed_values = {false}
+    data.raw["bool-setting"]["bobmods-mining-pumpjacks"].default_value = false
+end
