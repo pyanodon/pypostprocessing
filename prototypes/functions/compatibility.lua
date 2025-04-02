@@ -546,15 +546,15 @@ if mods["RenaiTransportation"] then
         RECIPE("PrimerBouncePlateRecipe"):replace_ingredient("coal", "coke")
     end
 
-    if mods["pyfusionenergy"] then
+    if mods["pyfusionenergy"] and settings.startup["RTZiplineSetting"].value == true then
         TECHNOLOGY("RTZiplineTech5"):remove_prereq("uranium-processing")
     end
 
-    if mods["pyrawores"] then
+    if mods["pyrawores"] and settings.startup["RTZiplineSetting"].value == true then
         TECHNOLOGY("RTZiplineTech5"):remove_prereq("kovarex-enrichment-process")
     end
 
-    if mods["pypetroleumhandling"] then
+    if mods["pypetroleumhandling"] and settings.startup["RTZiplineSetting"].value == true then
         RECIPE("RTZiplineRecipe3"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-02", amount = 50}
         RECIPE("RTZiplineRecipe4"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-03", amount = 50}
     end
@@ -562,15 +562,17 @@ if mods["RenaiTransportation"] then
     if mods["pyhightech"] then
         TECHNOLOGY("RTImpactTech"):remove_prereq("advanced-circuit")
         TECHNOLOGY("RTSimonSays"):remove_prereq("advanced-circuit"):add_prereq("circuit-network")
-        TECHNOLOGY("RTZiplineTech"):add_prereq("electronics"):remove_prereq("steel-processing")
-        TECHNOLOGY("RTZiplineTech2"):remove_prereq("logistic-science-pack")
-        TECHNOLOGY("RTZiplineTech3"):add_prereq("basic-electronics")
-        TECHNOLOGY("RTZiplineTech4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-
         RECIPE("RTImpactUnloaderRecipe"):replace_ingredient("advanced-circuit", "electronic-circuit")
         RECIPE("RTMagnetTrainRampRecipe"):replace_ingredient("advanced-circuit", "electronic-circuit")
         RECIPE("RTImpactWagonRecipe"):replace_ingredient("advanced-circuit", "electronic-circuit")
         RECIPE("DirectorBouncePlateRecipie"):replace_ingredient("advanced-circuit", "decider-combinator")
+    end
+
+    if mods["pyhightech"] and settings.startup["RTZiplineSetting"].value == true then
+        TECHNOLOGY("RTZiplineTech"):add_prereq("electronics"):remove_prereq("steel-processing")
+        TECHNOLOGY("RTZiplineTech2"):remove_prereq("logistic-science-pack")
+        TECHNOLOGY("RTZiplineTech3"):add_prereq("basic-electronics")
+        TECHNOLOGY("RTZiplineTech4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
     end
 
     if mods["pyalienlife"] then
@@ -585,22 +587,25 @@ if mods["RenaiTransportation"] then
         TECHNOLOGY("RTSimonSays"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTProgrammableZiplineControlTech"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTDeliverThePayload"):remove_pack("py-science-pack-2")
-        TECHNOLOGY("RTZiplineTech3"):remove_pack("chemical-science-pack")
-        TECHNOLOGY("RTZiplineTech4"):add_pack("py-science-pack-3"):remove_prereq("")
+
+        if settings.startup["RTZiplineSetting"].value == true then
+            TECHNOLOGY("RTZiplineTech3"):remove_pack("chemical-science-pack")
+            TECHNOLOGY("RTZiplineTech4"):add_pack("py-science-pack-3"):remove_prereq("")
+        end
     end
 
     if mods["pyalternativeenergy"] then
         TECHNOLOGY("RTMagnetTrainRamps"):remove_pack("chemical-science-pack"):remove_pack("py-science-pack-2")
-        TECHNOLOGY("RTZiplineTech4"):add_prereq("machine-components-mk03")
-
         RECIPE("RTMagnetTrainRampRecipe"):add_ingredient {type = "item", name = "nexelit-plate", amount = 10}:replace_ingredient("substation", "big-electric-pole")
-        RECIPE("RTZiplineRecipe3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
-        RECIPE("RTZiplineRecipe4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
         RECIPE("RTTrainRampRecipe"):add_ingredient {type = "item", name = "intermetallics", amount = 10}
 
-        data.raw.recipe["RTZiplineRecipe5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
-
-        RECIPE("RTZiplineRecipe5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
+        if settings.startup["RTZiplineSetting"].value == true then
+            RECIPE("RTZiplineRecipe5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
+            data.raw.recipe["RTZiplineRecipe5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
+            RECIPE("RTZiplineRecipe3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
+            RECIPE("RTZiplineRecipe4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
+            TECHNOLOGY("RTZiplineTech4"):add_prereq("machine-components-mk03")
+        end
     end
 end
 

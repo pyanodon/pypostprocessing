@@ -2,6 +2,7 @@
 Version: 3.0.27
 Date: tba
   Changes:
+    - Fixed a crash with disabling ziplines when paired with renai transportation.
     - Fixed that alpha Dingrits couldn't be used in non turd recipes.
     - Attempted to avoid crash when loading with Bob's Mining. Resolves https://github.com/pyanodon/pybugreports/issues/942
 ---------------------------------------------------------------------------------------------------
