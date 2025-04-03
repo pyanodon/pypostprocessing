@@ -246,7 +246,13 @@ end
 ---@param new string
 ---@param blackrecipe (string | table)?
 py.global_item_replacer = function(old, new, blackrecipe)
-    if not data.raw.item[old] and not data.raw.fluid[old] then error("Could not find item or fluid " .. old) end
+    if not data.raw.item[old] and not data.raw.fluid[old] then
+        local errstring = "Could not find item or fluid " .. old
+        if old == "iron-gear-wheel" then
+            errstring = errstring .. "\nThis is the result of a conflicting mod."
+        end
+        error(errstring)
+    end
     if not data.raw.item[new] and not data.raw.fluid[new] then error("Could not find item or fluid " .. new) end
 
     if type(blackrecipe) == "string" then blackrecipe = {blackrecipe} end
