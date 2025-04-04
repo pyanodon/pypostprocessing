@@ -129,7 +129,7 @@ function data_parser:run()
 
     -- minable entities
     for _, entity in py.iter_prototypes("entity") do
-        if (entity.script_autoplace or entity.autoplace) and entity.minable and (entity.minable.result or entity.minable.results) then
+        if entity.autoplace and entity.minable and (entity.minable.result or entity.minable.results) then
             self:add_mining_recipe(entity)
         end
     end
@@ -852,7 +852,7 @@ function data_parser:pre_process()
 
     -- Minables
     for _, entity in py.iter_prototypes("entity") do
-        if (entity.script_autoplace or entity.autoplace) and entity.minable and (entity.minable.result or entity.minable.results) then
+        if entity.autoplace and entity.minable and (entity.minable.result or entity.minable.results) then
             self:pre_process_entity(entity:standardize())
         end
     end
