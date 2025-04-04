@@ -248,13 +248,13 @@ local function factoriopedia_recipes(check_absent_recipes)
             end
             local max = -1
             for _, tier in pairs(tiers) do
-                if science_pack_order[tier[2]] > max then
+                if science_pack_order[tier[2]] or 100 > max then
                     max = science_pack_order[tier[2]]
                     unit_tech = table.deepcopy(data.raw["technology"][tier[1]])
                 end
             end
         end
-        for _, modifier in pairs(tech.effects) do
+        for _, modifier in pairs(tech.effects or {}) do
             if modifier.type == "unlock-recipe" and not barreling[data.raw["recipe"][modifier.recipe].category] then
                 if not science then
                     for _, pack in pairs(unit_tech.unit.ingredients) do
