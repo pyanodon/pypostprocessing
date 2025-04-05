@@ -249,7 +249,7 @@ local function factoriopedia_recipes(check_absent_recipes)
             local max = -1
             for _, tier in pairs(tiers) do
                 if science_pack_order[tier[2]] or 100 > max then
-                    max = science_pack_order[tier[2]]
+                    max = science_pack_order[tier[2]] or 100
                     unit_tech = table.deepcopy(data.raw["technology"][tier[1]])
                 end
             end
