@@ -96,6 +96,8 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
             item_type = "item"
         elseif data.raw.fluid[name] then
             item_type = "fluid"
+        else
+            item_type = "item"
         end
         item.type = item_type
 
