@@ -200,7 +200,7 @@ if mods["pyalienlife"] then
         type = "recipe",
         name = "hidden-beacon-turd",
         ingredients = {},
-        result = "hidden-beacon-turd"
+        results = {{type = "item", name = "hidden-beacon-turd", amount = 1}}
     }
 
     _G.yafc_turd_integration = true

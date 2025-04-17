@@ -55,27 +55,10 @@ RECIPE = setmetatable(data.raw.recipe, {
 })
 
 metas.standardize = function(self)
-    if self.results and type(self.results) == "table" then
-        self.result = nil
-        self.result_count = nil
-    elseif self.result then
-        self.results = {{type = "item", name = self.result, amount = self.result_count or 1}}
-        self.result = nil
-        self.result_count = nil
-    else
-        self.results = {}
-    end
-
-    for k, p in pairs(self.results) do
-        self.results[k] = py.standardize_product(p)
-    end
+    self.results = self.results or {}
 
     -- ingredients is optional
     self.ingredients = self.ingredients or {}
-
-    for k, p in pairs(self.ingredients) do
-        self.ingredients[k] = py.standardize_product(p)
-    end
 
     self.energy_required = self.energy_required or 0.5
 
