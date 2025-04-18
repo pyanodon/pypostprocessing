@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.28
 Date: tba
+  Changes:
+    - Added missing translation from base game
   Internal:
-    - removed unneeded part of recipe lib
+    - Removed unneeded part of recipe lib
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.27
 Date: 2025-4-13
