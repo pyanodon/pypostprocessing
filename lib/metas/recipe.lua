@@ -310,7 +310,7 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
 end
 
 metas.set_result_amount = function(self, result_name, amount)
-    self:replace_result(ingredient_name, ingredient_name, amount)
+    self:replace_result(result_name, result_name, amount)
     return self
 end
 
