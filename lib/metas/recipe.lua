@@ -155,7 +155,7 @@ do
                 end
             end
         elseif type == "table" then
-            new = py.standardize_product(table.deepcopy(new))
+            new = table.deepcopy(new)
             if not FLUID[new.name] and not ITEM[new.name] then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return
@@ -170,14 +170,12 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        if type(new_ingredient) == "table" then new_ingredient = py.standardize_product(new_ingredient) end
         replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
         return self
     end
 
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        if type(new_result) == "table" then new_result = py.standardize_product(new_result) end
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
@@ -188,7 +186,6 @@ end
 
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
-    ingredient = py.standardize_product(ingredient)
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
         log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
         return self
@@ -216,7 +213,7 @@ end
 
 metas.add_result = function(self, result)
     self:standardize()
-    table_insert(self.results, py.standardize_product(result))
+    table_insert(self.results, result)
     return self
 end
 

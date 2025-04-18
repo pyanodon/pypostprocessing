@@ -167,29 +167,6 @@ function py.composite_molten_icon(base_prototype, child_prototype, shadow_alpha)
     }
 end
 
----Standardizes a product or ingredient prototype to a common format.
----@param p data.IngredientPrototype | data.ProductPrototype | string
----@return data.IngredientPrototype | data.ProductPrototype
-py.standardize_product = function(p)
-    if type(p) == "string" then p = {p, 1} end
-    local name = p.name or p[1]
-    if not p.type and name then
-        if data.raw.fluid[name] then
-            p.type = "fluid"
-        else
-            p.type = "item"
-        end
-    end
-
-    p.name = name
-    if not (p.amount_min and p.amount_max) then p.amount = p.amount or p[2] or 1 end
-    p[1] = nil
-    p[2] = nil
-
-    return p
-end
-
-
 ---Returns an iterator through all data.raw categories of a given supertype.
 ---@param parent_type string
 ---@return function<string, table>
