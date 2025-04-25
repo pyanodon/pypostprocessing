@@ -3,6 +3,7 @@ Version: 3.0.28
 Date: tba
   Changes:
     - Added missing translation from base game
+    - Added hard data-stage error if post processing detects an impossible-to-research technology.
   Internal:
     - Removed unneeded part of recipe lib
 ---------------------------------------------------------------------------------------------------
