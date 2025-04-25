@@ -5,7 +5,8 @@ Date: tba
     - Added missing translation from base game
     - Added hard data-stage error if post processing detects an impossible-to-research technology.
   Internal:
-    - Removed unneeded part of recipe lib
+    - Removed unneeded part of recipe lib.
+    - Added melonlib error with overriding a technologies' research_trigger.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.27
 Date: 2025-4-13

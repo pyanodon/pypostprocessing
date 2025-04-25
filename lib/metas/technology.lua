@@ -26,7 +26,7 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
 local metas = {}
 
 metas.standardize = function(self)
-    if not self.unit then self.unit = {ingredients = {}} end
+    if not self.unit and not self.research_trigger then self.unit = {ingredients = {}} end
 
     self.prerequisites = self.prerequisites or {}
     self.dependencies = self.dependencies or {}
@@ -72,6 +72,10 @@ metas.remove_pack = function(self, science_pack_name)
 end
 
 metas.add_pack = function(self, science_pack_name)
+    if self.research_trigger then
+        error("WARNING @ \'" .. self.name .. "\':add_pack(): Attempted to add science packs to technology with research_trigger.")
+    end
+
     if not self.unit then
         self.unit = {ingredients = {}}
     end
