@@ -382,7 +382,13 @@ end
 
 
 for _, lab in pairs(data.raw.lab) do
-    table.sort(lab.inputs, function(i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
+    table.sort(lab.inputs, function(i1, i2)
+        local science_pack_a = data.raw.tool[i1]
+        if not science_pack_a then error("Missing science pack prototype " .. i1 .. " in lab " .. lab.name) end
+        local science_pack_b = data.raw.tool[i2]
+        if not science_pack_b then error("Missing science pack prototype " .. i2 .. " in lab " .. lab.name) end
+        return science_pack_a.order < science_pack_b.order
+    end)
 end
 
 if mods["pycoalprocessing"] then
