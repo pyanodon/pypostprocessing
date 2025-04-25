@@ -20,6 +20,7 @@ end
 ---@param prototype data.AnyPrototype
 ---@param localised_string LocalisedString
 py.add_to_description = function(type, prototype, localised_string)
+    --[[@cast localised_string string]] -- can also be a nested table but it hides warnings at least
     if prototype.localised_description and prototype.localised_description ~= "" then
         prototype.localised_description = {"", prototype.localised_description, "\n", localised_string}
         return
@@ -75,7 +76,7 @@ py.make_item_glowing = function(prototype)
         error("No icon found for " .. prototype.name)
     end
     local pictures = {}
-    for _, picture in pairs(table.deepcopy(prototype.icons)) do
+    for _, picture in pairs(table.deepcopy(prototype.icons) or {}) do
         picture.draw_as_glow = true
         local icon_size = picture.icon_size or prototype.icon_size
         picture.filename = picture.icon
@@ -138,13 +139,13 @@ function py.farm_speed_derived(num_slots, base_entity_name, base_module_bonus, t
 end
 
 ---Takes two prototype names (both must use the style of IconSpecification with icon = string_path), returns an IconSpecification with the icons as composites
----@param base_prototype string
----@param child_prototype string
+---@param base_prototype_string string
+---@param child_prototype_string string
 ---@param shadow_alpha number?
-function py.composite_molten_icon(base_prototype, child_prototype, shadow_alpha)
+function py.composite_molten_icon(base_prototype_string, child_prototype_string, shadow_alpha)
     shadow_alpha = shadow_alpha or 0.6
-    base_prototype = data.raw.fluid[base_prototype] or data.raw.item[base_prototype]
-    child_prototype = data.raw.fluid[child_prototype] or data.raw.item[child_prototype]
+    local base_prototype = data.raw.fluid[base_prototype_string] or data.raw.item[base_prototype_string]
+    local child_prototype = data.raw.fluid[child_prototype_string] or data.raw.item[child_prototype_string]
     return {
         {
             icon = base_prototype.icon,
@@ -236,6 +237,7 @@ py.global_item_replacer = function(old, new, blackrecipe)
     blackrecipe = table.invert(blackrecipe or {})
 
     for _, recipe in pairs(data.raw.recipe) do
+        ---@diagnostic disable-next-line: undefined-field
         if not recipe.ignored_by_recipe_replacement and not blackrecipe[recipe.name] then
             recipe:replace_ingredient(old, new)
             recipe:replace_result(old, new)
@@ -281,7 +283,7 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     end
 
     if recipe.icons then -- If it's already an icons
-        icons = recipe.icons
+        icons = recipe.icons --[[@as table<int, data.IconData>]]
         icons[#icons + 1] = corner
     elseif result and result.icons then
         icons = table.deepcopy(result.icons)

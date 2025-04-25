@@ -2,7 +2,6 @@ local table_insert = table.insert
 
 ---@class data.RecipePrototype
 ---@field public standardize fun(self: data.RecipePrototype): data.RecipePrototype
----@field public allow_productivity fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public add_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype

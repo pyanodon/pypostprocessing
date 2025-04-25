@@ -7,7 +7,7 @@
 ---@field dependencies string[]
 
 TECHNOLOGY = setmetatable(data.raw.technology, {
-    ---@param tech data.TechnologyPrototype
+    ---@param technology data.TechnologyPrototype
     __call = function(self, technology)
         local ttype = type(technology)
         if ttype == "string" then

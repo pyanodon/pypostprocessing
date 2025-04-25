@@ -260,7 +260,7 @@ if dev_mode then
         end
 
         for _, pack in pairs(tech.unit and tech.unit.ingredients or {}) do
-            science_packs[pack.name or pack[1]] = true
+            science_packs[pack[1]] = true
         end
 
         if mods.pystellarexpedition then
@@ -317,8 +317,8 @@ else
     }
 
     for _, t in pairs(starting_techs) do
-        t = data.raw.technology[t]
-        if t then t.prerequisites = {"automation-science-pack"} end
+        tech = data.raw.technology[t]
+        if tech then tech.prerequisites = {"automation-science-pack"} end
         ::continue::
     end
 
@@ -352,7 +352,7 @@ for _, tech in pairs(data.raw.technology) do
     local highest_science_pack = "automation-science-pack"
     -- Add the current ingredients for the technology
     for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
-        local pack = ingredient.name or ingredient[1]
+        local pack = ingredient[1]
         if pack == "military-science-pack" and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
             add_military_science = true
         elseif config.SCIENCE_PACK_INDEX[pack] then
@@ -360,7 +360,7 @@ for _, tech in pairs(data.raw.technology) do
                 highest_science_pack = pack
             end
         else -- not one of ours, sir
-            tech_ingredients_to_use[pack] = ingredient.amount or ingredient[2]
+            tech_ingredients_to_use[pack] = ingredient[2]
         end
     end
 
