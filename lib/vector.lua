@@ -6,6 +6,7 @@
 ---@field dot fun(self, v: Pyvector): number -- dot product
 ---@field mag fun(self): number -- get the magnitude of a vector
 ---@field normalized fun(self): Pyvector -- normalize the vector
+---@field rotate fun(self, angle: number): Pyvector -- rotate the vector around the z axis (angle in radians)
 ---@field is_vector fun(self): boolean
 ---@field new fun(x: {x: number, y: number, z: number} | number, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
 ---@operator add(): Pyvector
@@ -73,13 +74,21 @@ py.vector = {
             return py.vector.new(out)
         end,
 
+        ---@return number
         mag = function(self)
             return math.sqrt(self.x ^ 2 + self.y ^ 2 + self.z ^ 2)
         end,
 
+        ---@return Pyvector
         normalized = function(self)
             local mag = self:mag()
             return py.vector.new(self.x / mag, self.y / mag, self.z / mag)
+        end,
+
+        ---@param angle number
+        ---@return Pyvector
+        rotate = function(self, angle)
+            return py.vector.new(self.x * math.cos(angle) - self.y * math.sin(angle), self.x * math.sin(angle) + self.y * math.cos(angle), self.z)
         end
     }
 }
