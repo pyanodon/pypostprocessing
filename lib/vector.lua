@@ -8,7 +8,7 @@
 ---@field normalized fun(self): Pyvector -- normalize the vector
 ---@field rotate fun(self, angle: number): Pyvector -- rotate the vector around the z axis (angle in radians)
 ---@field is_vector fun(self): boolean
----@field new fun(x: {x: number, y: number, z: number} | number, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
+---@field new fun(x: {x: number, y: number, z: number} | number?, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
 ---@operator add(): Pyvector
 ---@operator sub(): Pyvector
 ---@operator mul(): Pyvector
