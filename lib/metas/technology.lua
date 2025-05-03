@@ -80,7 +80,7 @@ metas.add_pack = function(self, science_pack_name)
         self.unit = {ingredients = {}}
     end
 
-    table.insert(self.unit.ingredients, {type = "item", name = science_pack_name, amount = 1})
+    table.insert(self.unit.ingredients, {science_pack_name, 1})
 
     return self
 end
