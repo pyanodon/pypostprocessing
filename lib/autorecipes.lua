@@ -272,6 +272,7 @@ py.autorecipes = function(params)
         }
         if tier.tech then recipe:add_unlock(tier.tech) end
         if params.number_icons then -- add numbers to farming recipes so that they're not identical
+            if tier.name then error("can't use number_icons with individual recipe names") end
             if recipe_name == "arthurian-egg-incubation-01" then log("fucked up") end
             if i > 9 then
                 log(serpent.block(params))
@@ -293,7 +294,7 @@ py.autorecipes = function(params)
             local scale = (data.raw.recipe[recipe_name].icons[1].scale or .5) / 2
             table.insert(
                 data.raw.recipe[recipe_name].icons,
-                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}}
+                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}, floating = true}
             )
         elseif tier.icon then
             data.raw.recipe[recipe_name].icon = tier.icon
