@@ -138,34 +138,127 @@ function py.farm_speed_derived(num_slots, base_entity_name, base_module_bonus, t
     return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1 / this_bonus) / base_module_bonus
 end
 
----Takes two prototype names (both must use the style of IconSpecification with icon = string_path), returns an IconSpecification with the icons as composites
+---Returns a composite icon with a base icon and up to 4 child icons.
+---The child icons are placed in the corners of the base icon, and can be tinted with a shadow color.
 ---@param base_prototype_string string
----@param child_prototype_string string
+---@param child_top_left string?
+---@param child_top_right string?
+---@param child_bottom_left string?
+---@param child_bottom_right string?
 ---@param shadow_alpha number?
-function py.composite_molten_icon(base_prototype_string, child_prototype_string, shadow_alpha)
+---@param shadow_scale number?
+---@param child_scale number?
+---@param shift number?
+function py.composite_icon(base_prototype_string, child_top_left, child_top_right, child_bottom_left, child_bottom_right,
+                           shadow_alpha, shadow_scale, child_scale, shift)
     shadow_alpha = shadow_alpha or 0.6
+    shadow_scale = shadow_scale or 0.6
+    child_scale = child_scale or 0.5
+    shift = shift or 10
     local base_prototype = data.raw.fluid[base_prototype_string] or data.raw.item[base_prototype_string]
-    local child_prototype = data.raw.fluid[child_prototype_string] or data.raw.item[child_prototype_string]
-    return {
+
+    local icons = {
         {
             icon = base_prototype.icon,
             icon_size = base_prototype.icon_size
-        },
-        {
-            icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
-            shift = {10, 10},
-            scale = 0.65,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        },
-        {
-            icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
-            shift = {10, 10},
-            scale = 0.5,
-            tint = {r = 1, g = 1, b = 1, a = 1}
-        },
+        }
     }
+
+    -- Add shadow icons
+    if child_top_left then
+        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {-shift, -shift},
+            scale = 32 / child_prototype.icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha},
+        })
+    end
+
+    if child_top_right then
+        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {shift, -shift},
+            scale = 32 / child_prototype.icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+    end
+
+    if child_bottom_left then
+        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {-shift, shift},
+            scale = 32 / child_prototype.icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+    end
+
+    if child_bottom_right then
+        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {shift, shift},
+            scale = 32 / child_prototype.icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+    end
+
+    -- Add normal children icons
+    if child_top_left then
+        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {-shift, -shift},
+            scale = 32 / child_prototype.icon_size * child_scale,
+            tint = {r = 1, g = 1, b = 1, a = 1},
+            draw_background = true
+        })
+    end
+
+    if child_top_right then
+        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {shift, -shift},
+            scale = 32 / child_prototype.icon_size * child_scale,
+            tint = {r = 1, g = 1, b = 1, a = 1},
+            draw_background = true
+        })
+    end
+
+    if child_bottom_left then
+        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {-shift, shift},
+            scale = 32 / child_prototype.icon_size * child_scale,
+            tint = {r = 1, g = 1, b = 1, a = 1},
+            draw_background = true
+        })
+    end
+
+    if child_bottom_right then
+        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right]
+        table.insert(icons, {
+            icon = child_prototype.icon,
+            icon_size = child_prototype.icon_size,
+            shift = {shift, shift}, 
+            scale = 32 / child_prototype.icon_size * child_scale,
+            tint = {r = 1, g = 1, b = 1, a = 1},
+            draw_background = true
+        })
+    end
+
+    return icons
 end
 
 ---Returns an iterator through all data.raw categories of a given supertype.
