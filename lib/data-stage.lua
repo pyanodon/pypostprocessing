@@ -160,7 +160,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     local icons = {
         {
             icon = base_prototype.icon,
-            icon_size = base_prototype.icon_size
+            icon_size = (base_prototype.icon_size or 64)
         }
     }
 
@@ -169,9 +169,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, -shift},
-            scale = 32 / child_prototype.icon_size * shadow_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha},
         })
     end
@@ -180,9 +180,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {shift, -shift},
-            scale = 32 / child_prototype.icon_size * shadow_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
         })
     end
@@ -191,9 +191,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, shift},
-            scale = 32 / child_prototype.icon_size * shadow_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
         })
     end
@@ -202,9 +202,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {shift, shift},
-            scale = 32 / child_prototype.icon_size * shadow_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
         })
     end
@@ -214,9 +214,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, -shift},
-            scale = 32 / child_prototype.icon_size * child_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -226,9 +226,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {shift, -shift},
-            scale = 32 / child_prototype.icon_size * child_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -238,9 +238,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, shift},
-            scale = 32 / child_prototype.icon_size * child_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -250,9 +250,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right]
         table.insert(icons, {
             icon = child_prototype.icon,
-            icon_size = child_prototype.icon_size,
+            icon_size = (child_prototype.icon_size or 64),
             shift = {shift, shift}, 
-            scale = 32 / child_prototype.icon_size * child_scale,
+            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
