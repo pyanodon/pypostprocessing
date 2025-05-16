@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.28
+Date: ???
+  Changes:
+    - Adjust to name changes in Renai Transportation 2.1.4. Resolves https://github.com/pyanodon/pybugreports/issues/982
+---------------------------------------------------------------------------------------------------
 Version: 3.0.27
 Date: 2025-4-13
   Changes:
