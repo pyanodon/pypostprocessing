@@ -116,9 +116,17 @@ local function init_nth_tick()
     py.nth_tick_setup = true
 end
 
----@param event EventData.on_tick
-py.on_event(defines.events.on_tick, function(event)
-    local tick = event.tick
+local query_funcs = {}
+
+---@param mod string
+---@param tick uint
+---@return string[]
+local query_nth_tick = function(mod, tick)
+    if query_funcs[tick] then
+        return query_funcs[tick][mod] or {}
+    end
+    query_funcs[tick - 1] = nil
+    query_funcs[tick] = {}
     if not py.nth_tick_setup then init_nth_tick() end
     local max_funcs_per_tick = math.ceil(py.nth_tick_total * 2)
     local this_tick_total = 0
@@ -127,7 +135,9 @@ py.on_event(defines.events.on_tick, function(event)
         if not py.nth_tick_funcs[order.func] then goto continue end
         this_tick_total = this_tick_total + (game.tick ~= 0 and 1 or 0)
         if this_tick_total <= max_funcs_per_tick then
-            remote.call(py.nth_tick_funcs[order.func].mod, "execute_on_nth_tick", order.func)
+            local mod_name = py.nth_tick_funcs[order.func].mod
+            query_funcs[tick][mod_name] = query_funcs[tick][mod_name] or {}
+            table.insert(query_funcs[tick][mod_name], order.func)
             local next_tick = tick + py.nth_tick_funcs[order.func].tick - order.delay
             order.delay = 0
             if next_tick <= tick then
@@ -145,10 +155,12 @@ py.on_event(defines.events.on_tick, function(event)
         ::continue::
     end
     storage.nth_tick_order[tick] = nil
-end)
+    return query_funcs[tick][mod] or {}
+end
 
 py.finalize_events()
 
 remote.add_interface("on_nth_tick", {
-    add = register_on_nth_tick
+    add = register_on_nth_tick,
+    query = query_nth_tick,
 })
