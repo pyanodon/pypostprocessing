@@ -141,7 +141,6 @@ local query_nth_tick = function(mod, tick)
             local mod_name = py.nth_tick_funcs[order.func].mod
             query_funcs[mod_name] = query_funcs[mod_name] or {}
             table.insert(query_funcs[mod_name], order.func)
-            game.print(order.func, {skip = defines.print_skip.never})
             local next_tick = tick + py.nth_tick_funcs[order.func].tick - order.delay
             order.delay = 0
             if next_tick <= tick then
