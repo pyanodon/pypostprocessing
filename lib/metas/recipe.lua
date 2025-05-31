@@ -318,4 +318,16 @@ metas.set_ingredient_amount = function(self, ingredient_name, amount)
     return self
 end
 
+metas.change_category = function(self, category_name)
+    self:standardize()
+
+    if data.raw['recipe-category'][category_name] then
+        self.category = category_name
+    else
+        log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name  .. " not found")
+    end
+
+    return self
+end
+
 return metas
