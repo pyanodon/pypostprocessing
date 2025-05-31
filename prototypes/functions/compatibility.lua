@@ -555,7 +555,7 @@ if mods["RenaiTransportation"] then
     end
 
     if mods["pypetroleumhandling"] and settings.startup["RTZiplineSetting"].value == true then
-        RECIPE("RTZiplineRecipe3"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-02", amount = 50}
+        RECIPE("RTZiplineTrolley3"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-02", amount = 50}
         RECIPE("RTZiplineRecipe4"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-03", amount = 50}
     end
 
@@ -600,10 +600,10 @@ if mods["RenaiTransportation"] then
         RECIPE("RTTrainRampRecipe"):add_ingredient {type = "item", name = "intermetallics", amount = 10}
 
         if settings.startup["RTZiplineSetting"].value == true then
-            RECIPE("RTZiplineRecipe5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
-            data.raw.recipe["RTZiplineRecipe5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
-            RECIPE("RTZiplineRecipe3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
-            RECIPE("RTZiplineRecipe4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
+            RECIPE("RTZiplineTrolley5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
+            data.raw.recipe["RTZiplineTrolley5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
+            RECIPE("RTZiplineTrolley3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
+            RECIPE("RTZiplineTrolley4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
             TECHNOLOGY("RTZiplineTech4"):add_prereq("machine-components-mk03")
         end
     end

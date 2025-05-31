@@ -4,6 +4,7 @@ Date: tba
   Changes:
     - Added missing translation from base game
     - Added hard data-stage error if post processing detects an impossible-to-research technology.
+    - Adjust to name changes in Renai Transportation 2.1.4. Resolves https://github.com/pyanodon/pybugreports/issues/982
   Internal:
     - Removed unneeded part of recipe lib.
     - Added melonlib error with overriding a technologies' research_trigger.
