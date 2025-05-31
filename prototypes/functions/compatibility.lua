@@ -233,7 +233,7 @@ end
 if mods["miniloader"] then
     TECHNOLOGY("miniloader"):add_pack("py-science-pack-1"):add_pack("logistic-science-pack")
     TECHNOLOGY("fast-miniloader"):add_pack("py-science-pack-2")
-    RECIPE("chute-miniloader"):add_ingredient {"burner-inserter", 2}
+    RECIPE("chute-miniloader"):add_ingredient {type = "item", name = "burner-inserter", amount = 2}
 end
 
 if mods["Flare Stack"] then
@@ -406,16 +406,16 @@ if mods["Rocket-Silo-Construction"] then
 
     if mods["pypetroleumhandling"] then
         RECIPE("rsc-excavation-site"):replace_ingredient("processing-unit", "advanced-circuit")
-        RECIPE("rsc-construction-stage2"):add_ingredient {"small-parts-02", 20}
-        RECIPE("rsc-construction-stage4"):add_ingredient {"small-parts-02", 10}
-        RECIPE("rsc-construction-stage5"):add_ingredient {"small-parts-02", 10}
-        RECIPE("rsc-construction-stage6"):remove_ingredient("processing-unit"):add_ingredient {"small-parts-02", 10}
+        RECIPE("rsc-construction-stage2"):add_ingredient {type = "item", name = "small-parts-02", amount = 20}
+        RECIPE("rsc-construction-stage4"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
+        RECIPE("rsc-construction-stage5"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
+        RECIPE("rsc-construction-stage6"):remove_ingredient("processing-unit"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
     end
 
     if mods["pyalternativeenergy"] then
-        RECIPE("rsc-construction-stage2"):add_ingredient {"self-assembly-monolayer", 5}
-        RECIPE("rsc-construction-stage4"):add_ingredient {"self-assembly-monolayer", 5}
-        RECIPE("rsc-construction-stage5"):add_ingredient {"self-assembly-monolayer", 5}
+        RECIPE("rsc-construction-stage2"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
+        RECIPE("rsc-construction-stage4"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
+        RECIPE("rsc-construction-stage5"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
     end
 end
 

@@ -271,8 +271,32 @@ py.autorecipes = function(params)
             allow_productivity = params.category ~= "slaughterhouse",
         }
         if tier.tech then recipe:add_unlock(tier.tech) end
-
-        if tier.icon then
+        if params.number_icons then -- add numbers to farming recipes so that they're not identical
+            if tier.name then error("can't use number_icons with individual recipe names") end
+            if recipe_name == "arthurian-egg-incubation-01" then log("fucked up") end
+            if i > 9 then
+                log(serpent.block(params))
+                error("autorecipes can only count to 9, check logs")
+            end
+            data.raw.recipe[recipe_name].icons = data.raw.recipe[recipe_name].icons or {}
+            if #data.raw.recipe[recipe_name].icons == 0 then
+                local item_name = tier.main_product or params.main_product or tier.results[1].name
+                local item = (data.raw.module[item_name] or data.raw.item[item_name])
+                if not item.icon then
+                    data.raw.recipe[recipe_name].icons = table.array_combine(data.raw.recipe[recipe_name].icons, item.icons)
+                else
+                    table.insert(
+                        data.raw.recipe[recipe_name].icons,
+                        {icon = tier.icon or item.icon, scale = 64 / (tier.icon_size or 32)}
+                    )
+                end
+            end
+            local scale = (data.raw.recipe[recipe_name].icons[1].scale or .5) / 2
+            table.insert(
+                data.raw.recipe[recipe_name].icons,
+                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}, floating = true}
+            )
+        elseif tier.icon then
             data.raw.recipe[recipe_name].icon = tier.icon
             if tier.icon_size then
                 data.raw.recipe[recipe_name].icon_size = tier.icon_size

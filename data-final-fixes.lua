@@ -317,8 +317,8 @@ else
     }
 
     for _, t in pairs(starting_techs) do
-        t = data.raw.technology[t]
-        if t then t.prerequisites = {"automation-science-pack"} end
+        tech = data.raw.technology[t]
+        if tech then tech.prerequisites = {"automation-science-pack"} end
         ::continue::
     end
 
@@ -382,7 +382,13 @@ end
 
 
 for _, lab in pairs(data.raw.lab) do
-    table.sort(lab.inputs, function(i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
+    table.sort(lab.inputs, function(i1, i2)
+        local science_pack_a = data.raw.tool[i1]
+        if not science_pack_a then error("Missing science pack prototype " .. i1 .. " in lab " .. lab.name) end
+        local science_pack_b = data.raw.tool[i2]
+        if not science_pack_b then error("Missing science pack prototype " .. i2 .. " in lab " .. lab.name) end
+        return science_pack_a.order < science_pack_b.order
+    end)
 end
 
 if mods["pycoalprocessing"] then
@@ -577,6 +583,17 @@ end
 for _, bot_type in pairs {"construction-robot", "logistic-robot"} do
     for _, bot in pairs(data.raw[bot_type]) do
         bot.icon_draw_specification = bot.icon_draw_specification or {shift = {0, -0.2}, scale = 0.8, render_layer = "air-entity-info-icon"}
+    end
+end
+
+for _, technology in pairs(data.raw.technology) do
+    if not technology.hidden and technology.prerequisites then
+        for _, prerequisite in pairs(technology.prerequisites) do
+            local prerequisite = data.raw.technology[prerequisite]
+            if prerequisite and prerequisite.hidden then
+                error("\n\nERROR! Pyanodon detected an impossible-to-research technology.\n" .. technology.name .. " has hidden prerequisite " .. prerequisite.name .. "\nPlease report this on the pY bug tracker. https://github.com/pyanodon/pybugreports/issues\n\n")
+            end
+        end
     end
 end
 

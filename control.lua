@@ -97,7 +97,7 @@ local register_on_nth_tick = function(func_list)
     end
 end
 
-local function init_nth_tick()
+local function init_nth_tick(mod)
     ---@type table<int, NthTickOrder[]>
     storage.nth_tick_order = storage.nth_tick_order or {}
     local added_funcs = {}
@@ -113,21 +113,34 @@ local function init_nth_tick()
             table.insert(storage.nth_tick_order[next_tick], {func = name, delay = 0})
         end
     end
-    py.nth_tick_setup = true
+    py.nth_tick_total = math.ceil(py.nth_tick_total * 2)
+    py.nth_tick_setup[mod] = true
 end
 
----@param event EventData.on_tick
-py.on_event(defines.events.on_tick, function(event)
-    local tick = event.tick
-    if not py.nth_tick_setup then init_nth_tick() end
-    local max_funcs_per_tick = math.ceil(py.nth_tick_total * 2)
+local query_funcs = {}
+local check_tick = -1
+py.nth_tick_setup = {}
+
+---@param mod string
+---@param tick uint
+---@return string[]
+local query_nth_tick = function(mod, tick)
+    if check_tick == tick and py.nth_tick_setup[mod] then
+        return query_funcs[mod] or {}
+    end
+    check_tick = tick
+    query_funcs = {}
+    if not py.nth_tick_setup[mod] then init_nth_tick(mod) end
     local this_tick_total = 0
     local delayed = 0
+    local add = tick ~= 0 and 1 or 0
     for _, order in pairs(storage.nth_tick_order[tick] or {}) do
         if not py.nth_tick_funcs[order.func] then goto continue end
-        this_tick_total = this_tick_total + (game.tick ~= 0 and 1 or 0)
-        if this_tick_total <= max_funcs_per_tick then
-            remote.call(py.nth_tick_funcs[order.func].mod, "execute_on_nth_tick", order.func)
+        this_tick_total = this_tick_total + add
+        if this_tick_total <= py.nth_tick_total then
+            local mod_name = py.nth_tick_funcs[order.func].mod
+            query_funcs[mod_name] = query_funcs[mod_name] or {}
+            table.insert(query_funcs[mod_name], order.func)
             local next_tick = tick + py.nth_tick_funcs[order.func].tick - order.delay
             order.delay = 0
             if next_tick <= tick then
@@ -145,10 +158,12 @@ py.on_event(defines.events.on_tick, function(event)
         ::continue::
     end
     storage.nth_tick_order[tick] = nil
-end)
+    return query_funcs[mod] or {}
+end
 
 py.finalize_events()
 
 remote.add_interface("on_nth_tick", {
-    add = register_on_nth_tick
+    add = register_on_nth_tick,
+    query = query_nth_tick,
 })

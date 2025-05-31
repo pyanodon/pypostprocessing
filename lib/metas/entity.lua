@@ -50,10 +50,6 @@ metas.standardize = function(self)
         end
         minable.result = nil
         minable.count = nil
-
-        for k, p in pairs(minable.results) do
-            minable.results[k] = py.standardize_product(p)
-        end
     end
 
     self.collision_mask = self.collision_mask or collision_mask_util.get_mask(self)

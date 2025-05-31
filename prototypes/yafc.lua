@@ -46,6 +46,7 @@ if mods["pyalienlife"] then
         }
         resource.minable.required_fluid = fluid_name
         resource.minable.fluid_amount = 10
+        ---@diagnostic disable-next-line: missing-fields
         resource.autoplace = {control = "trees"}
 
         for _, recipe_data in ipairs(farm.recipes) do
@@ -56,7 +57,9 @@ if mods["pyalienlife"] then
     end
 
     -- Collector and harvester need a fluid box - an empty table is enough for YAFC
+    ---@diagnostic disable-next-line: missing-fields
     data.raw["mining-drill"]["harvester"].input_fluid_box = {}
+    ---@diagnostic disable-next-line: missing-fields
     data.raw["mining-drill"]["flora-collector-mk01"].input_fluid_box = {}
 
     -- No rocket launches in farm, make it a normal assembling machine
@@ -200,7 +203,7 @@ if mods["pyalienlife"] then
         type = "recipe",
         name = "hidden-beacon-turd",
         ingredients = {},
-        result = "hidden-beacon-turd"
+        results = {{type = "item", name = "hidden-beacon-turd", amount = 1}}
     }
 
     _G.yafc_turd_integration = true

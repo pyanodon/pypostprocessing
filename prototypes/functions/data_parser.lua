@@ -118,7 +118,7 @@ function data_parser:run()
 
     -- starting recipes
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled ~= false then
+        if recipe.enabled ~= false and recipe.parameter ~= true then
             local node = self:parse_recipe(not recipe.ignore_for_dependencies and fz_graph.START_NODE_NAME or nil, recipe)
 
             if not recipe.ignore_for_dependencies then
@@ -845,7 +845,7 @@ function data_parser:pre_process()
 
     -- Starter recipes
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled ~= false then
+        if recipe.enabled ~= false and recipe.parameter ~= true then
             self:pre_process_recipe(recipe)
         end
     end
