@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.29
+Date: 2025-6-1
+  Changes:
+    - Fixed crash on load with bobs logistics.
+    - Fixed crash on load with aai signal transmission.
+    - Fixed crash on load with ultimate belts space age.
+---------------------------------------------------------------------------------------------------
 Version: 3.0.28
 Date: 2025-6-1
   Changes:
