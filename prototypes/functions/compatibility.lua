@@ -538,6 +538,24 @@ if mods["aai-loaders"] then
     end
 end
 
+if mods["aai-signal-transmission"] and data.raw.technology["aai-signal-transmission"] then
+    TECHNOLOGY("aai-signal-transmission"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
+end
+
+if mods["boblogistics"] then
+    if data.raw.technology["bob-robotics-3"] then TECHNOLOGY("bob-robotics-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["bob-railway-3"] then TECHNOLOGY("bob-railway-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["bob-armoured-railway-2"] then TECHNOLOGY("bob-armoured-railway-2"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["bob-robo-modular-3"] then TECHNOLOGY("bob-robo-modular-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["bob-repair-pack-4"] then TECHNOLOGY("bob-repair-pack-4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["logistic-system-2"] then TECHNOLOGY("logistic-system-2"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+    if data.raw.technology["logistics-4"] then TECHNOLOGY("logistics-4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
+end
+
+if mods["UltimateBeltsSpaceAge"] then
+    if data.raw.technology["ultra-express-logistics"] then TECHNOLOGY("ultra-express-logistics"):remove_prereq("modules") end
+end
+
 if mods["cargo-ships"] then
     TECHNOLOGY("water_transport"):remove_prereq("logistics-2"):remove_pack("logistic-science-pack")
     TECHNOLOGY("cargo_ships"):remove_pack("logistic-science-pack")
