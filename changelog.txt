@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.28
-Date: tba
+Date: 2025-6-1
   Changes:
-    - Added missing translation from base game
+    - Added missing translation for the "change-recipe-productivity" localised string.
     - Added hard data-stage error if post processing detects an impossible-to-research technology.
     - Adjust to name changes in Renai Transportation 2.1.4. Resolves https://github.com/pyanodon/pybugreports/issues/982
     - Fixed melonlib recipe functions could result in recipes that create 0x of a result.
