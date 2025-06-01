@@ -256,6 +256,10 @@ metas.multiply_result_amount = function(self, result_name, percent)
         if result.name == result_name then
             local amount = result.amount or (result.amount_min + result.amount_max) / 2
             result.amount = math.ceil(amount * percent)
+            if result.amount == 0 then
+                self:remove_result(result_name)
+                return
+            end
             result.amount_min = nil
             result.amount_max = nil
             return self
@@ -272,6 +276,10 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
     for _, ingredient in pairs(self.ingredients) do
         if ingredient.name == ingredient_name then
             ingredient.amount = math.ceil(ingredient.amount * percent)
+            if ingredient.amount == 0 then
+                self:remove_result(ingredient_name)
+                return
+            end
             return self
         end
     end
@@ -286,6 +294,10 @@ metas.add_result_amount = function(self, result_name, increase)
     for _, result in pairs(self.results) do
         if result.name == result_name then
             result.amount = result.amount + increase
+            if result.amount == 0 then
+                self:remove_result(result_name)
+                return
+            end
             return self
         end
     end
@@ -300,6 +312,10 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
     for _, ingredient in pairs(self.ingredients) do
         if ingredient.name == ingredient_name then
             ingredient.amount = ingredient.amount + increase
+            if ingredient.amount == 0 then
+                self:remove_result(ingredient_name)
+                return
+            end
             return self
         end
     end
