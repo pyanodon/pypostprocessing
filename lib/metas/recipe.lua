@@ -277,7 +277,7 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
         if ingredient.name == ingredient_name then
             ingredient.amount = math.ceil(ingredient.amount * percent)
             if ingredient.amount == 0 then
-                self:remove_result(ingredient_name)
+                self:remove_ingredient(ingredient_name)
                 return
             end
             return self
@@ -313,7 +313,7 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
         if ingredient.name == ingredient_name then
             ingredient.amount = ingredient.amount + increase
             if ingredient.amount == 0 then
-                self:remove_result(ingredient_name)
+                self:remove_ingredient(ingredient_name)
                 return
             end
             return self
