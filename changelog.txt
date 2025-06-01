@@ -5,6 +5,7 @@ Date: 2025-6-1
     - Fixed crash on load with bobs logistics.
     - Fixed crash on load with aai signal transmission.
     - Fixed crash on load with ultimate belts space age.
+    - Added hard version requirement on experimental factorio.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.28
 Date: 2025-6-1
