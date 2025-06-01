@@ -182,31 +182,29 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         table.insert(result_table, return_item)
     end
 
-    local return_barrel
-    if item.return_barrel and item.return_barrel == true then
-        local item_type = "item"
-        local name
+    if item.return_barrel then
+        local barrel_item_name
         if string.match(item.name, "barrel") then
-            name = "barrel"
+            barrel_item_name = "barrel"
         elseif string.match(item.name, "canister") then
-            name = "empty-fuel-canister"
-        end
-        local amount = item.amount or item.add_amount
-        return_barrel = {type = item_type, name = name, amount = amount}
-        if next(result_table) then
-            local has_barrel = false
-            for _, result in pairs(result_table) do
-                if result.name == name then
-                    result.amount = result.amount + amount
-                    has_barrel = true
-                end
-            end
-            if has_barrel == false then
-                table.insert(result_table, return_barrel)
-            end
+            barrel_item_name = "empty-fuel-canister"
         else
-            table.insert(result_table, return_barrel)
+            error()
         end
+
+        local amount = item.amount or item.add_amount
+        local barrels_to_return = {type = "item", name = barrel_item_name, amount = amount, ignored_by_stats = amount, ignored_by_productivity = amount}
+
+        for _, result in pairs(result_table) do
+            if result.name == barrel_item_name then
+                result.amount = result.amount + amount
+                result.ignored_by_stats = (result.ignored_by_stats or 0) + amount
+                result.ignored_by_productivity = (result.ignored_by_productivity or 0) + amount
+                goto already_had_barrel_result
+            end
+        end
+        table.insert(result_table, barrels_to_return)
+        ::already_had_barrel_result::
     end
 end
 
