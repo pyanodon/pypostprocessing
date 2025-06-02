@@ -285,11 +285,11 @@ py.autorecipes = function(params)
                 else
                     table.insert(
                         data.raw.recipe[recipe_name].icons,
-                        {icon = tier.icon or item.icon, scale = 64 / (tier.icon_size or 64)}
+                        {icon = tier.icon or item.icon, scale = 64 / (tier.icon_size or 128)}
                     )
                 end
             end
-            local scale = (data.raw.recipe[recipe_name].icons[1].scale or .25) / 2
+            local scale = (data.raw.recipe[recipe_name].icons[1].scale or .125) / 2
             table.insert(
                 data.raw.recipe[recipe_name].icons,
                 {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}, floating = true}
