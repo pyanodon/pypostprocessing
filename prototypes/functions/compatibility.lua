@@ -530,30 +530,9 @@ then
 end
 
 if mods["aai-loaders"] then
-    if data.raw.technology["aai-express-loader"] then
-        TECHNOLOGY("aai-express-loader"):remove_prereq("processing-unit")
-    end
     if data.raw.technology["aai-fast-loader"] and mods["pyalienlife"] then
         TECHNOLOGY("aai-fast-loader"):remove_prereq("advanced-circuit"):remove_pack("chemical-science-pack")
     end
-end
-
-if mods["aai-signal-transmission"] and data.raw.technology["aai-signal-transmission"] then
-    TECHNOLOGY("aai-signal-transmission"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-end
-
-if mods["boblogistics"] then
-    if data.raw.technology["bob-robotics-3"] then TECHNOLOGY("bob-robotics-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["bob-railway-3"] then TECHNOLOGY("bob-railway-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["bob-armoured-railway-2"] then TECHNOLOGY("bob-armoured-railway-2"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["bob-robo-modular-3"] then TECHNOLOGY("bob-robo-modular-3"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["bob-repair-pack-4"] then TECHNOLOGY("bob-repair-pack-4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["logistic-system-2"] then TECHNOLOGY("logistic-system-2"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-    if data.raw.technology["logistics-4"] then TECHNOLOGY("logistics-4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit") end
-end
-
-if mods["UltimateBeltsSpaceAge"] then
-    if data.raw.technology["ultra-express-logistics"] then TECHNOLOGY("ultra-express-logistics"):remove_prereq("modules") end
 end
 
 if mods["cargo-ships"] then
@@ -603,7 +582,6 @@ if mods["RenaiTransportation"] then
         TECHNOLOGY("RTZiplineTech"):add_prereq("electronics"):remove_prereq("steel-processing")
         TECHNOLOGY("RTZiplineTech2"):remove_prereq("logistic-science-pack")
         TECHNOLOGY("RTZiplineTech3"):add_prereq("basic-electronics")
-        TECHNOLOGY("RTZiplineTech4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
     end
 
     if mods["pyalienlife"] then
@@ -666,4 +644,48 @@ end
 
 if mods["aai-vehicles-miner"] and not mods["pyalienlife"] then
     TECHNOLOGY("vehicle-miner-2"):remove_prereq("electric-mining-drill")
+end
+
+-- https://github.com/pyanodon/pybugreports/issues/1015
+if mods.pyhightech then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "processing-unit" then
+                technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
+                break
+            end
+        end
+    end
+end
+
+if mods.pycoalprocessing then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "modules" then
+                technology:remove_prereq("modules"):add_prereq("speed-module")
+                break
+            end
+        end
+    end
+
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "laser" then
+                technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
+                break
+            end
+        end
+    end
+end
+
+-- https://github.com/pyanodon/pybugreports/issues/1014
+if mods.pyalternativeenergy then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "solar-energy" then
+                technology:remove_prereq("solar-energy"):add_prereq("solar-mk01")
+                break
+            end
+        end
+    end
 end

@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.30
+Date: 2025-06-02
+  Changes:
+    - Automatically resolve hidden technology issues with "processing-unit", "modules", "solar-energy", or "laser" techs. Resolves https://github.com/pyanodon/pybugreports/issues/1015. Resolves https://github.com/pyanodon/pybugreports/issues/1014
+---------------------------------------------------------------------------------------------------
 Version: 3.0.29
 Date: 2025-6-1
   Changes:
