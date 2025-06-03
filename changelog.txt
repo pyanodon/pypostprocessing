@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.32
+Date: 2025-06-03
+  Changes:
+    - Automatically resolve hidden technology issues with the "kovarex-enrichment-process" tech.
+---------------------------------------------------------------------------------------------------
 Version: 3.0.31
 Date: 2025-06-03
   Changes:

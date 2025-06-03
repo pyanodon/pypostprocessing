@@ -689,3 +689,14 @@ if mods.pyalternativeenergy then
         end
     end
 end
+
+if mods.pyrawores then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "kovarex-enrichment-process" then
+                technology:remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
+                break
+            end
+        end
+    end
+end
