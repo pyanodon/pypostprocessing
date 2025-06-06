@@ -703,3 +703,4 @@ end
 
 require('compatibility.aircraft')
 require('compatibility.htl')
+require('compatibility.rampant-arsenal')
