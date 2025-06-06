@@ -3,6 +3,7 @@ Version: 3.0.33
 Date: tba
   Changes:
     - Actually really fix AL farm icon size.
+    - Fixed prerequisite crash with 'declutter' mod
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03

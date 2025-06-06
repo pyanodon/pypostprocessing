@@ -586,12 +586,15 @@ for _, bot_type in pairs {"construction-robot", "logistic-robot"} do
     end
 end
 
-for _, technology in pairs(data.raw.technology) do
-    if not technology.hidden and technology.prerequisites then
-        for _, prerequisite in pairs(technology.prerequisites) do
-            local prerequisite = data.raw.technology[prerequisite]
-            if prerequisite and prerequisite.hidden then
-                error("\n\nERROR! Pyanodon detected an impossible-to-research technology.\n" .. technology.name .. " has hidden prerequisite " .. prerequisite.name .. "\nPlease report this on the pY bug tracker. https://github.com/pyanodon/pybugreports/issues\n\n")
+-- Skip check if user has [declutter](https://mods.factorio.com/mod/declutter) mod which hides arbitrary techs
+if not mods["declutter"] then
+    for _, technology in pairs(data.raw.technology) do
+        if not technology.hidden and technology.prerequisites then
+            for _, prerequisite in pairs(technology.prerequisites) do
+                local prerequisite = data.raw.technology[prerequisite]
+                if prerequisite and prerequisite.hidden then
+                    error("\n\nERROR! Pyanodon detected an impossible-to-research technology.\n" .. technology.name .. " has hidden prerequisite " .. prerequisite.name .. "\nPlease report this on the pY bug tracker. https://github.com/pyanodon/pybugreports/issues\n\n")
+                end
             end
         end
     end
