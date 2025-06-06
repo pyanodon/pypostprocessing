@@ -701,4 +701,5 @@ if mods.pyrawores then
     end
 end
 
+require('compatibility.aircraft')
 require('compatibility.htl')

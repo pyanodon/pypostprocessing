@@ -5,6 +5,7 @@ Date: tba
     - Actually really fix AL farm icon size.
     - Fixed prerequisite crash with 'declutter' mod
     - Fixed prerequisite crash with 'htl' mod
+    - Fixed prerequisite crash with 'aircraft' mod.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03
