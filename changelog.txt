@@ -8,6 +8,7 @@ Date: tba
     - Fixed prerequisite crash with 'aircraft' mod.
     - Fixed prerequisite crash with 'rampant arsenal' mod.
     - Fixed prerequisite crash with 'ks power' mod.
+    - Update RU locale (thanks to Astorin)
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03
