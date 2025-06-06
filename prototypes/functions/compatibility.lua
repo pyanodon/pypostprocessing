@@ -646,7 +646,7 @@ if mods["aai-vehicles-miner"] and not mods["pyalienlife"] then
     TECHNOLOGY("vehicle-miner-2"):remove_prereq("electric-mining-drill")
 end
 
--- https://github.com/pyanodon/pybugreports/issues/1015
+-- [Impossible to research technology - rampant-arsenal-technology-flamethrower-3 has hidden prereq processing unit](https://github.com/pyanodon/pybugreports/issues/1015)
 if mods.pyhightech then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
@@ -678,7 +678,7 @@ if mods.pycoalprocessing then
     end
 end
 
--- https://github.com/pyanodon/pybugreports/issues/1014
+-- [advanced-solar has hidden prerequisite solar-energy](https://github.com/pyanodon/pybugreports/issues/1014)
 if mods.pyalternativeenergy then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
@@ -700,3 +700,5 @@ if mods.pyrawores then
         end
     end
 end
+
+require('compatibility.htl')
