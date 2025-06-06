@@ -703,4 +703,5 @@ end
 
 require('compatibility.aircraft')
 require('compatibility.htl')
+require('compatibility.ks-power')
 require('compatibility.rampant-arsenal')

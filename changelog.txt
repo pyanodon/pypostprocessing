@@ -7,6 +7,7 @@ Date: tba
     - Fixed prerequisite crash with 'htl' mod.
     - Fixed prerequisite crash with 'aircraft' mod.
     - Fixed prerequisite crash with 'rampant arsenal' mod.
+    - Fixed prerequisite crash with 'ks power' mod.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03
