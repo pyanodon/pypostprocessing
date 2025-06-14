@@ -9,6 +9,7 @@ Date: tba
     - Fixed prerequisite crash with 'rampant arsenal' mod.
     - Fixed prerequisite crash with 'ks power' mod.
     - Update RU locale (thanks to Astorin)
+    - Added compatibility with the Space Extension mod
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03
