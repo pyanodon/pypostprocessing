@@ -652,7 +652,10 @@ if mods.pyhightech then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "processing-unit" then
                 technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-                break
+            elseif pre == "battery-mk2-equipment" then
+                technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
+            elseif pre == "battery-equipment" then
+                technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
             end
         end
     end
@@ -663,28 +666,14 @@ if mods.pycoalprocessing then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "modules" then
                 technology:remove_prereq("modules"):add_prereq("speed-module")
-                break
-            end
-        end
-    end
-
-    for _, technology in pairs(data.raw.technology) do
-        for _, prereq in pairs(technology.prerequisites or {}) do
-            if prereq == "laser" then
+            elseif prereq == "laser" then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
-                break
-            end
-        end
-    end
-
-    -- https://mods.factorio.com/mod/Aircraft
-    -- https://mods.factorio.com/mod/Aircraft-space-age
-    -- https://github.com/pyanodon/pybugreports/issues/1036
-    for _, technology in pairs(data.raw.technology) do
-        for _, prereq in pairs(technology.prerequisites or {}) do
-            if prereq == "flammables" then
-                technology:remove_prereq("flammables"):add_prereq("flamethrower")
-                break
+            elseif prereq == "flammables" then
+                if mods["KS_Power"] and technology.name == "big-burner-generator" then
+                    technology:remove_prereq("flammables"):add_prereq("nuclear-power")
+                else
+                    technology:remove_prereq("flammables"):add_prereq("flamethrower")
+                end
             end
         end
     end
@@ -713,8 +702,16 @@ if mods.pyrawores then
     end
 end
 
+if mods.pyindustry then
+    for _, technology in pairs(data.raw.technology) do
+        for i, pre in pairs(technology.prerequisites or {}) do
+            if pre == "radar" then
+                technology:remove_prereq("radar"):add_prereq("radars-mk01")
+                break
+            end
+        end
+    end
+end
+
 require('compatibility.htl')
-require('compatibility.ks-power')
 require('compatibility.rampant-arsenal')
-require('compatibility.battery')
-require('compatibility.radar')
