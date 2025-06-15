@@ -1,6 +1,6 @@
 -- Changes mods that use radar tech to use py radar tech
 
-if mods.pyhightech then
+if mods.pyindustry then
   for _, technology in pairs(data.raw.technology) do
     for i, pre in pairs(technology.prerequisites) do
       if pre == "radar" then
