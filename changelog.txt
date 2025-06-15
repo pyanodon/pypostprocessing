@@ -10,6 +10,7 @@ Date: tba
     - Fixed prerequisite crash with 'ks power' mod.
     - Update RU locale (thanks to Astorin)
     - Added compatibility with the Space Extension mod. Resolves https://github.com/pyanodon/pybugreports/issues/1050.
+    - Dynamically changes all dependencies on battery equipment to use the high tech battery
     - Fixed crash with "big-burner-generator" mod. Resolves https://github.com/pyanodon/pybugreports/issues/1036
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
