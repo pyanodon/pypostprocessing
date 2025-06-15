@@ -716,4 +716,4 @@ end
 require('compatibility.htl')
 require('compatibility.ks-power')
 require('compatibility.rampant-arsenal')
-require('compatibility.space-extension')
+require('compatibility.battery')
