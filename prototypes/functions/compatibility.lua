@@ -676,6 +676,18 @@ if mods.pycoalprocessing then
             end
         end
     end
+
+    -- https://mods.factorio.com/mod/Aircraft
+    -- https://mods.factorio.com/mod/Aircraft-space-age
+    -- https://github.com/pyanodon/pybugreports/issues/1036
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "flammables" then
+                technology:remove_prereq("flammables"):add_prereq("flamethrower")
+                break
+            end
+        end
+    end
 end
 
 -- [advanced-solar has hidden prerequisite solar-energy](https://github.com/pyanodon/pybugreports/issues/1014)
@@ -701,7 +713,6 @@ if mods.pyrawores then
     end
 end
 
-require('compatibility.aircraft')
 require('compatibility.htl')
 require('compatibility.ks-power')
 require('compatibility.rampant-arsenal')

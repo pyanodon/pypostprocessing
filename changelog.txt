@@ -9,7 +9,8 @@ Date: tba
     - Fixed prerequisite crash with 'rampant arsenal' mod.
     - Fixed prerequisite crash with 'ks power' mod.
     - Update RU locale (thanks to Astorin)
-    - Added compatibility with the Space Extension mod (resolves https://github.com/pyanodon/pybugreports/issues/1050).
+    - Added compatibility with the Space Extension mod. Resolves https://github.com/pyanodon/pybugreports/issues/1050.
+    - Fixed crash with "big-burner-generator" mod. Resolves https://github.com/pyanodon/pybugreports/issues/1036
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.32
 Date: 2025-06-03
