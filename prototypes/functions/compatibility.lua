@@ -1,14 +1,6 @@
 -- Compatibility changes which need to modify data.raw should go here.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
-if mods["pyrawores"] then
-    for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
-            recipe:replace_ingredient("coal", "raw-coal")
-        end
-    end
-end
-
 if data.raw.recipe["electronic-circuit"].enabled == false
     and (not data.raw.recipe["electronic-circuit-initial"] or data.raw.recipe["electronic-circuit-initial"].enabled == false)
     and data.raw.recipe["inductor1-2"]
@@ -79,6 +71,11 @@ if mods.pyrawores then
 end
 
 if mods.pyindustry then
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
+            recipe:replace_ingredient("coal", "raw-coal")
+        end
+    end
     for _, technology in pairs(data.raw.technology) do
         for i, pre in pairs(technology.prerequisites or {}) do
             if pre == "radar" then
