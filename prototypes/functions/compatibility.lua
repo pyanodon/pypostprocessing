@@ -1,4 +1,5 @@
 -- Compatibility changes which need to modify data.raw should go here.
+-- Additionally you should add new compatibility code not related to the py mods into it's own mod group file or mod file to keep things organized.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
 if data.raw.recipe["electronic-circuit"].enabled == false
