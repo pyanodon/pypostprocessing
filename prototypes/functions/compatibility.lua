@@ -49,11 +49,7 @@ if mods.pycoalprocessing then
             elseif prereq == "laser" then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
             elseif prereq == "flammables" then
-                if mods["KS_Power"] and technology.name == "big-burner-generator" then
-                    technology:remove_prereq("flammables"):add_prereq("nuclear-power")
-                else
-                    technology:remove_prereq("flammables"):add_prereq("flamethrower")
-                end
+                technology:remove_prereq("flammables"):add_prereq("flamethrower")
             end
         end
     end
