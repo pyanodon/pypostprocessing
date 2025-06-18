@@ -25,9 +25,9 @@ if mods.pyhightech then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "processing-unit" then
                 technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-            elseif pre == "battery-mk2-equipment" then
+            elseif prereq == "battery-mk2-equipment" then
                 technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
-            elseif pre == "battery-equipment" then
+            elseif prereq == "battery-equipment" then
                 technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
             end
         end
