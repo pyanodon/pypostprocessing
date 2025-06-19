@@ -12,8 +12,8 @@ require "vector"
 py.draw_error_sprite = function(entity, sprite, time_to_live)
     rendering.draw_sprite {
         sprite = sprite,
-        x_scale = 0.5,
-        y_scale = 0.5,
+        x_scale = entity.prototype.alert_icon_scale or 0.5,
+        y_scale = entity.prototype.alert_icon_scale or 0.5,
         target = entity,
         surface = entity.surface,
         time_to_live = time_to_live or 30,
