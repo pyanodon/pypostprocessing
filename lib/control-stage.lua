@@ -37,9 +37,9 @@ py.generate_allowed_module_tooltip = function(allowed_modules)
 end
 
 ---Randomizes a position by a factor.
----@param position Position
+---@param position MapPosition
 ---@param factor number?
----@return Position
+---@return MapPosition
 py.randomize_position = function(position, factor)
     local x = position.x or position[1]
     local y = position.y or position[2]
@@ -62,7 +62,7 @@ py.cancel_creation = function(entity, player_index, message, color)
     local name = entity.name
 
     if player_index then
-        local player = game.get_player(player_index)
+        local player = game.get_player(player_index) --[[@as LuaPlayer]]
         if player.mine_entity(entity, false) then
             inserted = 1
 
@@ -212,8 +212,8 @@ py.distance = function(x, y)
 end
 
 ---Returns the squared distance between two points.
----@param first Position
----@param second Position
+---@param first MapPosition
+---@param second MapPosition
 ---@return number
 py.distance_squared = function(first, second)
     local x = first.x - second.x

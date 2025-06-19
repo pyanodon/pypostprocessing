@@ -1,5 +1,5 @@
 FLUID = setmetatable(data.raw.fluid, {
-    ---@param tech data.FluidPrototype
+    ---@param fluid data.FluidPrototype
     __call = function(self, fluid)
         local ftype = type(fluid)
         if ftype == "string" then

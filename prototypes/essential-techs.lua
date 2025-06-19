@@ -25,7 +25,7 @@ make_essential("pyrrhic")
 make_essential("electronics")
 make_essential("basic-electronics")
 make_essential("advanced-circuit")
-make_essential("nano-tech")
+make_essential("quantum-processor")
 
 -- alternative energy progression
 make_essential("machine-components-mk01")

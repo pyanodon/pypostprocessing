@@ -2,7 +2,6 @@ local table_insert = table.insert
 
 ---@class data.RecipePrototype
 ---@field public standardize fun(self: data.RecipePrototype): data.RecipePrototype
----@field public allow_productivity fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public add_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype
@@ -55,27 +54,10 @@ RECIPE = setmetatable(data.raw.recipe, {
 })
 
 metas.standardize = function(self)
-    if self.results and type(self.results) == "table" then
-        self.result = nil
-        self.result_count = nil
-    elseif self.result then
-        self.results = {{type = "item", name = self.result, amount = self.result_count or 1}}
-        self.result = nil
-        self.result_count = nil
-    else
-        self.results = {}
-    end
-
-    for k, p in pairs(self.results) do
-        self.results[k] = py.standardize_product(p)
-    end
+    self.results = self.results or {}
 
     -- ingredients is optional
     self.ingredients = self.ingredients or {}
-
-    for k, p in pairs(self.ingredients) do
-        self.ingredients[k] = py.standardize_product(p)
-    end
 
     self.energy_required = self.energy_required or 0.5
 
@@ -172,7 +154,7 @@ do
                 end
             end
         elseif type == "table" then
-            new = py.standardize_product(table.deepcopy(new))
+            new = table.deepcopy(new)
             if not FLUID[new.name] and not ITEM[new.name] then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return
@@ -187,14 +169,12 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        if type(new_ingredient) == "table" then new_ingredient = py.standardize_product(new_ingredient) end
         replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
         return self
     end
 
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        if type(new_result) == "table" then new_result = py.standardize_product(new_result) end
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
@@ -205,7 +185,6 @@ end
 
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
-    ingredient = py.standardize_product(ingredient)
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
         log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
         return self
@@ -233,7 +212,7 @@ end
 
 metas.add_result = function(self, result)
     self:standardize()
-    table_insert(self.results, py.standardize_product(result))
+    table_insert(self.results, result)
     return self
 end
 
@@ -277,6 +256,10 @@ metas.multiply_result_amount = function(self, result_name, percent)
         if result.name == result_name then
             local amount = result.amount or (result.amount_min + result.amount_max) / 2
             result.amount = math.ceil(amount * percent)
+            if result.amount == 0 then
+                self:remove_result(result_name)
+                return
+            end
             result.amount_min = nil
             result.amount_max = nil
             return self
@@ -293,6 +276,10 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
     for _, ingredient in pairs(self.ingredients) do
         if ingredient.name == ingredient_name then
             ingredient.amount = math.ceil(ingredient.amount * percent)
+            if ingredient.amount == 0 then
+                self:remove_ingredient(ingredient_name)
+                return
+            end
             return self
         end
     end
@@ -307,6 +294,10 @@ metas.add_result_amount = function(self, result_name, increase)
     for _, result in pairs(self.results) do
         if result.name == result_name then
             result.amount = result.amount + increase
+            if result.amount == 0 then
+                self:remove_result(result_name)
+                return
+            end
             return self
         end
     end
@@ -321,6 +312,10 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
     for _, ingredient in pairs(self.ingredients) do
         if ingredient.name == ingredient_name then
             ingredient.amount = ingredient.amount + increase
+            if ingredient.amount == 0 then
+                self:remove_ingredient(ingredient_name)
+                return
+            end
             return self
         end
     end
@@ -330,12 +325,24 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
 end
 
 metas.set_result_amount = function(self, result_name, amount)
-    self:replace_result(ingredient_name, ingredient_name, amount)
+    self:replace_result(result_name, result_name, amount)
     return self
 end
 
 metas.set_ingredient_amount = function(self, ingredient_name, amount)
     self:replace_ingredient(ingredient_name, ingredient_name, amount)
+    return self
+end
+
+metas.change_category = function(self, category_name)
+    self:standardize()
+
+    if data.raw['recipe-category'][category_name] then
+        self.category = category_name
+    else
+        log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name  .. " not found")
+    end
+
     return self
 end
 

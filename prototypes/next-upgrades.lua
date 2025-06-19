@@ -3,8 +3,8 @@ local math2d = require "__core__/lualib/math2d"
 
 ---Given an entity prototype name, return the next tier of that entity. For example electrolyzer-mk01 -> electrolyzer-mk02
 ---@param prototype_name string
----@param prototype_category table<string, EntityPrototype>
----@return string
+---@param prototype_category table<string, data.EntityPrototype>
+---@return string?
 local function next_tier(prototype_name, prototype_category)
     local tier_num = prototype_name:match("%-mk(%d%d)")
     if tier_num then
@@ -21,12 +21,12 @@ local function next_tier(prototype_name, prototype_category)
 end
 
 ---Given a prototype, check if it has valid minable properties for use in the next upgrade system.
----@param entity EntityPrototype
+---@param entity data.EntityPrototype
 ---@return boolean
 local function check_for_valid_minable_properties(entity)
     if not entity.minable then return false end
 
-    local minable = entity.minable
+    local minable = entity.minable --[[@as data.MinableProperties]]
     if not minable.result and not minable.results then return false end
     local minable_result = minable.result or minable.results[1] and (minable.results[1].name or minable.results[1][1])
     if not minable_result then return false end
@@ -40,7 +40,7 @@ local function check_for_valid_minable_properties(entity)
 end
 
 ---Given an entity prototype, check if it meets the criteria for being upgradable.
----@param entity EntityPrototype
+---@param entity data.EntityPrototype
 ---@return boolean
 local function can_be_upgraded(entity)
     if not entity then return false end

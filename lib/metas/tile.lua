@@ -1,5 +1,5 @@
 TILE = setmetatable(data.raw.tile, {
-    ---@param tech data.TilePrototype
+    ---@param tile data.TilePrototype
     __call = function(self, tile)
         local ftype = type(tile)
         if ftype == "string" then

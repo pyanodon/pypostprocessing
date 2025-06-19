@@ -1,6 +1,57 @@
 ---------------------------------------------------------------------------------------------------
-Version: 3.0.27
+Version: 3.0.33
 Date: tba
+  Changes:
+    - Actually really fix AL farm icon size. Resolves https://github.com/pyanodon/pybugreports/issues/1025
+    - Fixed prerequisite crash with 'declutter' mod.
+    - Fixed prerequisite crash with 'htl' mod.
+    - Fixed prerequisite crash with 'aircraft' mod.
+    - Fixed prerequisite crash with 'rampant arsenal' mod.
+    - Fixed prerequisite crash with 'ks power' mod.
+    - Update RU locale (thanks to Astorin)
+    - Added compatibility with the Space Extension mod. Resolves https://github.com/pyanodon/pybugreports/issues/1050.
+    - Dynamically changes all dependencies on battery equipment to use the high tech battery
+    - Dynamically changes all deperdencies on radar to use the py radars
+    - Fixed crash with "big-burner-generator" mod. Resolves https://github.com/pyanodon/pybugreports/issues/1036
+---------------------------------------------------------------------------------------------------
+Version: 3.0.32
+Date: 2025-06-03
+  Changes:
+    - Automatically resolve hidden technology issues with the "kovarex-enrichment-process" tech.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.31
+Date: 2025-06-03
+  Changes:
+    - Fixed AL farm icons being too big.
+    - Fixed startup crash with YAFC. Resolves https://github.com/pyanodon/pybugreports/issues/1016
+---------------------------------------------------------------------------------------------------
+Version: 3.0.30
+Date: 2025-06-02
+  Changes:
+    - Automatically resolve hidden technology issues with "processing-unit", "modules", "solar-energy", or "laser" techs. Resolves https://github.com/pyanodon/pybugreports/issues/1015. Resolves https://github.com/pyanodon/pybugreports/issues/1014
+---------------------------------------------------------------------------------------------------
+Version: 3.0.29
+Date: 2025-6-1
+  Changes:
+    - Fixed crash on load with bobs logistics.
+    - Fixed crash on load with aai signal transmission.
+    - Fixed crash on load with ultimate belts space age.
+    - Added hard version requirement on experimental factorio.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.28
+Date: 2025-6-1
+  Changes:
+    - Added missing translation for the "change-recipe-productivity" localised string.
+    - Added hard data-stage error if post processing detects an impossible-to-research technology.
+    - Adjust to name changes in Renai Transportation 2.1.4. Resolves https://github.com/pyanodon/pybugreports/issues/982
+    - Fixed melonlib recipe functions could result in recipes that create 0x of a result.
+    - pyAL plant and animal recipe autogeneration functions now properly prevent productivity duplication in most barrel recipes.
+  Internal:
+    - Removed unneeded part of recipe lib.
+    - Added melonlib error with overriding a technologies' research_trigger.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.27
+Date: 2025-4-13
   Changes:
     - Fixed a crash with disabling ziplines when paired with renai transportation.
     - Fixed that alpha Dingrits couldn't be used in non turd recipes.

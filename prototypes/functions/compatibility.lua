@@ -17,6 +17,19 @@ if mods["DeadlockLargerLamp"] then
     -- Originally these include electronic-circuits and are unlocked at optics, causing a deadlock in pymods
     RECIPE("deadlock-large-lamp"):remove_ingredient("electronic-circuit"):add_ingredient {type = "item", name = "copper-plate", amount = 4}:add_ingredient {type = "item", name = "glass", amount = 6}
     RECIPE("deadlock-floor-lamp"):remove_ingredient("electronic-circuit"):add_ingredient {type = "item", name = "copper-plate", amount = 4}:add_ingredient {type = "item", name = "glass", amount = 6}
+
+    data.raw["assembling-machine"]["deadlock-copper-lamp"].energy_source.fuel_categories = {"chemical","biomass","nuke"}
+
+end
+
+if mods["LargerLamps-2_0"] then
+    -- Originally these include electronic-circuits and are unlocked at optics, causing a deadlock in pymods
+    RECIPE("deadlock-large-lamp"):remove_ingredient("electronic-circuit"):add_ingredient {type = "item", name = "copper-plate", amount = 4}:add_ingredient {type = "item", name = "glass", amount = 6}
+    RECIPE("deadlock-floor-lamp"):remove_ingredient("electronic-circuit"):add_ingredient {type = "item", name = "copper-plate", amount = 4}:add_ingredient {type = "item", name = "glass", amount = 6}
+    RECIPE("deadlock-electric-copper-lamp"):remove_ingredient("advanced-circuit"):add_ingredient {type = "item", name = "deadlock-copper-lamp", amount = 1}:add_ingredient {type = "item", name = "inductor1", amount = 4}:add_ingredient {type = "item", name = "glass", amount = 6}
+
+    data.raw["assembling-machine"]["deadlock-copper-lamp"].energy_source.fuel_categories = {"chemical","biomass","nuke"}
+
 end
 
 if mods["deadlock-beltboxes-loaders"] then
@@ -233,7 +246,7 @@ end
 if mods["miniloader"] then
     TECHNOLOGY("miniloader"):add_pack("py-science-pack-1"):add_pack("logistic-science-pack")
     TECHNOLOGY("fast-miniloader"):add_pack("py-science-pack-2")
-    RECIPE("chute-miniloader"):add_ingredient {"burner-inserter", 2}
+    RECIPE("chute-miniloader"):add_ingredient {type = "item", name = "burner-inserter", amount = 2}
 end
 
 if mods["Flare Stack"] then
@@ -406,16 +419,16 @@ if mods["Rocket-Silo-Construction"] then
 
     if mods["pypetroleumhandling"] then
         RECIPE("rsc-excavation-site"):replace_ingredient("processing-unit", "advanced-circuit")
-        RECIPE("rsc-construction-stage2"):add_ingredient {"small-parts-02", 20}
-        RECIPE("rsc-construction-stage4"):add_ingredient {"small-parts-02", 10}
-        RECIPE("rsc-construction-stage5"):add_ingredient {"small-parts-02", 10}
-        RECIPE("rsc-construction-stage6"):remove_ingredient("processing-unit"):add_ingredient {"small-parts-02", 10}
+        RECIPE("rsc-construction-stage2"):add_ingredient {type = "item", name = "small-parts-02", amount = 20}
+        RECIPE("rsc-construction-stage4"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
+        RECIPE("rsc-construction-stage5"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
+        RECIPE("rsc-construction-stage6"):remove_ingredient("processing-unit"):add_ingredient {type = "item", name = "small-parts-02", amount = 10}
     end
 
     if mods["pyalternativeenergy"] then
-        RECIPE("rsc-construction-stage2"):add_ingredient {"self-assembly-monolayer", 5}
-        RECIPE("rsc-construction-stage4"):add_ingredient {"self-assembly-monolayer", 5}
-        RECIPE("rsc-construction-stage5"):add_ingredient {"self-assembly-monolayer", 5}
+        RECIPE("rsc-construction-stage2"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
+        RECIPE("rsc-construction-stage4"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
+        RECIPE("rsc-construction-stage5"):add_ingredient {type = "item", name = "self-assembly-monolayer", amount = 5}
     end
 end
 
@@ -517,9 +530,6 @@ then
 end
 
 if mods["aai-loaders"] then
-    if data.raw.technology["aai-express-loader"] then
-        TECHNOLOGY("aai-express-loader"):remove_prereq("processing-unit")
-    end
     if data.raw.technology["aai-fast-loader"] and mods["pyalienlife"] then
         TECHNOLOGY("aai-fast-loader"):remove_prereq("advanced-circuit"):remove_pack("chemical-science-pack")
     end
@@ -555,7 +565,7 @@ if mods["RenaiTransportation"] then
     end
 
     if mods["pypetroleumhandling"] and settings.startup["RTZiplineSetting"].value == true then
-        RECIPE("RTZiplineRecipe3"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-02", amount = 50}
+        RECIPE("RTZiplineTrolley3"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-02", amount = 50}
         RECIPE("RTZiplineRecipe4"):remove_ingredient("small-parts-01"):add_ingredient {type = "item", name = "small-parts-03", amount = 50}
     end
 
@@ -572,7 +582,6 @@ if mods["RenaiTransportation"] then
         TECHNOLOGY("RTZiplineTech"):add_prereq("electronics"):remove_prereq("steel-processing")
         TECHNOLOGY("RTZiplineTech2"):remove_prereq("logistic-science-pack")
         TECHNOLOGY("RTZiplineTech3"):add_prereq("basic-electronics")
-        TECHNOLOGY("RTZiplineTech4"):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
     end
 
     if mods["pyalienlife"] then
@@ -600,10 +609,10 @@ if mods["RenaiTransportation"] then
         RECIPE("RTTrainRampRecipe"):add_ingredient {type = "item", name = "intermetallics", amount = 10}
 
         if settings.startup["RTZiplineSetting"].value == true then
-            RECIPE("RTZiplineRecipe5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
-            data.raw.recipe["RTZiplineRecipe5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
-            RECIPE("RTZiplineRecipe3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
-            RECIPE("RTZiplineRecipe4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
+            RECIPE("RTZiplineTrolley5"):add_ingredient {type = "item", name = "fission-reactor-equipment", amount = 1}:add_ingredient {type = "item", name = "RTZiplineItem4", amount = 1}:add_ingredient {type = "item", name = "nuclear-fuel", amount = 5}
+            data.raw.recipe["RTZiplineTrolley5"].ingredients = table.deepcopy(data.raw.recipe["exoskeleton-equipment"].ingredients)
+            RECIPE("RTZiplineTrolley3"):add_ingredient {type = "item", name = "mechanical-parts-02", amount = 10}
+            RECIPE("RTZiplineTrolley4"):add_ingredient {type = "item", name = "mechanical-parts-03", amount = 10}
             TECHNOLOGY("RTZiplineTech4"):add_prereq("machine-components-mk03")
         end
     end
@@ -636,3 +645,73 @@ end
 if mods["aai-vehicles-miner"] and not mods["pyalienlife"] then
     TECHNOLOGY("vehicle-miner-2"):remove_prereq("electric-mining-drill")
 end
+
+-- [Impossible to research technology - rampant-arsenal-technology-flamethrower-3 has hidden prereq processing unit](https://github.com/pyanodon/pybugreports/issues/1015)
+if mods.pyhightech then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "processing-unit" then
+                technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
+            elseif pre == "battery-mk2-equipment" then
+                technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
+            elseif pre == "battery-equipment" then
+                technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
+            end
+        end
+    end
+end
+
+if mods.pycoalprocessing then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "modules" then
+                technology:remove_prereq("modules"):add_prereq("speed-module")
+            elseif prereq == "laser" then
+                technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
+            elseif prereq == "flammables" then
+                if mods["KS_Power"] and technology.name == "big-burner-generator" then
+                    technology:remove_prereq("flammables"):add_prereq("nuclear-power")
+                else
+                    technology:remove_prereq("flammables"):add_prereq("flamethrower")
+                end
+            end
+        end
+    end
+end
+
+-- [advanced-solar has hidden prerequisite solar-energy](https://github.com/pyanodon/pybugreports/issues/1014)
+if mods.pyalternativeenergy then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "solar-energy" then
+                technology:remove_prereq("solar-energy"):add_prereq("solar-mk01")
+                break
+            end
+        end
+    end
+end
+
+if mods.pyrawores then
+    for _, technology in pairs(data.raw.technology) do
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "kovarex-enrichment-process" then
+                technology:remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
+                break
+            end
+        end
+    end
+end
+
+if mods.pyindustry then
+    for _, technology in pairs(data.raw.technology) do
+        for i, pre in pairs(technology.prerequisites or {}) do
+            if pre == "radar" then
+                technology:remove_prereq("radar"):add_prereq("radars-mk01")
+                break
+            end
+        end
+    end
+end
+
+require('compatibility.htl')
+require('compatibility.rampant-arsenal')
