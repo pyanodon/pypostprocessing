@@ -61,6 +61,11 @@ if mods.pyalternativeenergy then
 end
 
 if mods.pyrawores then
+    for _, recipe in pairs(data.raw.recipe) do
+        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
+            recipe:replace_ingredient("coal", "raw-coal")
+        end
+    end
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "kovarex-enrichment-process" then
@@ -72,11 +77,6 @@ if mods.pyrawores then
 end
 
 if mods.pyindustry then
-    for _, recipe in pairs(data.raw.recipe) do
-        if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
-            recipe:replace_ingredient("coal", "raw-coal")
-        end
-    end
     for _, technology in pairs(data.raw.technology) do
         for i, pre in pairs(technology.prerequisites or {}) do
             if pre == "radar" then
@@ -87,9 +87,6 @@ if mods.pyindustry then
     end
 end
 
-require('compatibility.htl')
-require('compatibility.rampant-arsenal')
-require('compatibility.deadlock')
 require("compatibility.aai")
 require("compatibility.bobs")
 require("compatibility.bot-replacer")
@@ -98,10 +95,12 @@ require("compatibility.compakt-circuit")
 require("compatibility.deadlock")
 require("compatibility.extra-storage-tank-minibuffer")
 require("compatibility.flare-stack")
+require("compatibility.galdoc")
 require("compatibility.htl")
 require("compatibility.jetpack")
+require("compatibility.ks-power")
 require("compatibility.larger-lamps")
-require("compatibility.larger-poles-plus")
+require("compatibility.lighted-poles-plus")
 require("compatibility.logistic-train-network")
 require("compatibility.miniloader")
 require("compatibility.nixie-tubes")
@@ -119,9 +118,9 @@ require("compatibility.shuttle-train-refresh")
 require("compatibility.subspace-storage")
 require("compatibility.teleporters")
 require("compatibility.tiny-start")
-require("compatibility.trainfactory")
 require("compatibility.train-pubsub")
 require("compatibility.train-upgrader")
+require("compatibility.trainfactory")
 require("compatibility.transport-drones")
 require("compatibility.waterwell")
 require("compatibility.yirailway")

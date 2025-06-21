@@ -1,3 +1,4 @@
+local bobInsertersVersion = mods["bobinserters"]
 if mods["bobinserters"] and mods["pyalienlife"] then
     if bobInsertersVersion:sub(1, 1) == "1" then
         TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
