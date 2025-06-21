@@ -54,7 +54,9 @@ if mods.pyalternativeenergy then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "solar-energy" then
                 technology:remove_prereq("solar-energy"):add_prereq("solar-mk01")
-                break
+            end
+            if prereq == "battery" then
+                technology:remove_prereq("battery"):add_prereq("battery-mk01")
             end
         end
     end

@@ -6,7 +6,3 @@ if mods["Teleporters"] and mods["pyhightech"] then
         TECHNOLOGY("teleporter"):remove_pack("py-science-pack-2")
     end
 end
-
-if mods["Teleporters"] and mods["pyalternativeenergy"] then
-    TECHNOLOGY("teleporter"):remove_prereq("battery"):add_prereq("battery-mk01")
-end
