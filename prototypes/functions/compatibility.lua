@@ -21,8 +21,10 @@ end
 
 if mods.pyalternativeenergy then
     for _, technology in pairs(data.raw.technology) do
-        if prereq == "nuclear-fuel-reprocessing" then
-            technology:remove_prereq("nuclear-fuel-reprocessing")
+        for _, prereq in pairs(technology.prerequisites or {}) do
+            if prereq == "nuclear-fuel-reprocessing" then
+                technology:remove_prereq("nuclear-fuel-reprocessing")
+            end
         end
     end
 end
