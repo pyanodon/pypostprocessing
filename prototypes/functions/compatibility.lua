@@ -19,25 +19,17 @@ if mods["angelsrefining"] and not mods["PyCoalTBaA"] then
     error("\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n")
 end
 
-if mods.pyalternativeenergy then
-    for _, technology in pairs(data.raw.technology) do
-        for _, prereq in pairs(technology.prerequisites or {}) do
-            if prereq == "nuclear-fuel-reprocessing" then
-                technology:remove_prereq("nuclear-fuel-reprocessing")
-            end
-        end
-    end
-end
-
 -- [Impossible to research technology - rampant-arsenal-technology-flamethrower-3 has hidden prereq processing unit](https://github.com/pyanodon/pybugreports/issues/1015)
 if mods.pyhightech then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "processing-unit" then
                 technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-            elseif prereq == "battery-mk2-equipment" then
+            end
+            if prereq == "battery-mk2-equipment" then
                 technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
-            elseif prereq == "battery-equipment" then
+            end
+            if prereq == "battery-equipment" then
                 technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
             end
         end
@@ -49,9 +41,9 @@ if mods.pycoalprocessing then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "modules" then
                 technology:remove_prereq("modules"):add_prereq("speed-module")
-            elseif prereq == "laser" then
+            if prereq == "laser" then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
-            elseif prereq == "flammables" then
+            if prereq == "flammables" then
                 technology:remove_prereq("flammables"):add_prereq("flamethrower")
             end
         end
@@ -67,6 +59,9 @@ if mods.pyalternativeenergy then
             end
             if prereq == "battery" then
                 technology:remove_prereq("battery"):add_prereq("battery-mk01")
+            end
+            if prereq == "nuclear-fuel-reprocessing" then
+                technology:remove_prereq("nuclear-fuel-reprocessing")
             end
         end
     end
