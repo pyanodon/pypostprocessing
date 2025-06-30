@@ -19,6 +19,14 @@ if mods["angelsrefining"] and not mods["PyCoalTBaA"] then
     error("\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n")
 end
 
+if mods.pyalternativeenergy then
+    for _, technology in pairs(data.raw.technology) do
+        if prereq == "nuclear-fuel-reprocessing" then
+            technology:remove_prereq("nuclear-fuel-reprocessing")
+        end
+    end
+end
+
 -- [Impossible to research technology - rampant-arsenal-technology-flamethrower-3 has hidden prereq processing unit](https://github.com/pyanodon/pybugreports/issues/1015)
 if mods.pyhightech then
     for _, technology in pairs(data.raw.technology) do
@@ -43,8 +51,6 @@ if mods.pycoalprocessing then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
             elseif prereq == "flammables" then
                 technology:remove_prereq("flammables"):add_prereq("flamethrower")
-            elseif prereq == "nuclear-fuel-reprocessing" then
-                technology:remove_prereq("nuclear-fuel-reprocessing")
             end
         end
     end
