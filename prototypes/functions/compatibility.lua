@@ -41,8 +41,10 @@ if mods.pycoalprocessing then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "modules" then
                 technology:remove_prereq("modules"):add_prereq("speed-module")
+            end
             if prereq == "laser" then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
+            end
             if prereq == "flammables" then
                 technology:remove_prereq("flammables"):add_prereq("flamethrower")
             end
