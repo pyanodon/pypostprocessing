@@ -89,6 +89,10 @@ if mods.pyindustry then
     end
 end
 
+if not mods.pyalienlife and mods.pypetroleumhandling then
+    RECIPE("oil-refinery"):remove_unlock("plastics")
+end
+
 require("compatibility.aai")
 require("compatibility.bobs")
 require("compatibility.bot-replacer")
