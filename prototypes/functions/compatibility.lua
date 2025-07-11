@@ -25,11 +25,9 @@ if mods.pyhightech then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "processing-unit" then
                 technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
-            end
-            if prereq == "battery-mk2-equipment" then
+            elseif prereq == "battery-mk2-equipment" then
                 technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
-            end
-            if prereq == "battery-equipment" then
+            elseif prereq == "battery-equipment" then
                 technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
             end
         end
@@ -41,11 +39,9 @@ if mods.pycoalprocessing then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "modules" then
                 technology:remove_prereq("modules"):add_prereq("speed-module")
-            end
-            if prereq == "laser" then
+            elseif prereq == "laser" then
                 technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
-            end
-            if prereq == "flammables" then
+            elseif prereq == "flammables" then
                 technology:remove_prereq("flammables"):add_prereq("flamethrower")
             end
         end
@@ -58,11 +54,9 @@ if mods.pyalternativeenergy then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "solar-energy" then
                 technology:remove_prereq("solar-energy"):add_prereq("solar-mk01")
-            end
-            if prereq == "battery" then
+            elseif prereq == "battery" then
                 technology:remove_prereq("battery"):add_prereq("battery-mk01")
-            end
-            if prereq == "nuclear-fuel-reprocessing" then
+            elseif prereq == "nuclear-fuel-reprocessing" then
                 technology:remove_prereq("nuclear-fuel-reprocessing")
             end
         end
