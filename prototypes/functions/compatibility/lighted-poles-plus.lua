@@ -1,4 +1,4 @@
-if mods["LightedPolesPlus"] then
+if mods["LightedPolesPlus"] or mods["Lighted-Poles-Plus"] then
     RECIPE("lighted-small-electric-pole"):add_unlock("optics"):remove_unlock("creosote").enabled = false
     if mods["pyalternativeenergy"] then
         RECIPE("lighted-medium-electric-pole"):remove_unlock("optics"):add_unlock("electric-energy-distribution-1")
