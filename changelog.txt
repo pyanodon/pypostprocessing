@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.34
+Date: ???
+  Changes:
+    - Fixed pymedium oil-refinery existing
+---------------------------------------------------------------------------------------------------
 Version: 3.0.33
-Date: tba
+Date: 2025-06-28
   Changes:
     - Actually really fix AL farm icon size. Resolves https://github.com/pyanodon/pybugreports/issues/1025
     - Fixed prerequisite crash with 'declutter' mod.
