@@ -713,5 +713,4 @@ if mods.pyindustry then
     end
 end
 
-require('compatibility.htl')
-require('compatibility.rampant-arsenal')
+
