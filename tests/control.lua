@@ -35,9 +35,22 @@ script.on_nth_tick(1, function()
 end)
 
 local tests = require("scenario-tests")
+local helper = require("scenario-helper")
 
 commands.add_command("pytest", nil, function(param)
+    local beacons = helper.create_speed_beacons()
+    
     for _, test in pairs(tests) do
-        game.print("Test `" .. test() .. "` succeeded")
+        local name, result = test()
+
+        if not result then
+            game.print("Test `" .. test() .. "` succeeded")
+        else
+            game.print("Test `" .. test() .. "` failed")
+        end
+    end
+
+    for _,beacon in pairs(beacons) do
+        beacon.destroy()
     end
 end)
