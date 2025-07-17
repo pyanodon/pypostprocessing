@@ -37,7 +37,7 @@ end)
 local tests = require("scenario-tests")
 
 commands.add_command("pytest", nil, function(param)
-    for k, test in pairs(tests) do
-        test()
+    for _, test in pairs(tests) do
+        game.print("Test `" .. test() .. "` succeeded")
     end
 end)
