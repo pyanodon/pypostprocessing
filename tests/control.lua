@@ -33,3 +33,11 @@ script.on_nth_tick(1, function()
     test_localised_strings()
     script.on_nth_tick(1, nil)
 end)
+
+local tests = require("scenario-tests")
+
+commands.add_command("pytest", nil, function(param)
+    for k, test in pairs(tests) do
+        test()
+    end
+end)
