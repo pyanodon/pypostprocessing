@@ -3,6 +3,7 @@ Version: 3.0.34
 Date: ???
   Changes:
     - Fixed pymedium oil-refinery existing
+    - Added support for using recipe icons in composite icons
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.33
 Date: 2025-06-28
