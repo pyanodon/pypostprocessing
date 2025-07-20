@@ -1,9 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.34
-Date: ???
+Date: 2025-07-20
   Changes:
     - Fixed pymedium oil-refinery existing
     - Added support for using recipe icons in composite icons
+    - Supporting Lgihted Poles Plus
+    - Made compat with plutonium-energy
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.33
 Date: 2025-06-28
