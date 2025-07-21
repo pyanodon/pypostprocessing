@@ -9,14 +9,15 @@ require "vector"
 ---@param entity LuaEntity
 ---@param sprite string
 ---@param time_to_live integer
-py.draw_error_sprite = function(entity, sprite, time_to_live)
+py.draw_error_sprite = function(entity, sprite, blink_interval, time_to_live)
     rendering.draw_sprite {
         sprite = sprite,
         x_scale = entity.prototype.alert_icon_scale or 0.5,
         y_scale = entity.prototype.alert_icon_scale or 0.5,
         target = entity,
         surface = entity.surface,
-        time_to_live = time_to_live or 30,
+		time_to_live = time_to_live or 60,
+        blink_interval = blink_interval or 30,
         render_layer = "air-entity-info-icon"
     }
 end

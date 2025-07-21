@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.35
+Date: ????-??-??
+  Changes:
+    - Fixed warning icons blinking when the "Enable warning icons blinking" setting was disabled. Resolves https://github.com/pyanodon/pybugreports/issues/1090
+---------------------------------------------------------------------------------------------------
 Version: 3.0.34
 Date: 2025-07-20
   Changes:
