@@ -16,7 +16,7 @@ py.draw_error_sprite = function(entity, sprite, blink_interval, time_to_live)
         y_scale = entity.prototype.alert_icon_scale or 0.5,
         target = entity,
         surface = entity.surface,
-		time_to_live = time_to_live or 60,
+	time_to_live = time_to_live or 60,
         blink_interval = blink_interval or 30,
         render_layer = "air-entity-info-icon"
     }
