@@ -1,5 +1,10 @@
 _G.py = {}
 
+function py.has_any_py_mods()
+  local mods = mods or script.active_mods
+  return mods.pyindustry or mods.pycoalprocessing
+end
+
 py.range = function(start, stop, step)
     step = step or 1
     if start > stop then
