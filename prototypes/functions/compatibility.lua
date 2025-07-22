@@ -73,7 +73,8 @@ if mods.pyrawores then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "kovarex-enrichment-process" then
                 technology:remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
-                break
+            elseif prereq == "uranium-processing" then
+                technology:remove_prereq("uranium-processing")
             end
         end
     end
