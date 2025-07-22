@@ -22,14 +22,14 @@ elseif py.stage == "control" then
     end
   end)
 
-  _G.py.compound_functions = {}
+  if not py._compound_functions then py._compound_functions = {} end
 
   function py.register_compound_function(name, func)
-    _G.py.compound_functions[name] = func
+    py._compound_functions[name] = func
   end
 
   function py.get_compound_function(name)
-    return _G.py.compound_functions[name]
+    return py._compound_functions[name]
   end
 
   local function match_entity_gui_type(name)
@@ -152,17 +152,13 @@ elseif py.stage == "control" then
         local gui_child = storage.py_compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number]
   
         local gui_menu
-        game.print(serpent.block(_G.py.compound_functions))
         if gui_child.info.gui_function_name then
           gui_menu = py.get_compound_function(gui_child.info.gui_function_name)(gui_child.entity)
         else
           gui_menu = gui_child
         end
-        game.print("this runs")
         player.opened = gui_menu
       end)
     end
   end
-
-  py.register_compound_entities()
 end
