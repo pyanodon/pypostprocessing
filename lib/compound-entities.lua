@@ -128,6 +128,10 @@ elseif py.stage == "control" then
 
 
         for _, gui_child in pairs(storage.py_compound_entity_gui_pairs[event.entity.unit_number]) do
+          if gui_child.info.gui_title then
+            root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
+          end
+          
           -- game.print(serpent.line(gui_child))
           root.add{
             type = "button",
