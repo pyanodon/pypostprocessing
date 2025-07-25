@@ -32,7 +32,7 @@ elseif py.stage == "control" then
     return py._compound_functions[name]
   end
 
-  local function match_entity_gui_type(name)
+  function py.match_entity_gui_type(name)
     if name == "rocket-silo" then
       return defines.relative_gui_type.rocket_silo_gui
     end
@@ -106,44 +106,48 @@ elseif py.stage == "control" then
         local player = game.players[event.player_index]
         local entity = event.entity
       
-        if player.gui.relative["compound-entity-children"] then
-          player.gui.relative["compound-entity-children"].destroy()
-        end
         if not storage.py_compound_entity_gui_pairs[event.entity.unit_number] then
           return
         end
         if not storage.py_compound_entity_pairs[event.entity.unit_number] then
           return
         end
+        
+        if player.gui.relative["compound-entity-children"] then
+          player.gui.relative["compound-entity-children"].destroy()
+        end
+
         local root = player.gui.relative.add{
           type = "frame",
           name = "compound-entity-children",
           caption = {"", {"entity-name." .. entity.name}, " Components"},
           direction = "vertical",
           anchor = {
-            gui = match_entity_gui_type(entity.type),
+            gui = py.match_entity_gui_type(entity.type),
             position = defines.relative_gui_position.right
           },
         }
 
-
         for _, gui_child in pairs(storage.py_compound_entity_gui_pairs[event.entity.unit_number]) do
-          if gui_child.info.gui_title then
-            root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
+          local gui_func = py.get_compound_function(gui_child.info.gui_function_name)
+          local gui_func = gui_func or function(event, player, root, gui_child)
+            if gui_child.info.gui_title then
+              root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
+            end
+
+            root.add{
+              type = "button",
+              name = "open-compound-entity-child-" .. (gui_child.entity.unit_number or gui_child.entity.name),
+              caption = gui_child.info.gui_caption or {"", "Open ", {"entity-name." .. gui_child.entity.name}, " gui"},
+              tags = {
+                unit_number = event.entity.unit_number,
+                child_unit_number = gui_child.entity.unit_number,
+              },
+            }
           end
-          
-          -- game.print(serpent.line(gui_child))
-          root.add{
-            type = "button",
-            name = "open-compound-entity-child-" .. (gui_child.entity.unit_number or gui_child.entity.name),
-            caption = gui_child.info.gui_caption or {"", "Open ", {"entity-name." .. gui_child.entity.name}, " gui"},
-            tags = {
-              unit_number = entity.unit_number,
-              child_unit_number = gui_child.entity.unit_number,
-            },
-          }
+          gui_func(event, player, root, gui_child)
         end
-      
+
         return
       end)
 
@@ -154,10 +158,10 @@ elseif py.stage == "control" then
         if not storage.py_compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number] then return end
 
         local gui_child = storage.py_compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number]
-  
+
         local gui_menu
         if gui_child.info.gui_function_name then
-          gui_menu = py.get_compound_function(gui_child.info.gui_function_name)(gui_child.entity)
+          gui_menu = py.get_compound_function(gui_child.info.gui_submenu_function_name)(gui_child.entity)
         else
           gui_menu = gui_child
         end
