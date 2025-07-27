@@ -147,13 +147,13 @@ elseif py.stage == "control" then
           },
         }
 
-        for _, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
+        for i, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
           if gui_child.info.gui_title then
             root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
           end
           
           local gui_func = py.get_compound_function(gui_child.info.gui_function_name)
-          local gui_func = gui_func or function(event, player, root, gui_child)
+          local gui_func = gui_func or function(event, player, root, _, gui_child)
             root.add{
               type = "button",
               name = "open-compound-entity-child-" .. (gui_child.entity.unit_number or gui_child.entity.name),
@@ -164,7 +164,7 @@ elseif py.stage == "control" then
               },
             }
           end
-          gui_func(event, player, root, gui_child)
+          gui_func(event, player, root, i, gui_child)
         end
 
         return
