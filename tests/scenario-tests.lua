@@ -80,7 +80,6 @@ function tests.auog_turd_crash()
 end
 
 function tests.test_all_turds()
-
   for _,turd in pairs(turds) do
     for _,subtech in pairs(turd.sub_techs) do
       helper.select_turd(turd.master_tech.name, subtech.name)
