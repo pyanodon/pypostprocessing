@@ -148,7 +148,8 @@ elseif py.stage == "control" then
           },
         }
 
-        for i, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
+        local i = 1
+        for _, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
           if gui_child.info.gui_title then
             root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
           end
@@ -166,6 +167,8 @@ elseif py.stage == "control" then
             }
           end
           gui_func(event, player, root, i, gui_child)
+
+          i = i + 1
         end
 
         return
