@@ -3,6 +3,8 @@
 require "metas.metas"
 require "autorecipes"
 require "pipe-connections"
+require "smuggler"
+require "compound-entities"
 
 ---Returns a 1x1 empty image.
 ---@return table

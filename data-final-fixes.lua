@@ -1,3 +1,7 @@
+if not py.has_any_py_mods() then
+    return
+end
+
 require "prototypes.quality"
 
 local dev_mode = settings.startup["pypp-dev-mode"].value

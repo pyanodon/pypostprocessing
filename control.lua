@@ -1,77 +1,4 @@
-script.on_configuration_changed(function()
-    for _, force in pairs(game.forces) do
-        force.reset_recipes()
-        force.reset_technologies()
-        force.reset_technology_effects()
-    end
-
-    if remote.interfaces["pywiki_turd_page"] then
-        for _, force in pairs(game.forces) do remote.call("pywiki_turd_page", "reapply_turd_bonuses", force) end
-    end
-
-    if remote.interfaces["pyse_start_seqence"] then
-        for _, force in pairs(game.forces) do remote.call("pyse_start_seqence", "update_force", force) end
-    end
-end)
-
-
--- We risk more problems than solutions if we expand further
--- This will need changes if TURD works off locking techs!
-local checked_mods = {
-    base = true,
-    pyalienlife = true,
-    pyalternativeenergy = true,
-    pycoalprocessing = true,
-    pyfusionenergy = true,
-    pyhightech = true,
-    pyindustry = true,
-    pypetroleumhandling = true,
-    pypostprocessing = true,
-    pyrawores = true
-}
-
-commands.add_command("check-technology-consistency", {"command-help.check-technology-consistency"}, function()
-    -- Build a list of base-game techs
-    local filtered_prototypes = {}
-    for name, prototype in pairs(prototypes.technology) do
-        local history = prototypes.get_history("technology", name)
-        if checked_mods[history.created] then
-            filtered_prototypes[name] = prototype
-        end
-    end
-    -- Iterate and verify
-    for _, force in pairs(game.forces) do
-        local force_techs = force.technologies
-        for name, prototype in pairs(filtered_prototypes) do
-            local tech = force_techs[name]
-            if tech.enabled ~= prototype.enabled then
-                tech.enabled = prototype.enabled
-                local localised_name = tech.localised_name or ("technology-name." .. name)
-                game.print {"command-output.fixed-technology", localised_name}
-            end
-        end
-    end
-    game.print {"command-output.consistency-check-complete"}
-end)
-
-if settings.startup["pypp-tests"].value then require "tests.control" end
-
 require "lib"
-
--- delayed functions
----@type table<integer, table<int, {name: string, params: any[]?}>>
-storage.on_tick = storage.on_tick or {}
-
-py.on_event(defines.events.on_tick, function(event)
-    local tick = event.tick
-    storage.on_tick = storage.on_tick or {}
-    if not storage.on_tick[tick] then return end
-    for _, func_details in pairs(storage.on_tick[tick]) do
-        local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
-        if not success then error("error in on tick function " .. func_details.name .. ": " .. err) end
-    end
-    storage.on_tick[tick] = nil
-end)
 
 -- on_nth_tick functions
 ---@class NthTickOrder
@@ -167,3 +94,81 @@ remote.add_interface("on_nth_tick", {
     add = register_on_nth_tick,
     query = query_nth_tick,
 })
+
+-- delayed functions
+---@type table<integer, table<int, {name: string, params: any[]?}>>
+storage.on_tick = storage.on_tick or {}
+
+py.on_event(defines.events.on_tick, function(event)
+    local tick = event.tick
+    storage.on_tick = storage.on_tick or {}
+    if not storage.on_tick[tick] then return end
+    for _, func_details in pairs(storage.on_tick[tick]) do
+        local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
+        if not success then error("error in on tick function " .. func_details.name .. ": " .. err) end
+    end
+    storage.on_tick[tick] = nil
+end)
+
+-- PAST HERE IS PY ONLY STUFF
+if not py.has_any_py_mods() then
+    return
+end
+
+script.on_configuration_changed(function()
+    for _, force in pairs(game.forces) do
+        force.reset_recipes()
+        force.reset_technologies()
+        force.reset_technology_effects()
+    end
+
+    if remote.interfaces["pywiki_turd_page"] then
+        for _, force in pairs(game.forces) do remote.call("pywiki_turd_page", "reapply_turd_bonuses", force) end
+    end
+
+    if remote.interfaces["pyse_start_seqence"] then
+        for _, force in pairs(game.forces) do remote.call("pyse_start_seqence", "update_force", force) end
+    end
+end)
+
+
+-- We risk more problems than solutions if we expand further
+-- This will need changes if TURD works off locking techs!
+local checked_mods = {
+    base = true,
+    pyalienlife = true,
+    pyalternativeenergy = true,
+    pycoalprocessing = true,
+    pyfusionenergy = true,
+    pyhightech = true,
+    pyindustry = true,
+    pypetroleumhandling = true,
+    pypostprocessing = true,
+    pyrawores = true
+}
+
+commands.add_command("check-technology-consistency", {"command-help.check-technology-consistency"}, function()
+    -- Build a list of base-game techs
+    local filtered_prototypes = {}
+    for name, prototype in pairs(prototypes.technology) do
+        local history = prototypes.get_history("technology", name)
+        if checked_mods[history.created] then
+            filtered_prototypes[name] = prototype
+        end
+    end
+    -- Iterate and verify
+    for _, force in pairs(game.forces) do
+        local force_techs = force.technologies
+        for name, prototype in pairs(filtered_prototypes) do
+            local tech = force_techs[name]
+            if tech.enabled ~= prototype.enabled then
+                tech.enabled = prototype.enabled
+                local localised_name = tech.localised_name or ("technology-name." .. name)
+                game.print {"command-output.fixed-technology", localised_name}
+            end
+        end
+    end
+    game.print {"command-output.consistency-check-complete"}
+end)
+
+if settings.startup["pypp-tests"].value then require "tests.control" end

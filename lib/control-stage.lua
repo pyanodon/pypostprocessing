@@ -4,6 +4,8 @@ local random = math.random
 
 require "events"
 require "vector"
+require "smuggler"
+require "compound-entities"
 
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity

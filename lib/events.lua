@@ -184,6 +184,16 @@ py.events = {
             defines.events.on_space_platform_mined_tile,
         }
     end,
+    on_gui_opened = function()
+        return {
+            defines.events.on_gui_opened
+        }
+    end,
+    on_gui_click = function()
+        return {
+            defines.events.on_gui_click
+        }
+    end,
     --- Called for on_init and on_configuration_changed
     on_init = function()
         return "ON INIT EVENT"
