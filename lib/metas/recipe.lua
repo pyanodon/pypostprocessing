@@ -221,8 +221,7 @@ metas.remove_ingredient = function(self, ingredient_name)
     local amount_removed = 0
     self.ingredients = table.filter(self.ingredients, function(ingredient)
         if ingredient.name == ingredient_name then
-            local amount = ingredient.amount or (ingredient.amount_min + ingredient.amount_max) / 2
-            amount_removed = amount_removed + amount
+            amount_removed = amount_removed + ingredient.amount
             return false
         end
         return true
@@ -235,7 +234,7 @@ metas.remove_result = function(self, result_name)
     local amount_removed = 0
     self.results = table.filter(self.results, function(result)
         if result.name == result_name then
-            local amount = result.amount or (result.amount_min + result.amount_max) / 2
+            local amount = result.amount or (result.amount_min + result.amount_max) * (result.probability or 1) / 2
             amount_removed = amount_removed + amount
             return false
         end
