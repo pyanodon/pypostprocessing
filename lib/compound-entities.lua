@@ -102,14 +102,15 @@ elseif py.stage == "control" then
 
         for _, child in pairs(storage.compound_entity_pairs[event.entity.unit_number]) do
           if child and child.valid then
+            if storage.compound_entity_pairs_reverse then
+              storage.compound_entity_pairs_reverse[child.unit_number] = nil
+            end
+            
             child.destroy()
-          end
-
-          if storage.compound_entity_pairs_reverse then
-            storage.compound_entity_pairs_reverse[child.unit_number] = nil
           end
           child = nil
         end
+
         for _, child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
           if child[1] and child[1].valid then
             child.destroy()
@@ -151,7 +152,7 @@ elseif py.stage == "control" then
           if gui_child.info.gui_title then
             root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
           end
-          
+
           local gui_func = py.get_compound_function(gui_child.info.gui_function_name)
           local gui_func = gui_func or function(event, player, root, _, gui_child)
             root.add{
