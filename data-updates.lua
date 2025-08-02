@@ -1,3 +1,6 @@
+if not py.has_any_py_mods() then
+    return
+end
 require "prototypes.next-upgrades"
 require "prototypes.essential-techs"
 
