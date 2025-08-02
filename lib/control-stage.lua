@@ -224,3 +224,12 @@ py.distance_squared = function(first, second)
     local y = first.y - second.y
     return x * x + y * y
 end
+
+---get planet property from its surface if it exists or its prototype
+---@param planet LuaPlanet
+---@param property string
+---@return number
+py.get_planet_property = function(planet, property)
+    if planet.surface then return planet.surface.get_property(property) end
+    return planet.prototype.surface_properties[property]
+end
