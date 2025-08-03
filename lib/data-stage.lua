@@ -482,5 +482,24 @@ py.finite_state_machine_working_visualisations = function(params)
     return graphics_set
 end
 
+---Returns a flipped animation
+---@param animation4way data.Animation4Way
+py.flip_4way_animation = function(animation4way)
+    local inverse = {
+        north = "south",
+        north_east = "south_west",
+        east = "west",
+        south_east = "north_west",
+        south = "north",
+        south_west = "north_east",
+        west = "east",
+        north_west = "south_east"
+    }
+    for direction, inverse_direction in pairs(inverse) do
+        inverse[direction] = table.deepcopy(animation4way[inverse_direction])
+    end
+    return inverse
+end
+
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function() end
