@@ -73,8 +73,6 @@ if mods.pyrawores then
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "kovarex-enrichment-process" then
                 technology:remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
-            elseif prereq == "uranium-processing" then
-                technology:remove_prereq("uranium-processing")
             end
         end
     end
@@ -113,6 +111,7 @@ require("compatibility.logistic-train-network")
 require("compatibility.miniloader")
 require("compatibility.nixie-tubes")
 require("compatibility.omnimatter-water")
+require("compatibility.plutonium-energy")
 require("compatibility.portals")
 require("compatibility.push-button")
 require("compatibility.railloader")
