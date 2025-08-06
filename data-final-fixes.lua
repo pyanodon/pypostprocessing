@@ -20,7 +20,7 @@ for _, recipe in pairs(data.raw.recipe) do
 
     if recipe.results then
         -- fallback for localised names
-        if not recipe.localised_name and not recipe.hidden then
+        if not recipe.localised_name then
             local fallback = recipe.main_product or (#recipe.results == 1 and recipe.results[1].name)
             if fallback and fallback ~= "" then
                 local product_type = data.raw.fluid[fallback] and "fluid" or "item"
