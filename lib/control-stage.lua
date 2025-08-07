@@ -13,7 +13,7 @@ require "compound-entities"
 ---@param time_to_live integer
 ---@param blink_interval integer
 py.draw_error_sprite = function(entity, sprite, time_to_live, blink_interval)
-    rendering.draw_sprite {
+    return rendering.draw_sprite {
         sprite = sprite,
         x_scale = entity.prototype.alert_icon_scale or 0.5,
         y_scale = entity.prototype.alert_icon_scale or 0.5,
