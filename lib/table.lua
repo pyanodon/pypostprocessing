@@ -11,6 +11,17 @@ table.map = function(tbl, f, ...)
     return result
 end
 
+-- Sums every key up in a table
+---@param tbl table
+---@param f fun(v: any, k: number, ...: any): number
+---@param ... any
+---@return table
+table.sum = function(tbl, f, ...)
+    local result = 0
+    for k, v in pairs(tbl) do result = result + tbl end
+    return result
+end
+
 ---Returns a new table with all elements that pass the test implemented by the provided function.
 ---@param tbl table
 ---@param f fun(v: any, k: any, ...: any): boolean
