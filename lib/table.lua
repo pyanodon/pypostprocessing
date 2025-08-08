@@ -13,11 +13,15 @@ end
 
 -- Sums every key up in a table
 ---@param tbl table
+---@param f (fun(v: any, k: number, ...: any): number|nil)
 ---@param ... any
 ---@return table
-table.sum = function(tbl, ...)
+table.sum = function(tbl, f, ...)
+    local f = f or function(v, k, ...)
+        return v
+    end
     local result = 0
-    for k, v in pairs(tbl) do result = result + tbl end
+    for k, v in pairs(tbl) do result = result + f(v, k, ...) end
     return result
 end
 
