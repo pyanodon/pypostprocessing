@@ -226,7 +226,7 @@ table.extend = function(tbl, tbl2)
     local tbl = table.deepcopy(tbl)
     
     for _, v in pairs(tbl2) do
-        table[#tbl + 1] = v
+        table.insert(tbl, v)
     end
 
     return tbl
