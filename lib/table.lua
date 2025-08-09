@@ -1,10 +1,5 @@
 -- Adds new functions to the builtin table class.
 
--- Bro what is this game
-table.insert = function(tbl, v)
-    tbl[#tbl + 1] = v
-end
-
 ---Returns a new table with the results of calling a provided function on every element in the table.
 ---@param tbl table
 ---@param f fun(v: any, k: any, ...: any): any
@@ -231,7 +226,7 @@ table.extend = function(tbl, tbl2)
     local tbl = table.deepcopy(tbl)
     
     for _, v in pairs(tbl2) do
-        table.insert(tbl, v)
+        table[#tbl + 1] = v
     end
 
     return tbl
