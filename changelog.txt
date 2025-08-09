@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.35
-Date: ???
+Date: 2025-08-09
   Changes:
     - Added german translation
     - Fixed warning icons blinking when the "Enable warning icons blinking" setting was disabled. Resolves https://github.com/pyanodon/pybugreports/issues/1090
