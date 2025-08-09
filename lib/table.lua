@@ -11,6 +11,20 @@ table.map = function(tbl, f, ...)
     return result
 end
 
+-- Sums every key up in a table
+---@param tbl table
+---@param f (fun(v: any, k: number, ...: any): number|nil)
+---@param ... any
+---@return table
+table.sum = function(tbl, f, ...)
+    local f = f or function(v, k, ...)
+        return v
+    end
+    local result = 0
+    for k, v in pairs(tbl) do result = result + f(v, k, ...) end
+    return result
+end
+
 ---Returns a new table with all elements that pass the test implemented by the provided function.
 ---@param tbl table
 ---@param f fun(v: any, k: any, ...: any): boolean
@@ -203,4 +217,17 @@ table.dedupe = function(tbl)
         end
     end
     return result
+end
+
+-- Extends an array out
+-- @param tbl any[]
+-- @param tbl2 any[]
+table.extend = function(tbl, tbl2)
+    local tbl = table.deepcopy(tbl)
+    
+    for _, v in pairs(tbl2) do
+        table.insert(tbl, v)
+    end
+
+    return tbl
 end
