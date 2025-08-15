@@ -18,6 +18,8 @@ local table_insert = table.insert
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 ---@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype
 ---@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype
+---@field public get_main_product fun(self: data.RecipePrototype): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_icons fun(self: data.RecipePrototype): data.IconData
 
 local metas = {}
 
@@ -343,6 +345,83 @@ metas.change_category = function(self, category_name)
     end
 
     return self
+end
+
+metas.get_main_product = function(self, allow_multi_product)
+    self:standardize()
+    local target, target_type = self.main_product, "item"
+    -- main product of "" prevents the recipe from inheriting properties from a single result
+    if target == "" then
+        target = nil
+    end
+
+    local result_count = table_size(self.results or {})
+    if result_count == 0 or (not target and not allow_multi_product and result_count > 1) then return end
+
+    local result
+    if target then -- find with specific name
+        for _, v in pairs(self.results) do
+            if v.name == target then
+                result = v
+            end
+        end
+    else -- or only result
+        _, result = next(self.results)
+    end
+    -- Special modding funtimes case: invalid spec
+    if not (result.type == "research-progress" and result.research_item or result.name) then return end
+    if result.type ~= nil and (result.type ~= "item" and result.type ~= "fluid" and result.type ~= "research-progress") then return end
+    target, target_type = result.name, result.type or target_type
+    -- Special case: type of research-progress uses an item prototype
+    if target_type == "research-progress" then
+        target = result.research_item
+        target_type = "item"
+    end
+    -- Find our prototype :)
+    for _, category in py.iter_prototype_categories(target_type) do
+        local proto = category[target]
+        if proto then return proto end
+    end
+    -- haha oh no
+end
+
+local function icons(proto)
+    -- Has priority over .icon
+    if proto.icons then
+        return table.deepcopy(proto.icons)
+    end
+    if proto.icon then
+        return {{
+            icon = proto.icon,
+            icon_size = proto.icon_size
+        }}
+    end
+end
+
+metas.get_icons = function(self)
+    local icon = icons(self)
+    if icon then return icon end
+
+    local product = self:get_main_product()
+    if product then
+        icon = icons(product)
+        if icon then return icon end
+        local place_result = product.place_result
+        if place_result then
+            -- Step through the list until either it ends or we find our thing
+            local iterable = py.iter_prototype_categories("entity")
+            while true do
+                local _, next_category = iterable()
+                if not next_category then break end
+                local placed_entity = next_category[place_result]
+                if placed_entity then
+                    return icons(placed_entity)
+                end
+            end
+        end
+    end
+    log(serpent.block(self))
+    error(string.format("Couldn't find icons for recipe %s", self.name))
 end
 
 return metas
