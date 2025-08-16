@@ -186,7 +186,7 @@ elseif py.stage == "control" then
         if gui_child.info.gui_submenu_function_name then
           gui_menu = py.get_compound_function(gui_child.info.gui_submenu_function_name)(gui_child.entity)
         else
-          gui_menu = gui_child
+          gui_menu = gui_child.entity
         end
         player.opened = gui_menu
       end)
