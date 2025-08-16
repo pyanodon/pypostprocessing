@@ -148,6 +148,10 @@ elseif py.stage == "control" then
           },
         }
 
+        if #storage.compound_entity_gui_pairs[event.entity.unit_number] == 0 then
+          root.destroy()
+        end
+
         local i = 1
         for _, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
           if gui_child.info.gui_title then
