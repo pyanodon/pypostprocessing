@@ -347,6 +347,9 @@ metas.change_category = function(self, category_name)
     return self
 end
 
+--- Get the prototype for the main_product using the same logic the game uses.
+--- Set allow_multi_product to take the *first* result (not game behavior) instead of failing when a recipe has no main_product set but has multiple results.
+--- <br /> Check https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#main_product for more details
 metas.get_main_product = function(self, allow_multi_product)
     self:standardize()
     local target, target_type = self.main_product, "item"
@@ -398,6 +401,9 @@ local function icons(proto)
     end
 end
 
+--- Returns the icons table a recipe would use (i.e. using the item icon if the recipe prototype has no .icons/.icon set).
+--- May error on malformed prototypes.
+--- <br /> Check https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#icon for more details.
 metas.get_icons = function(self)
     local icon = icons(self)
     if icon then return icon end
