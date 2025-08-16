@@ -18,7 +18,7 @@ local table_insert = table.insert
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 ---@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype
 ---@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype
----@field public get_main_product fun(self: data.RecipePrototype): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_main_product fun(self: data.RecipePrototype, allow_multi_product: bool?): LuaItemPrototype?|LuaFluidPrototype?
 ---@field public get_icons fun(self: data.RecipePrototype): data.IconData
 
 local metas = {}
