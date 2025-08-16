@@ -9,7 +9,7 @@ local table_insert = table.insert
 ---@field public add_ingredient fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype
 ---@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
 ---@field public replace_result fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype
----@field public add_result fun(self: data.RecipePrototype, result: string | data.ProductPrototype): data.RecipePrototype
+---@field public add_result fun(self: data.RecipePrototype, result: data.ProductPrototype): data.RecipePrototype
 ---@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype
 ---@field public clear_ingredients fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public multiply_result_amount fun(self: data.RecipePrototype, result_name: string, percent: number): data.RecipePrototype
