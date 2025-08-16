@@ -148,7 +148,7 @@ elseif py.stage == "control" then
           },
         }
 
-        if #storage.compound_entity_gui_pairs[event.entity.unit_number] == 0 then
+        if not #storage.compound_entity_gui_pairs[event.entity.unit_number] then
           root.destroy()
         end
 
