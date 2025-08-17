@@ -1,10 +1,9 @@
-  Changes:
-    - Fixed hidden tech error with revamped bob's thorium processing. Resolves https://github.com/pyanodon/pybugreports/issues/1138
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.36
 Date: ???
   Changes:
     - Added recipe functions: get_main_product and get_icons
+    - Fixed hidden tech error with revamped bob's thorium processing. Resolves https://github.com/pyanodon/pybugreports/issues/1138
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.35
 Date: 2025-08-09
