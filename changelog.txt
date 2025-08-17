@@ -4,6 +4,7 @@ Date: ???
   Changes:
     - Added recipe functions: get_main_product and get_icons
     - Fixed hidden tech error with bob's mods. Resolves https://github.com/pyanodon/pybugreports/issues/1138
+    - Fixed module slot overhang with omnimatter compression.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.35
 Date: 2025-08-09
