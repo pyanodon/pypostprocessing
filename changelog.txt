@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.36
-Date: ???
+Date: 2025-08-17
   Changes:
     - Added recipe functions: get_main_product and get_icons
     - Fixed hidden tech error with bob's mods. Resolves https://github.com/pyanodon/pybugreports/issues/1138
