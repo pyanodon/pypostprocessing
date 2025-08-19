@@ -535,3 +535,56 @@ if not mods["declutter"] then
 end
 
 if settings.startup["pypp-tests"].value then require "tests.data" end
+
+-- Final task, removes PP data from prototypes to prevent spam when logging unused prototype properties
+local properties_to_remove = {
+    ["*"] = {
+        ignore_for_dependencies = true,
+        dependencies = true
+    },
+    ["technology"] = {
+        is_turd = true
+    },
+    ["tips-and-tricks-item"] = {
+        dependencies = false
+    },
+    ["recipe"] = {
+        ["ingredients"] = {
+            ["*"] = { -- individual IngredientPrototype
+                return_barrel = true,
+                fallback = true,
+                return_item = true
+            }
+        }
+    }
+}
+-- we do a little recursion
+local function clean_proto(prototype, category, removals, fullkey)
+    local merged_removals = table.merge((removals["*"] or {}), (removals[category] or {}))
+    for removal_name, removal_detail in pairs(merged_removals) do
+        local removal_value = prototype[removal_name]
+        if type(removal_detail) == "boolean" then -- just kill it
+            if removal_detail and removal_value ~= nil then
+                --log(string.format("Removed `%s` from `%s`", removal_name, fullkey))
+                prototype[removal_name] = nil
+            end
+        else -- recursion time
+            if removal_name == "*" then -- all of the things
+                for property_name, property in pairs(prototype) do
+                    if type(property) == "table" then
+                        clean_proto(property, category, merged_removals, fullkey .. "." .. property_name)
+                    end
+                end
+            else -- one of the things
+                if type(removal_value) == "table" then
+                    clean_proto(removal_value, removal_name, merged_removals, fullkey .. "." .. removal_name)
+                end
+            end
+        end
+    end
+end
+for category_name, category in pairs(data.raw) do
+    for key, prototype in pairs(category) do
+        clean_proto(prototype, category_name, properties_to_remove, category_name .. "." .. key)
+    end
+end
