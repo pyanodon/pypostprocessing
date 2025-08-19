@@ -70,20 +70,14 @@ py.events = {
     end
 }
 
-
-
----Workaround for the "open-gui" custom input also triggering clicks on the GUI that is opened
-local ignored_players = {}
 ---Conditionally runs the given event based on if the player is not present within ignored_players
 ---@param event EventData.on_gui_click
 ---@param f function event handler
 local function wrapped_click(event, f)
-    log(serpent.block(event))
     -- Runs if the click wasn't caused by a custom-input click
-    local player_index = event and event.player_index ~= nil or -1
-    if ignored_players[player_index] then
-        log("[" .. game.tick .. "] forget")
-        ignored_players[player_index] = nil
+    local player_index = event and event.player_index or -1
+    if storage.ignored_players[player_index] then
+        storage.ignored_players[player_index] = nil
         return
     end
     f(event)
@@ -94,8 +88,10 @@ end
 local function set_ignore_click(f)
     return function(event)
         if event.player_index ~= nil then
-            log("[" .. game.tick .. "] set")
-            ignored_players[event.player_index] = true
+            local offset = math.floor(20 * game.speed + 0.5)
+            if offset ~= 0 then
+                storage.ignored_players[event.player_index] = game.tick + offset
+            end
         end
         f(event)
     end
@@ -107,14 +103,16 @@ end
 ---@param f function
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function(event, f)
-    for _, event in pairs(type(event) == "table" and event or {event}) do
-        event = tostring(event)
-        events[event] = events[event] or {}
+    for _, event_name in pairs(type(event) == "table" and event or {event}) do
+        event_name = tostring(event_name)
+        events[event_name] = events[event_name] or {}
         -- Handle the GUI click wrapping
-        if event == py.events.on_entity_clicked() then
-            f = set_ignore_click(f)
+        if event_name == py.events.on_entity_clicked() then
+            ---Sets event's player_index into ignored_players before running the given function
+            table.insert(events[event_name], set_ignore_click(f))
+        else
+            table.insert(events[event_name], f)
         end
-        table.insert(events[event], f)
     end
 end
 
@@ -165,13 +163,13 @@ _G.gui_events = {
 local function process_gui_event(event)
     if event.element and event.element.valid then
         local is_click = event.name == defines.events.on_gui_click
-        if is_click then
-            log("[" .. game.tick .. "] click")
-        end
         for pattern, f in pairs(gui_events[event.name]) do
             if event.element.name:match(pattern) then
-                log(event.name)
-                _ = is_click and wrapped_click(event, f) or f(event)
+                if is_click then
+                    wrapped_click(event, f)
+                else
+                    f(event)
+                end
                 return
             end
         end
@@ -231,19 +229,21 @@ end
 
 py.on_event(defines.events.on_tick, function(event)
     -- on_nth_tick
+    local tick = event.tick
     if not on_nth_tick_init then
         remote.call("on_nth_tick", "add", function_list)
         on_nth_tick_init = true
     end
 
     -- gui handler
-    if next(ignored_players) ~= nil then
-        --log("[" .. game.tick .. "] all")
+    storage.ignored_players = storage.ignored_players or {}
+    for k, expiry in pairs(storage.ignored_players) do
+        if tick >= expiry then
+            storage.ignored_players[k] = nil
+        end
     end
-    --ignored_players = {}
 
     -- delayed funcs
-    local tick = event.tick
     if not (storage.on_tick and storage.on_tick[tick]) then return end
     for _, func_details in pairs(storage.on_tick[tick]) do
         local success, err = pcall(py.on_tick_funcs[func_details.name], table.unpack(func_details.params))
