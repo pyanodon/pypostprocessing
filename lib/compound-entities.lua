@@ -5,11 +5,12 @@ if py.stage == "data" then
   -- 
   -- @param additional AdditionalParams
   -- @class AdditionalParams
-  -- @param enable_gui bool Enables an entry in the gui of the parent
-  -- @param gui_title string The title of the parent gui
-  -- @param gui_function_name string The name of the register compound function that handles adding the button to the gui
-  -- @param gui_submenu_function string The fuction called when you hit the button itself
-  -- @param gui_caption string The text the button has
+  -- @field enable_gui bool Enables an entry in the gui of the parent
+  -- @field gui_title string The title of the parent gui
+  -- @field gui_function_name string The name of the register compound function that handles adding the button to the gui
+  -- @field gui_submenu_function string The fuction called when you hit the button itself
+  -- @field gui_caption string The text the button has
+  -- @field position_offset MapPosition https://lua-api.factorio.com/2.0.64/concepts/MapPosition.html
   --
   -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html 
   function py.compound_attach_entity_to(parent, child, additional)
@@ -93,6 +94,84 @@ elseif py.stage == "control" then
     end
 
     return defines.relative_gui_type.assembling_machine_gui
+  end
+
+
+  -- Adds a new child to a compound entity
+  -- Unsure about using this on non compound register parents, beware...
+  -- Will not clean up compound entity children on non registered parents
+  -- 
+  -- @param parent LuaEntity the parent compound entity
+  -- @param child_name string Name of the child
+  -- @param info Info
+  --
+  -- @class Info
+  -- @field enable_gui bool Not sure if it works but it's the same as the normal enable_gui property
+  -- @field possition_offset MapPosition https://lua-api.factorio.com/2.0.64/concepts/MapPosition.html
+  function py.compound_attach_entity_to(parent, child_name, info)
+    init()
+    if not parent.valid then return end
+  
+    local position = parent.position
+
+    if not storage.compound_entity_pairs[parent.unit_number] then
+      storage.compound_entity_pairs[parent.unit_number] = {}
+      storage.compound_entity_gui_pairs[parent.unit_number] = {}
+    end
+    
+    local new_position = position
+    -- game.print(serpent.line(info.position_offset))
+    if info.position_offset then
+      new_position = {
+        x = (position[1] or position.x) + (info.position_offset[1] or info.position_offset.x),
+        y = (position[2] or position.y) + (info.position_offset[2] or info.position_offset.y)
+      }
+      -- game.print(serpent.line(position) .. " vs. " .. serpent.line(new_position))
+    end
+  
+    local new_entity = parent.surface.create_entity{
+      name = child_name,
+      position = new_position,
+      force = "player"
+    }
+
+    storage.compound_entity_pairs[parent.unit_number][new_entity.unit_number] = new_entity
+    storage.compound_entity_pairs_reverse[new_entity.unit_number] = parent
+    if info.enable_gui then
+      storage.compound_entity_gui_pairs[parent.unit_number][new_entity.unit_number] = {entity = new_entity, info = info}
+    end
+  end
+
+  -- Deletes children from a parent by a filter function
+  -- Do not worry about validity it is checked internally
+  --
+  -- @param parent_unit_number number Unit number of the parent
+  -- @param filter_func fun(child: LuaEntity): bool Return true if delete
+  function py.delete_attached_entities_by_filter(parent_unit_number, filter_func)
+    init()
+    if not storage.compound_entity_pairs[parent_unit_number] then
+      return
+    end
+
+    for _, child in pairs(storage.compound_entity_pairs[parent_unit_number]) do
+      local delete = filter_func(child)
+      if child and child.valid and delete then
+        if storage.compound_entity_pairs_reverse then
+          storage.compound_entity_pairs_reverse[child.unit_number] = nil
+        end
+    
+        child.destroy()
+        child = nil
+      end
+    end
+
+    for _, child in pairs(storage.compound_entity_gui_pairs[parent_unit_number]) do
+      local delete = filter_func(child[1])
+      if child[1] and child[1].valid and delete then
+        child.destroy()
+        child = nil
+      end
+    end
   end
 
   -- Register all compound_entities and create their events
