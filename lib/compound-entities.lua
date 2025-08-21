@@ -1,4 +1,17 @@
 if py.stage == "data" then
+  -- Attachs an entity to another entity with additional properties
+  -- @param parent string
+  -- @param child string
+  -- 
+  -- @param additional AdditionalParams
+  -- @class AdditionalParams
+  -- @param enable_gui bool Enables an entry in the gui of the parent
+  -- @param gui_title string The title of the parent gui
+  -- @param gui_function_name string The name of the register compound function that handles adding the button to the gui
+  -- @param gui_submenu_function string The fuction called when you hit the button itself
+  -- @param gui_caption string The text the button has
+  --
+  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html 
   function py.compound_attach_entity_to(parent, child, additional)
     local info = py.smuggle_get("compound-info", {})
     log(serpent.block(info))
@@ -12,7 +25,9 @@ if py.stage == "data" then
     table.insert(info[parent], additional)
     log(serpent.block(data.raw["mod-data"]))
   end
+  
 elseif py.stage == "control" then
+
   local init = function()
     if not storage.compound_entity_pairs then
       storage.compound_entity_pairs = {}
@@ -28,22 +43,50 @@ elseif py.stage == "control" then
 
   if not py.compound_functions then py.compound_functions = {} end
 
+  -- Registers a new compound function
+  -- @param name string Name of the function
+  -- @param func (GuiTitleFunction|GuiFunction|GuiSubmenuFunction)
+  --
+  -- @function GuiTitleFunction
+  -- @param entity LuaEntity parent entity
+  -- @return string Title
+  -- 
+  -- @function GuiFunction
+  -- @param event events.on_gui_opened Event data of when on_gui_opened is called
+  -- @param player LuaEntity the player who opened the GUI
+  -- @param gui_root LuaGuiElement The root of the preset GUI that you can add to
+  -- @param current_index number The index of the compound-entity child you are
+  -- @param gui_child LuaGuiElement The Button you are in the the gui_root
+  -- @return nil
+  --
+  -- @function GuiSubmenuFunction
+  -- @param entity Parent entity
+  -- @return (LuaGuiElement|LuaEntity) Anything that can be put in `player.opened`
+  -- 
+  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html 
   function py.register_compound_function(name, func)
     py.compound_functions[name] = func
   end
 
+  -- Gets a registered compound_function from a name
+  -- @param name string The name of the function
   function py.get_compound_function(name)
     return py.compound_functions[name]
   end
 
+  -- Gets the compound entity's children from it's unit_number
+  -- @param unit_number number Unit number of the parent
   function py.get_compound_entity_children(unit_number)
     return storage.compound_entity_pairs[unit_number]
   end
-  
+
+  -- Gets the compound_entity parent from a child's unit_number
+  -- @param unit_number number Unit number of a child
   function py.get_compound_entity_parent(unit_number)
     return storage.compound_entity_pairs_reverse[unit_number]
   end
 
+  -- WARNING: THIS SHOULD BE SOMEWHERE ELSE AND SHOULD BE REPLACED IF DOESN'T EXIST ALREADY
   function py.match_entity_gui_type(name)
     if name == "rocket-silo" then
       return defines.relative_gui_type.rocket_silo_gui
@@ -52,6 +95,7 @@ elseif py.stage == "control" then
     return defines.relative_gui_type.assembling_machine_gui
   end
 
+  -- Register all compound_entities and create their events
   function py.register_compound_entities()
     init()
     local info = py.get_smuggled_data("compound-info")
@@ -148,6 +192,10 @@ elseif py.stage == "control" then
           },
         }
 
+        if #storage.compound_entity_gui_pairs[event.entity.unit_number] == 0 then
+          root.destroy()
+        end
+
         local i = 1
         for _, gui_child in pairs(storage.compound_entity_gui_pairs[event.entity.unit_number]) do
           if gui_child.info.gui_title then
@@ -186,7 +234,7 @@ elseif py.stage == "control" then
         if gui_child.info.gui_submenu_function_name then
           gui_menu = py.get_compound_function(gui_child.info.gui_submenu_function_name)(gui_child.entity)
         else
-          gui_menu = gui_child
+          gui_menu = gui_child.entity
         end
         player.opened = gui_menu
       end)
