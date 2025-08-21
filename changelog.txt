@@ -1,8 +1,20 @@
 ---------------------------------------------------------------------------------------------------
-Version: 3.0.36
+Version: 3.0.38
 Date: ???
   Changes:
+    - Fixed crash when placing a building while paused at 0 ticks elapsed.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.37
+Date: 2025-08-19
+  Changes:
+    - Now prevents internal custom-input from triggering GUI clicks.
+---------------------------------------------------------------------------------------------------
+Version: 3.0.36
+Date: 2025-08-17
+  Changes:
     - Added recipe functions: get_main_product and get_icons
+    - Fixed hidden tech error with bob's mods. Resolves https://github.com/pyanodon/pybugreports/issues/1138
+    - Fixed module slot overhang with omnimatter compression.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.35
 Date: 2025-08-09

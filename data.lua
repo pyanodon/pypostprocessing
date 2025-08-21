@@ -1,4 +1,4 @@
-
+require("prototypes.custom-input")
 -- Log all mods & versions, Alien Biomes already does this so we skip if it is active
 if not mods["alien-biomes"] then
     log("MODSET:\n" .. serpent.block(mods, {sortkeys=false}))
