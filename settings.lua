@@ -51,4 +51,11 @@ data:extend {
         default_value = false,
         order = "e",
     },
+    {
+        type = "bool-setting",
+        name = "pypp-no-globals",
+        setting_type = "startup",
+        default_value = false,
+        order = "e",
+    },
 }

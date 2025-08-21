@@ -237,7 +237,7 @@ py.on_event(defines.events.on_tick, function(event)
     end
 
     -- gui handler
-    for k, expiry in pairs(storage.ignored_players) do
+    for k, expiry in pairs(storage.ignored_players or {}) do
         if tick >= expiry then
             storage.ignored_players[k] = nil
         end
