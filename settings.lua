@@ -51,4 +51,13 @@ data:extend {
         default_value = false,
         order = "e",
     },
+    {
+        type = "double-setting",
+        name = "pypp-click-lock-duration",
+        setting_type = "runtime-per-user",
+        default_value = 0.5,
+        minimum_value = 0,
+        maximum_value = 10,
+        order = "a"
+    }
 }

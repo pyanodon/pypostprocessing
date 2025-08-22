@@ -1,5 +1,4 @@
 local events = {}
-local GUI_CLICK_LOCK_DURATION = 20 -- ticks
 -- Moved to top for referencing below
 --- Sentinel values for defining groups of events
 py.events = {
@@ -89,7 +88,8 @@ end
 local function set_ignore_click(f)
     return function(event)
         if event.player_index ~= nil then
-            local offset = math.floor(GUI_CLICK_LOCK_DURATION * game.speed + 0.5)
+            local multiplier = settings.get_player_settings(event.player_index)["pypp-click-lock-duration"].value * 60
+            local offset = math.floor(multiplier * game.speed + 0.5)
             if offset ~= 0 then
                 storage.ignored_players[event.player_index] = game.tick + offset
             end
