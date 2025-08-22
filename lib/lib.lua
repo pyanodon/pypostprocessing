@@ -101,7 +101,7 @@ local factorio_globals = {
 
 local spidertron_patrols_globals = {
     -- data stage
-    -- "sp_data_stage",
+    "sp_data_stage",
     "contains",
     "contains_key",
     "content_equals",
