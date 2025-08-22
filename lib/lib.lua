@@ -252,14 +252,36 @@ end
 local declaredNames = {}
 
 ---declare a new global variable
+---luals doesn't like them being declared like that so use the function here and assign value later
 ---@param name string
 ---@param initval any
-function declare(name, initval)
+local function declare(name, initval)
     rawset(_G, name, initval or rawget(_G, name))
     if declaredNames[name] then
         error("attempt to overwrite global variable: " .. name, 2)
     end
     declaredNames[name] = true
+end
+
+if py.stage == "data" then
+    data:extend {
+        {
+            type = "mod-data",
+            name = "py-undocumented-globals",
+            data = {}
+        }
+    }
+end
+
+local message_sent = false
+if py.stage == "control" then
+    py.on_event(defines.events.on_tick, function(_)
+        ---@diagnostic disable-next-line: undefined-field
+        if not message_sent and prototypes.mod_data["py-undocumented-globals"].get("exist") then
+            game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
+            message_sent = true
+        end
+    end)
 end
 
 if settings.startup["pypp-no-globals"].value then
@@ -278,15 +300,17 @@ if settings.startup["pypp-no-globals"].value then
         end,
         __index = function(_, n)
             if not declaredNames[n] then
-                -- temp
                 if py.stage == "control" then
+                    -- temp
                     game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
                     log(debug.traceback("attempt to read undeclared global variable: " .. n, 2))
-                else
-                    error("attempt to read undeclared variable: " .. n, 2)
+                    -- end temp
+                    -- error("attempt to read undeclared variable: " .. n, 2)
+                elseif py.stage == "data" then
+                    -- temp, ultimately won't print at game start and will have a strict mode setting for testing that will crash the game
+                    log(debug.traceback("WARNING: attempt to read undeclared global variable: " .. n, 2))
+                    data.raw["mod-data"]["py-undocumented-globals"].data.exist = true
                 end
-                -- end temp
-                -- error("attempt to read undeclared variable: " .. n, 2)
             else
                 return nil
             end
