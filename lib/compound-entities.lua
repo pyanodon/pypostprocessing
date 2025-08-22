@@ -280,6 +280,9 @@ elseif py.stage == "control" then
           if gui_child.info.gui_title then
             root.caption = py.get_compound_function(gui_child.info.gui_title)(event.entity)
           end
+          if not gui_child.entity.valid then
+            goto continue
+          end
 
           local gui_func = py.get_compound_function(gui_child.info.gui_function_name)
           local gui_func = gui_func or function(event, player, root, _, gui_child)
@@ -296,6 +299,7 @@ elseif py.stage == "control" then
           gui_func(event, player, root, i, gui_child)
 
           i = i + 1
+          ::continue::
         end
 
         return
