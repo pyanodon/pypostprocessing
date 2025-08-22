@@ -6,10 +6,10 @@ local table_insert = table.insert
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype
 ---@field public replace_ingredient fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype
----@field public add_ingredient fun(self: data.RecipePrototype, ingredient: string | data.IngredientPrototype): data.RecipePrototype
+---@field public add_ingredient fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype
 ---@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
 ---@field public replace_result fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype
----@field public add_result fun(self: data.RecipePrototype, result: string | data.ProductPrototype): data.RecipePrototype
+---@field public add_result fun(self: data.RecipePrototype, result: data.ProductPrototype): data.RecipePrototype
 ---@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype
 ---@field public clear_ingredients fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public multiply_result_amount fun(self: data.RecipePrototype, result_name: string, percent: number): data.RecipePrototype
@@ -18,7 +18,7 @@ local table_insert = table.insert
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 ---@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype
 ---@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype
----@field public get_main_product fun(self: data.RecipePrototype): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_main_product fun(self: data.RecipePrototype, allow_multi_product: bool?): LuaItemPrototype?|LuaFluidPrototype?
 ---@field public get_icons fun(self: data.RecipePrototype): data.IconData
 
 local metas = {}

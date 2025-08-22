@@ -237,7 +237,9 @@ py.on_event(defines.events.on_tick, function(event)
     end
 
     -- gui handler
-    for k, expiry in pairs(storage.ignored_players or {}) do
+    -- do it here too since somehow config_changed doesn't always get called below
+    storage.ignored_players = storage.ignored_players or {}
+    for k, expiry in pairs(storage.ignored_players) do
         if tick >= expiry then
             storage.ignored_players[k] = nil
         end
@@ -252,6 +254,7 @@ py.on_event(defines.events.on_tick, function(event)
     storage.on_tick[tick] = nil
 end)
 
+-- somehow this doesn't trigger for on config changed
 py.on_event(py.events.on_init(), function(_)
     storage.ignored_players = storage.ignored_players or {}
 end)
