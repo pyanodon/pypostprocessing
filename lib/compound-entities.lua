@@ -271,7 +271,7 @@ elseif py.stage == "control" then
           },
         }
 
-        if #storage.compound_entity_gui_pairs[event.entity.unit_number] == 0 then
+        if table_size(storage.compound_entity_gui_pairs[event.entity.unit_number]) == 0 then
           root.destroy()
         end
 
