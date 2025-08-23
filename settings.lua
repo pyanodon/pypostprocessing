@@ -52,6 +52,13 @@ data:extend {
         order = "e",
     },
     {
+        type = "bool-setting",
+        name = "pypp-no-globals",
+        setting_type = "startup",
+        default_value = false,
+        order = "e",
+    },
+    {
         type = "double-setting",
         name = "pypp-click-lock-duration",
         setting_type = "runtime-per-user",

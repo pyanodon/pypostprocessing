@@ -35,7 +35,7 @@ local function init_nth_tick(mod)
     end
     for name, details in pairs(py.nth_tick_funcs) do
         if not added_funcs[name] then
-            next_tick = math.ceil(game.tick / details.tick) * details.tick
+            local next_tick = math.ceil(game.tick / details.tick) * details.tick
             if not storage.nth_tick_order[next_tick] then storage.nth_tick_order[next_tick] = {} end
             table.insert(storage.nth_tick_order[next_tick], {func = name, delay = 0})
         end

@@ -3,6 +3,7 @@ Version: 3.0.38
 Date: ???
   Changes:
     - Fixed crash when placing a building while paused at 0 ticks elapsed.
+    - Added an opt-in setting to find undocumented global variables. It will print warnings for now, in the future it will always be on and crash the game so testing and reporting is appreciated!
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.37
 Date: 2025-08-19
