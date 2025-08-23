@@ -2,7 +2,7 @@ if py.stage == "data" then
   -- Attachs an entity to another entity with additional properties
   -- @param parent string
   -- @param child string
-  -- 
+  --
   -- @param additional AdditionalParams
   -- @class AdditionalParams
   -- @field enable_gui bool Enables an entry in the gui of the parent
@@ -11,8 +11,9 @@ if py.stage == "data" then
   -- @field gui_submenu_function string The fuction called when you hit the button itself
   -- @field gui_caption string The text the button has
   -- @field position_offset MapPosition https://lua-api.factorio.com/2.0.64/concepts/MapPosition.html
+  -- @field on_built string Name of compound_entity function to run when the entity is built
   --
-  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html 
+  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html
   function py.compound_attach_entity_to(parent, child, additional)
     local info = py.smuggle_get("compound-info", {})
     log(serpent.block(info))
@@ -22,13 +23,11 @@ if py.stage == "data" then
     end
 
     additional.child = child
-  
+
     table.insert(info[parent], additional)
     log(serpent.block(data.raw["mod-data"]))
   end
-  
 elseif py.stage == "control" then
-
   local init = function()
     if not storage.compound_entity_pairs then
       storage.compound_entity_pairs = {}
@@ -51,7 +50,7 @@ elseif py.stage == "control" then
   -- @function GuiTitleFunction
   -- @param entity LuaEntity parent entity
   -- @return string Title
-  -- 
+  --
   -- @function GuiFunction
   -- @param event events.on_gui_opened Event data of when on_gui_opened is called
   -- @param player LuaEntity the player who opened the GUI
@@ -63,8 +62,8 @@ elseif py.stage == "control" then
   -- @function GuiSubmenuFunction
   -- @param entity Parent entity
   -- @return (LuaGuiElement|LuaEntity) Anything that can be put in `player.opened`
-  -- 
-  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html 
+  --
+  -- @see https://pyanodon.github.io/pybugreports/internal_apis/compound_entities.html
   function py.register_compound_function(name, func)
     py.compound_functions[name] = func
   end
@@ -96,11 +95,10 @@ elseif py.stage == "control" then
     return defines.relative_gui_type.assembling_machine_gui
   end
 
-
   -- Adds a new child to a compound entity
   -- Unsure about using this on non compound register parents, beware...
   -- Will not clean up compound entity children on non registered parents
-  -- 
+  --
   -- @param parent LuaEntity the parent compound entity
   -- @param child_name string Name of the child
   -- @param info Info
@@ -111,14 +109,14 @@ elseif py.stage == "control" then
   function py.compound_attach_entity_to(parent, child_name, info)
     init()
     if not parent.valid then return end
-  
+
     local position = parent.position
 
     if not storage.compound_entity_pairs[parent.unit_number] then
       storage.compound_entity_pairs[parent.unit_number] = {}
       storage.compound_entity_gui_pairs[parent.unit_number] = {}
     end
-    
+
     local new_position = position
     -- game.print(serpent.line(info.position_offset))
     if info.position_offset then
@@ -128,17 +126,23 @@ elseif py.stage == "control" then
       }
       -- game.print(serpent.line(position) .. " vs. " .. serpent.line(new_position))
     end
-  
-    local new_entity = parent.surface.create_entity{
+
+    local new_entity = parent.surface.create_entity {
       name = child_name,
       position = new_position,
       force = "player"
     }
 
+    local on_built = py.get_compound_function(info.on_built)
+
+    if on_built then
+      on_built(new_entity)
+    end
+
     storage.compound_entity_pairs[parent.unit_number][new_entity.unit_number] = new_entity
     storage.compound_entity_pairs_reverse[new_entity.unit_number] = parent
     if info.enable_gui then
-      storage.compound_entity_gui_pairs[parent.unit_number][new_entity.unit_number] = {entity = new_entity, info = info}
+      storage.compound_entity_gui_pairs[parent.unit_number][new_entity.unit_number] = { entity = new_entity, info = info }
     end
   end
 
@@ -159,7 +163,7 @@ elseif py.stage == "control" then
         if storage.compound_entity_pairs_reverse then
           storage.compound_entity_pairs_reverse[child.unit_number] = nil
         end
-    
+
         child.destroy()
         child = nil
       end
@@ -183,34 +187,12 @@ elseif py.stage == "control" then
       py.on_event(py.events.on_built(), function(event)
         init()
         if not event.entity.valid or machine ~= event.entity.name then return end
-      
-        local position = event.entity.position
 
         storage.compound_entity_pairs[event.entity.unit_number] = {}
         storage.compound_entity_gui_pairs[event.entity.unit_number] = {}
 
         for _, info in pairs(children) do
-          local new_position = position
-          -- game.print(serpent.line(info.position_offset))
-          if info.position_offset then
-            new_position = {
-              x = (position[1] or position.x) + (info.position_offset[1] or info.position_offset.x),
-              y = (position[2] or position.y) + (info.position_offset[2] or info.position_offset.y)
-            }
-            -- game.print(serpent.line(position) .. " vs. " .. serpent.line(new_position))
-          end
-        
-          local new_entity = event.entity.surface.create_entity{
-            name = info.child,
-            position = new_position,
-            force = "player"
-          }
-
-          storage.compound_entity_pairs[event.entity.unit_number][new_entity.unit_number] = new_entity
-          storage.compound_entity_pairs_reverse[new_entity.unit_number] = event.entity
-          if info.enable_gui then
-            storage.compound_entity_gui_pairs[event.entity.unit_number][new_entity.unit_number] = {entity = new_entity, info = info}
-          end
+          py.compound_attach_entity_to(event.entity, info.child, info)
         end
       end)
 
@@ -228,7 +210,7 @@ elseif py.stage == "control" then
             if storage.compound_entity_pairs_reverse then
               storage.compound_entity_pairs_reverse[child.unit_number] = nil
             end
-            
+
             child.destroy()
           end
           child = nil
@@ -245,25 +227,25 @@ elseif py.stage == "control" then
 
       py.on_event(py.events.on_gui_opened(), function(event)
         if not event.entity or not event.entity.valid or not machine == event.entity.name then return end
-      
+
         local player = game.players[event.player_index]
         local entity = event.entity
-      
+
         if not storage.compound_entity_gui_pairs[event.entity.unit_number] then
           return
         end
         if not storage.compound_entity_pairs[event.entity.unit_number] then
           return
         end
-        
+
         if player.gui.relative["compound-entity-children"] then
           player.gui.relative["compound-entity-children"].destroy()
         end
 
-        local root = player.gui.relative.add{
+        local root = player.gui.relative.add {
           type = "frame",
           name = "compound-entity-children",
-          caption = {"", {"entity-name." .. entity.name}, " Components"},
+          caption = { "", { "entity-name." .. entity.name }, " Components" },
           direction = "vertical",
           anchor = {
             gui = py.match_entity_gui_type(entity.type),
@@ -286,10 +268,10 @@ elseif py.stage == "control" then
 
           local gui_func = py.get_compound_function(gui_child.info.gui_function_name)
           local gui_func = gui_func or function(event, player, root, _, gui_child)
-            root.add{
+            root.add {
               type = "button",
               name = "open-compound-entity-child-" .. (gui_child.entity.unit_number or gui_child.entity.name),
-              caption = gui_child.info.gui_caption or {"", "Open ", {"entity-name." .. gui_child.entity.name}, " gui"},
+              caption = gui_child.info.gui_caption or { "", "Open ", { "entity-name." .. gui_child.entity.name }, " gui" },
               tags = {
                 unit_number = event.entity.unit_number,
                 child_unit_number = gui_child.entity.unit_number,
@@ -311,7 +293,8 @@ elseif py.stage == "control" then
         if not storage.compound_entity_gui_pairs[event.element.tags.unit_number] then return end
         if not storage.compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number] then return end
 
-        local gui_child = storage.compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number]
+        local gui_child = storage.compound_entity_gui_pairs[event.element.tags.unit_number]
+            [event.element.tags.child_unit_number]
 
         local gui_menu
         if gui_child.info.gui_submenu_function_name then
