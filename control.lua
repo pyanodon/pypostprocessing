@@ -17,11 +17,13 @@ py.nth_tick_total = 0
 ---use instead of script.on_nth_tick
 ---@param func_list NthTickFunc[]
 local register_on_nth_tick = function(func_list)
+    local this_nth_tick_total = 0
     for func_name, details in pairs(func_list) do
         log("registered on_nth_tick function " .. func_name .. " from mod " .. details.mod)
-        py.nth_tick_total = py.nth_tick_total + 1 / details.tick
+        this_nth_tick_total = this_nth_tick_total + 1 / details.tick
         py.nth_tick_funcs[details.mod .. "-" .. func_name] = {mod = details.mod, tick = details.tick}
     end
+    py.nth_tick_total = py.nth_tick_total + this_nth_tick_total * 2
 end
 
 local function init_nth_tick(mod)
@@ -40,7 +42,6 @@ local function init_nth_tick(mod)
             table.insert(storage.nth_tick_order[next_tick], {func = name, delay = 0})
         end
     end
-    py.nth_tick_total = math.ceil(py.nth_tick_total * 2)
     py.nth_tick_setup[mod] = true
 end
 
@@ -64,7 +65,7 @@ local query_nth_tick = function(mod, tick)
     for _, order in pairs(storage.nth_tick_order[tick] or {}) do
         if not py.nth_tick_funcs[order.func] then goto continue end
         this_tick_total = this_tick_total + add
-        if this_tick_total <= py.nth_tick_total then
+        if this_tick_total <= math.ceil(py.nth_tick_total) then
             local mod_name = py.nth_tick_funcs[order.func].mod
             query_funcs[mod_name] = query_funcs[mod_name] or {}
             table.insert(query_funcs[mod_name], order.func)
