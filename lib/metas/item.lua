@@ -90,7 +90,7 @@ metas.spoil = function(self, spoil_result, spoil_ticks)
         self.spoil_result = spoil_result
     elseif type(spoil_result) == "table" and spoil_result.trigger then
         self.spoil_to_trigger_result = spoil_result
-    else
+    elseif spoil_result ~= nil then
         error("Invalid spoil result provided for item " .. self.name)
     end
 
