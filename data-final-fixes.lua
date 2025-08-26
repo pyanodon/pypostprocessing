@@ -496,7 +496,9 @@ end
 
 for _, vehicle_prototype in pairs {"car", "locomotive", "spider-vehicle"} do
     for _, vehicle in pairs(data.raw[vehicle_prototype]) do
-        vehicle.allow_remote_driving = true
+        if not vehicle.hidden then
+            vehicle.allow_remote_driving = true
+        end
     end
 end
 
