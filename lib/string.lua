@@ -32,5 +32,9 @@ end
 ---@param suffix string
 ---@return boolean
 string.ends_with = function(s, suffix)
-    return s:sub(-#suffix) == suffix
+    return s:sub(- #suffix) == suffix
+end
+
+function string.remove_suffix(s, suffix)
+    return s:gsub("%" .. suffix, "")
 end
