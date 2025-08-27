@@ -289,6 +289,7 @@ elseif py.stage == "control" then
 
       py.on_event(py.events.on_gui_click(), function(event)
         local player = game.players[event.player_index]
+        if not event.element.valid then return end
         if not ((string.find(event.element.name, "open-compound-entity-child", 1, true) or -1) >= 0) then return end
         if not storage.compound_entity_gui_pairs[event.element.tags.unit_number] then return end
         if not storage.compound_entity_gui_pairs[event.element.tags.unit_number][event.element.tags.child_unit_number] then return end
