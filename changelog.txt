@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.38
-Date: ???
+Date: 2025-08-23
   Changes:
     - Cars, tanks, and spidertrons are no longer remote-drivable if they have the "hidden" flag.
     - Fixed crash when placing a building while paused at 0 ticks elapsed.
