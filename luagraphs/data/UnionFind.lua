@@ -18,8 +18,8 @@ function UnionFind.create(V)
     s.count = {}
 
     for v = 0, V - 1 do
-        s.id[ v ] = v
-        s.count[ v ] = 1
+        s.id[v] = v
+        s.count[v] = 1
     end
 
     return s
@@ -33,8 +33,8 @@ function UnionFind.createFromVertexList(vertices)
     s.count = {}
 
     for _, v in pairs(vertices:enumerate()) do
-        s.id[ v ] = v
-        s.count[ v ] = 1
+        s.id[v] = v
+        s.count[v] = 1
     end
 
     return s
@@ -43,9 +43,9 @@ end
 function UnionFind:root(v)
     local x = v
 
-    while self.id[ x ] ~= x do
-        x = self.id[ x ]
-        self.id[ x ] = self.id[ self.id[ x ] ]
+    while self.id[x] ~= x do
+        x = self.id[x]
+        self.id[x] = self.id[self.id[x]]
     end
 
     return x
@@ -56,12 +56,12 @@ function UnionFind:union(v, w)
     local w_root = self:root(w)
 
     if v_root ~= w_root then
-        if self.count[ v_root ] > self.count[ w_root ] then
-            self.id[ w_root ] = v_root
-            self.count[ v_root ] = self.count[ w_root ] + self.count[ v_root ]
+        if self.count[v_root] > self.count[w_root] then
+            self.id[w_root] = v_root
+            self.count[v_root] = self.count[w_root] + self.count[v_root]
         else
-            self.id[ v_root ] = w_root
-            self.count[ w_root ] = self.count[ w_root ] + self.count[ v_root ]
+            self.id[v_root] = w_root
+            self.count[w_root] = self.count[w_root] + self.count[v_root]
         end
     end
 end

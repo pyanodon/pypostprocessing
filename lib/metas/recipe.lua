@@ -28,7 +28,7 @@ RECIPE = setmetatable(data.raw.recipe, {
     __call = function(self, recipe)
         local rtype = type(recipe)
         if rtype == "string" then
-            if not self[ recipe ] then
+            if not self[recipe] then
                 local dummyResult = {
                     __index = function(self2)
                         return self2
@@ -40,9 +40,9 @@ RECIPE = setmetatable(data.raw.recipe, {
                 setmetatable(dummyResult, dummyResult)
                 return dummyResult
             end
-            recipe = setmetatable(self[ recipe ], { __index = metas })
+            recipe = setmetatable(self[recipe], { __index = metas })
         elseif rtype == "table" then
-            local old_recipe = data.raw.recipe[ recipe.name ]
+            local old_recipe = data.raw.recipe[recipe.name]
             if old_recipe then
                 recipe.allow_productivity = recipe.allow_productivity or old_recipe.allow_productivity
             end
@@ -68,8 +68,8 @@ end
 
 py.allow_productivity = function(recipe_names)
     for _, recipe_name in pairs(recipe_names) do
-        if data.raw.recipe[ recipe_name ] then
-            data.raw.recipe[ recipe_name ].allow_productivity = true
+        if data.raw.recipe[recipe_name] then
+            data.raw.recipe[recipe_name].allow_productivity = true
         else
             log("WARNING @ allow_productivity(): Recipe " .. recipe_name .. " does not exist")
         end
@@ -84,7 +84,7 @@ metas.add_unlock = function(self, technology_name)
         return self
     end
 
-    local technology = data.raw.technology[ technology_name ]
+    local technology = data.raw.technology[technology_name]
     if not technology then
         log("WARNING @ \'" .. self.name .. "\':add_unlock(): Technology " .. technology_name .. " does not exist")
         return self
@@ -109,7 +109,7 @@ metas.remove_unlock = function(self, technology_name)
         return self
     end
 
-    local technology = data.raw.technology[ technology_name ]
+    local technology = data.raw.technology[technology_name]
     if not technology then
         log("WARNING @ \'" .. self.name .. "\':remove_unlock(): Technology " .. technology_name .. " does not exist")
         return self
@@ -137,14 +137,14 @@ do
     local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
         local type = type(new)
         if type == "string" then
-            if not FLUID[ new ] and not ITEM[ new ] then
+            if not FLUID[new] and not ITEM[new] then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
                 return
             end
             for _, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
                     ingredient.name = new
-                    ingredient.type = FLUID[ new ] and "fluid" or "item"
+                    ingredient.type = FLUID[new] and "fluid" or "item"
                     ingredient.minimum_temperature = nil
                     ingredient.maximum_temperature = nil
                     ingredient.temperature = nil
@@ -157,13 +157,13 @@ do
             end
         elseif type == "table" then
             new = table.deepcopy(new)
-            if not FLUID[ new.name ] and not ITEM[ new.name ] then
+            if not FLUID[new.name] and not ITEM[new.name] then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return
             end
             for k, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
-                    ingredients_or_results[ k ] = new
+                    ingredients_or_results[k] = new
                 end
             end
         end
@@ -179,7 +179,7 @@ do
         self:standardize()
         replacement_helper(self, self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
-            self.main_product = type(new_result) == "string" and new_result or new_result[ 1 ] or new_result.name
+            self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
         end
         return self
     end
@@ -187,7 +187,7 @@ end
 
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
-    if not FLUID[ ingredient.name ] and not ITEM[ ingredient.name ] then
+    if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
         log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
         return self
     end
@@ -338,7 +338,7 @@ end
 metas.change_category = function(self, category_name)
     self:standardize()
 
-    if data.raw[ "recipe-category" ][ category_name ] then
+    if data.raw["recipe-category"][category_name] then
         self.category = category_name
     else
         log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name .. " not found")
@@ -382,7 +382,7 @@ metas.get_main_product = function(self, allow_multi_product)
     end
     -- Find our prototype :)
     for _, category in py.iter_prototype_categories(target_type) do
-        local proto = category[ target ]
+        local proto = category[target]
         if proto then return proto end
     end
     -- haha oh no
@@ -419,7 +419,7 @@ metas.get_icons = function(self)
             while true do
                 local _, next_category = iterable()
                 if not next_category then break end
-                local placed_entity = next_category[ place_result ]
+                local placed_entity = next_category[place_result]
                 if placed_entity then
                     return icons(placed_entity)
                 end

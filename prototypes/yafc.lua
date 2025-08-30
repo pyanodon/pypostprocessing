@@ -1,10 +1,10 @@
-if mods[ "pyalienlife" ] then
+if mods["pyalienlife"] then
     log("Fix Automated smartfarm")
     -- Add the replicator as proper ingredient
     -- Smartfarm recipe produces fluid that is used for mining
 
     -- Create copy of bioreserve for farming
-    local bioreserve_copy = table.deepcopy(data.raw[ "resource" ][ "ore-bioreserve" ])
+    local bioreserve_copy = table.deepcopy(data.raw["resource"]["ore-bioreserve"])
     bioreserve_copy.name = "ore-bioreserve-farming"
     bioreserve_copy.localised_name = { "entity-name.ore-bioreserve" }
     data:extend({ bioreserve_copy })
@@ -27,13 +27,13 @@ if mods[ "pyalienlife" ] then
         use_bioreserve_copy(require("__pyalienlife__/scripts/smart-farm/farm-bioreserve"))
     }
 
-    if mods[ "pyalternativeenergy" ] then
-        farms[ #farms+1 ] = require("__pyalternativeenergy__/scripts/crops/farm-mova")
+    if mods["pyalternativeenergy"] then
+        farms[#farms+1] = require("__pyalternativeenergy__/scripts/crops/farm-mova")
     end
 
     for _, farm in ipairs(farms) do
         local fluid_name = farm.crop .. "-farming-fluid"
-        local resource = data.raw[ "resource" ][ farm.crop ]
+        local resource = data.raw["resource"][farm.crop]
         local fluid = FLUID({
             type = "fluid",
             name = fluid_name,
@@ -52,20 +52,20 @@ if mods[ "pyalienlife" ] then
         for _, recipe_data in ipairs(farm.recipes) do
             local recipe = RECIPE(recipe_data.recipe_name)
             recipe:add_ingredient({ name = farm.seed, amount = 1, type = "item" })
-            recipe.results[ 1 ] = { type = "fluid", name = fluid_name, amount = math.floor(recipe_data.crop_output) * 529 }
+            recipe.results[1] = { type = "fluid", name = fluid_name, amount = math.floor(recipe_data.crop_output) * 529 }
         end
     end
 
     -- Collector and harvester need a fluid box - an empty table is enough for YAFC
     ---@diagnostic disable-next-line: missing-fields
-    data.raw[ "mining-drill" ][ "harvester" ].input_fluid_box = {}
+    data.raw["mining-drill"]["harvester"].input_fluid_box = {}
     ---@diagnostic disable-next-line: missing-fields
-    data.raw[ "mining-drill" ][ "flora-collector-mk01" ].input_fluid_box = {}
+    data.raw["mining-drill"]["flora-collector-mk01"].input_fluid_box = {}
 
     -- No rocket launches in farm, make it a normal assembling machine
-    data.raw[ "rocket-silo" ][ "mega-farm" ].type = "assembling-machine"
-    data.raw[ "assembling-machine" ][ "mega-farm" ] = data.raw[ "rocket-silo" ][ "mega-farm" ]
-    data.raw[ "rocket-silo" ][ "mega-farm" ] = nil
+    data.raw["rocket-silo"]["mega-farm"].type = "assembling-machine"
+    data.raw["assembling-machine"]["mega-farm"] = data.raw["rocket-silo"]["mega-farm"]
+    data.raw["rocket-silo"]["mega-farm"] = nil
 
     log("Fix animal module dependencies")
     -- Needed to make the milestones work properly and lock normal production after the bootstrapping recipe
@@ -115,23 +115,23 @@ if mods[ "pyalienlife" ] then
         { "zipir1",         "zipir-reef-mk01" }
     }
 
-    if mods[ "pyalternativeenergy" ] then
-        mod_buildings[ #mod_buildings+1 ] = { "zungror", "zungror-lair-mk01" }
-        mod_buildings[ #mod_buildings+1 ] = { "numal", "numal-reef-mk01" }
+    if mods["pyalternativeenergy"] then
+        mod_buildings[#mod_buildings+1] = { "zungror", "zungror-lair-mk01" }
+        mod_buildings[#mod_buildings+1] = { "numal", "numal-reef-mk01" }
     end
 
-    if mods[ "pystellarexpedition" ] then
-        mod_buildings[ #mod_buildings+1 ] = { "kakkalakki-m", "kakkalakki-habitat-mk01" }
+    if mods["pystellarexpedition"] then
+        mod_buildings[#mod_buildings+1] = { "kakkalakki-m", "kakkalakki-habitat-mk01" }
     end
 
     for _, x in ipairs(mod_buildings) do
-        table.insert(RECIPE(x[ 2 ]).ingredients, { type = "item", name = x[ 1 ], amount = 1 })
+        table.insert(RECIPE(x[2]).ingredients, { type = "item", name = x[1], amount = 1 })
     end
 
     log("Fix dig-site")
 
-    data.raw.recipe[ "digosaurus-hidden-recipe" ].results = {}
-    data.raw[ "assembling-machine" ][ "dino-dig-site" ].fixed_recipe = nil
+    data.raw.recipe["digosaurus-hidden-recipe"].results = {}
+    data.raw["assembling-machine"]["dino-dig-site"].fixed_recipe = nil
 
     local dig_creatures = {
         -- {creature, amount, time_taken_to_mine, attack_cooldown_ticks}
@@ -147,15 +147,15 @@ if mods[ "pyalienlife" ] then
             -- The creature is looped in the recipe to make it only available after the creature is available
             RECIPE({
                 type = "recipe",
-                name = "nexelit-from-" .. food_name .. "-" .. y[ 1 ],
-                energy_required = y[ 3 ] * y[ 4 ] / 60,
+                name = "nexelit-from-" .. food_name .. "-" .. y[1],
+                energy_required = y[3] * y[4] / 60,
                 ingredients = {
                     { type = "item", name = food_name, amount = 4 },
-                    { type = "item", name = y[ 1 ],    amount = 4 }
+                    { type = "item", name = y[1],      amount = 4 }
                 },
                 results = {
-                    { type = "item", name = "nexelit-ore", amount = food_bonus * y[ 2 ] * 4 },
-                    { type = "item", name = y[ 1 ],        amount = 4 }
+                    { type = "item", name = "nexelit-ore", amount = food_bonus * y[2] * 4 },
+                    { type = "item", name = y[1],          amount = 4 }
                 },
                 main_product = "nexelit-ore",
                 category = "dino-dig-site"
@@ -165,8 +165,8 @@ if mods[ "pyalienlife" ] then
 
     log("Fix guano")
 
-    data.raw.recipe[ "bioport-hidden-recipe" ].results = {}
-    data.raw[ "assembling-machine" ][ "bioport" ].fixed_recipe = nil
+    data.raw.recipe["bioport-hidden-recipe"].results = {}
+    data.raw["assembling-machine"]["bioport"].fixed_recipe = nil
 
     Biofluid = {}
     require("__pyalienlife__/scripts/biofluid/biofluid-prototypes")
@@ -195,8 +195,8 @@ if mods[ "pyalienlife" ] then
     ITEM({
         type = "item",
         name = "hidden-beacon-turd",
-        icon = data.raw[ "beacon" ][ "hidden-beacon-turd" ].icon,
-        icon_size = data.raw[ "beacon" ][ "hidden-beacon-turd" ].icon_size,
+        icon = data.raw["beacon"]["hidden-beacon-turd"].icon,
+        icon_size = data.raw["beacon"]["hidden-beacon-turd"].icon_size,
         place_result = "hidden-beacon-turd"
     })
     RECIPE({
@@ -215,7 +215,7 @@ if mods[ "pyalienlife" ] then
             for _, effect in pairs(tech.effects) do
                 if effect.type == "module-effects" then
                     local modules = {}
-                    if data.raw.module[ tech.name .. "-module" ] then
+                    if data.raw.module[tech.name .. "-module"] then
                         table.insert(modules, tech.name .. "-module")
                     else
                         for i, entity in pairs(tech_upgrade.affected_entities or {}) do
@@ -281,17 +281,17 @@ if mods[ "pyalienlife" ] then
     end
 end
 
-if mods[ "pyalternativeenergy" ] then
+if mods["pyalternativeenergy"] then
     log("Fix placer entities")
     -- Needed to make some buildings available
 
-    data.raw[ "item" ][ "numal-reef-mk01" ].place_result = "numal-reef-mk01"
-    data.raw[ "item" ][ "numal-reef-mk02" ].place_result = "numal-reef-mk02"
-    data.raw[ "item" ][ "numal-reef-mk03" ].place_result = "numal-reef-mk03"
-    data.raw[ "item" ][ "numal-reef-mk04" ].place_result = "numal-reef-mk04"
+    data.raw["item"]["numal-reef-mk01"].place_result = "numal-reef-mk01"
+    data.raw["item"]["numal-reef-mk02"].place_result = "numal-reef-mk02"
+    data.raw["item"]["numal-reef-mk03"].place_result = "numal-reef-mk03"
+    data.raw["item"]["numal-reef-mk04"].place_result = "numal-reef-mk04"
 end
 
-if mods[ "pypetroleumhandling" ] then
+if mods["pypetroleumhandling"] then
     log("Fix bitumen seeps")
 
     local changed_seeps = {
@@ -307,6 +307,6 @@ if mods[ "pypetroleumhandling" ] then
     }
 
     for _, resource in ipairs(changed_seeps) do
-        data.raw[ "resource" ][ resource ].autoplace = data.raw[ "resource" ][ "bitumen-seep" ].autoplace
+        data.raw["resource"][resource].autoplace = data.raw["resource"]["bitumen-seep"].autoplace
     end
 end

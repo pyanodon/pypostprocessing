@@ -28,7 +28,7 @@ function EagerPrimMST:run(G)
     self.marked = {}
 
     for _, v in pairs(G:vertices():enumerate()) do
-        self.marked[ v ] = false
+        self.marked[v] = false
     end
 
     local pq = intexedMinPQ.create(function(e1, e2) return e1.weight - e2.weight end)
@@ -43,12 +43,12 @@ function EagerPrimMST:run(G)
 end
 
 function EagerPrimMST:visit(G, v, pq)
-    self.marked[ v ] = true
+    self.marked[v] = true
 
     for _, e in pairs(G:adj(v):enumerate()) do
         local w = e:other(v)
 
-        if self.marked[ w ] == false then
+        if self.marked[w] == false then
             if pq:contains(w) then
                 pq:decreaseKey(w, e)
             else

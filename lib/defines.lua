@@ -2,14 +2,14 @@ defines.gravitational_constant = 6.67408e-11 -- m^3 kg^-1 s^-2
 defines.orbit_time_adjustment = 1440         -- 1440 > year is 6 minutes
 
 defines.opposite_direction = {
-    [ defines.direction.north ] = defines.direction.south,
-    [ defines.direction.northeast ] = defines.direction.southwest,
-    [ defines.direction.east ] = defines.direction.west,
-    [ defines.direction.southeast ] = defines.direction.northwest,
-    [ defines.direction.south ] = defines.direction.north,
-    [ defines.direction.southwest ] = defines.direction.northeast,
-    [ defines.direction.west ] = defines.direction.east,
-    [ defines.direction.northwest ] = defines.direction.southeast
+    [defines.direction.north] = defines.direction.south,
+    [defines.direction.northeast] = defines.direction.southwest,
+    [defines.direction.east] = defines.direction.west,
+    [defines.direction.southeast] = defines.direction.northwest,
+    [defines.direction.south] = defines.direction.north,
+    [defines.direction.southwest] = defines.direction.northeast,
+    [defines.direction.west] = defines.direction.east,
+    [defines.direction.northwest] = defines.direction.southeast
 }
 
 defines.color = {

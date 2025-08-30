@@ -66,7 +66,7 @@ local turd_upgrade_names_table = {
 }
 local turds = {}
 for i, t in pairs(turd_upgrade_names_table) do
-  turds[ i ] = require("__pyalienlife__/" .. t)
+  turds[i] = require("__pyalienlife__/" .. t)
 end
 
 

@@ -60,14 +60,14 @@ function list.ArrayList:makeCopy()
     local temp = {}
 
     for key, val in pairs(self.a) do
-        temp[ key ] = val
+        temp[key] = val
     end
 
     return list.ArrayList.createWith(temp, self.aLen, self.N)
 end
 
 function list.ArrayList:add(value)
-    self.a[ self.N ] = value
+    self.a[self.N] = value
     self.N = self.N + 1
 
     if self.N == self.aLen then
@@ -78,11 +78,11 @@ function list.ArrayList:add(value)
 end
 
 function list.ArrayList:set(index, value)
-    self.a[ index ] = value
+    self.a[index] = value
 end
 
 function list.ArrayList:get(index)
-    local temp = self.a[ index ]
+    local temp = self.a[index]
 
     return temp
 end
@@ -94,7 +94,7 @@ function list.ArrayList:removeAt(index)
     end
 
     for i = index + 1, self.N - 1 do
-        self.a[ i - 1 ] = self.a[ i ]
+        self.a[i - 1] = self.a[i]
     end
 
     self.N = self.N - 1
@@ -110,7 +110,7 @@ function list.ArrayList:indexOf(value)
     end
 
     for i = 0, self.N - 1 do
-        if self.a[ i ] == value then
+        if self.a[i] == value then
             return i
         end
     end
@@ -131,7 +131,7 @@ function list.ArrayList:resize(newSize)
     local temp = {}
 
     for i = 0, (newSize - 1) do
-        temp[ i ] = self.a[ i ]
+        temp[i] = self.a[i]
     end
 
     self.a = temp
@@ -150,7 +150,7 @@ function list.ArrayList:enumerate()
     local temp = {}
 
     for i = 0, (self.N - 1) do
-        temp[ i ] = self.a[ i ]
+        temp[i] = self.a[i]
     end
 
     return temp

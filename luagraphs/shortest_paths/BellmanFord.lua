@@ -33,11 +33,11 @@ function BellmanFord:run(g, s)
     self.negativeCycle = false
 
     for _, v in pairs(g:vertices():enumerate()) do
-        self.edgeTo[ v ] = -1
-        self.costs[ v ] = BellmanFord.MAX_VALUE
+        self.edgeTo[v] = -1
+        self.costs[v] = BellmanFord.MAX_VALUE
     end
 
-    self.costs[ s ] = 0
+    self.costs[s] = 0
 
     for i = 0, g:vertexCount() - 1 do
         for k = 0, g:vertexCount() - 1 do
@@ -69,14 +69,14 @@ function BellmanFord:relax(g, e)
     local w = e:to()
     local v = e:from()
 
-    if self.costs[ w ] > self.costs[ v ] + e.weight then
-        self.costs[ w ] = self.costs[ v ] + e.weight
-        self.edgeTo[ w ] = e
+    if self.costs[w] > self.costs[v] + e.weight then
+        self.costs[w] = self.costs[v] + e.weight
+        self.edgeTo[w] = e
     end
 end
 
 function BellmanFord:hasPathTo(v)
-    return self.costs[ v ] < BellmanFord.MAX_VALUE
+    return self.costs[v] < BellmanFord.MAX_VALUE
 end
 
 function BellmanFord:hasNegativeCycle()
@@ -84,14 +84,14 @@ function BellmanFord:hasNegativeCycle()
 end
 
 function BellmanFord:getPathLength(v)
-    return self.costs[ v ]
+    return self.costs[v]
 end
 
 function BellmanFord:getPathTo(v)
     local x = v
 
     while x ~= self.source do
-        local e = self.edgeTo[ x ]
+        local e = self.edgeTo[x]
         stack:push(e)
         x = e:other(x)
     end

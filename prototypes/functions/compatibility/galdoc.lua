@@ -1,4 +1,4 @@
-if mods[ "galdocs-manufacturing" ] then
+if mods["galdocs-manufacturing"] then
     --zinc
     py.global_item_replacer("ore-zinc", "zinc-ore")
     py.global_item_replacer("zinc-plate", "zinc-plate-stock")

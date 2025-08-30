@@ -1,7 +1,7 @@
 -- https://github.com/modded-factorio/bobsmods/tree/main
 
-local bobInsertersVersion = mods[ "bobinserters" ]
-if mods[ "bobinserters" ] and mods[ "pyalienlife" ] then
+local bobInsertersVersion = mods["bobinserters"]
+if mods["bobinserters"] and mods["pyalienlife"] then
     if bobInsertersVersion:sub(1, 1) == "1" then
         TECHNOLOGY("more-inserters-1"):add_pack("py-science-pack-2")
     else
@@ -9,7 +9,7 @@ if mods[ "bobinserters" ] and mods[ "pyalienlife" ] then
     end
 end
 
-if mods[ "bobmodules" ] then
+if mods["bobmodules"] then
     RECIPE("module-case"):add_unlock("basic-electronics")
     RECIPE("module-contact"):add_unlock("basic-electronics")
     RECIPE("module-circuit-board"):add_unlock("basic-electronics")

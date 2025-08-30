@@ -13,12 +13,12 @@ ENTITY = setmetatable({}, {
         local etype = type(entity)
         if etype == "string" then
             for ptype in py.iter_prototype_categories("entity") do
-                local result = data.raw[ ptype ][ entity ]
+                local result = data.raw[ptype][entity]
                 if result then return result:standardize() end
             end
         elseif etype == "table" then
             if not entity.type then error("Tried to extend an entity " .. entity.name .. " without providing a type") end
-            if not entity_types[ entity.type ] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
+            if not entity_types[entity.type] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
 
             data:extend({ entity })
             return entity:standardize()
@@ -29,7 +29,7 @@ ENTITY = setmetatable({}, {
     end,
     __index = function(self, entity_name)
         for ptype in pairs(defines.prototypes.entity) do
-            local result = data.raw[ ptype ][ entity_name ]
+            local result = data.raw[ptype][entity_name]
             if result then return result:standardize() end
         end
         return nil

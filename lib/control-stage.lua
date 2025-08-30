@@ -33,10 +33,10 @@ py.generate_allowed_module_tooltip = function(allowed_modules)
     ---@type LocalisedString
     local result = { "", { "gui.module-description" }, "\n" }
     for module, _ in pairs(allowed_modules) do
-        result[ #result+1 ] = { "", "[font=heading-2][item=" .. module .. "][/font]", " ", item_prototypes[ module ].localised_name }
-        result[ #result+1 ] = "\n"
+        result[#result+1] = { "", "[font=heading-2][item=" .. module .. "][/font]", " ", item_prototypes[module].localised_name }
+        result[#result+1] = "\n"
     end
-    result[ #result ] = nil
+    result[#result] = nil
     return result
 end
 
@@ -45,8 +45,8 @@ end
 ---@param factor number?
 ---@return MapPosition
 py.randomize_position = function(position, factor)
-    local x = position.x or position[ 1 ]
-    local y = position.y or position[ 2 ]
+    local x = position.x or position[1]
+    local y = position.y or position[2]
     factor = factor or 1
     return { x = x + factor * (random() - 0.5), y = y + factor * (random() - 0.5) }
 end
@@ -60,7 +60,7 @@ end
 py.cancel_creation = function(entity, player_index, message, color)
     local inserted = 0
     local items_to_place_this = entity.prototype.items_to_place_this
-    local item_to_place = items_to_place_this and items_to_place_this[ 1 ]
+    local item_to_place = items_to_place_this and items_to_place_this[1]
     local surface = entity.surface
     local position = entity.position
     local name = entity.name
@@ -176,7 +176,7 @@ py.find_grandparent = function(element, name)
 end
 
 local si_prefixes = {
-    [ 0 ] = "",
+    [0] = "",
     "si-prefix-symbol-kilo",
     "si-prefix-symbol-mega",
     "si-prefix-symbol-giga",
@@ -204,7 +204,7 @@ py.format_energy = function(energy, watts_or_joules)
         energy = energy / 1000
         prefix = prefix + 1
     end
-    return { "", string.format("%.1f", energy), " ", si_prefixes[ prefix ] and { si_prefixes[ prefix ] } or "* 10^" .. (prefix * 3) .. " ", { watts_or_joules } }
+    return { "", string.format("%.1f", energy), " ", si_prefixes[prefix] and { si_prefixes[prefix] } or "* 10^" .. (prefix * 3) .. " ", { watts_or_joules } }
 end
 
 ---Returns the distance from 0,0
@@ -231,5 +231,5 @@ end
 ---@return number
 py.get_planet_property = function(planet, property)
     if planet.surface then return planet.surface.get_property(property) end
-    return planet.prototype.surface_properties[ property ]
+    return planet.prototype.surface_properties[property]
 end

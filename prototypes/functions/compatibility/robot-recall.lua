@@ -1,4 +1,4 @@
-if mods[ "robot-recall" ] and mods[ "pyindustry" ] then
+if mods["robot-recall"] and mods["pyindustry"] then
     -- The robot distribution chest should be available when construction bots are researched
     RECIPE("robot-redistribute-chest"):remove_unlock("logistic-robotics"):remove_ingredient("advanced-circuit")
     -- The robot recall chest can wait until mk02 robots are researched

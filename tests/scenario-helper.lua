@@ -46,7 +46,7 @@ if script.active_mods.pyalienlife then
         name = "ee-super-speed-module",
         count = 10
       })
-      position[ 1 ] = position[ 1 ] - 3
+      position[1] = position[1] - 3
     end
 
     return beacons
@@ -59,11 +59,11 @@ if script.active_mods.pyalienlife then
   function helper.get_entity_at(position)
     radius = radius or 0.5
     local area = {
-      { position[ 1 ] - radius, position[ 2 ] - radius },
-      { position[ 1 ] + radius, position[ 2 ] + radius }
+      { position[1] - radius,   position[2] - radius },
+      { position[1] + radius,   position[2] + radius }
     }
     local entities = game.surfaces.nauvis.find_entities_filtered({ area = area })
-    return entities[ 1 ]
+    return entities[1]
   end
 end
 

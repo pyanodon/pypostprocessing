@@ -29,7 +29,7 @@ function BreadthFirstSearch:run(G, s, stop_filter)
     local q = queue.create()
 
     q:enqueue(s)
-    self.marked[ s ] = true
+    self.marked[s] = true
 
     while q:isEmpty() == false do
         local v = q:dequeue()
@@ -37,9 +37,9 @@ function BreadthFirstSearch:run(G, s, stop_filter)
         for _, e in pairs(G:adj(v)) do
             local w = e:other(v)
 
-            if not self.marked[ w ] and (not stop_filter or not stop_filter(w, v)) then
-                self.marked[ w ] = true
-                self.pathTo[ w ] = v
+            if not self.marked[w] and (not stop_filter or not stop_filter(w, v)) then
+                self.marked[w] = true
+                self.pathTo[w] = v
                 q:enqueue(w)
             end
         end
@@ -47,7 +47,7 @@ function BreadthFirstSearch:run(G, s, stop_filter)
 end
 
 function BreadthFirstSearch:hasPathTo(v)
-    return self.marked[ v ]
+    return self.marked[v]
 end
 
 function BreadthFirstSearch:getPathTo(v)
@@ -56,7 +56,7 @@ function BreadthFirstSearch:getPathTo(v)
 
     while x and x ~= self.s do
         path:push(x)
-        x = self.pathTo[ x ]
+        x = self.pathTo[x]
     end
 
     path:push(self.s)

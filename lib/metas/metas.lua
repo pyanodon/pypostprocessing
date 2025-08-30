@@ -36,19 +36,19 @@ for _, meta in pairs(lib) do
     meta.set_fields = function(self, fields)
         for k, v in pairs(fields) do
             if type(k) ~= "string" then error("Field name must be a string") end
-            self[ k ] = v
+            self[k] = v
         end
         return self
     end
 
     meta.set = function(self, field, value)
         if type(field) ~= "string" then error("Field name must be a string") end
-        self[ field ] = value
+        self[field] = value
         return self
     end
 
     meta.delete = function(self)
-        data.raw[ self.type ][ self.name ] = nil
+        data.raw[self.type][self.name] = nil
     end
 end
 
@@ -56,16 +56,16 @@ local metas = {}
 metas.recipe = { __index = lib.recipe }
 metas.technology = { __index = lib.technology }
 for ptype in pairs(defines.prototypes.entity) do
-    metas[ ptype ] = { __index = lib.entity }
+    metas[ptype] = { __index = lib.entity }
 end
 for ptype in pairs(defines.prototypes.item) do
-    metas[ ptype ] = { __index = lib.item }
+    metas[ptype] = { __index = lib.item }
 end
 metas.fluid = { __index = lib.fluid }
 metas.tile = { __index = lib.tile }
 
 for ptype, prototypes in pairs(data.raw) do
-    local meta = metas[ ptype ]
+    local meta = metas[ptype]
     if meta then
         for _, prototype in pairs(prototypes) do
             setmetatable(prototype, meta)
@@ -81,7 +81,7 @@ data.extend = function(self, prototypes)
     end
     extend(self, prototypes)
     for _, prototype in pairs(prototypes) do
-        local meta = metas[ prototype.type ]
+        local meta = metas[prototype.type]
         if meta then
             setmetatable(prototype, meta)
         end

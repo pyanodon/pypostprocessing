@@ -11,8 +11,8 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
     __call = function(self, technology)
         local ttype = type(technology)
         if ttype == "string" then
-            if not self[ technology ] then error("Technology " .. technology .. " does not exist") end
-            technology = self[ technology ]
+            if not self[technology] then error("Technology " .. technology .. " does not exist") end
+            technology = self[technology]
         elseif ttype == "table" then
             technology.type = "technology"
             data:extend({ technology })
@@ -36,7 +36,7 @@ metas.standardize = function(self)
 end
 
 metas.add_prereq = function(self, prereq_technology_name)
-    local prereq_technology = data.raw.technology[ prereq_technology_name ]
+    local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
         log("WARNING @ \'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
         return self
@@ -66,7 +66,7 @@ metas.remove_pack = function(self, science_pack_name)
         return self
     end
 
-    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[ 1 ] ~= science_pack_name end)
+    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[1] ~= science_pack_name end)
 
     return self
 end

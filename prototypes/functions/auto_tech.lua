@@ -13,18 +13,18 @@ auto_tech.__index = auto_tech
 local function merge(table, value)
     for k, v in pairs(value) do
         if type(v) == "table" then
-            table[ k ] = table[ k ] or {}
-            merge(table[ k ], v)
+            table[k] = table[k] or {}
+            merge(table[k], v)
         else
-            table[ k ] = v
+            table[k] = v
         end
     end
 end
 
 local tech_updates = {}
 local function set_tech_property(tech, property)
-    tech_updates[ tech.name ] = tech_updates[ tech.name ] or {}
-    merge(tech_updates[ tech.name ], property)
+    tech_updates[tech.name] = tech_updates[tech.name] or {}
+    merge(tech_updates[tech.name], property)
 end
 
 local science_pack_string = "\n"
@@ -35,7 +35,7 @@ end
 local function get_modlist_string()
     local modlist = {}
     for _, mod in pairs(config.PYMODS) do
-        if mods[ mod ] then modlist[ #modlist+1 ] = mod end
+        if mods[mod] then modlist[#modlist+1] = mod end
     end
     table.sort(modlist)
     return table.concat(modlist, "+") .. ".lua"
@@ -61,7 +61,7 @@ function auto_tech.create()
     setmetatable(a, auto_tech)
 
     a.spf_cache = {}
-    a.verbose_logging = settings.startup[ "pypp-verbose-logging" ].value
+    a.verbose_logging = settings.startup["pypp-verbose-logging"].value
 
     return a
 end
@@ -86,8 +86,8 @@ function auto_tech:run()
     local recipes = {}
 
     for _, node in pairs(fg_tmp.nodes) do
-        if node.type == fz_graph.NT_RECIPE and not node.ignore_for_dependencies and not node.virtual and data.raw.recipe[ node.factorio_name ] and not recipes[ node.factorio_name ] then
-            recipes[ node.factorio_name ] = true
+        if node.type == fz_graph.NT_RECIPE and not node.ignore_for_dependencies and not node.virtual and data.raw.recipe[node.factorio_name] and not recipes[node.factorio_name] then
+            recipes[node.factorio_name] = true
 
             if bfs:has_path_to(node) then
                 recipe_count = recipe_count + 1
@@ -153,26 +153,26 @@ function auto_tech:run()
 
     -- Set science pack order
     for _, node in pairs(spg.nodes) do
-        science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[ node.key ] or 0, ts.level[ node.key ]))
-        local sp = data.raw.tool[ node.name ]
+        science_pack_order(node.name, string.format("%03d-%06d", sp_ts.level[node.key] or 0, ts.level[node.key]))
+        local sp = data.raw.tool[node.name]
 
         sp.subgroup = "science-pack"
-        sp.order = string.format("%03d-%06d", sp_ts.level[ node.key ] or 0, ts.level[ node.key ])
-        sp_level[ node.name ] = sp_ts.level[ node.key ] or 0
+        sp.order = string.format("%03d-%06d", sp_ts.level[node.key] or 0, ts.level[node.key])
+        sp_level[node.name] = sp_ts.level[node.key] or 0
 
-        if sp_level[ sp.name ] > max_level then
-            max_level = sp_level[ sp.name ]
+        if sp_level[sp.name] > max_level then
+            max_level = sp_level[sp.name]
         end
     end
 
     for _, lab in pairs(data.raw.lab) do
-        table.sort(lab.inputs, function(i1, i2) return data.raw.tool[ i1 ].order < data.raw.tool[ i2 ].order end)
+        table.sort(lab.inputs, function(i1, i2) return data.raw.tool[i1].order < data.raw.tool[i2].order end)
     end
 
     local mult_count = table.size(config.TC_SCIENCE_PACK_MULT)
 
     for i = 1, max_level do
-        level_amount[ i ] = math.floor(config.TC_SCIENCE_PACK_MULT[ (i - 1) % mult_count + 1 ] * math.pow(config.TC_SCIENCE_PACK_MULT_STEP, math.floor((i - 1) / mult_count)) + 0.5)
+        level_amount[i] = math.floor(config.TC_SCIENCE_PACK_MULT[(i - 1) % mult_count + 1] * math.pow(config.TC_SCIENCE_PACK_MULT_STEP, math.floor((i - 1) / mult_count)) + 0.5)
     end
 
     local tech_bfs = fz_lazy_bfs.create(tg, tg:get_node(config.WIN_GAME_TECH, fz_graph.NT_TECH_HEAD), false, true)
@@ -181,7 +181,7 @@ function auto_tech:run()
 
     -- Export tech changes to prototypes
     for _, node in pairs(tg.nodes) do
-        local tech = data.raw.technology[ node.name ]
+        local tech = data.raw.technology[node.name]
 
         if tech then
             tech:standardize()
@@ -190,8 +190,8 @@ function auto_tech:run()
             local pre = {}
 
             for _, e in tg:iter_links_to(node) do
-                if data.raw.technology[ tg:get_node(e:from()).name ] then
-                    pre[ tg:get_node(e:from()).name ] = true
+                if data.raw.technology[tg:get_node(e:from()).name] then
+                    pre[tg:get_node(e:from()).name] = true
                 end
             end
 
@@ -199,34 +199,34 @@ function auto_tech:run()
             local highest_level = 0
 
             for _, sp in pairs(tech.unit.ingredients) do
-                if sp_level[ sp[ 1 ] ] > highest_level then
-                    highest_level = sp_level[ sp[ 1 ] ]
-                    highest_sp = sp[ 1 ]
+                if sp_level[sp[1]] > highest_level then
+                    highest_level = sp_level[sp[1]]
+                    highest_sp = sp[1]
                 end
             end
 
-            tech_highest_sp[ tech.name ] = highest_level
+            tech_highest_sp[tech.name] = highest_level
 
             for i, sp in pairs(tech.unit.ingredients) do
-                sp.amount = level_amount[ highest_level - sp_level[ sp[ 1 ] ] + 1 ]
-                set_tech_property(tech, { unit = { ingredients = { [ i ] = sp } } })
-                tech.unit.ingredients[ i ] = sp
+                sp.amount = level_amount[highest_level - sp_level[sp[1]] + 1]
+                set_tech_property(tech, { unit = { ingredients = { [i] = sp } } })
+                tech.unit.ingredients[i] = sp
             end
 
             if node.mandatory then
-                if not level_sp_cost[ tech_ts.level[ node.key ] ] then
-                    level_sp_cost[ tech_ts.level[ node.key ] ] = {}
+                if not level_sp_cost[tech_ts.level[node.key]] then
+                    level_sp_cost[tech_ts.level[node.key]] = {}
                 end
 
-                level_sp_cost[ tech_ts.level[ node.key ] ][ highest_level ] = (level_sp_cost[ tech_ts.level[ node.key ] ][ highest_level ] or 0) + 1
+                level_sp_cost[tech_ts.level[node.key]][highest_level] = (level_sp_cost[tech_ts.level[node.key]][highest_level] or 0) + 1
             end
 
-            set_tech_property(tech, { unit = { time = config.TC_SCIENCE_PACK_TIME[ highest_sp ] } })
+            set_tech_property(tech, { unit = { time = config.TC_SCIENCE_PACK_TIME[highest_sp] } })
             set_tech_property(tech, { prerequisites = table.keys(pre) })
-            set_tech_property(tech, { order = string.format("%06d", tech_ts.level[ node.key ]) })
-            tech.unit.time = config.TC_SCIENCE_PACK_TIME[ highest_sp ]
+            set_tech_property(tech, { order = string.format("%06d", tech_ts.level[node.key]) })
+            tech.unit.time = config.TC_SCIENCE_PACK_TIME[highest_sp]
             tech.prerequisites = table.keys(pre)
-            tech.order = string.format("%06d", tech_ts.level[ node.key ])
+            tech.order = string.format("%06d", tech_ts.level[node.key])
         end
     end
 
@@ -234,8 +234,8 @@ function auto_tech:run()
     local target = config.TC_BASE_MULT * (recipe_count * config.TC_MANDATORY_RECIPE_COUNT_MULT + opt_recipe_count * config.TC_OPTIONAL_RECIPE_COUNT_MULT)
     log("Target: " .. target)
 
-    local win_level = tech_ts.level[ tg:get_node(config.WIN_GAME_TECH, fz_graph.NT_TECH_HEAD).key ]
-    local win_sp_level = tech_highest_sp[ config.WIN_GAME_TECH ]
+    local win_level = tech_ts.level[tg:get_node(config.WIN_GAME_TECH, fz_graph.NT_TECH_HEAD).key]
+    local win_sp_level = tech_highest_sp[config.WIN_GAME_TECH]
     local factor = self:calculate_factor(level_sp_cost, target, win_level, win_sp_level)
     local spf = self:calculate_sp_factor(factor, win_level, win_sp_level)
     local sum_mand_packs = 0
@@ -243,12 +243,12 @@ function auto_tech:run()
     -- local factor = 1.2
 
     for _, node in pairs(tg.nodes) do
-        local tech = data.raw.technology[ node.name ]
+        local tech = data.raw.technology[node.name]
 
         if tech and not tech.unit.count_formula and tech.name ~= config.WIN_GAME_TECH then
-            local count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[ node.key ] - 2) * math.pow(spf, tech_highest_sp[ node.name ] - 1)))
+            local count = self.cost_rounding(config.TC_STARTING_TECH_COST * math.max(1, math.pow(factor, tech_ts.level[node.key] - 2) * math.pow(spf, tech_highest_sp[node.name] - 1)))
             local turd_adjusted_count = count
-            if tech.is_turd then turd_adjusted_count = config.TC_TURD_COST[ tech_highest_sp[ node.name ] ] end
+            if tech.is_turd then turd_adjusted_count = config.TC_TURD_COST[tech_highest_sp[node.name]] end
 
             set_tech_property(tech, { unit = { count = turd_adjusted_count } })
             tech.unit.count = turd_adjusted_count
@@ -279,11 +279,11 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
             -- log('Checking links from : ' .. e:from() .. ' To: ' .. sp.name)
             local sp2 = sp_graph:get_node(e:from())
 
-            for tech, _ in pairs(science_packs[ sp2.name ]) do
+            for tech, _ in pairs(science_packs[sp2.name]) do
                 local other_parents = true
 
                 for sp3, t in pairs(science_packs) do
-                    if sp3 ~= sp.name and sp3.name ~= sp2.name and t[ tech ]
+                    if sp3 ~= sp.name and sp3.name ~= sp2.name and t[tech]
                         and not bfs:has_path_to(sp_graph:get_node(sp3, fz_graph.NT_ITEM))
                     then
                         other_parents = false
@@ -293,7 +293,7 @@ function auto_tech:topo_sort_with_sp(fg, sp_graph, science_packs)
 
                 local tech_node = fg:get_node(tech, fz_graph.NT_TECH_TAIL)
 
-                if other_parents and tech_node and not science_packs[ sp.name ][ tech ] then
+                if other_parents and tech_node and not science_packs[sp.name][tech] then
                     fg:add_link(tech_node, sp_node, tech)
                     table.insert(sp_links, { from = tech_node, to = sp_node })
                     -- log('  - Adding sp link: ' .. tech_node.key .. ' >> ' .. sp_node.key)
@@ -334,24 +334,24 @@ function auto_tech.cost_rounding(num)
 
     local exp = 1
 
-    while num >= (t[ #t ] + t[ 1 ] * 10) / 2 do
+    while num >= (t[#t] + t[1] * 10) / 2 do
         num = num / 10
         exp = exp * 10
     end
 
     for i, n in pairs(t) do
-        if i == #t or num < (n + t[ i + 1 ]) / 2 then
+        if i == #t or num < (n + t[i + 1]) / 2 then
             return math.floor(n * exp)
         end
     end
 end
 
 function auto_tech:calculate_sp_factor(factor, win_level, win_sp_level)
-    if not self.spf_cache[ factor ] then
-        self.spf_cache[ factor ] = math.pow(config.TC_WIN_TECH_COST / config.TC_STARTING_TECH_COST / math.pow(factor, win_level - 2), 1 / (win_sp_level - 1))
+    if not self.spf_cache[factor] then
+        self.spf_cache[factor] = math.pow(config.TC_WIN_TECH_COST / config.TC_STARTING_TECH_COST / math.pow(factor, win_level - 2), 1 / (win_sp_level - 1))
     end
 
-    return self.spf_cache[ factor ]
+    return self.spf_cache[factor]
 end
 
 function auto_tech:calculate_factor(level_sp_cost, target, win_level, win_sp_level)
@@ -482,8 +482,8 @@ function auto_tech:add_tech_prerequisites(fg, tg, node)
         for _, e in fg:iter_links_to(n) do
             local p_node = fg:get_node(e:from())
 
-            if not marked[ p_node.key ] then
-                marked[ p_node.key ] = true
+            if not marked[p_node.key] then
+                marked[p_node.key] = true
                 local tg_node = tg:get_node(p_node.name, fz_graph.NT_TECH_HEAD)
 
                 if tg_node and p_node.type == fz_graph.NT_TECH_TAIL then
@@ -497,13 +497,13 @@ function auto_tech:add_tech_prerequisites(fg, tg, node)
 end
 
 function auto_tech:add_original_prerequisites(fg, tg, levels)
-    local nodes = table.filter(table.values(fg.nodes), function(n) return n.type == fz_graph.NT_TECH_HEAD and data.raw.technology[ n.name ] ~= nil end)
-    table.sort(nodes, function(n1, n2) return levels[ fg:get_node(n1.name, fz_graph.NT_TECH_TAIL).key ] < levels[ fg:get_node(n2.name, fz_graph.NT_TECH_TAIL).key ] end)
+    local nodes = table.filter(table.values(fg.nodes), function(n) return n.type == fz_graph.NT_TECH_HEAD and data.raw.technology[n.name] ~= nil end)
+    table.sort(nodes, function(n1, n2) return levels[fg:get_node(n1.name, fz_graph.NT_TECH_TAIL).key] < levels[fg:get_node(n2.name, fz_graph.NT_TECH_TAIL).key] end)
 
     for _, node in pairs(nodes) do
         -- log('Processing ' .. node.key)
         local target_hnode = tg:get_node(node.key)
-        local tech = data.raw.technology[ node.name ]
+        local tech = data.raw.technology[node.name]
         local bfs = fz_lazy_bfs.create(fg, node, true)
 
         for _, pre in pairs(table.merge(tech.dependencies or {}, tech.prerequisites or {})) do
@@ -536,11 +536,11 @@ function auto_tech:process_tech(tech_node, fg)
     local tmp_nodes = {}
 
     for _, e in pairs(fg:get_links_from(tech_node)) do
-        local node = fg.nodes[ e:to() ]
+        local node = fg.nodes[e:to()]
 
         if node.type == fz_graph.NT_RECIPE then
             fg:add_link(node, tail_node, node.key)
-            recipes[ node.key ] = node
+            recipes[node.key] = node
         end
     end
 
@@ -555,10 +555,10 @@ function auto_tech:process_tech(tech_node, fg)
         for _, node in pairs(recipes) do
             if not node.temp then
                 for label, _ in pairs(node.labels) do
-                    if not recipes[ fz_graph.node.get_key(node.name .. "/" .. label, node.type) ] and fg:has_label_to(node, label) then
+                    if not recipes[fz_graph.node.get_key(node.name .. "/" .. label, node.type)] and fg:has_label_to(node, label) then
                         local tmp_node = fg:add_node(node.name .. "/" .. label, node.type, node)
                         tmp_node.temp = true
-                        recipes[ tmp_node.key ] = tmp_node
+                        recipes[tmp_node.key] = tmp_node
                         table.insert(tmp_nodes, tmp_node)
                         fg:add_link(tech_node, tmp_node, LABEL_UNLOCK_RECIPE)
 
@@ -573,10 +573,10 @@ function auto_tech:process_tech(tech_node, fg)
         for _, node in pairs(recipes) do
             for _, e in pairs(fg:get_links_from(node)) do
                 if e:to() ~= tail_node.key then
-                    local p = fg.nodes[ e:to() ]
-                    products[ p.key ] = products[ p.key ] or {}
-                    products[ p.key ][ e.label ] = true
-                    node.products[ p.key ] = true
+                    local p = fg.nodes[e:to()]
+                    products[p.key] = products[p.key] or {}
+                    products[p.key][e.label] = true
+                    node.products[p.key] = true
                 end
             end
         end
@@ -588,17 +588,17 @@ function auto_tech:process_tech(tech_node, fg)
             local bfs = BreadthFirstSearch.create()
 
             bfs:run(fg.graph, k, function(v, from)
-                local tech_name = fg.nodes[ v ].tech_name
+                local tech_name = fg.nodes[v].tech_name
                 local result = tech_name and tech_name ~= tech_node.tech_name
 
                 if result then return true end
 
                 -- Stop the barrel/unbarrel and similar loops
-                if fg.nodes[ from ].tech_name == nil and fg.nodes[ from ].type == fz_graph.NT_RECIPE then
-                    local p = bfs.pathTo[ from ]
+                if fg.nodes[from].tech_name == nil and fg.nodes[from].type == fz_graph.NT_RECIPE then
+                    local p = bfs.pathTo[from]
 
-                    while p and fg.nodes[ p ].tech_name == nil do
-                        local p_node = fg.nodes[ p ]
+                    while p and fg.nodes[p].tech_name == nil do
+                        local p_node = fg.nodes[p]
 
                         if p_node.type == fz_graph.NT_RECIPE then
                             for _, e in pairs(fg:get_links_to(p_node)) do
@@ -608,7 +608,7 @@ function auto_tech:process_tech(tech_node, fg)
                             end
                         end
 
-                        p = bfs.pathTo[ p ]
+                        p = bfs.pathTo[p]
                     end
                 end
 
@@ -618,25 +618,25 @@ function auto_tech:process_tech(tech_node, fg)
             for r, _ in pairs(recipes) do
                 if bfs:hasPathTo(r) then
                     -- if tech_node.name == '__START__' then log('    - Path to recipe: ' .. r) end
-                    local n = bfs.pathTo[ r ]
+                    local n = bfs.pathTo[r]
 
-                    while n and fg.nodes[ n ].tech_name == nil do
+                    while n and fg.nodes[n].tech_name == nil do
                         -- if tech_node.name == '__START__' then log('      - ' .. n) end
-                        local new_name = tech_node.name .. ":" .. fg.nodes[ n ].name
-                        local new_key = fz_graph.node.get_key(new_name, fg.nodes[ n ].type)
+                        local new_name = tech_node.name .. ":" .. fg.nodes[n].name
+                        local new_key = fz_graph.node.get_key(new_name, fg.nodes[n].type)
 
-                        if not internal_nodes[ new_key ] then
-                            internal_nodes[ new_key ] = fg:clone_node(fg.nodes[ n ], new_name)
-                            internal_nodes[ new_key ]:update({ ignore_for_dependencies = true, tech_name = tech_node.name, internal = true, original_key = n })
+                        if not internal_nodes[new_key] then
+                            internal_nodes[new_key] = fg:clone_node(fg.nodes[n], new_name)
+                            internal_nodes[new_key]:update({ ignore_for_dependencies = true, tech_name = tech_node.name, internal = true, original_key = n })
 
-                            if internal_nodes[ new_key ].type == fz_graph.NT_RECIPE then
-                                recipes[ new_key ] = internal_nodes[ new_key ]
+                            if internal_nodes[new_key].type == fz_graph.NT_RECIPE then
+                                recipes[new_key] = internal_nodes[new_key]
                                 change = true
                             end
                             -- if tech_node.name == '__START__' then log('        - Add internal node: ' .. new_key) end
                         end
 
-                        n = bfs.pathTo[ n ]
+                        n = bfs.pathTo[n]
                     end
                 end
             end
@@ -739,7 +739,7 @@ function auto_tech:find_internal_nodes(fg, tech_name, recipes)
     for r, _ in pairs(recipes) do
         local n = { path = {}, deps = {} }
         n.last = r
-        n.deps[ r ] = true
+        n.deps[r] = true
 
         q(n)
     end
@@ -747,29 +747,29 @@ function auto_tech:find_internal_nodes(fg, tech_name, recipes)
     while not queue.is_empty(q) do
         local n = q()
 
-        for _, e in fg:iter_links_from(fg.nodes[ n.last ]) do
-            local node = fg.nodes[ e:to() ]
+        for _, e in fg:iter_links_from(fg.nodes[n.last]) do
+            local node = fg.nodes[e:to()]
 
-            if not marked[ node.key ] and not n.deps[ node.key ] and not node.tech_name then
-                marked[ node.key ] = true
+            if not marked[node.key] and not n.deps[node.key] and not node.tech_name then
+                marked[node.key] = true
                 local nn = { path = table.merge({}, n.path), deps = table.merge({}, n.deps) }
-                nn.path[ node.key ] = nn.last
+                nn.path[node.key] = nn.last
                 nn.last = node.key
-                nn.deps[ node.key ] = true
+                nn.deps[node.key] = true
 
                 for _, ee in fg:iter_links_to(node) do
-                    nn.deps[ ee:from() ] = true
+                    nn.deps[ee:from()] = true
                 end
 
                 q(nn)
             elseif (node.tech_name == tech_name and node.type == fz_graph.NT_RECIPE)
-                or (marked[ node.key ] and not n.deps[ node.key ] and not node.tech_name)
+                or (marked[node.key] and not n.deps[node.key] and not node.tech_name)
             then
                 local p = n.last
 
-                while p and not internal_nodes[ p ] and not fg.nodes[ p ].tech_name do
-                    internal_nodes[ p ] = true
-                    p = n.path[ p ]
+                while p and not internal_nodes[p] and not fg.nodes[p].tech_name do
+                    internal_nodes[p] = true
+                    p = n.path[p]
                 end
             end
         end
@@ -779,7 +779,7 @@ function auto_tech:find_internal_nodes(fg, tech_name, recipes)
 end
 
 function auto_tech:find_dependency_loop(fg, ts)
-    local node_list = table.filter(fg.nodes, function(n, k) return not ts.sorted[ k ] end)
+    local node_list = table.filter(fg.nodes, function(n, k) return not ts.sorted[k] end)
     local g = fg:create_subgraph(node_list)
     g:recursive_remove(deadend_node, false)
     -- self:remove_redundant_deps(g)
@@ -792,7 +792,7 @@ function auto_tech:find_dependency_loop(fg, ts)
     for _, node in pairs(g.nodes) do
         if node.type == fz_graph.NT_RECIPE and not node.internal then
             local bfs = fz_lazy_bfs.create(g, node, true)
-            bfs.marked[ node.key ] = nil
+            bfs.marked[node.key] = nil
 
             if bfs:has_path_to(node, false, path and queue.size(path) or nil) then
                 path = bfs:get_path_to(node, false)
@@ -818,7 +818,7 @@ function auto_tech:remove_redundant_deps(fg)
                 end
 
                 if count > 1 then
-                    fuzzy_nodes[ key ] = node
+                    fuzzy_nodes[key] = node
                     break
                 end
             end
@@ -862,7 +862,7 @@ function auto_tech:remove_redundant_deps(fg)
 
             if clear then
                 -- log('- Cleared node: ' .. key)
-                fuzzy_nodes[ key ] = nil
+                fuzzy_nodes[key] = nil
             end
         end
     end

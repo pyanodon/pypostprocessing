@@ -36,8 +36,8 @@ function fz_graph.node:update(properties)
     if not properties then return end
 
     for k, v in pairs(properties) do
-        if v ~= nil and fz_graph.node.property_names[ k ] then
-            self[ k ] = v
+        if v ~= nil and fz_graph.node.property_names[k] then
+            self[k] = v
         end
     end
 
@@ -51,7 +51,7 @@ function fz_graph.node:update(properties)
 end
 
 function fz_graph.node:add_label(label)
-    self.labels[ label ] = true
+    self.labels[label] = true
 end
 
 function fz_graph.node.get_key(name, type)
@@ -83,7 +83,7 @@ function fz_graph:copy()
 
     g.graph = self.graph:copy()
     g.nodes = table.deepcopy(self.nodes)
-    g.start_node = g.nodes[ self.start_node.key ]
+    g.start_node = g.nodes[self.start_node.key]
 
     return g
 end
@@ -95,18 +95,18 @@ function fz_graph:create_subgraph(node_list)
     local keys = table.map(node_list, function() return true end)
     g.graph = self.graph:create_subgraph(keys)
     g.nodes = table.deepcopy(node_list)
-    g.start_node = g.nodes[ self.start_node.name ]
+    g.start_node = g.nodes[self.start_node.name]
 
     return g
 end
 
 function fz_graph:add_node(name, type, properties)
     local key = fz_graph.node.get_key(name, type)
-    local node = self.nodes[ key ]
+    local node = self.nodes[key]
 
     if not node then
         node = fz_graph.node.create(name, type, properties)
-        self.nodes[ key ] = node
+        self.nodes[key] = node
         self.graph:addVertexIfNotExists(key)
     else
         node:update(properties)
@@ -117,7 +117,7 @@ end
 
 function fz_graph:get_node(name, type)
     local key = type and fz_graph.node.get_key(name, type) or name
-    return self.nodes[ key ]
+    return self.nodes[key]
 end
 
 function fz_graph:node_exists(name, type)
@@ -141,9 +141,9 @@ function fz_graph:remove_link(from, to, label)
 end
 
 function fz_graph:remove_node(node)
-    if self.nodes[ node.key ] then
+    if self.nodes[node.key] then
         self.graph:removeVertex(node.key)
-        self.nodes[ node.key ] = nil
+        self.nodes[node.key] = nil
     end
 end
 
@@ -181,7 +181,7 @@ function fz_graph:get_links_to(node, label)
 end
 
 function fz_graph:link_exists(from, to, label)
-    return table.any(self.graph.adjList[ from.key ], function(e) return e:to() == to.key and e.label == label end)
+    return table.any(self.graph.adjList[from.key], function(e) return e:to() == to.key and e.label == label end)
 end
 
 function fz_graph:iter_links_from(node, label)
@@ -225,11 +225,11 @@ function fz_graph:clone_node(source_node, name)
     node:update(source_node)
 
     for _, e in self:iter_links_from(source_node) do
-        self:add_link(node, self.nodes[ e:other(source_node.key) ], e.label)
+        self:add_link(node, self.nodes[e:other(source_node.key)], e.label)
     end
 
     for _, e in self:iter_links_to(source_node) do
-        self:add_link(self.nodes[ e:other(source_node.key) ], node, e.label)
+        self:add_link(self.nodes[e:other(source_node.key)], node, e.label)
     end
 
     return node

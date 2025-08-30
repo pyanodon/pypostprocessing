@@ -1,5 +1,5 @@
 local function make_essential(tech_name)
-    local tech = data.raw.technology[ tech_name ]
+    local tech = data.raw.technology[tech_name]
     if not tech then return end
     tech.essential = true
 end

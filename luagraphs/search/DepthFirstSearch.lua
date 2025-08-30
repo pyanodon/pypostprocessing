@@ -26,28 +26,28 @@ function DepthFirstSearch:run(G, s)
     self.s = s
 
     for _, v in pairs(G:vertices():enumerate()) do
-        self.marked[ v ] = false
-        self.pathTo[ v ] = -1
+        self.marked[v] = false
+        self.pathTo[v] = -1
     end
 
     self:dfs(G, s)
 end
 
 function DepthFirstSearch:dfs(G, v)
-    self.marked[ v ] = true
+    self.marked[v] = true
 
     for _, e in pairs(G:adj(v):enumerate()) do
         local w = e:other(v)
 
-        if self.marked[ w ] == false then
-            self.pathTo[ w ] = v
+        if self.marked[w] == false then
+            self.pathTo[w] = v
             self:dfs(G, w)
         end
     end
 end
 
 function DepthFirstSearch:hasPathTo(v)
-    return self.marked[ v ]
+    return self.marked[v]
 end
 
 function DepthFirstSearch:getPathTo(v)
@@ -56,7 +56,7 @@ function DepthFirstSearch:getPathTo(v)
 
     while x ~= self.s do
         path:push(x)
-        x = self.pathTo[ x ]
+        x = self.pathTo[x]
     end
 
     path:push(self.s)

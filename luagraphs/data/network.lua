@@ -39,7 +39,7 @@ function network.FlowNetwork.create(V)
 
     for v = 0, V - 1 do
         s.vertexList:add(v)
-        s.adjList[ v ] = list.create()
+        s.adjList[v] = list.create()
     end
 
     return s
@@ -58,7 +58,7 @@ function network.FlowNetwork:addVertexIfNotExists(v)
         return false
     else
         self.vertexList:add(v)
-        self.adjList[ v ] = list.create()
+        self.adjList[v] = list.create()
         return true
     end
 end
@@ -66,7 +66,7 @@ end
 function network.FlowNetwork:removeVertex(v)
     if self.vertexList:contains(v) then
         self.vertexList:remove(v)
-        self.adjList[ v ] = nil
+        self.adjList[v] = nil
     end
 end
 
@@ -80,12 +80,12 @@ end
 
 function network.FlowNetwork:addEdge(v, w, capacity)
     local e = network.FlowEdge.create(v, w, capacity)
-    self.adjList[ e.v ]:add(e)
-    self.adjList[ e.w ]:add(e)
+    self.adjList[e.v]:add(e)
+    self.adjList[e.w]:add(e)
 end
 
 function network.FlowNetwork:adj(v)
-    return self.adjList[ v ]
+    return self.adjList[v]
 end
 
 function network.FlowEdge:residualCapacityTo(x)

@@ -31,7 +31,7 @@ py.add_to_description = function(type, prototype, localised_string)
     local place_result = prototype.place_result or prototype.place_as_equipment_result
     if type == "item" and place_result then
         for _, machine in pairs(data.raw) do
-            machine = machine[ place_result ]
+            machine = machine[place_result]
             if machine and machine.localised_description then
                 prototype.localised_description = {
                     "?",
@@ -46,7 +46,7 @@ py.add_to_description = function(type, prototype, localised_string)
         prototype.localised_description = {
             "?",
             { "", { entity_type .. "-description." .. place_result }, "\n", localised_string },
-            { "", { type .. "-description." .. prototype.name },    "\n", localised_string },
+            { "", { type .. "-description." .. prototype.name },      "\n", localised_string },
             localised_string
         }
     else
@@ -88,7 +88,7 @@ py.make_item_glowing = function(prototype)
         picture.scale = 16 / icon_size
         picture.icon = nil
         picture.icon_size = nil
-        pictures[ #pictures+1 ] = picture
+        pictures[#pictures+1] = picture
     end
     prototype.pictures = pictures
 end
@@ -101,9 +101,9 @@ py.merge = function(old, new)
     old = table.deepcopy(old)
     for k, v in pairs(new) do
         if v == "nil" then
-            old[ k ] = nil
+            old[k] = nil
         else
-            old[ k ] = v
+            old[k] = v
         end
     end
     return old
@@ -132,7 +132,7 @@ end
 ---@return number
 function py.farm_speed_derived(num_slots, base_entity_name, base_module_bonus, this_bonus)
     base_module_bonus = base_module_bonus or 1
-    local e = data.raw[ "assembling-machine" ][ base_entity_name ]
+    local e = data.raw["assembling-machine"][base_entity_name]
     local mk1_slots = e.module_slots
     local desired_mk1_speed = e.crafting_speed * (mk1_slots * base_module_bonus + 1)
     local speed_improvement_ratio = num_slots / mk1_slots
@@ -157,7 +157,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     shadow_scale = shadow_scale or 0.6
     child_scale = child_scale or 0.5
     shift = shift or 10
-    local base_prototype = data.raw.fluid[ base_prototype_string ] or data.raw.item[ base_prototype_string ] or data.raw.recipe[ base_prototype_string ]
+    local base_prototype = data.raw.fluid[base_prototype_string] or data.raw.item[base_prototype_string] or data.raw.recipe[base_prototype_string]
 
     local icons = {
         {
@@ -168,7 +168,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     -- Add shadow icons
     if child_top_left then
-        local child_prototype = data.raw.fluid[ child_top_left ] or data.raw.item[ child_top_left ] or data.raw.recipe[ child_top_left ]
+        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left] or data.raw.recipe[child_top_left]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -179,7 +179,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_top_right then
-        local child_prototype = data.raw.fluid[ child_top_right ] or data.raw.item[ child_top_right ] or data.raw.recipe[ child_top_right ]
+        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right] or data.raw.recipe[child_top_right]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -190,7 +190,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_left then
-        local child_prototype = data.raw.fluid[ child_bottom_left ] or data.raw.item[ child_bottom_left ] or data.raw.recipe[ child_bottom_left ]
+        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left] or data.raw.recipe[child_bottom_left]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -201,7 +201,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_right then
-        local child_prototype = data.raw.fluid[ child_bottom_right ] or data.raw.item[ child_bottom_right ] or data.raw.recipe[ child_bottom_right ]
+        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right] or data.raw.recipe[child_bottom_right]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -213,7 +213,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     -- Add normal children icons
     if child_top_left then
-        local child_prototype = data.raw.fluid[ child_top_left ] or data.raw.item[ child_top_left ] or data.raw.recipe[ child_top_left ]
+        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left] or data.raw.recipe[child_top_left]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -225,7 +225,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_top_right then
-        local child_prototype = data.raw.fluid[ child_top_right ] or data.raw.item[ child_top_right ] or data.raw.recipe[ child_top_right ]
+        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right] or data.raw.recipe[child_top_right]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -237,7 +237,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_left then
-        local child_prototype = data.raw.fluid[ child_bottom_left ] or data.raw.item[ child_bottom_left ] or data.raw.recipe[ child_bottom_left ]
+        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left] or data.raw.recipe[child_bottom_left]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -249,7 +249,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_right then
-        local child_prototype = data.raw.fluid[ child_bottom_right ] or data.raw.item[ child_bottom_right ] or data.raw.recipe[ child_bottom_right ]
+        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right] or data.raw.recipe[child_bottom_right]
         table.insert(icons, {
             icon = child_prototype.icon,
             icon_size = (child_prototype.icon_size or 64),
@@ -267,7 +267,7 @@ end
 ---@param parent_type string
 ---@return function<string, table>
 function py.iter_prototype_categories(parent_type)
-    local types = defines.prototypes[ parent_type ]
+    local types = defines.prototypes[parent_type]
     local child_type_name, value
 
     return function()
@@ -278,8 +278,8 @@ function py.iter_prototype_categories(parent_type)
             -- Move to our next type
             value, child_type_name, _ = nil, next(types, child_type_name)
             -- Returns the next item in our current table, if valid
-            if child_type_name and data.raw[ child_type_name ] then
-                value = data.raw[ child_type_name ]
+            if child_type_name and data.raw[child_type_name] then
+                value = data.raw[child_type_name]
             end
             -- cur_type will be nil here if we've reached the last prototype in the last table
         until value or not child_type_name
@@ -292,14 +292,14 @@ end
 ---@param parent_type string
 ---@return function
 function py.iter_prototypes(parent_type)
-    local types = defines.prototypes[ parent_type ]
+    local types = defines.prototypes[parent_type]
     local cur_type, index, value
 
     return function()
         repeat
             -- Returns the next item in our current table, if valid
-            if cur_type and data.raw[ cur_type ] then
-                index, value = next(data.raw[ cur_type ], index)
+            if cur_type and data.raw[cur_type] then
+                index, value = next(data.raw[cur_type], index)
             end
 
             -- We reached the end of the last table
@@ -319,21 +319,21 @@ end
 ---@param new string
 ---@param blackrecipe (string | table)?
 py.global_item_replacer = function(old, new, blackrecipe)
-    if not data.raw.item[ old ] and not data.raw.fluid[ old ] then
+    if not data.raw.item[old] and not data.raw.fluid[old] then
         local errstring = "Could not find item or fluid " .. old
         if old == "iron-gear-wheel" then
             errstring = errstring .. "\nThis is the result of a conflicting mod."
         end
         error(errstring)
     end
-    if not data.raw.item[ new ] and not data.raw.fluid[ new ] then error("Could not find item or fluid " .. new) end
+    if not data.raw.item[new] and not data.raw.fluid[new] then error("Could not find item or fluid " .. new) end
 
     if type(blackrecipe) == "string" then blackrecipe = { blackrecipe } end
     blackrecipe = table.invert(blackrecipe or {})
 
     for _, recipe in pairs(data.raw.recipe) do
         ---@diagnostic disable-next-line: undefined-field
-        if not recipe.ignored_by_recipe_replacement and not blackrecipe[ recipe.name ] then
+        if not recipe.ignored_by_recipe_replacement and not blackrecipe[recipe.name] then
             recipe:replace_ingredient(old, new)
             recipe:replace_result(old, new)
         end
@@ -349,7 +349,7 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     if recipe.main_product then
         result = ITEM(recipe.main_product)
     elseif recipe.results and table_size(recipe.results) >= 1 then
-        result = recipe.results[ 1 ]
+        result = recipe.results[1]
         if result.type == "fluid" then
             result = FLUID(result.name)
         else
@@ -379,10 +379,10 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
 
     if recipe.icons then -- If it's already an icons
         icons = recipe.icons --[[@as table<int, data.IconData>]]
-        icons[ #icons+1 ] = corner
+        icons[#icons+1] = corner
     elseif result and result.icons then
         icons = table.deepcopy(result.icons)
-        icons[ #icons+1 ] = corner
+        icons[#icons+1] = corner
     else -- No icons table, use icon found above
         if icon == nil then
             error("No icons found for recipe " .. serpent.block(result) .. serpent.block(recipe))
@@ -422,11 +422,11 @@ py.finite_state_machine_working_visualisations = function(params)
         error("Finite state machine must have between 2 and 32 states")
     end
 
-    if states[ 1 ].name ~= "idle" then
+    if states[1].name ~= "idle" then
         error("First state must be 'idle'")
     end
 
-    if table_size(states[ 1 ].frame_sequence) ~= 1 then
+    if table_size(states[1].frame_sequence) ~= 1 then
         error("First state must have only one frame")
     end
 
@@ -437,7 +437,7 @@ py.finite_state_machine_working_visualisations = function(params)
         local frame_count = layer.frame_count * (layer.repeat_count or 1)
         local new_frame_sequence = {}
         for _, frame in pairs(layer.frame_sequence) do
-            new_frame_sequence[ #new_frame_sequence+1 ] = frame % layer.frame_count + 1
+            new_frame_sequence[#new_frame_sequence+1] = frame % layer.frame_count + 1
         end
         layer.frame_sequence = new_frame_sequence
         layer.repeat_count = nil
@@ -446,7 +446,7 @@ py.finite_state_machine_working_visualisations = function(params)
             layer.run_mode = nil
             local frame_sequence_backwards = {}
             for _, frame in pairs(new_frame_sequence) do
-                frame_sequence_backwards[ #frame_sequence_backwards+1 ] = frame_count - frame + 1
+                frame_sequence_backwards[#frame_sequence_backwards+1] = frame_count - frame + 1
             end
             layer.frame_sequence = frame_sequence_backwards
         end
@@ -467,7 +467,7 @@ py.finite_state_machine_working_visualisations = function(params)
             visualization.draw_in_states = { state.name }
             visualization.draw_when_state_filter_matches = true
             visualization.always_draw = true
-            working_visualisations[ #working_visualisations+1 ] = visualization
+            working_visualisations[#working_visualisations+1] = visualization
         end
     end
 
@@ -477,7 +477,7 @@ py.finite_state_machine_working_visualisations = function(params)
         state.frame_sequence = nil
     end
 
-    states[ 1 ].duration = 1
+    states[1].duration = 1
 
     return graphics_set
 end
@@ -496,7 +496,7 @@ py.flip_4way_animation = function(animation4way)
         north_west = "south_east"
     }
     for direction, inverse_direction in pairs(inverse) do
-        inverse[ direction ] = table.deepcopy(animation4way[ inverse_direction ])
+        inverse[direction] = table.deepcopy(animation4way[inverse_direction])
     end
     return inverse
 end

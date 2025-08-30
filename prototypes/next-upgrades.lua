@@ -13,10 +13,10 @@ local function next_tier(prototype_name, prototype_category)
         tier_num = tier_num + 1
         tier_num = string.format("%02d", tier_num)
         local next_upgrade = prototype_name:gsub("%-mk%d%d", "-mk" .. tier_num)
-        if prototype_category[ next_upgrade ] then return next_upgrade end
+        if prototype_category[next_upgrade] then return next_upgrade end
     else
         local next_upgrade = prototype_name .. "-mk02"
-        if prototype_category[ next_upgrade ] then return next_upgrade end
+        if prototype_category[next_upgrade] then return next_upgrade end
     end
 end
 
@@ -28,7 +28,7 @@ local function check_for_valid_minable_properties(entity)
 
     local minable = entity.minable --[[@as data.MinableProperties]]
     if not minable.result and not minable.results then return false end
-    local minable_result = minable.result or minable.results[ 1 ] and (minable.results[ 1 ].name or minable.results[ 1 ][ 1 ])
+    local minable_result = minable.result or minable.results[1] and (minable.results[1].name or minable.results[1][1])
     if not minable_result then return false end
     if minable_result ~= entity.name then return false end
 
@@ -58,7 +58,7 @@ for category_name, category in py.iter_prototype_categories("entity") do
         if prototype.next_upgrade then goto continue end
         if not can_be_upgraded(prototype) then goto continue end
 
-        local next_upgrade = category[ next_tier(name, category) ]
+        local next_upgrade = category[next_tier(name, category)]
         if not can_be_upgraded(next_upgrade) then goto continue end
 
         if next_upgrade.fast_replaceable_group ~= prototype.fast_replaceable_group then goto continue end

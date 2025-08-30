@@ -1,32 +1,32 @@
 -- This causes icon overhang issues with compressed omni buildings.
-if mods[ "omnimatter_compression" ] then return end
+if mods["omnimatter_compression"] then return end
 
 -- custom module alt-mode draw positioning
 for prototype_name, inventory in pairs({
-    [ "mining-drill" ] = defines.inventory.mining_drill_modules,
-    [ "assembling-machine" ] = defines.inventory.assembling_machine_modules,
-    [ "furnace" ] = defines.inventory.furnace_modules,
-    [ "lab" ] = defines.inventory.lab_modules,
-    [ "rocket-silo" ] = defines.inventory.rocket_silo_modules,
-    [ "beacon" ] = defines.inventory.beacon_modules,
+    ["mining-drill"] = defines.inventory.mining_drill_modules,
+    ["assembling-machine"] = defines.inventory.assembling_machine_modules,
+    ["furnace"] = defines.inventory.furnace_modules,
+    ["lab"] = defines.inventory.lab_modules,
+    ["rocket-silo"] = defines.inventory.rocket_silo_modules,
+    ["beacon"] = defines.inventory.beacon_modules,
 }) do
-    for _, machine in pairs(data.raw[ prototype_name ] or {}) do
+    for _, machine in pairs(data.raw[prototype_name] or {}) do
         local collision_box = machine.selection_box or machine.collision_box
         if not collision_box then goto continue end
 
-        local left_top = collision_box[ 1 ] or collision_box.left_top
-        local right_bottom = collision_box[ 2 ] or collision_box.right_bottom
+        local left_top = collision_box[1] or collision_box.left_top
+        local right_bottom = collision_box[2] or collision_box.right_bottom
         if not left_top or not right_bottom then goto continue end
 
-        local x1, y1 = left_top[ 1 ] or left_top.x, left_top[ 2 ] or left_top.y
-        local x2, y2 = right_bottom[ 1 ] or right_bottom.x, right_bottom[ 2 ] or right_bottom.y
+        local x1, y1 = left_top[1] or left_top.x, left_top[2] or left_top.y
+        local x2, y2 = right_bottom[1] or right_bottom.x, right_bottom[2] or right_bottom.y
         local width, height = x2 - x1, y2 - y1
         local area = width * height
 
         if not machine.module_slots or machine.module_slots == 0 then goto continue end
 
         local scale_factors = { 1 }
-        for i = 1, 20 do scale_factors[ i + 1 ] = scale_factors[ i ] * 0.95 end
+        for i = 1, 20 do scale_factors[i + 1] = scale_factors[i] * 0.95 end
 
         if width > 4 then table.insert(scale_factors, 1, 1.25) end
         if width > 5 then table.insert(scale_factors, 1, 1.5) end

@@ -1,4 +1,4 @@
-if mods[ "UPSFriendlyNixieTubeDisplay" ] then
+if mods["UPSFriendlyNixieTubeDisplay"] then
     TECHNOLOGY("classic-nixie-tubes"):remove_pack("logistic-science-pack")
     TECHNOLOGY("reinforced-nixie-tubes"):remove_pack("logistic-science-pack")
 

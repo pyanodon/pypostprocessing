@@ -2,10 +2,10 @@
 -- Additionally you should add new compatibility code not related to the py mods into it's own mod group file or mod file to keep things organized.
 -- Compatibility changes affecting auto-tech config should go in the bottom of config.lua
 
-if data.raw.recipe[ "electronic-circuit" ].enabled == false
-    and (not data.raw.recipe[ "electronic-circuit-initial" ] or data.raw.recipe[ "electronic-circuit-initial" ].enabled == false)
-    and data.raw.recipe[ "inductor1-2" ]
-    and (data.raw.recipe[ "inductor1-2" ].enabled == nil or data.raw.recipe[ "inductor1-2" ].enabled == true)
+if data.raw.recipe["electronic-circuit"].enabled == false
+    and (not data.raw.recipe["electronic-circuit-initial"] or data.raw.recipe["electronic-circuit-initial"].enabled == false)
+    and data.raw.recipe["inductor1-2"]
+    and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
 then
     for _, recipe in pairs(data.raw.recipe) do
         recipe:standardize()
@@ -15,7 +15,7 @@ then
     end
 end
 
-if mods[ "angelsrefining" ] and not mods[ "PyCoalTBaA" ] then
+if mods["angelsrefining"] and not mods["PyCoalTBaA"] then
     error("\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n")
 end
 

@@ -48,7 +48,7 @@ end
 function Queue.push_first(queue, ...)
     for _, value in pairs({ ... }) do
         queue.first = queue.first - 1
-        queue.objects[ queue.first ] = value
+        queue.objects[queue.first] = value
     end
     return queue
 end
@@ -59,7 +59,7 @@ end
 function Queue.push_last(queue, ...)
     for _, value in pairs({ ... }) do
         queue.last = queue.last + 1
-        queue.objects[ queue.last ] = value
+        queue.objects[queue.last] = value
     end
     return queue
 end
@@ -85,8 +85,8 @@ function Queue.push_at(queue, index, value)
 end
 
 function Queue.wrapper(self, func_name, ...)
-    if Queue[ func_name ] then
-        Queue[ func_name ](self, ...)
+    if Queue[func_name] then
+        Queue[func_name](self, ...)
     end
     return self
 end
@@ -99,8 +99,8 @@ function Queue.pop_first(queue)
         return nil
     end
     local first = queue.first
-    local value = queue.objects[ first ]
-    queue.objects[ first ] = nil -- to allow garbage collection
+    local value = queue.objects[first]
+    queue.objects[first] = nil   -- to allow garbage collection
     queue.first = first + 1
     return value
 end
@@ -110,12 +110,12 @@ end
 Queue.pop = Queue.pop_first
 
 local function remove(queue, index)
-    local ret = queue.objects[ index ]
+    local ret = queue.objects[index]
     if ret ~= nil then
         for i = index + 1, queue.last do
-            queue.objects[ i - 1 ] = queue.objects[ i ]
+            queue.objects[i - 1] = queue.objects[i]
         end
-        queue.objects[ queue.last ] = nil
+        queue.objects[queue.last] = nil
         queue.last = queue.last - 1
     end
     return ret
@@ -134,14 +134,14 @@ end
 -- @tparam number index the index in the queue to peek at
 -- @treturn Mixed the value of the peeked element
 function Queue.peek_at(queue, index)
-    return queue.objects[ index ]
+    return queue.objects[index]
 end
 
 ---Return the element at the front of the queue and remove it from the queue.
 -- @tparam Queue queue the queue to retrieve the element from
 -- @treturn Mixed the element at the front of the queue
 function Queue.peek_first(queue)
-    return queue.objects[ queue.first ]
+    return queue.objects[queue.first]
 end
 
 ---Shortcut for @{Queue.peek_first}
@@ -157,8 +157,8 @@ function Queue.pop_last(queue)
     end
 
     local last = queue.last
-    local value = queue.objects[ last ]
-    queue.objects[ last ] = nil -- to allow garbage collection
+    local value = queue.objects[last]
+    queue.objects[last] = nil   -- to allow garbage collection
     queue.last = last - 1
     return value
 end
@@ -167,7 +167,7 @@ end
 -- @tparam Queue queue the queue to retrieve the element from
 -- @treturn Mixed the element at the back of the queue
 function Queue.peek_last(queue)
-    return queue.objects[ queue.last ]
+    return queue.objects[queue.last]
 end
 
 ---Returns the popped value and pushes back into the queue.
@@ -206,7 +206,7 @@ function Queue.sort(queue, func)
     local sorted = {}
     for _, v in pairs(queue) do
         if v ~= nil then
-            sorted[ #sorted+1 ] = v
+            sorted[#sorted+1] = v
         end
     end
     table.sort(sorted, func or _sort_func)
@@ -242,7 +242,7 @@ Queue.count = Queue.size
 function Queue.next(queue, index, pop)
     index = not index and queue.first or index + (pop and 0 or 1)
     for i = index, queue.last do
-        local v = queue.objects[ i ]
+        local v = queue.objects[i]
         if v ~= nil then
             return i, pop and Queue.pop_at(queue, i) or v
         end
@@ -260,7 +260,7 @@ function Queue.rnext(queue, index, pop)
     -- next returns index of next or nil and data,
     index = not index and queue.last or (index < queue.first and queue.first or index) - 1
     for i = index, queue.first, -1 do
-        local v = queue.objects[ i ]
+        local v = queue.objects[i]
         if v ~= nil then
             return i, pop and Queue.pop_at(queue, i) or v
         end
@@ -300,7 +300,7 @@ do
         else
             local v = rawget(self, k)
             if v == nil then
-                return Queue[ k ]
+                return Queue[k]
             end
             return v
         end
