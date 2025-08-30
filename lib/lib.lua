@@ -231,20 +231,20 @@ py.range = function(start, stop, step)
     return range
 end
 
-require "table"
-require "string"
-require "defines"
-require "color"
-require "world-generation"
+require("table")
+require("string")
+require("defines")
+require("color")
+require("world-generation")
 
-if data and data.raw and not data.raw.item["iron-plate"] then
+if data and data.raw and not data.raw.item[ "iron-plate" ] then
     py.stage = "settings"
 elseif data and data.raw then
     py.stage = "data"
-    require "data-stage"
+    require("data-stage")
 elseif script then
     py.stage = "control"
-    require "control-stage"
+    require("control-stage")
 else
     error("Could not determine load order stage.")
 end
@@ -257,37 +257,37 @@ local declaredNames = {}
 ---@param initval any
 local function declare(name, initval)
     rawset(_G, name, initval or rawget(_G, name))
-    if declaredNames[name] then
+    if declaredNames[ name ] then
         error("attempt to overwrite global variable: " .. name, 2)
     end
-    declaredNames[name] = true
+    declaredNames[ name ] = true
 end
 
 if py.stage == "data" then
-    data:extend {
+    data:extend({
         {
             type = "mod-data",
             name = "py-undocumented-globals",
             data = {}
         }
-    }
+    })
 end
 
 local message_sent = false
 if py.stage == "control" then
     py.on_event(defines.events.on_tick, function(_)
         ---@diagnostic disable-next-line: undefined-field
-        if not message_sent and prototypes.mod_data["py-undocumented-globals"].get("exist") then
+        if not message_sent and prototypes.mod_data[ "py-undocumented-globals" ].get("exist") then
             game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
             message_sent = true
         end
     end)
 end
 
-if settings.startup["pypp-no-globals"].value then
+if settings.startup[ "pypp-no-globals" ].value then
     setmetatable(_G, {
         __newindex = function(t, n, v)
-            if not declaredNames[n] then
+            if not declaredNames[ n ] then
                 if py.stage == "control" then
                     -- temp
                     game.print(debug.traceback("attempt to write to undeclared global variable, please report it: " .. n, 2))
@@ -299,7 +299,7 @@ if settings.startup["pypp-no-globals"].value then
             rawset(t, n, v) -- do the actual set
         end,
         __index = function(_, n)
-            if not declaredNames[n] then
+            if not declaredNames[ n ] then
                 if py.stage == "control" then
                     -- temp
                     game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
@@ -309,7 +309,7 @@ if settings.startup["pypp-no-globals"].value then
                 elseif py.stage == "data" then
                     -- temp, ultimately won't print at game start and will have a strict mode setting for testing that will crash the game
                     log(debug.traceback("WARNING: attempt to read undeclared global variable: " .. n, 2))
-                    data.raw["mod-data"]["py-undocumented-globals"].data.exist = true
+                    data.raw[ "mod-data" ][ "py-undocumented-globals" ].data.exist = true
                 end
             else
                 return nil

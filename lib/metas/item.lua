@@ -11,14 +11,14 @@ ITEM = setmetatable({}, {
         local itype = type(item)
         if itype == "string" then
             for _, pdata in py.iter_prototype_categories("item") do
-                local result = pdata[item]
+                local result = pdata[ item ]
                 if result then return result end
             end
         elseif itype == "table" then
             if not item.type then error("Tried to extend an item " .. item.name .. " without providing a type") end
-            if not item_prototypes[item.type] then error("Tried to use ITEM{} on a non-item: " .. item.name) end
+            if not item_prototypes[ item.type ] then error("Tried to use ITEM{} on a non-item: " .. item.name) end
 
-            data:extend {item}
+            data:extend({ item })
             return item
         else
             error("Invalid type " .. itype)
@@ -27,7 +27,7 @@ ITEM = setmetatable({}, {
     end,
     __index = function(self, item_name)
         for _, pdata in py.iter_prototype_categories("item") do
-            local result = pdata[item_name]
+            local result = pdata[ item_name ]
             if result then return result end
         end
         return nil
@@ -71,7 +71,7 @@ py.spoil_triggers = {
                         smoke_name = "smoke-building",
                         repeat_count = 4,
                         affects_target = true,
-                        offset_deviation = {{-0.2, -0.2}, {0.2, 0.2}},
+                        offset_deviation = { { -0.2, -0.2 }, { 0.2, 0.2 } },
                         starting_frame_deviation = 5,
                         speed_from_center = 0.03
                     }

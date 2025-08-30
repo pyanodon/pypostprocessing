@@ -67,11 +67,11 @@ function graph.create(V, directed)
     end
 
     for v = 0, V - 1 do
-        g.vertexList[v] = true
-        g.adjList[v] = {}
+        g.vertexList[ v ] = true
+        g.adjList[ v ] = {}
 
         if directed then
-            g.revList[v] = {}
+            g.revList[ v ] = {}
         end
     end
 
@@ -96,10 +96,10 @@ function graph.createFromVertexList(vertices, directed)
     g.adjList = {}
 
     for v, _ in pairs(g.vertexList) do
-        g.adjList[v] = {}
+        g.adjList[ v ] = {}
 
         if directed then
-            g.revList[v] = {}
+            g.revList[ v ] = {}
         end
     end
 
@@ -109,14 +109,14 @@ function graph.createFromVertexList(vertices, directed)
 end
 
 function graph:addVertexIfNotExists(v)
-    if self.vertexList[v] then
+    if self.vertexList[ v ] then
         return false
     else
-        self.vertexList[v] = true
-        self.adjList[v] = {}
+        self.vertexList[ v ] = true
+        self.adjList[ v ] = {}
 
         if self.directed then
-            self.revList[v] = {}
+            self.revList[ v ] = {}
         end
 
         return true
@@ -124,54 +124,54 @@ function graph:addVertexIfNotExists(v)
 end
 
 function graph:removeVertex(v)
-    if self.vertexList[v] then
-        self.vertexList[v] = nil
+    if self.vertexList[ v ] then
+        self.vertexList[ v ] = nil
 
-        local edges = table.merge({}, self.adjList[v])
+        local edges = table.merge({}, self.adjList[ v ])
 
         if self.directed then
-            table.merge(edges, self.revList[v])
+            table.merge(edges, self.revList[ v ])
         end
 
         for _, e in pairs(edges) do
             self:removeEdge(e:from(), e:to(v))
         end
 
-        self.adjList[v] = nil
+        self.adjList[ v ] = nil
 
         if self.directed then
-            self.revList[v] = nil
+            self.revList[ v ] = nil
         end
     end
 end
 
 function graph:containsVertex(v)
-    return self.vertexList[v] or false
+    return self.vertexList[ v ] or false
 end
 
 function graph:adj(v)
-    return self.adjList[v]
+    return self.adjList[ v ]
 end
 
 function graph:rev(v)
-    return self.directed and self.revList[v] or nil
+    return self.directed and self.revList[ v ] or nil
 end
 
 function graph:addEdge(v, w, weight, label)
     local e = graph.Edge.create(v, w, weight, label)
     self:addVertexIfNotExists(v)
     self:addVertexIfNotExists(w)
-    table.insert(self.adjList[v], e)
+    table.insert(self.adjList[ v ], e)
 
     if not self.directed then
-        table.insert(self.adjList[w], e)
+        table.insert(self.adjList[ w ], e)
     else
-        table.insert(self.revList[w], e)
+        table.insert(self.revList[ w ], e)
     end
 end
 
 function graph:removeEdge(v, w, label)
-    local adj_v = self.adjList[v]
+    local adj_v = self.adjList[ v ]
 
     for k, e in pairs(adj_v) do
         if e:other(v) == w and (not label or label == "" or label == e.label) then
@@ -180,7 +180,7 @@ function graph:removeEdge(v, w, label)
         end
     end
 
-    local adj_w = self.directed and self.revList[w] or self.adjList[w]
+    local adj_w = self.directed and self.revList[ w ] or self.adjList[ w ]
     if not adj_w then error(w) end
 
     for k, e in pairs(adj_w) do
@@ -226,7 +226,7 @@ function graph:create_subgraph(vertexList)
         local adj_v = self:adj(v)
 
         for _, e in pairs(adj_v) do
-            if vertexList[e:other(v)] then
+            if vertexList[ e:other(v) ] then
                 g:addEdge(e.v, e.w, e.weight, e.label)
             end
         end

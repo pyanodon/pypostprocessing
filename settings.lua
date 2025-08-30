@@ -1,4 +1,4 @@
-data:extend {
+data:extend({
     {
         type = "bool-setting",
         name = "pypp-dev-mode",
@@ -67,4 +67,4 @@ data:extend {
         maximum_value = 10,
         order = "a"
     }
-}
+})

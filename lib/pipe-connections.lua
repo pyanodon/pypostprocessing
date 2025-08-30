@@ -46,12 +46,12 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             } or py.empty_image()
     }
     for direction, image in pairs(replacements or {}) do
-        if new_pictures[direction].filename ~= "__core__/graphics/empty.png" then
-            new_pictures[direction].filename = image.filename
-            new_pictures[direction].width = image.width
-            new_pictures[direction].height = image.height
-            new_pictures[direction].priority = image.priority or new_pictures[direction].priority
-            new_pictures[direction].scale = 1 or new_pictures[direction].scale
+        if new_pictures[ direction ].filename ~= "__core__/graphics/empty.png" then
+            new_pictures[ direction ].filename = image.filename
+            new_pictures[ direction ].width = image.width
+            new_pictures[ direction ].height = image.height
+            new_pictures[ direction ].priority = image.priority or new_pictures[ direction ].priority
+            new_pictures[ direction ].scale = 1 or new_pictures[ direction ].scale
         end
     end
     return new_pictures
@@ -150,7 +150,7 @@ py.pipe_covers = function(n, s, w, e)
             }
         } or py.empty_image()
 
-    return {north = n, south = s, east = e, west = w}
+    return { north = n, south = s, east = e, west = w }
 end
 
 ---Define nice looking pipe pictures based on the space age electromagnetic plant.

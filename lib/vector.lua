@@ -49,7 +49,7 @@ py.vector = {
             if type(x) == "table" then
                 return setmetatable(x, py.vector)
             end
-            return setmetatable({x = x or 0, y = y or 0, z = z or 0}, py.vector)
+            return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, py.vector)
         end,
 
         ---@return boolean

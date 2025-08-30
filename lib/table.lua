@@ -7,7 +7,7 @@
 ---@return table
 table.map = function(tbl, f, ...)
     local result = {}
-    for k, v in pairs(tbl) do result[k] = f(v, k, ...) end
+    for k, v in pairs(tbl) do result[ k ] = f(v, k, ...) end
     return result
 end
 
@@ -34,9 +34,9 @@ table.filter = function(tbl, f, ...)
     local result = {}
     local is_array = #tbl > 0
     if is_array then
-        for i, v in pairs(tbl) do if f(v, i, ...) then result[#result + 1] = v end end
+        for i, v in pairs(tbl) do if f(v, i, ...) then result[ #result+1 ] = v end end
     else
-        for k, v in pairs(tbl) do if f(v, k, ...) then result[k] = v end end
+        for k, v in pairs(tbl) do if f(v, k, ...) then result[ k ] = v end end
     end
     return result
 end
@@ -93,7 +93,7 @@ end
 ---@return any[]
 table.keys = function(tbl)
     local keys = {}
-    for k, _ in pairs(tbl) do keys[#keys + 1] = k end
+    for k, _ in pairs(tbl) do keys[ #keys+1 ] = k end
     return keys
 end
 
@@ -129,7 +129,7 @@ end
 table.array_last = function(tbl)
     local size = #tbl
     if size == 0 then return nil end
-    return tbl[size]
+    return tbl[ size ]
 end
 
 ---Returns a new table with keys and values swapped.
@@ -137,7 +137,7 @@ end
 ---@return table
 table.invert = function(tbl)
     local result = {}
-    for k, v in pairs(tbl) do result[v] = k end
+    for k, v in pairs(tbl) do result[ v ] = k end
     return result
 end
 
@@ -146,8 +146,8 @@ end
 ---@return table
 table.merge = function(...)
     local result = {}
-    for _, tbl in pairs {...} do
-        for k, v in pairs(tbl) do result[k] = v end
+    for _, tbl in pairs({ ... }) do
+        for k, v in pairs(tbl) do result[ k ] = v end
     end
     return result
 end
@@ -157,8 +157,8 @@ end
 ---@return any[]
 table.array_combine = function(...)
     local result = {}
-    for _, tbl in pairs {...} do
-        for _, v in pairs(tbl) do result[#result + 1] = v end
+    for _, tbl in pairs({ ... }) do
+        for _, v in pairs(tbl) do result[ #result+1 ] = v end
     end
     return result
 end
@@ -168,7 +168,7 @@ end
 ---@return any[]
 table.reverse = function(tbl)
     for i = 1, #tbl / 2 do
-        tbl[i], tbl[#tbl - i + 1] = tbl[#tbl - i + 1], tbl[i]
+        tbl[ i ], tbl[ #tbl - i + 1 ] = tbl[ #tbl - i + 1 ], tbl[ i ]
     end
     return tbl
 end
@@ -178,12 +178,12 @@ local function shuffle(t)
     local n = 0
     for k in pairs(t) do
         n = n + 1
-        keys[n] = k
+        keys[ n ] = k
     end
 
     while n > 1 do
         local k = math.random(n)
-        keys[n], keys[k] = keys[k], keys[n]
+        keys[ n ], keys[ k ] = keys[ k ], keys[ n ]
         n = n - 1
     end
 
@@ -197,9 +197,9 @@ function py.shuffled_pairs(t)
     local i = 0
     return function()
         i = i + 1
-        local key = shuffled_keys[i]
+        local key = shuffled_keys[ i ]
         if key then
-            return key, t[key]
+            return key, t[ key ]
         end
     end
 end
@@ -211,9 +211,9 @@ table.dedupe = function(tbl)
     local seen = {}
     local result = {}
     for _, v in pairs(tbl) do
-        if not seen[v] then
+        if not seen[ v ] then
             table.insert(result, v)
-            seen[v] = true
+            seen[ v ] = true
         end
     end
     return result
@@ -224,7 +224,7 @@ end
 -- @param tbl2 any[]
 table.extend = function(tbl, tbl2)
     local tbl = table.deepcopy(tbl)
-    
+
     for _, v in pairs(tbl2) do
         table.insert(tbl, v)
     end

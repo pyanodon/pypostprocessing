@@ -1,5 +1,5 @@
-local queue = require "luagraphs.queue.queue"
-local fz_lazy_bfs = require "prototypes.functions.search.fz_lazy_bfs"
+local queue = require("luagraphs.queue.queue")
+local fz_lazy_bfs = require("prototypes.functions.search.fz_lazy_bfs")
 
 local fz_topo = {}
 fz_topo.__index = fz_topo
@@ -22,13 +22,13 @@ end
 
 function fz_topo:run(check_ancestry, logging)
     self.queue(self.work_graph.start_node)
-    self.level[self.work_graph.start_node.key] = 1
+    self.level[ self.work_graph.start_node.key ] = 1
     local recipes_with_issues = {}
 
     while not queue.is_empty(self.queue) do
         local node = self.queue()
 
-        self.sorted[node.key] = true
+        self.sorted[ node.key ] = true
         local adj_labels = {}
         local adj = {}
         local bfs
@@ -37,13 +37,13 @@ function fz_topo:run(check_ancestry, logging)
 
         for _, e in self.work_graph:iter_links_from(node) do
             if e.label and e.label ~= "" then
-                if not adj_labels[e:to()] then
-                    adj_labels[e:to()] = {}
+                if not adj_labels[ e:to() ] then
+                    adj_labels[ e:to() ] = {}
                 end
 
-                adj_labels[e:to()][e.label] = true
+                adj_labels[ e:to() ][ e.label ] = true
             else
-                adj[e:to()] = true
+                adj[ e:to() ] = true
             end
         end
 
@@ -58,7 +58,7 @@ function fz_topo:run(check_ancestry, logging)
                 end
             end
 
-            adj[to_key] = true
+            adj[ to_key ] = true
         end
 
         if not table.is_empty(links_to_remove) then
@@ -86,11 +86,11 @@ function fz_topo:run(check_ancestry, logging)
 
             if to_node and not self.work_graph:has_links_to(to_node) then
                 self.queue(to_node)
-                self.level[to_node.key] = self.level[node.key] + 1
+                self.level[ to_node.key ] = self.level[ node.key ] + 1
                 if logging then log("  - Queued: " .. to_key) end
-                recipes_with_issues[to_key] = nil
+                recipes_with_issues[ to_key ] = nil
             else
-                recipes_with_issues[to_key] = true
+                recipes_with_issues[ to_key ] = true
                 if logging then
                     log("  - Not queued: " .. to_key)
                     for _, e in self.work_graph:iter_links_to(to_node) do
@@ -101,7 +101,7 @@ function fz_topo:run(check_ancestry, logging)
         end
     end
 
-    local has_error = table.any(self.graph.nodes, function(n) return not n.ignore_for_dependencies and not self.sorted[n.key] end)
+    local has_error = table.any(self.graph.nodes, function(n) return not n.ignore_for_dependencies and not self.sorted[ n.key ] end)
     return has_error, recipes_with_issues
 end
 

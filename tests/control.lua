@@ -3,15 +3,15 @@ local function test_localised_strings()
     local excluded_categories = {}
     local localised_strings = {}
     for _, recipe in pairs(prototypes.recipe) do
-        if not excluded_categories[recipe.category] and not recipe.hidden then table.insert(localised_strings, recipe.localised_name) end
+        if not excluded_categories[ recipe.category ] and not recipe.hidden then table.insert(localised_strings, recipe.localised_name) end
     end
     local excluded_types = {}
-    for _, category in pairs {"item", "fluid", "entity"} do
-        for _, item in pairs(prototypes[category]) do
-            if not excluded_types[item.type] and not item.hidden then table.insert(localised_strings, item.localised_name) end
+    for _, category in pairs({ "item", "fluid", "entity" }) do
+        for _, item in pairs(prototypes[ category ]) do
+            if not excluded_types[ item.type ] and not item.hidden then table.insert(localised_strings, item.localised_name) end
         end
     end
-    game.players[1].request_translations(localised_strings)
+    game.players[ 1 ].request_translations(localised_strings)
     total_string_count = #localised_strings
     log("\ntest localised strings:")
 end
@@ -39,7 +39,7 @@ local helper = require("scenario-helper")
 
 commands.add_command("pytest", nil, function(param)
     local beacons = helper.create_speed_beacons()
-    
+
     for _, test in pairs(tests) do
         local name, result = test()
 
@@ -50,7 +50,7 @@ commands.add_command("pytest", nil, function(param)
         end
     end
 
-    for _,beacon in pairs(beacons) do
+    for _, beacon in pairs(beacons) do
         beacon.destroy()
     end
 end)

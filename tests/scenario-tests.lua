@@ -2,7 +2,7 @@ local tests = {}
 
 local helper = require("scenario-helper")
 
-local turd_upgrade_names_table = {    
+local turd_upgrade_names_table = {
   "prototypes/upgrades/biofactory",
   "prototypes/upgrades/compost",
   "prototypes/upgrades/creature",
@@ -62,26 +62,26 @@ local turd_upgrade_names_table = {
   "prototypes/upgrades/sap",
   "prototypes/upgrades/bioprinting",
   "prototypes/upgrades/zipir",
-  "prototypes/upgrades/wpu", 
+  "prototypes/upgrades/wpu",
 }
 local turds = {}
 for i, t in pairs(turd_upgrade_names_table) do
-  turds[i] = require("__pyalienlife__/" .. t)
+  turds[ i ] = require("__pyalienlife__/" .. t)
 end
 
 
-function tests.auog_turd_crash()  
+function tests.auog_turd_crash()
   helper.select_turd("auog-upgrade", "glowing-mushrooms")
-  local auog_power_gen = game.surfaces.nauvis.create_entity{name = "generator-1", position = {0, 0}, force = game.player.force, player = game.player, raise_built = true}
+  local auog_power_gen = game.surfaces.nauvis.create_entity({ name = "generator-1", position = { 0, 0 }, force = game.player.force, player = game.player, raise_built = true })
   helper.select_turd("auog-upgrade", "glowing-mushrooms")
-  helper.get_entity_at({0, 0}).destroy()
+  helper.get_entity_at({ 0, 0 }).destroy()
 
   return "Auog Glowing Mushrooms Turd"
 end
 
 function tests.test_all_turds()
-  for _,turd in pairs(turds) do
-    for _,subtech in pairs(turd.sub_techs) do
+  for _, turd in pairs(turds) do
+    for _, subtech in pairs(turd.sub_techs) do
       helper.select_turd(turd.master_tech.name, subtech.name)
       helper.select_turd(turd.master_tech.name, subtech.name)
     end

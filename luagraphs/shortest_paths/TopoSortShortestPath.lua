@@ -27,13 +27,13 @@ function TopoSortShortestPath:run(G, s)
 
     for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
-        self.edgeTo[v] = -1
-        self.cost[v] = TopoSortShortestPath.MAX_VALUE
+        self.edgeTo[ v ] = -1
+        self.cost[ v ] = TopoSortShortestPath.MAX_VALUE
     end
 
-    self.cost[s] = 0
+    self.cost[ s ] = 0
 
-    local topoSort = require "luagraphs.sort.TopologicalSort".create()
+    local topoSort = require("luagraphs.sort.TopologicalSort").create()
     topoSort:run(G)
     local order = topoSort:path()
 
@@ -51,25 +51,25 @@ function TopoSortShortestPath:relax(e)
     local v = e:from()
     local w = e:to()
 
-    if (self.cost[w] > self.cost[v] + e.weight) then
-        self.cost[w] = self.cost[v] + e.weight
-        self.edgeTo[w] = e
+    if (self.cost[ w ] > self.cost[ v ] + e.weight) then
+        self.cost[ w ] = self.cost[ v ] + e.weight
+        self.edgeTo[ w ] = e
     end
 end
 
 function TopoSortShortestPath:hasPathTo(v)
-    return self.edgeTo[v] ~= -1
+    return self.edgeTo[ v ] ~= -1
 end
 
 function TopoSortShortestPath:getPathLength(v)
-    return self.cost[v]
+    return self.cost[ v ]
 end
 
 function TopoSortShortestPath:getPathTo(v)
-    local stack = require "luagraphs.data.stack".create()
+    local stack = require("luagraphs.data.stack").create()
     local x = v
     while x ~= self.source do
-        local e = self.edgeTo[x]
+        local e = self.edgeTo[ x ]
         stack:push(e)
         x = e:other(x)
     end

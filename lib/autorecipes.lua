@@ -62,7 +62,7 @@ local function ensure_contiguous(tbl)
     local contiguous_table = {}
     for _, v in pairs(tbl) do
         if v ~= nil then
-            contiguous_table[#contiguous_table + 1] = v
+            contiguous_table[ #contiguous_table+1 ] = v
         end
     end
     return contiguous_table
@@ -75,7 +75,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
     end
 
     local name
-    if data.raw.item[item.name] or data.raw.module[item.name] or data.raw.fluid[item.name] then
+    if data.raw.item[ item.name ] or data.raw.module[ item.name ] or data.raw.fluid[ item.name ] then
         name = item.name
     elseif type(item.fallback) == "string" then
         name = item.fallback
@@ -86,15 +86,15 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         if item.fallback.amount then
             item.amount = item.fallback.amount
         end
-    elseif data.raw.fluid[barrel] then
+    elseif data.raw.fluid[ barrel ] then
         name = item.name
     end
 
-    if previous_item_names[name] ~= true then
+    if previous_item_names[ name ] ~= true then
         local item_type
-        if data.raw.item[name] or data.raw.module[name] then
+        if data.raw.item[ name ] or data.raw.module[ name ] then
             item_type = "item"
-        elseif data.raw.fluid[name] then
+        elseif data.raw.fluid[ name ] then
             item_type = "fluid"
         else
             item_type = "item"
@@ -106,7 +106,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         elseif item.amount_min and item.amount_max then
             table.insert(items_table, item)
         end
-    elseif previous_item_names[name] == true then
+    elseif previous_item_names[ name ] == true then
         if item.remove_item and item.remove_item == true then
             for p, pre in pairs(items_table) do
                 if pre.name == name then
@@ -117,9 +117,9 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
                         elseif string.match(item.name, "canister") then
                             barrel_name = "empty-fuel-canister"
                         end
-                        local amount = items_table[p].amount
+                        local amount = items_table[ p ].amount
                         if result_table and next(result_table) then
-                            if result_table.no_returns == nil or result_table.no_returns and result_table.no_returns[item.name] ~= true then
+                            if result_table.no_returns == nil or result_table.no_returns and result_table.no_returns[ item.name ] ~= true then
                                 for _, result in pairs(result_table) do
                                     if result.name == barrel_name then
                                         result.amount = result.amount - amount
@@ -128,8 +128,8 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
                             end
                         end
                     end
-                    items_table[p] = nil
-                    previous_item_names[name] = nil
+                    items_table[ p ] = nil
+                    previous_item_names[ name ] = nil
                 end
             end
         elseif item.amount == nil then
@@ -173,12 +173,12 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         local item_type
         local name = item.return_item.name
         local amount = item.return_item.amount or item.amount or item.add_amount
-        if data.raw.item[name] or data.raw.module[name] then
+        if data.raw.item[ name ] or data.raw.module[ name ] then
             item_type = "item"
-        elseif data.raw.fluid[name] then
+        elseif data.raw.fluid[ name ] then
             item_type = "fluid"
         end
-        return_item = {type = item_type, name = name, amount = amount}
+        return_item = { type = item_type, name = name, amount = amount }
         table.insert(result_table, return_item)
     end
 
@@ -193,7 +193,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         end
 
         local amount = item.amount or item.add_amount
-        local barrels_to_return = {type = "item", name = barrel_item_name, amount = amount, ignored_by_stats = amount, ignored_by_productivity = amount}
+        local barrels_to_return = { type = "item", name = barrel_item_name, amount = amount, ignored_by_stats = amount, ignored_by_productivity = amount }
 
         for _, result in pairs(result_table) do
             if result.name == barrel_item_name then
@@ -215,12 +215,12 @@ local function recipe_item_builder(ingredients, results, previous_ingredients, p
 
     local previous_ingredient_names = {}
     for _, pre in pairs(previous_ingredients) do
-        previous_ingredient_names[pre.name] = true
+        previous_ingredient_names[ pre.name ] = true
     end
 
     local previous_result_names = {}
     for _, pre in pairs(previous_results) do
-        previous_result_names[pre.name] = true
+        previous_result_names[ pre.name ] = true
     end
 
     for _, ing in pairs(ingredients) do
@@ -249,11 +249,11 @@ py.autorecipes = function(params)
         repeat
             i = i + 1
             numbered_name = params.name .. "-" .. i
-        until not data.raw.recipe[numbered_name]
+        until not data.raw.recipe[ numbered_name ]
 
         local recipe_name = tier.name or numbered_name
 
-        local recipe = RECIPE {
+        local recipe = RECIPE({
             type = "recipe",
             name = recipe_name,
             category = params.category,
@@ -267,7 +267,7 @@ py.autorecipes = function(params)
             icons = tier.icons,
             main_product = tier.main_product or params.main_product,
             allow_productivity = params.category ~= "slaughterhouse",
-        }
+        })
         if tier.tech then recipe:add_unlock(tier.tech) end
         if params.number_icons then -- add numbers to farming recipes so that they're not identical
             if tier.name then error("can't use number_icons with individual recipe names") end
@@ -276,30 +276,30 @@ py.autorecipes = function(params)
                 log(serpent.block(params))
                 error("autorecipes can only count to 9, check logs")
             end
-            data.raw.recipe[recipe_name].icons = data.raw.recipe[recipe_name].icons or {}
-            if #data.raw.recipe[recipe_name].icons == 0 then
-                local item_name = tier.main_product or params.main_product or tier.results[1].name
-                local item = (data.raw.module[item_name] or data.raw.item[item_name])
+            data.raw.recipe[ recipe_name ].icons = data.raw.recipe[ recipe_name ].icons or {}
+            if #data.raw.recipe[ recipe_name ].icons == 0 then
+                local item_name = tier.main_product or params.main_product or tier.results[ 1 ].name
+                local item = (data.raw.module[ item_name ] or data.raw.item[ item_name ])
                 if not item.icon then
-                    data.raw.recipe[recipe_name].icons = table.array_combine(data.raw.recipe[recipe_name].icons, item.icons)
+                    data.raw.recipe[ recipe_name ].icons = table.array_combine(data.raw.recipe[ recipe_name ].icons, item.icons)
                 else
                     table.insert(
-                        data.raw.recipe[recipe_name].icons,
-                        {icon = tier.icon or item.icon, scale = 64 / (tier.icon_size or 128)}
+                        data.raw.recipe[ recipe_name ].icons,
+                        { icon = tier.icon or item.icon, scale = 64 / (tier.icon_size or 128) }
                     )
                 end
             end
-            local scale = (data.raw.recipe[recipe_name].icons[1].scale or .5) / 2
+            local scale = (data.raw.recipe[ recipe_name ].icons[ 1 ].scale or .5) / 2
             table.insert(
-                data.raw.recipe[recipe_name].icons,
-                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}, floating = true}
+                data.raw.recipe[ recipe_name ].icons,
+                { icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = { 32 * scale, 32 * scale }, floating = true }
             )
         elseif tier.icon then
-            data.raw.recipe[recipe_name].icon = tier.icon
+            data.raw.recipe[ recipe_name ].icon = tier.icon
             if tier.icon_size then
-                data.raw.recipe[recipe_name].icon_size = tier.icon_size
+                data.raw.recipe[ recipe_name ].icon_size = tier.icon_size
             else
-                data.raw.recipe[recipe_name].icon_size = 32
+                data.raw.recipe[ recipe_name ].icon_size = 32
             end
         end
     end

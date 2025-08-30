@@ -7,7 +7,7 @@
 string.split = function(s, seperator)
     local result = {}
     for match in (s .. seperator):gmatch("(.-)" .. seperator) do
-        result[#result + 1] = match
+        result[ #result+1 ] = match
     end
     return result
 end

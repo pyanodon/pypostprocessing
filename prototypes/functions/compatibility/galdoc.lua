@@ -1,4 +1,4 @@
-if mods["galdocs-manufacturing"] then
+if mods[ "galdocs-manufacturing" ] then
     --zinc
     py.global_item_replacer("ore-zinc", "zinc-ore")
     py.global_item_replacer("zinc-plate", "zinc-plate-stock")
@@ -18,5 +18,5 @@ if mods["galdocs-manufacturing"] then
     py.global_item_replacer("titanium-plate", "titanium-plate-stock")
 
     --Shafts
-    RECIPE("shaft-mk01"):remove_ingredient("solder"):add_ingredient {type = "item", name = "basic-shafting", amount = 2}
+    RECIPE("shaft-mk01"):remove_ingredient("solder"):add_ingredient({ type = "item", name = "basic-shafting", amount = 2 })
 end

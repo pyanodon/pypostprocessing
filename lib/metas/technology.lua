@@ -11,11 +11,11 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
     __call = function(self, technology)
         local ttype = type(technology)
         if ttype == "string" then
-            if not self[technology] then error("Technology " .. technology .. " does not exist") end
-            technology = self[technology]
+            if not self[ technology ] then error("Technology " .. technology .. " does not exist") end
+            technology = self[ technology ]
         elseif ttype == "table" then
             technology.type = "technology"
-            data:extend {technology}
+            data:extend({ technology })
         else
             error("Invalid type " .. ttype)
         end
@@ -26,7 +26,7 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
 local metas = {}
 
 metas.standardize = function(self)
-    if not self.unit and not self.research_trigger then self.unit = {ingredients = {}} end
+    if not self.unit and not self.research_trigger then self.unit = { ingredients = {} } end
 
     self.prerequisites = self.prerequisites or {}
     self.dependencies = self.dependencies or {}
@@ -36,7 +36,7 @@ metas.standardize = function(self)
 end
 
 metas.add_prereq = function(self, prereq_technology_name)
-    local prereq_technology = data.raw.technology[prereq_technology_name]
+    local prereq_technology = data.raw.technology[ prereq_technology_name ]
     if not prereq_technology then
         log("WARNING @ \'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
         return self
@@ -66,7 +66,7 @@ metas.remove_pack = function(self, science_pack_name)
         return self
     end
 
-    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[1] ~= science_pack_name end)
+    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[ 1 ] ~= science_pack_name end)
 
     return self
 end
@@ -77,10 +77,10 @@ metas.add_pack = function(self, science_pack_name)
     end
 
     if not self.unit then
-        self.unit = {ingredients = {}}
+        self.unit = { ingredients = {} }
     end
 
-    table.insert(self.unit.ingredients, {science_pack_name, 1})
+    table.insert(self.unit.ingredients, { science_pack_name, 1 })
 
     return self
 end

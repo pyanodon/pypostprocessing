@@ -27,8 +27,8 @@ function ConnectedComponents:run(G)
 
     for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
-        self.marked[v] = false
-        self.id[v] = -1
+        self.marked[ v ] = false
+        self.id[ v ] = -1
     end
 
     self.count = 0
@@ -36,7 +36,7 @@ function ConnectedComponents:run(G)
     for i = 0, G:vertexCount() - 1 do
         local v = G:vertexAt(i)
 
-        if self.marked[v] == false then
+        if self.marked[ v ] == false then
             self:dfs(G, v)
             self.count = self.count + 1
         end
@@ -44,8 +44,8 @@ function ConnectedComponents:run(G)
 end
 
 function ConnectedComponents:dfs(G, v)
-    self.marked[v] = true
-    self.id[v] = self.count
+    self.marked[ v ] = true
+    self.id[ v ] = self.count
 
     local adj_v = G:adj(v)
 
@@ -53,14 +53,14 @@ function ConnectedComponents:dfs(G, v)
         local e = adj_v:get(i)
         local w = e:other(v)
 
-        if self.marked[w] == false then
+        if self.marked[ w ] == false then
             self:dfs(G, w)
         end
     end
 end
 
 function ConnectedComponents:component(v)
-    return self.id[v]
+    return self.id[ v ]
 end
 
 return ConnectedComponents
