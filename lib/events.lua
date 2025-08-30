@@ -91,7 +91,7 @@ local function set_ignore_click(f)
     return function(event)
         if event.player_index ~= nil then
             local multiplier = settings.get_player_settings(event.player_index)["pypp-click-lock-duration"].value * 60
-            local offset = math.floor(multiplier * game.speed + 0.5)
+            local offset = math.floor(multiplier * math.min(game.speed, 20) + 0.5) -- people can't actually run these speeds, so we cap the multiplier
             if offset ~= 0 then
                 storage.ignored_players[event.player_index] = game.tick + offset
             end
