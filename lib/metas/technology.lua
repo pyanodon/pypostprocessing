@@ -1,9 +1,9 @@
 ---@class data.TechnologyPrototype
 ---@field public standardize fun(): data.TechnologyPrototype
----@field public add_prereq fun(prereq_technology_name: string): data.TechnologyPrototype
----@field public remove_prereq fun(prereq_technology_name: string): data.TechnologyPrototype
----@field public remove_pack fun(science_pack_name: string): data.TechnologyPrototype
----@field public add_pack fun(science_pack_name: string): data.TechnologyPrototype
+---@field public add_prereq fun(self, prereq_technology_name: string): data.TechnologyPrototype
+---@field public remove_prereq fun(self, prereq_technology_name: string): data.TechnologyPrototype
+---@field public remove_pack fun(self, science_pack_name: string): data.TechnologyPrototype
+---@field public add_pack fun(self, science_pack_name: string): data.TechnologyPrototype
 ---@field dependencies string[]
 
 TECHNOLOGY = setmetatable(data.raw.technology, {
