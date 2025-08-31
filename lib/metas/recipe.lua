@@ -18,7 +18,7 @@ local table_insert = table.insert
 ---@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype
 ---@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype
 ---@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype
----@field public get_main_product fun(self: data.RecipePrototype, allow_multi_product: bool?): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_main_product fun(self: data.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype?|LuaFluidPrototype?
 ---@field public get_icons fun(self: data.RecipePrototype): data.IconData
 
 local metas = {}
@@ -371,6 +371,7 @@ metas.get_main_product = function(self, allow_multi_product)
     else -- or only result
         _, result = next(self.results)
     end
+    --[[@cast result data.ItemProductPrototype|data.ResearchProgressProductPrototype]]
     -- Special modding funtimes case: invalid spec
     if not (result.type == "research-progress" and result.research_item or result.name) then return end
     if result.type ~= nil and (result.type ~= "item" and result.type ~= "fluid" and result.type ~= "research-progress") then return end

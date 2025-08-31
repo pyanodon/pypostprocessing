@@ -11,7 +11,7 @@ require "compound-entities"
 ---@param entity LuaEntity
 ---@param sprite string
 ---@param time_to_live integer
----@param blink_interval integer
+---@param blink_interval integer?
 py.draw_error_sprite = function(entity, sprite, time_to_live, blink_interval)
     return rendering.draw_sprite {
         sprite = sprite,

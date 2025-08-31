@@ -290,11 +290,11 @@ if settings.startup["pypp-no-globals"].value then
             if not declaredNames[n] then
                 if py.stage == "control" then
                     -- temp
-                    game.print(debug.traceback("attempt to write to undeclared global variable, please report it: " .. n, 2))
+                    game.print(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua" .. n, 2))
                     -- end temp
                     -- error("attempt to write to undeclared variable: " .. n, 2)
                 end
-                log(debug.traceback("INFO: creating a new global variable: " .. n, 2))
+                log(debug.traceback("INFO: creating a new global variable\nIf this is intended, add it to the globals list in pypp/lib/lib.lua" .. n, 2))
             end
             rawset(t, n, v) -- do the actual set
         end,
