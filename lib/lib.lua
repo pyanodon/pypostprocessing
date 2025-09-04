@@ -170,6 +170,7 @@ local pysex_globals = {
     "Planets",
     "H2O2",
     "Centrifuge",
+    "RocketSilo",
     -- tries to read nil
     "on_search",
 }
@@ -273,13 +274,19 @@ if py.stage == "data" then
     }
 end
 
-local message_sent = false
+local data_message_sent = false
+local control_message_sent = false
+local control_globals_outside_of_events = false
 if py.stage == "control" then
     py.on_event(defines.events.on_tick, function(_)
         ---@diagnostic disable-next-line: undefined-field
-        if not message_sent and prototypes.mod_data["py-undocumented-globals"].get("exist") then
+        if not data_message_sent and prototypes.mod_data["py-undocumented-globals"].get("exist") then
             game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
-            message_sent = true
+            data_message_sent = true
+        end
+        if not control_message_sent and control_globals_outside_of_events then
+            game.print("[color=255,0,0]found references to undefined globals in control stage, check logs[/color]")
+            control_message_sent = true
         end
     end)
 end
@@ -290,11 +297,16 @@ if settings.startup["pypp-no-globals"].value then
             if not declaredNames[n] then
                 if py.stage == "control" then
                     -- temp
-                    game.print(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua" .. n, 2))
+                    if game then
+                        game.print(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
+                    else
+                        log(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
+                        control_globals_outside_of_events = true
+                    end
                     -- end temp
                     -- error("attempt to write to undeclared variable: " .. n, 2)
                 end
-                log(debug.traceback("INFO: creating a new global variable\nIf this is intended, add it to the globals list in pypp/lib/lib.lua" .. n, 2))
+                log(debug.traceback("INFO: creating a new global variable\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
             end
             rawset(t, n, v) -- do the actual set
         end,
@@ -302,7 +314,11 @@ if settings.startup["pypp-no-globals"].value then
             if not declaredNames[n] then
                 if py.stage == "control" then
                     -- temp
-                    game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
+                    if game then
+                        game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
+                    else
+                        control_globals_outside_of_events = true
+                    end
                     log(debug.traceback("attempt to read undeclared global variable: " .. n, 2))
                     -- end temp
                     -- error("attempt to read undeclared variable: " .. n, 2)
@@ -336,3 +352,4 @@ for _, var in pairs(global_vars) do
 end
 
 declare("_")
+declare("game") -- needed for globals used outside of events
