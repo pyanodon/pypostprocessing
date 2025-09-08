@@ -229,7 +229,7 @@ local function factoriopedia_recipes(check_absent_recipes)
         local unit_tech = table.deepcopy(tech)
         local science
         while not unit_tech.unit do
-            if #unit_tech.prerequisites == 0 then
+            if not unit_tech.prerequisites or #unit_tech.prerequisites == 0 then
                 science = "none"
                 break
             end
