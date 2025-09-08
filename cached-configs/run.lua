@@ -9,21 +9,6 @@ local function merge(table, value)
     end
 end
 
-function _G.fix_tech(tech_name, properties)
-    local existing = data.raw.technology[tech_name]
-    if not existing then
-        log('WARNING: pypostprocessing could not find technology with name "' .. tech_name .. '"')
-        return
-    end
-    merge(existing, properties)
-end
-
-function _G.science_pack_order(science_pack, order)
-    local sp = data.raw.tool[science_pack]
-    sp.subgroup = "science-pack"
-    sp.order = order
-end
-
 local function register_cache_file_pypp(subset)
     table.sort(subset)
     local cache_file = table.concat(subset, "+")
@@ -107,5 +92,5 @@ if best_cache_file == nil then
     error("No cache file registered that supports all your enabled mods. Enabled known mods: " .. table.concat(recognized_enabled_mods, "+") .. ", registered cache files printed in logs.")
 else
     log("Unique best cache file found, applying " .. best_cache_file.cache_file .. ", which " .. (best_cache_file.is_fallback_from_pypp and "is" or "is not") .. " a PyPP default.")
-    require(best_cache_file.cache_file)
+    --require(best_cache_file.cache_file)
 end
