@@ -2,7 +2,7 @@ local tests = {}
 
 local helper = require("scenario-helper")
 
-local turd_upgrade_names_table = {    
+local turd_upgrade_names_table = {
   "prototypes/upgrades/biofactory",
   "prototypes/upgrades/compost",
   "prototypes/upgrades/creature",

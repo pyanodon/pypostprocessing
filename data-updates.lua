@@ -2,7 +2,6 @@ if not py.has_any_py_mods() then
     return
 end
 require "prototypes.next-upgrades"
-require "prototypes.essential-techs"
 
 local function set_underground_recipe(underground, belt, prev_underground, prev_belt)
     local dist = data.raw["underground-belt"][underground].max_distance + 1
