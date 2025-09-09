@@ -1,1 +1,1 @@
-﻿data.raw["bool-setting"]["pypp-tests"].forced_value           = false
+data.raw["bool-setting"]["pypp-tests"].forced_value           = false

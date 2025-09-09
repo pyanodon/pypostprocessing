@@ -245,6 +245,7 @@ if mods.pycoalprocessing and not mods["extended-descriptions"] then
     end
 end
 
+require "cached-configs.run"
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
