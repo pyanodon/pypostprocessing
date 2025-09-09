@@ -245,7 +245,9 @@ if mods.pycoalprocessing and not mods["extended-descriptions"] then
     end
 end
 
-require "cached-configs.run"
+if not mods.autotech then
+    require "cached-configs.run"
+end
 ----------------------------------------------------
 -- THIRD PARTY COMPATIBILITY
 ----------------------------------------------------
