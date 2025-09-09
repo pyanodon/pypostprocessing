@@ -433,7 +433,8 @@ for _, bot_type in pairs {"construction-robot", "logistic-robot"} do
 end
 
 -- Skip check if user has [declutter](https://mods.factorio.com/mod/declutter) mod which hides arbitrary techs
-if not mods["declutter"] then
+-- Also skip check if user has autotech mod, since autotech runs after this check.
+if not (mods.declutter or mods.autotech) then
     for _, technology in pairs(data.raw.technology) do
         if not technology.hidden and technology.prerequisites then
             for _, prerequisite in pairs(technology.prerequisites) do
