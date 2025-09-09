@@ -3,7 +3,9 @@ Version: 3.0.39
 Date: ???
   Changes:
     - Cars, tanks, and spidertrons are no longer remote-drivable if they have the "hidden" flag.
-    - Added Dutch locale
+    - Added Dutch locale (thanks, QatSquirrel!)
+    - Added Spanish translation (thanks, Starl1ght5!)
+    - Fixed a possible stack overflow.
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.38
 Date: 2025-08-23
