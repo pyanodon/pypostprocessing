@@ -46,7 +46,13 @@ metas.add_prereq = function(self, prereq_technology_name)
         self.prerequisites = {}
     end
 
-    table.insert(self.prerequisites, prereq_technology_name)
+    for _, prereq in pairs(self.prerequisites) do
+        if prereq == prereq_technology_name then
+            return
+        end
+    end
+
+    self.prerequisites[#self.prerequisites + 1] = prereq_technology_name
 
     return self
 end
