@@ -182,6 +182,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         error("No icon found for prototype \"" .. prototype_string .. "\"!")
     end
 
+    -- Add the base icon
     local base_prototype, base_prototype_icon = get_prototype_icon(base_prototype_string)
     local icons = {
         {
@@ -190,59 +191,25 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
         }
     }
 
-    -- Add shadow icons
+    -- Add the icons in the four corners around the base icon, if present.
+    -- This also adds a icon shadow for more contrast between the corner icon and the base icon
     if child_top_left then
         local child_prototype, child_prototype_icon = get_prototype_icon(child_top_left)
+        local child_prototype_icon_size = child_prototype.icon_size or 64
+        -- add the icon shadow first...
         table.insert(icons, {
             icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
+            icon_size = child_prototype_icon_size,
             shift = {-shift, -shift},
-            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
+            scale = 32 / child_prototype_icon_size * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha},
         })
-    end
-
-    if child_top_right then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_right)
+        -- ...then add the icon itself
         table.insert(icons, {
             icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
-            shift = {shift, -shift},
-            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-    end
-
-    if child_bottom_left then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_left)
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
-            shift = {-shift, shift},
-            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-    end
-
-    if child_bottom_right then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_right)
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
-            shift = {shift, shift},
-            scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-    end
-
-    -- Add normal children icons
-    if child_top_left then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_left)
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
+            icon_size = child_prototype_icon_size,
             shift = {-shift, -shift},
-            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
+            scale = 32 / child_prototype_icon_size * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -250,11 +217,19 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     if child_top_right then
         local child_prototype, child_prototype_icon = get_prototype_icon(child_top_right)
+        local child_prototype_icon_size = child_prototype.icon_size or 64
         table.insert(icons, {
             icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
+            icon_size = child_prototype_icon_size,
             shift = {shift, -shift},
-            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
+            scale = 32 / child_prototype_icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+        table.insert(icons, {
+            icon = child_prototype_icon,
+            icon_size = child_prototype_icon_size,
+            shift = {shift, -shift},
+            scale = 32 / child_prototype_icon_size * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -262,11 +237,19 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     if child_bottom_left then
         local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_left)
+        local child_prototype_icon_size = child_prototype.icon_size or 64
         table.insert(icons, {
             icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
+            icon_size = child_prototype_icon_size,
             shift = {-shift, shift},
-            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
+            scale = 32 / child_prototype_icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+        table.insert(icons, {
+            icon = child_prototype_icon,
+            icon_size = child_prototype_icon_size,
+            shift = {-shift, shift},
+            scale = 32 / child_prototype_icon_size * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
@@ -274,11 +257,19 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     if child_bottom_right then
         local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_right)
+        local child_prototype_icon_size = child_prototype.icon_size or 64
         table.insert(icons, {
             icon = child_prototype_icon,
-            icon_size = (child_prototype.icon_size or 64),
+            icon_size = child_prototype_icon_size,
+            shift = {shift, shift},
+            scale = 32 / child_prototype_icon_size * shadow_scale,
+            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
+        })
+        table.insert(icons, {
+            icon = child_prototype_icon,
+            icon_size = child_prototype_icon_size,
             shift = {shift, shift}, 
-            scale = 32 / (child_prototype.icon_size or 64) * child_scale,
+            scale = 32 / child_prototype_icon_size * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
             draw_background = true
         })
