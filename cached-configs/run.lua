@@ -98,6 +98,7 @@ local function apply_cache(cache)
         if changes.prerequisites then
             technology.prerequisites = changes.prerequisites
         end
+        technology.essential = not not changes.essential
 
         if technology.research_trigger then
             technology.unit = nil
