@@ -157,20 +157,44 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     shadow_scale = shadow_scale or 0.6
     child_scale = child_scale or 0.5
     shift = shift or 10
-    local base_prototype = data.raw.fluid[base_prototype_string] or data.raw.item[base_prototype_string] or data.raw.recipe[base_prototype_string]
 
+    local function get_prototype_icon(prototype_string)
+        local keys = { "fluid", "item", "recipe", "module" }
+        
+        for _, key in pairs(keys)
+        do
+            local prototype = data.raw[key][prototype_string]
+            if prototype
+            then
+                if prototype.icon
+                then
+                    return prototype, prototype.icon
+                elseif prototype.icons
+                then
+                    -- the array index starts at 1 instead of 0 in Lua
+                    return prototype, prototype.icons[1].icon
+                end
+            end
+        end
+
+        -- if we reach this part we haven't found an icon to use,
+        -- so we deliberately cause an error to make the problem more clear in the bracktrace
+        error("No icon found for prototype \"" .. prototype_string .. "\"!")
+    end
+
+    local base_prototype, base_prototype_icon = get_prototype_icon(base_prototype_string)
     local icons = {
         {
-            icon = base_prototype.icon,
+            icon = base_prototype_icon,
             icon_size = (base_prototype.icon_size or 64)
         }
     }
 
     -- Add shadow icons
     if child_top_left then
-        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left] or data.raw.recipe[child_top_left]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_left)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, -shift},
             scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
@@ -179,9 +203,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_top_right then
-        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right] or data.raw.recipe[child_top_right]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_right)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {shift, -shift},
             scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
@@ -190,9 +214,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_left then
-        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left] or data.raw.recipe[child_bottom_left]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_left)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, shift},
             scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
@@ -201,9 +225,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_right then
-        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right] or data.raw.recipe[child_bottom_right]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_right)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {shift, shift},
             scale = 32 / (child_prototype.icon_size or 64) * shadow_scale,
@@ -213,9 +237,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     -- Add normal children icons
     if child_top_left then
-        local child_prototype = data.raw.fluid[child_top_left] or data.raw.item[child_top_left] or data.raw.recipe[child_top_left]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_left)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, -shift},
             scale = 32 / (child_prototype.icon_size or 64) * child_scale,
@@ -225,9 +249,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_top_right then
-        local child_prototype = data.raw.fluid[child_top_right] or data.raw.item[child_top_right] or data.raw.recipe[child_top_right]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_right)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {shift, -shift},
             scale = 32 / (child_prototype.icon_size or 64) * child_scale,
@@ -237,9 +261,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_left then
-        local child_prototype = data.raw.fluid[child_bottom_left] or data.raw.item[child_bottom_left] or data.raw.recipe[child_bottom_left]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_left)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {-shift, shift},
             scale = 32 / (child_prototype.icon_size or 64) * child_scale,
@@ -249,9 +273,9 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
     end
 
     if child_bottom_right then
-        local child_prototype = data.raw.fluid[child_bottom_right] or data.raw.item[child_bottom_right] or data.raw.recipe[child_bottom_right]
+        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_right)
         table.insert(icons, {
-            icon = child_prototype.icon,
+            icon = child_prototype_icon,
             icon_size = (child_prototype.icon_size or 64),
             shift = {shift, shift}, 
             scale = 32 / (child_prototype.icon_size or 64) * child_scale,

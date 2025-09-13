@@ -6,6 +6,7 @@ Date: ???
     - Added Dutch locale (thanks, QatSquirrel!)
     - Added Spanish translation (thanks, Starl1ght5!)
     - Fixed a possible stack overflow.
+    - Allow py.composite_icon to use pyalienlife's plants and animals as icons
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.38
 Date: 2025-08-23
