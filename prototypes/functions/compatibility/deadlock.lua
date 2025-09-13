@@ -11,9 +11,6 @@ if mods["deadlock-beltboxes-loaders"] then
     for item_name, item in py.iter_prototypes("item") do
         local stack = data.raw.item["deadlock-stack-" .. item_name]
         if stack then
-            stack.ignore_for_dependencies = true
-            data.raw.recipe["deadlock-stacks-stack-" .. item_name].ignore_for_dependencies = true
-            data.raw.recipe["deadlock-stacks-unstack-" .. item_name].ignore_for_dependencies = true
             data.raw.recipe["deadlock-stacks-unstack-" .. item_name].unlock_results = false
 
             if ITEM(item).burnt_result == "ash" then
@@ -46,11 +43,7 @@ end
 if mods["DeadlockCrating"] then
     for item_name, item in py.iter_prototypes("item") do
         if data.raw.item["deadlock-crate-" .. item_name] ~= nil then
-            data.raw.item["deadlock-crate-" .. item_name].ignore_for_dependencies = true
-            data.raw.recipe["deadlock-packrecipe-" .. item_name].ignore_for_dependencies = true
-            data.raw.recipe["deadlock-unpackrecipe-" .. item_name].ignore_for_dependencies = true
             data.raw.recipe["deadlock-unpackrecipe-" .. item_name].unlock_results = false
-
             if ITEM(item).hidden then
                 ITEM("deadlock-crate-" .. item_name).hidden = true
                 data.raw.recipe["deadlock-packrecipe-" .. item_name].hidden = true
@@ -63,8 +56,6 @@ end
 if mods["deadlock_stacked_recipes"] then
     for recipe_name, recipe in pairs(data.raw.recipe) do
         if data.raw.recipe["StackedRecipe-" .. recipe_name] ~= nil then
-            data.raw.recipe["StackedRecipe-" .. recipe_name].ignore_for_dependencies = true
-
             if recipe.hidden then
                 data.raw.recipe["StackedRecipe-" .. recipe_name].hidden = true
             end

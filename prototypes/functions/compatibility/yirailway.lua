@@ -89,8 +89,6 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 ywagon.air_resistance = wagon.air_resistance
                 ywagon.capacity = wagon.capacity
             else
-                --log('disabling '..recipe_name..' as subgroup is '..recipe.subgroup)
-                recipe.ignore_for_dependencies = true
                 recipe.unlock_results = false
                 recipe.hidden = true
                 if (recipe.results) then
@@ -101,8 +99,6 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 end
             end
         elseif string.sub(recipe_name, 1, 4) == "yir_" and string.find(recipe_name, "pyvoid") == nil then
-            --log('disabling '..recipe_name)
-            recipe.ignore_for_dependencies = true
             recipe.unlock_results = false
             recipe.hidden = true
             if (recipe.results) then

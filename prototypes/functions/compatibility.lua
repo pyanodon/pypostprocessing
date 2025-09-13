@@ -9,7 +9,7 @@ if data.raw.recipe["electronic-circuit"].enabled == false
 then
     for _, recipe in pairs(data.raw.recipe) do
         recipe:standardize()
-        if (recipe.enabled == nil or recipe.enabled == true) and not recipe.ignore_for_dependencies then
+        if recipe.enabled ~= false then
             recipe:replace_ingredient("electronic-circuit", "inductor1")
         end
     end
@@ -103,7 +103,6 @@ require("compatibility.cargo-ships")
 require("compatibility.compakt-circuit")
 require("compatibility.deadlock")
 require("compatibility.extra-storage-tank-minibuffer")
-require("compatibility.flare-stack")
 require("compatibility.galdoc")
 require("compatibility.htl")
 require("compatibility.jetpack")
@@ -123,11 +122,8 @@ require("compatibility.renai-transportation")
 require("compatibility.reverse-factory")
 require("compatibility.robot-recall")
 require("compatibility.rocket-silo-construction")
-require("compatibility.scattergun-turret")
 require("compatibility.shuttle-train-refresh")
-require("compatibility.subspace-storage")
 require("compatibility.teleporters")
-require("compatibility.tiny-start")
 require("compatibility.train-pubsub")
 require("compatibility.train-upgrader")
 require("compatibility.trainfactory")
