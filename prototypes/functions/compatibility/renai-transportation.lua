@@ -39,7 +39,7 @@ if mods["RenaiTransportation"] then
     end
 
     if mods["pyalienlife"] then
-        TECHNOLOGY("EjectorHatchRTTech"):add_prereq("py-science-pack-mk01")
+        TECHNOLOGY("EjectorHatchRTTech"):add_prereq("py-science-pack-1")
         TECHNOLOGY("RTDeliverThePayload"):add_prereq("military-science-pack")
         TECHNOLOGY("EjectorHatchRTTech"):remove_pack("logistic-science-pack")
         TECHNOLOGY("RTFlyingFreight"):remove_pack("logistic-science-pack")

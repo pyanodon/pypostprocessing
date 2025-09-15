@@ -1,3 +1,5 @@
+local lzw = require "lib.lempel-ziv-welch"
+
 local function merge(table, value)
     for k, v in pairs(value) do
         if type(v) == "table" and k ~= "prerequisites" and k ~= "ingredients" then
@@ -7,21 +9,6 @@ local function merge(table, value)
             table[k] = v
         end
     end
-end
-
-function _G.fix_tech(tech_name, properties)
-    local existing = data.raw.technology[tech_name]
-    if not existing then
-        log('WARNING: pypostprocessing could not find technology with name "' .. tech_name .. '"')
-        return
-    end
-    merge(existing, properties)
-end
-
-function _G.science_pack_order(science_pack, order)
-    local sp = data.raw.tool[science_pack]
-    sp.subgroup = "science-pack"
-    sp.order = order
 end
 
 local function register_cache_file_pypp(subset)
@@ -100,6 +87,44 @@ for _, cache_file_info in pairs(pypp_registered_cache_files) do
     end
 end
 
+local function apply_cache(cache)
+    for technology_name, changes in pairs(cache) do
+        local technology = data.raw.technology[technology_name]
+        if not technology then goto continue end
+
+        if changes.order then
+            technology.order = changes.order
+        end
+        if changes.prerequisites then
+            technology.prerequisites = changes.prerequisites
+        end
+        technology.essential = not not changes.essential
+
+        if technology.research_trigger then
+            technology.unit = nil
+            goto continue
+        end
+        technology.unit = technology.unit or {}
+
+        if changes.count_formula then
+            technology.unit.count = nil
+            technology.unit.count_formula = changes.count_formula
+        elseif changes.count then
+            technology.unit.count_formula = nil
+            technology.unit.count = changes.count
+        end
+
+        if changes.time then
+            technology.unit.time = changes.time
+        end
+
+        if changes.ingredients then
+            technology.unit.ingredients = changes.ingredients
+        end
+        ::continue::
+    end
+end
+
 if best_cache_file == nil then
     for _, cache_file_info in pairs(pypp_registered_cache_files) do
         log("Cache file " .. cache_file_info.cache_file .. ", supported mods " .. table.concat(cache_file_info.subset, "+"))
@@ -107,5 +132,8 @@ if best_cache_file == nil then
     error("No cache file registered that supports all your enabled mods. Enabled known mods: " .. table.concat(recognized_enabled_mods, "+") .. ", registered cache files printed in logs.")
 else
     log("Unique best cache file found, applying " .. best_cache_file.cache_file .. ", which " .. (best_cache_file.is_fallback_from_pypp and "is" or "is not") .. " a PyPP default.")
-    require(best_cache_file.cache_file)
+    local encoded_cache = require(best_cache_file.cache_file)
+    local serialized_cache = lzw.lzw_decompress(encoded_cache)
+    local _, cache = serpent.load(serialized_cache)
+    apply_cache(cache)
 end
