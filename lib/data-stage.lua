@@ -17,6 +17,32 @@ py.empty_image = function()
     }
 end
 
+---Returns a localised name with the respective properties of this item/entity/recipe, generalized to make localisation easier
+---@param base_name string
+---@param tier string?
+---@param wrapper string?
+---@return LocalisedString
+py.generate_localised_name = function(base_name, tier, wrapper)
+  local localised_name = not tier and base_name or tier {
+    "?",
+    type(base_name) == "string" and (base_name .. "mk0" .. tier) or base_name,
+    {"py.tier.mk0" .. tier, {base_name}}
+  }
+    return wrapper and {wrapper, {localised_name}} or localised_name
+end
+
+---Returns a localised description with the respective properties of this item/entity/recipe, generalized to make localisation easier
+---@param base_name string
+---@param tier string?
+---@return LocalisedString
+py.generate_localised_description = function(base_name, tier)
+    return not tier and base_name or tier {
+      "?",
+      type(base_name) == "string" and (base_name .. "mk0" .. tier) or base_name,
+      {"py.tier.mk0" .. tier, {base_name}}
+    }
+end
+
 ---Adds a localised string to the prototype's description.
 ---@param type string
 ---@param prototype data.AnyPrototype
