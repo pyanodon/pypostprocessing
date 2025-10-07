@@ -95,23 +95,26 @@ if create_signal_mode then
                     break
                 end
                 -- Determine amount of main product to display in signal name
-                amt = 0
+                local amt = 0
+                local main_product_name = recipe:get_main_product(true).name
                 for _, result in pairs(recipe.results) do
-                    if result.name then
-                        local is_main_product = recipe.main_product and result.name == recipe.main_product
-                        if is_main_product and result.probability and result.probability < 1 then
-                            amt = result.probability
+                    if result.name == main_product_name then
+                        if result.probability and result.probability < 1 then
+                            -- Some recipes have random amount for multiples, such as nuclear isotopes.
+                            local prob_amt = 0
+                            if result.amount then
+                                prob_amt = result.amount
+                            elseif result.amount_min and result.amount_max then
+                                prob_amt = (result.amount_min + result.amount_max) / 2
+                            end
+                            amt = result.probability * prob_amt
                             break
-                        elseif is_main_product and result.amount_min and result.amount_max then
+                        elseif result.amount_min and result.amount_max then
                             amt = (result.amount_min + result.amount_max) / 2
                             break
                         elseif result.amount then
-                            if is_main_product then
-                                amt = result.amount
-                                break
-                            end
-                            -- Fallback that determines main product based on highest output
-                            amt = math.max(amt, result.amount)
+                            amt = result.amount
+                            break
                         end
                     end
                 end
