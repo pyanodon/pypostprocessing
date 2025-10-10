@@ -124,6 +124,7 @@ if create_signal_mode then
                         end
                     end
                 end
+                recipe.subgroup = "py-recipes"
                 recipe.hide_from_signal_gui = false
             end
         end

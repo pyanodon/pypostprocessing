@@ -1,3 +1,4 @@
+require("prototypes.item-groups")
 require("prototypes.custom-input")
 -- Log all mods & versions, Alien Biomes already does this so we skip if it is active
 if not mods["alien-biomes"] then
