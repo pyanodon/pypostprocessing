@@ -5,6 +5,7 @@ Date: ????
     - Updated Simplified Chinese locale courtesy of @alone on Discord
     - Add compatibility with AAI Signal Transmission. Now researched after
       logistics science and uses contemporary ingredients
+    - Recipe signals are now sorted into their own item-group in the crafting tab
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.39
 Date: 2025-09-15
