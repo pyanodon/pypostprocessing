@@ -1,14 +1,19 @@
 local table_insert = table.insert
 
+--unsafe functions overrides protections for ingredient/result existence
+
 ---@class data.RecipePrototype
 ---@field public standardize fun(self: data.RecipePrototype): data.RecipePrototype
 ---@field public add_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype
 ---@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype
 ---@field public replace_ingredient fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype
+---@field public replace_ingredient_unsafe fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype
 ---@field public add_ingredient fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype
+---@field public add_ingredient_unsafe fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype
 ---@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
 ---@field public replace_result fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype
+---@field public replace_result_unsafe fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype
 ---@field public add_result fun(self: data.RecipePrototype, result: data.ProductPrototype): data.RecipePrototype
 ---@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype
 ---@field public clear_ingredients fun(self: data.RecipePrototype): data.RecipePrototype
@@ -134,10 +139,10 @@ end
 
 do
     --old is a string
-    local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount)
+    local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount, unsafe)
         local type = type(new)
         if type == "string" then
-            if not FLUID[new] and not ITEM[new] then
+            if not FLUID[new] and not ITEM[new] and not unsafe then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
                 return
             end
@@ -157,7 +162,7 @@ do
             end
         elseif type == "table" then
             new = table.deepcopy(new)
-            if not FLUID[new.name] and not ITEM[new.name] then
+            if not FLUID[new.name] and not ITEM[new.name] and not unsafe then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return
             end
@@ -171,13 +176,29 @@ do
 
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount)
+        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, false)
+        return self
+    end
+
+    metas.replace_ingredient_unsafe = function(self, old_ingredient, new_ingredient, new_amount)
+        self:standardize()
+        self:standardize()
+        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
         return self
     end
 
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        replacement_helper(self, self.results, old_result, new_result, new_amount)
+        replacement_helper(self, self.results, old_result, new_result, new_amount, false)
+        if self.main_product == old_result then
+            self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
+        end
+        return self
+    end
+
+    metas.replace_result_unsafe = function(self, old_result, new_result, new_amount)
+        self:standardize()
+        replacement_helper(self, self.results, old_result, new_result, new_amount, true)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
         end
@@ -185,13 +206,8 @@ do
     end
 end
 
-metas.add_ingredient = function(self, ingredient)
+metas.add_ingredient_unsafe = function(self, ingredient)
     self:standardize()
-    if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
-        log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
-        return self
-    end
-
     -- Ensure that this ingredient does not already exist in this recipe.
     -- If so, combine their amounts and catalyst amounts.
     for _, existing in pairs(self.ingredients) do
@@ -210,6 +226,16 @@ metas.add_ingredient = function(self, ingredient)
 
     table_insert(self.ingredients, ingredient)
     return self
+end
+
+metas.add_ingredient = function(self, ingredient)
+    self:standardize()
+    if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
+        log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
+        return self
+    end
+
+    return metas.add_ingredient_unsafe(self, ingredient)
 end
 
 metas.add_result = function(self, result)
@@ -338,10 +364,10 @@ end
 metas.change_category = function(self, category_name)
     self:standardize()
 
-    if data.raw['recipe-category'][category_name] then
+    if data.raw["recipe-category"][category_name] then
         self.category = category_name
     else
-        log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name  .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name .. " not found")
     end
 
     return self
