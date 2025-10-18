@@ -182,7 +182,6 @@ do
 
     metas.replace_ingredient_unsafe = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        self:standardize()
         replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
         return self
     end
