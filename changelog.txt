@@ -6,6 +6,7 @@ Date: ????
     - Add compatibility with AAI Signal Transmission. Now researched after logistics science and uses contemporary ingredients
     - Adjusted logic that determines the amount and name of a product to display with the "Add recipe signals" startup setting.
     - Fix a crash with Schall Machine Scaling
+    - Fixed a crash when cleaning up recycling recipes created by quality that had no results. Resolves https://github.com/pyanodon/pybugreports/issues/1284
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.39
 Date: 2025-09-15

@@ -4,7 +4,7 @@ local RECYCLING_ICON_FILEPATH = "__quality__/graphics/icons/recycling.png"
 
 local deadrecipes = {}
 for r, recipe in pairs(data.raw.recipe) do
-    if string.match(recipe.name, "recycling") and recipe.icons and recipe.icons[1] and recipe.icons[1].icon == RECYCLING_ICON_FILEPATH then
+    if string.match(recipe.name, "recycling") and recipe.icons and recipe.icons[1] and recipe.icons[1].icon == RECYCLING_ICON_FILEPATH and #(recipe.results or {}) > 0 then
         if data.raw.item[recipe.ingredients[1].name] == nil or data.raw.item[recipe.results[1].name] == nil then
             table.insert(deadrecipes, recipe.name)
         end
