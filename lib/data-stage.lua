@@ -219,85 +219,32 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
 
     -- Add the icons in the four corners around the base icon, if present.
     -- This also adds a icon shadow for more contrast between the corner icon and the base icon
-    if child_top_left then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_left)
+    for _, tuple in pairs{
+        child_top_left and {prototype = child_top_left, offset = {-shift, -shift}} or nil,
+        child_top_right and {prototype = child_top_right, offset = {shift, -shift}} or nil,
+        child_bottom_left and {prototype = child_bottom_left, offset = {-shift, shift}} or nil,
+        child_bottom_right and {prototype = child_bottom_right, offset = {shift, shift}} or nil,
+    } do
+        local child_prototype, child_prototype_icon = get_prototype_icon(tuple.prototype)
         local child_prototype_icon_size = child_prototype.icon_size or 64
         -- add the icon shadow first...
         table.insert(icons, {
             icon = child_prototype_icon,
             icon_size = child_prototype_icon_size,
-            shift = {-shift, -shift},
+            shift = tuple.offset,
             scale = 32 / child_prototype_icon_size * shadow_scale,
             tint = {r = 0, g = 0, b = 0, a = shadow_alpha},
+            floating = true
         })
         -- ...then add the icon itself
         table.insert(icons, {
             icon = child_prototype_icon,
             icon_size = child_prototype_icon_size,
-            shift = {-shift, -shift},
+            shift = tuple.offset,
             scale = 32 / child_prototype_icon_size * child_scale,
             tint = {r = 1, g = 1, b = 1, a = 1},
-            draw_background = true
-        })
-    end
-
-    if child_top_right then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_top_right)
-        local child_prototype_icon_size = child_prototype.icon_size or 64
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {shift, -shift},
-            scale = 32 / child_prototype_icon_size * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {shift, -shift},
-            scale = 32 / child_prototype_icon_size * child_scale,
-            tint = {r = 1, g = 1, b = 1, a = 1},
-            draw_background = true
-        })
-    end
-
-    if child_bottom_left then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_left)
-        local child_prototype_icon_size = child_prototype.icon_size or 64
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {-shift, shift},
-            scale = 32 / child_prototype_icon_size * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {-shift, shift},
-            scale = 32 / child_prototype_icon_size * child_scale,
-            tint = {r = 1, g = 1, b = 1, a = 1},
-            draw_background = true
-        })
-    end
-
-    if child_bottom_right then
-        local child_prototype, child_prototype_icon = get_prototype_icon(child_bottom_right)
-        local child_prototype_icon_size = child_prototype.icon_size or 64
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {shift, shift},
-            scale = 32 / child_prototype_icon_size * shadow_scale,
-            tint = {r = 0, g = 0, b = 0, a = shadow_alpha}
-        })
-        table.insert(icons, {
-            icon = child_prototype_icon,
-            icon_size = child_prototype_icon_size,
-            shift = {shift, shift}, 
-            scale = 32 / child_prototype_icon_size * child_scale,
-            tint = {r = 1, g = 1, b = 1, a = 1},
-            draw_background = true
+            draw_background = true,
+            floating = true
         })
     end
 
