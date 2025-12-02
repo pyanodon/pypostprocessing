@@ -5,6 +5,7 @@ Date: ????
     - Added unsafe modes for recipe functions, allowing the alteration of recipes regardless if the items/fluids exist.
     - Add compatibility with AAI Signal Transmission. Now researched after logistics science and uses contemporary ingredients
     - Adjusted logic that determines the amount and name of a product to display with the "Add recipe signals" startup setting.
+    - Updated py.composite_icons to mark child icons as floating and simplified logic to a for loop
     - Fix a crash with Schall Machine Scaling
     - Fixed a crash when cleaning up recycling recipes created by quality that had no results. Resolves https://github.com/pyanodon/pybugreports/issues/1284
 ---------------------------------------------------------------------------------------------------
