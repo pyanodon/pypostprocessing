@@ -8,6 +8,7 @@ Date: ????
     - Updated py.composite_icons to mark child icons as floating and simplified logic to a for loop
     - Fix a crash with Schall Machine Scaling
     - Fixed a crash when cleaning up recycling recipes created by quality that had no results. Resolves https://github.com/pyanodon/pybugreports/issues/1284
+    - Added process to automatically set spoil level of spoilable items. Resolves https://github.com/pyanodon/pybugreports/issues/1260
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.39
 Date: 2025-09-15
