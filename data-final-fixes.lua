@@ -4,6 +4,109 @@ end
 
 require "prototypes.quality"
 
+local function find_base_spoil_result(item, checked_items)
+    if checked_items[item] then
+        return nil, checked_items, item
+    elseif ITEM(item).spoil_result then
+        checked_items[item] = true
+        return find_base_spoil_result(ITEM(item).spoil_result, checked_items)
+    else
+        checked_items[item] = true
+        return item, checked_items
+    end
+end
+
+-------------------------------------------
+-- Spoilage priority --
+-------------------------------------------
+if feature_flags.spoiling then
+    local spoilage_loops = {} -- all known loops
+    local spoilage_chains = {} -- all known
+    for _, prototype in pairs{
+        "item",
+        "ammo",
+        "capsule",
+        "gun",
+        "module",
+        "tool",
+        "armor",
+        "repair-tool"
+    } do for _, spoiler in pairs(data.raw[prototype]) do
+        if spoiler.spoil_result then
+          local spoil_result, spoil_chain, last_checked = find_base_spoil_result(spoiler, {})
+          if spoil_result then -- spoilage chain found, set accordingly
+              spoilage_chains[spoiler.name] = {result = spoil_result, chain = spoil_chain}
+          else -- loop found, save for later
+              spoilage_loops[spoiler.name] = {result = last_checked, chain = spoil_chain}
+          end
+        end
+    end end
+
+    ----------------- handle normal spoilage chains -----------------
+    local ignore_items = {} -- list of items to ignore, we've already covered them
+    local spoil_levels = {} -- list of items and their spoil level
+    -- find largest chains for each normal spoilage loop
+    for _, spoil_data in pairs(spoilage_chains) do
+        -- ignore chains we've already covered
+        if not ignore_items[spoil_data.result] then
+            local chain = spoil_data.chain
+            local spoil_result = spoil_data.result
+            local longest_chain
+            -- find the biggest chain that end with the same item
+            for _, other_spoil_data in pairs(spoilage_chains) do
+                -- if this chain terminates at the same item (i.e. any item in the chain is the same) save larger one
+                if other_spoil_data.result == spoil_result and table_size(other_spoil_data.chain) > (longest_chain or 0) then
+                    longest_chain = table_size(other_spoil_data.chain)
+                end
+            end
+            spoil_levels[spoil_result] = longest_chain
+            ignore_items[spoil_result] = true
+        end
+    end
+
+    -- update spoil levels
+    for spoiler, spoil_data in pairs(spoilage_chains) do
+        spoil_levels[spoiler] = spoil_levels[spoil_data.result] - table_size(spoil_data.chain) + 1
+    end
+
+    ----------------- handle spoilage loops -----------------
+    -- set the spoil level of the base chain, derive from there
+    for _, spoil_data in pairs(spoilage_loops) do
+        -- ignore chains we've already covered
+        if not ignore_items[spoil_data.result] then
+            local chain = spoil_data.chain
+            local longest_chain, base_loop
+            -- find the biggest and smallest chain that end the same way
+            for _, other_spoil_data in pairs(spoilage_loops) do
+                local other_chain = other_spoil_data.chain
+                for item in pairs(other_chain) do
+                    -- if item is part of the main loop, check against our min/max size loops
+                    if chain[item] then
+                        longest_chain = table_size(other_chain) > table_size(longest_chain or {}) and other_chain or longest_chain
+                        base_loop = not base_loop and other_chain or table_size(other_chain) < table_size(base_loop) and other_chain or base_loop
+                        break
+                    end
+                end
+            end
+            local spoil_level = table_size(longest_chain) - table_size(base_loop) + 1
+            for item in pairs(base_loop) do
+                spoil_levels[item] = spoil_level
+                ignore_items[item] = true
+            end
+        end
+    end
+    for spoiler, spoil_data in pairs(spoilage_loops) do
+        if not ignore_items[spoiler] then
+            spoil_levels[spoiler].spoil_level = spoil_levels[spoil_data.result] + table_size(spoilage_loops[spoil_data.result].chain) - table_size(spoil_data.chain)
+        end
+    end
+    
+    ----------------- apply spoil levels -----------------
+    for spoiler, spoil_level in pairs(spoil_levels) do
+        ITEM(spoiler).spoil_level = spoil_level
+    end
+end
+
 local config = require "prototypes.config"
 local signal_recipes = {
 }
