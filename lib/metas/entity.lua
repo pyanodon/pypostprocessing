@@ -57,20 +57,39 @@ metas.standardize = function(self)
     return self
 end
 
+---@param self table
+---@param flag string
+---@return table self
+---@return boolean success
 metas.add_flag = function(self, flag)
-    if not self.flags then self.flags = {} end
-    table.insert(self.flags, flag)
-    return self
-end
-
-metas.remove_flag = function(self, flag)
-    if not self.flags then return self end
-    for i, f in pairs(self.flags) do
-        if f == flag then table.remove(self.flags, i) end
+    self.flags = self.flags or {}  
+    for _, f in pairs(self.flags) do
+        if f == flag then
+            return self, false -- flag already exists
+        end
     end
-    return self
+    table.insert(self.flags, flag)
+    return self, true -- flag added
 end
 
+---@param self table
+---@param flag string
+---@return table self
+---@return boolean success
+metas.remove_flag = function(self, flag)
+    if not self.flags then return self, false end
+    for i, f in pairs(self.flags) do
+        if f == flag then
+            table.remove(self.flags, i)
+            return self, true -- flag found and removed
+        end
+    end
+    return self, false -- could not find flag
+end
+
+---@param self table
+---@param flag string
+---@return boolean has_flag
 metas.has_flag = function(self, flag)
     if not self.flags then return false end
     for _, f in pairs(self.flags) do
