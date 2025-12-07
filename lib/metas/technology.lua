@@ -46,9 +46,7 @@ metas.add_prereq = function(self, prereq_technology_name)
         return self, false -- add prereq failed
     end
 
-    if not self.prerequisites then
-        self.prerequisites = {}
-    end
+    self.prerequisites = self.prerequisites or {}
 
     for _, prereq in pairs(self.prerequisites) do
         if prereq == prereq_technology_name then
@@ -90,10 +88,10 @@ metas.remove_pack = function(self, science_pack_name)
     end
 
     for i, ingredient in pairs(self.unit.ingredients) do
-      if ingredient[1] == science_pack_name then
-        table.remove(self.unit.ingredients, i)
-        return self, true -- remove pack succeeds
-      end
+        if ingredient[1] == science_pack_name then
+            table.remove(self.unit.ingredients, i)
+            return self, true -- remove pack succeeds
+        end
     end
 
     return self, false -- remove pack fails
@@ -109,14 +107,12 @@ metas.add_pack = function(self, science_pack_name)
         error("WARNING @ \'" .. self.name .. "\':add_pack(): Attempted to add science packs to technology with research_trigger.")
     end
 
-    if not self.unit then
-        self.unit = {ingredients = {}}
-    end
+    self.unit = self.unit or {ingredients = {}}
 
     for _, ingredient in pairs(self.unit.ingredients) do
-      if ingredient[1] == science_pack_name then
-        return self, true -- add pack fails, it already exists
-      end
+        if ingredient[1] == science_pack_name then
+            return self, true -- add pack fails, it already exists
+        end
     end
 
     table.insert(self.unit.ingredients, {science_pack_name, 1})
