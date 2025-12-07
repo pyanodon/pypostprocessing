@@ -39,7 +39,7 @@ metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
         log("WARNING @ \'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
-        return self
+        return self, false -- add prereq failed
     end
 
     if not self.prerequisites then
@@ -48,35 +48,46 @@ metas.add_prereq = function(self, prereq_technology_name)
 
     for _, prereq in pairs(self.prerequisites) do
         if prereq == prereq_technology_name then
-            return
+            return self, true -- should it be true? false? its already in the tech
         end
     end
 
     self.prerequisites[#self.prerequisites + 1] = prereq_technology_name
 
-    return self
+    return self, true -- add prereq succeeds
 end
 
 metas.remove_prereq = function(self, prereq_technology_name)
     if not self.prerequisites then
-        return self
+        return self, true -- should it be true? false?
     end
 
-    self.prerequisites = table.filter(self.prerequisites, function(prereq) return prereq ~= prereq_technology_name end)
+    for i, prereq in pairs(self.prerequisites) do
+      if prereq == prereq_technology_name then
+        table.remove(self.prerequisites, i)
+        return self, true -- remove prereq succeeds
+      end
+    end
 
-    return self
+    return self, false -- remove prereq fails
 end
 
 metas.remove_pack = function(self, science_pack_name)
     if not self.unit then
-        return self
+        return self, true -- should it be true? false?
     end
 
-    self.unit.ingredients = table.filter(self.unit.ingredients, function(ingredient) return ingredient[1] ~= science_pack_name end)
+    for i, ingredient in pairs(self.unit.ingredients) do
+      if ingredient[1] == science_pack_name then
+        table.remove(self.unit.ingredients, i)
+        return self, true -- remove pack succeeds
+      end
+    end
 
-    return self
+    return self, false -- remove pack fails
 end
 
+-- possible to add the same pack twice, should probably check for that
 metas.add_pack = function(self, science_pack_name)
     if self.research_trigger then
         error("WARNING @ \'" .. self.name .. "\':add_pack(): Attempted to add science packs to technology with research_trigger.")
@@ -88,7 +99,7 @@ metas.add_pack = function(self, science_pack_name)
 
     table.insert(self.unit.ingredients, {science_pack_name, 1})
 
-    return self
+    return self, true -- always succeeds
 end
 
 return metas
