@@ -35,6 +35,10 @@ metas.standardize = function(self)
     return self
 end
 
+---@param self table
+---@param prereq_technology_name string
+---@return table self
+---@return boolean success
 metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
@@ -57,6 +61,10 @@ metas.add_prereq = function(self, prereq_technology_name)
     return self, true -- add prereq succeeds
 end
 
+---@param self table
+---@param prereq_technology_name string
+---@return table self
+---@return boolean success
 metas.remove_prereq = function(self, prereq_technology_name)
     if not self.prerequisites then
         return self, true -- should it be true? false?
@@ -72,6 +80,10 @@ metas.remove_prereq = function(self, prereq_technology_name)
     return self, false -- remove prereq fails
 end
 
+---@param self table
+---@param science_pack_name string
+---@return table self
+---@return boolean success
 metas.remove_pack = function(self, science_pack_name)
     if not self.unit then
         return self, true -- should it be true? false?
@@ -88,6 +100,10 @@ metas.remove_pack = function(self, science_pack_name)
 end
 
 -- possible to add the same pack twice, should probably check for that
+---@param self table
+---@param science_pack_name string
+---@return table self
+---@return boolean success
 metas.add_pack = function(self, science_pack_name)
     if self.research_trigger then
         error("WARNING @ \'" .. self.name .. "\':add_pack(): Attempted to add science packs to technology with research_trigger.")
@@ -97,9 +113,15 @@ metas.add_pack = function(self, science_pack_name)
         self.unit = {ingredients = {}}
     end
 
+    for _, ingredient in pairs(self.unit.ingredients) do
+      if ingredient[1] == science_pack_name then
+        return self, true -- add pack fails, it already exists
+      end
+    end
+
     table.insert(self.unit.ingredients, {science_pack_name, 1})
 
-    return self, true -- always succeeds
+    return self, true -- add pack succeeds
 end
 
 return metas
