@@ -333,11 +333,11 @@ end
 ---@param new? string
 py.global_prerequisite_replacer = function(old, new)
   if not data.raw.technology[old] then
-      log("WARNING @ py.global_replace_prerequesite(): Technology " .. old .. " does not exist")
+      log("WARNING @ py.global_prerequisite_replacer(): Technology " .. old .. " does not exist")
       return
   end
   if new and not data.raw.technology[new] then
-      log("WARNING @ py.global_replace_prerequesite(): Technology " .. new .. " does not exist")
+      log("WARNING @ py.global_prerequisite_replacer(): Technology " .. new .. " does not exist")
       return
   end
   if new then
