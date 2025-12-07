@@ -105,9 +105,9 @@ metas.add_unlock = function(self, technology_name)
 
     -- skip adding unlocks twice
     for _, effect in pairs(technology.effects) do
-      if effect.type == "unlock-recipe" and effect.recipe == self.name then
-        return self, false -- fails, already in tech
-      end
+        if effect.type == "unlock-recipe" and effect.recipe == self.name then
+            return self, false -- fails, already in tech
+        end
     end
 
     table_insert(technology.effects, {type = "unlock-recipe", recipe = self.name})
