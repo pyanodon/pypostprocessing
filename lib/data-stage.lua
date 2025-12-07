@@ -328,6 +328,34 @@ py.global_item_replacer = function(old, new, blackrecipe)
     end
 end
 
+---replaces every instance of the old prerequesite with the new one. if the new one is omitted, removes the old prerequesite instead
+---@param old string
+---@param new string
+py.global_replace_prerequesite = function(old, new)
+  if not data.raw.technology[old] then
+      log("WARNING @ py.global_replace_prerequesite(): Technology " .. old .. " does not exist")
+      return
+  end
+  if new and not data.raw.technology[new] then
+      log("WARNING @ py.global_replace_prerequesite(): Technology " .. new .. " does not exist")
+      return
+  end
+  if new then
+    for _, tech in pairs(data.raw.technology) do
+      for i, prereq in pairs(tech.prerequesites or {}) do
+        if prereq == old then
+          tech.prerequesites[i] = new
+          break
+        end
+      end
+    end
+  else -- no need to do fancy checks, just remove it
+    for tech in pairs(data.raw.technology) do
+      TECHNOLOGY(tech):remove_prereq(old)
+    end
+  end
+end
+
 ---adds a small icon to the top right corner of a recipe
 ---@param recipe data.RecipePrototype
 ---@param corner table
