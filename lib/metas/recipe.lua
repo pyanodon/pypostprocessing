@@ -81,60 +81,84 @@ py.allow_productivity = function(recipe_names)
     end
 end
 
+---@param self table
+---@param technology_name string|table
+---@return table self
+---@return boolean success
 metas.add_unlock = function(self, technology_name)
     if type(technology_name) == "table" then
+        local success = true
         for _, tech in pairs(technology_name) do
-            self:add_unlock(tech)
+            _, this_success = self:add_unlock(tech)
+            success = success and this_success -- if any addition fails, the whole check fails
         end
-        return self
+        return self, success
     end
 
     local technology = data.raw.technology[technology_name]
     if not technology then
         log("WARNING @ \'" .. self.name .. "\':add_unlock(): Technology " .. technology_name .. " does not exist")
-        return self
+        return self, false -- fails, tech does not exist
     end
 
-    if not technology.effects then
-        technology.effects = {}
+    technology.effects = technology.effects or {}
+
+    -- skip adding unlocks twice
+    for _, effect in pairs(technology.effects) do
+      if effect.type == "unlock-recipe" and effect.recipe == self.name then
+        return self, false -- fails, already in tech
+      end
     end
 
     table_insert(technology.effects, {type = "unlock-recipe", recipe = self.name})
 
     self.enabled = false
 
-    return self
+    return self, true
 end
 
+---@param self table
+---@param technology_name string|table
+---@return table self
+---@return boolean success
 metas.remove_unlock = function(self, technology_name)
     if type(technology_name) == "table" then
+        local success = true
         for _, tech in pairs(technology_name) do
-            self:remove_unlock(tech)
+            local _, this_success = self:remove_unlock(tech)
+            success = success and this_success
         end
-        return self
+        return self, success -- if any removal fails, the whole check fails
     end
 
     local technology = data.raw.technology[technology_name]
     if not technology then
         log("WARNING @ \'" .. self.name .. "\':remove_unlock(): Technology " .. technology_name .. " does not exist")
-        return self
+        return self, false -- fails, tech does not exist
+    elseif not technology.effects then
+        return self, false -- tech effects do not exist
     end
 
-    if not technology.effects then
-        return self
+    for i, effect in pairs(technology.effects) do
+        if effect.recipe == self.name then
+            table.remove(technology.effects, i)
+            return self, true -- successfully removed recipe from tech
+        end
     end
 
-    technology.effects = table.filter(technology.effects, function(effect)
-        return effect.recipe ~= self.name
-    end)
-
-    return self
+    return self, false -- recipe not part of tech
 end
 
+---@param self table
+---@param technology_old string|table
+---@param technology_new string|table
+---@return table self
+---@return boolean success
 metas.replace_unlock = function(self, technology_old, technology_new)
-    self:remove_unlock(technology_old):add_unlock(technology_new)
+    local _, success_remove = self:remove_unlock(technology_old)
+    local _, success_add = self:add_unlock(technology_new)
 
-    return self
+    return self, success_remove and success_add -- fails if either fails
 end
 
 do
@@ -144,7 +168,7 @@ do
         if type == "string" then
             if not FLUID[new] and not ITEM[new] and not unsafe then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
-                return
+                return false
             end
             for _, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
@@ -164,7 +188,7 @@ do
             new = table.deepcopy(new)
             if not FLUID[new.name] and not ITEM[new.name] and not unsafe then
                 log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
-                return
+                return false
             end
             for k, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
@@ -172,39 +196,68 @@ do
                 end
             end
         end
+        return true -- must have been a success! cant early return on success because of possible repeated results
     end
 
+    ---@param self table
+    ---@param old_ingredient string
+    ---@param new_ingredient string|table
+    ---@param new_amount? int
+    ---@return table self
+    ---@return boolean success
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, false)
-        return self
+        local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, false)
+        return self, success
     end
 
+    ---@param self table
+    ---@param old_ingredient string
+    ---@param new_ingredient string|table
+    ---@param new_amount? int
+    ---@return table self
+    ---@return boolean success
     metas.replace_ingredient_unsafe = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
-        return self
+        local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
+        return self, success
     end
 
+    ---@param self table
+    ---@param old_result string
+    ---@param new_result string|table
+    ---@param new_amount? int
+    ---@return table self
+    ---@return boolean success
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        replacement_helper(self, self.results, old_result, new_result, new_amount, false)
+        local success = replacement_helper(self, self.results, old_result, new_result, new_amount, false)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
         end
-        return self
+        return self, success
     end
 
+    ---@param self table
+    ---@param old_result string
+    ---@param new_result string|table
+    ---@param new_amount? int
+    ---@return table self
+    ---@return boolean success
     metas.replace_result_unsafe = function(self, old_result, new_result, new_amount)
         self:standardize()
-        replacement_helper(self, self.results, old_result, new_result, new_amount, true)
+        local success = replacement_helper(self, self.results, old_result, new_result, new_amount, true)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
         end
-        return self
+        return self, success
     end
 end
 
+---@param self table
+---@param ingredient data.IngredientPrototype
+---@return table self
+---@return boolean success
 metas.add_ingredient_unsafe = function(self, ingredient)
     self:standardize()
     -- Ensure that this ingredient does not already exist in this recipe.
@@ -213,8 +266,8 @@ metas.add_ingredient_unsafe = function(self, ingredient)
         if existing.name == ingredient.name and existing.type == ingredient.type then
             if existing.amount and ingredient.amount then
                 existing.amount = existing.amount + ingredient.amount
-                existing.ignored_by_productivity = (existing.ignored_by_productivity or 0) + (ingredient.ignored_by_productivity or 0)
-                return self
+                existing.ignored_by_stats = (existing.ignored_by_stats or 0) + (ingredient.ignored_by_stats or 0)
+                return self, true
             end
         end
     end
@@ -224,25 +277,37 @@ metas.add_ingredient_unsafe = function(self, ingredient)
     end
 
     table_insert(self.ingredients, ingredient)
-    return self
+    return self, true
 end
 
+---@param self table
+---@param ingredient data.IngredientPrototype
+---@return table self
+---@return boolean success
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
         log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
-        return self
+        return self, false
     end
 
     return metas.add_ingredient_unsafe(self, ingredient)
 end
 
+---@param self table
+---@param result data.ProductPrototype
+---@return table self
+---@return boolean success
 metas.add_result = function(self, result)
     self:standardize()
     table_insert(self.results, result)
-    return self
+    return self, true
 end
 
+---@param self table
+---@param ingredient_name string
+---@return table self
+---@return int amount_removed
 metas.remove_ingredient = function(self, ingredient_name)
     self:standardize()
     local amount_removed = 0
@@ -256,6 +321,10 @@ metas.remove_ingredient = function(self, ingredient_name)
     return self, amount_removed
 end
 
+---@param self table
+---@param result_name string
+---@return table self
+---@return int amount_removed
 metas.remove_result = function(self, result_name)
     self:standardize()
     local amount_removed = 0
@@ -280,6 +349,11 @@ metas.clear_results = function(self)
     return self, true -- impossible to fail
 end
 
+---@param self table
+---@param result_name string
+---@param percent float
+---@return table self
+---@return boolean success
 metas.multiply_result_amount = function(self, result_name, percent)
     self:standardize()
 
@@ -289,18 +363,23 @@ metas.multiply_result_amount = function(self, result_name, percent)
             result.amount = math.ceil(amount * percent)
             if result.amount == 0 then
                 self:remove_result(result_name)
-                return
+                return self, true -- successful multiply
             end
             result.amount_min = nil
             result.amount_max = nil
-            return self
+            return self, true -- successful multiply
         end
     end
 
     log("WARNING @ \'" .. self.name .. "\':multiply_result_amount(): Result " .. result_name .. " not found")
-    return self
+    return self, false -- could not find result
 end
 
+---@param self table
+---@param ingredient_name string
+---@param percent float
+---@return table self
+---@return boolean success
 metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
     self:standardize()
 
@@ -309,72 +388,94 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
             ingredient.amount = math.ceil(ingredient.amount * percent)
             if ingredient.amount == 0 then
                 self:remove_ingredient(ingredient_name)
-                return
+                return self, true -- successful multiply
             end
-            return self
+            return self, true -- successful multiply
         end
     end
 
     log("WARNING @ \'" .. self.name .. "\':multiply_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
-    return self
+    return self, false -- could not find ingredient
 end
 
+---@param self table
+---@param result_name string
+---@param increase int
+---@return table self
+---@return boolean success
 metas.add_result_amount = function(self, result_name, increase)
     self:standardize()
 
     for _, result in pairs(self.results) do
         if result.name == result_name then
             result.amount = result.amount + increase
-            if result.amount == 0 then
+            if result.amount <= 0 then
                 self:remove_result(result_name)
-                return
+                return self, true -- successful addition
             end
-            return self
+            return self, true -- successful addition
         end
     end
 
     log("WARNING @ \'" .. self.name .. "\':add_result_amount(): Result " .. result_name .. " not found")
-    return self
+    return self, false -- could not find result
 end
 
+---@param self table
+---@param ingredient_name string
+---@param increase int
+---@return table self
+---@return boolean success
 metas.add_ingredient_amount = function(self, ingredient_name, increase)
     self:standardize()
 
     for _, ingredient in pairs(self.ingredients) do
         if ingredient.name == ingredient_name then
             ingredient.amount = ingredient.amount + increase
-            if ingredient.amount == 0 then
+            if ingredient.amount <= 0 then
                 self:remove_ingredient(ingredient_name)
-                return
+                return self, true -- successful addition
             end
-            return self
+            return self, true -- successful addition
         end
     end
 
     log("WARNING @ \'" .. self.name .. "\':add_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
-    return self
+    return self, false -- could not find ingredient
 end
 
+---@param self table
+---@param result_name string
+---@param amount int
+---@return table self
+---@return boolean success
 metas.set_result_amount = function(self, result_name, amount)
-    self:replace_result(result_name, result_name, amount)
-    return self
+    return self:replace_result(result_name, result_name, amount)
 end
 
+---@param self table
+---@param ingredient_name string
+---@param amount int
+---@return table self
+---@return boolean success
 metas.set_ingredient_amount = function(self, ingredient_name, amount)
-    self:replace_ingredient(ingredient_name, ingredient_name, amount)
-    return self
+    return self:replace_ingredient(ingredient_name, ingredient_name, amount)
 end
 
+---@param self table
+---@param category_name string
+---@return table self
+---@return boolean success
 metas.change_category = function(self, category_name)
     self:standardize()
 
     if data.raw["recipe-category"][category_name] then
         self.category = category_name
+        return self, true -- successful set
     else
         log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name .. " not found")
+        return self, false -- category does not exist
     end
-
-    return self
 end
 
 --- Get the prototype for the main_product using the same logic the game uses.
