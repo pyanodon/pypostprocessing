@@ -330,8 +330,8 @@ end
 
 ---replaces every instance of the old prerequesite with the new one. if the new one is omitted, removes the old prerequesite instead
 ---@param old string
----@param new string
-py.global_replace_prerequesite = function(old, new)
+---@param new? string
+py.global_prerequisite_replacer = function(old, new)
   if not data.raw.technology[old] then
       log("WARNING @ py.global_replace_prerequesite(): Technology " .. old .. " does not exist")
       return
@@ -342,9 +342,9 @@ py.global_replace_prerequesite = function(old, new)
   end
   if new then
     for _, tech in pairs(data.raw.technology) do
-      for i, prereq in pairs(tech.prerequesites or {}) do
+      for i, prereq in pairs(tech.prerequisites or {}) do
         if prereq == old then
-          tech.prerequesites[i] = new
+          tech.prerequisites[i] = new
           break
         end
       end
