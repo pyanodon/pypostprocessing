@@ -272,7 +272,12 @@ end
 
 metas.clear_ingredients = function(self)
     self.ingredients = {}
-    return self
+    return self, true -- impossible to fail
+end
+
+metas.clear_results = function(self)
+    self.ingredients = {}
+    return self, true -- impossible to fail
 end
 
 metas.multiply_result_amount = function(self, result_name, percent)
