@@ -1,10 +1,10 @@
----@class data.ItemPrototype
----@field public add_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
----@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
----@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
----@field public spoil fun(self: data.ItemPrototype, spoil_result: (string | table), spoil_ticks: number): data.ItemPrototype
-
 local item_prototypes = defines.prototypes.item
+
+---@class data.ItemPrototype
+---@field public add_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype, boolean
+---@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype, boolean
+---@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
+---@field public spoil fun(self: data.ItemPrototype, spoil_result: (string | table), spoil_ticks: number): data.ItemPrototype, boolean
 ITEM = setmetatable({}, {
     ---@param item data.ItemPrototype
     __call = function(self, item)
@@ -36,20 +36,39 @@ ITEM = setmetatable({}, {
 
 local metas = {}
 
+---@param self data.ItemPrototype
+---@param flag string
+---@return data.ItemPrototype self
+---@return boolean success
 metas.add_flag = function(self, flag)
-    if not self.flags then self.flags = {} end
-    table.insert(self.flags, flag)
-    return self
-end
-
-metas.remove_flag = function(self, flag)
-    if not self.flags then return self end
-    for i, f in pairs(self.flags) do
-        if f == flag then table.remove(self.flags, i) end
+    self.flags = self.flags or {}  
+    for _, f in pairs(self.flags) do
+        if f == flag then
+            return self, false -- flag already exists
+        end
     end
-    return self
+    table.insert(self.flags, flag)
+    return self, true -- flag added
 end
 
+---@param self data.ItemPrototype
+---@param flag string
+---@return data.ItemPrototype self
+---@return boolean success
+metas.remove_flag = function(self, flag)
+    if not self.flags then return self, false end
+    for i, f in pairs(self.flags) do
+        if f == flag then
+            table.remove(self.flags, i)
+            return self, true -- flag found and removed
+        end
+    end
+    return self, false -- could not find flag
+end
+
+---@param self data.ItemPrototype
+---@param flag string
+---@return boolean has_flag
 metas.has_flag = function(self, flag)
     if not self.flags then return false end
     for _, f in pairs(self.flags) do
@@ -82,8 +101,13 @@ py.spoil_triggers = {
     end
 }
 
+---@param self data.ItemPrototype
+---@param spoil_result string|data.SpoilToTriggerResult
+---@param spoil_ticks int
+---@return table self
+---@return boolean success
 metas.spoil = function(self, spoil_result, spoil_ticks)
-    if not feature_flags.spoiling then return end
+    if not feature_flags.spoiling then return self, false end -- spoilage is off
     if not spoil_ticks then error("No spoil ticks provided for item " .. self.name) end
 
     if type(spoil_result) == "string" then
@@ -96,7 +120,7 @@ metas.spoil = function(self, spoil_result, spoil_ticks)
 
     self.spoil_ticks = spoil_ticks
 
-    return self
+    return self, true
 end
 
 return metas

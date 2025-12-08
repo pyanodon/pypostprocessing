@@ -1,3 +1,4 @@
+---@class data.TilePrototype
 TILE = setmetatable(data.raw.tile, {
     ---@param tile data.TilePrototype
     __call = function(self, tile)
