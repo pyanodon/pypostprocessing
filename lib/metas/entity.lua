@@ -1,12 +1,12 @@
 local collision_mask_util = require "__core__/lualib/collision-mask-util"
 
----@class data.EntityPrototype
----@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype
----@field public add_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype
----@field public remove_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype
----@field public has_flag fun(self: data.EntityPrototype, flag: string): boolean
-
 local entity_types = defines.prototypes.entity
+
+---@class data.EntityPrototype
+---@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype, boolean
+---@field public add_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
+---@field public remove_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
+---@field public has_flag fun(self: data.EntityPrototype, flag: string): boolean
 ENTITY = setmetatable({}, {
     ---@param entity data.EntityPrototype
     __call = function(self, entity)
@@ -57,9 +57,9 @@ metas.standardize = function(self)
     return self
 end
 
----@param self table
+---@param self data.EntityPrototype
 ---@param flag string
----@return table self
+---@return data.EntityPrototype self
 ---@return boolean success
 metas.add_flag = function(self, flag)
     self.flags = self.flags or {}  
@@ -72,9 +72,9 @@ metas.add_flag = function(self, flag)
     return self, true -- flag added
 end
 
----@param self table
+---@param self data.EntityPrototype
 ---@param flag string
----@return table self
+---@return data.EntityPrototype self
 ---@return boolean success
 metas.remove_flag = function(self, flag)
     if not self.flags then return self, false end
@@ -87,7 +87,7 @@ metas.remove_flag = function(self, flag)
     return self, false -- could not find flag
 end
 
----@param self table
+---@param self data.EntityPrototype
 ---@param flag string
 ---@return boolean has_flag
 metas.has_flag = function(self, flag)

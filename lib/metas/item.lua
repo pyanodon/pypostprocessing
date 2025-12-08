@@ -1,10 +1,10 @@
----@class data.ItemPrototype
----@field public add_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
----@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype
----@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
----@field public spoil fun(self: data.ItemPrototype, spoil_result: (string | table), spoil_ticks: number): data.ItemPrototype
-
 local item_prototypes = defines.prototypes.item
+
+---@class data.ItemPrototype
+---@field public add_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype, boolean
+---@field public remove_flag fun(self: data.ItemPrototype, flag: string): data.ItemPrototype, boolean
+---@field public has_flag fun(self: data.ItemPrototype, flag: string): boolean
+---@field public spoil fun(self: data.ItemPrototype, spoil_result: (string | table), spoil_ticks: number): data.ItemPrototype, boolean
 ITEM = setmetatable({}, {
     ---@param item data.ItemPrototype
     __call = function(self, item)
@@ -36,9 +36,9 @@ ITEM = setmetatable({}, {
 
 local metas = {}
 
----@param self table
+---@param self data.ItemPrototype
 ---@param flag string
----@return table self
+---@return data.ItemPrototype self
 ---@return boolean success
 metas.add_flag = function(self, flag)
     self.flags = self.flags or {}  
@@ -51,9 +51,9 @@ metas.add_flag = function(self, flag)
     return self, true -- flag added
 end
 
----@param self table
+---@param self data.ItemPrototype
 ---@param flag string
----@return table self
+---@return data.ItemPrototype self
 ---@return boolean success
 metas.remove_flag = function(self, flag)
     if not self.flags then return self, false end
@@ -66,7 +66,7 @@ metas.remove_flag = function(self, flag)
     return self, false -- could not find flag
 end
 
----@param self table
+---@param self data.ItemPrototype
 ---@param flag string
 ---@return boolean has_flag
 metas.has_flag = function(self, flag)
@@ -101,8 +101,8 @@ py.spoil_triggers = {
     end
 }
 
----@param self table
----@param spoil_result string|table
+---@param self data.ItemPrototype
+---@param spoil_result string|data.SpoilToTriggerResult
 ---@param spoil_ticks int
 ---@return table self
 ---@return boolean success

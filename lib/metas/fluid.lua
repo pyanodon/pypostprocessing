@@ -1,3 +1,4 @@
+---@class data.FluidPrototype
 FLUID = setmetatable(data.raw.fluid, {
     ---@param fluid data.FluidPrototype
     __call = function(self, fluid)
