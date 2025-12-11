@@ -208,7 +208,12 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
     end
 end
 
---handles all adjustments for each ingredient and result changes in autorecipe
+---handles all adjustments for each ingredient and result changes in autorecipe
+---@param ingredients [data.IngredientPrototype]
+---@param results [data.ProductPrototype]
+---@param previous_ingredients [data.IngredientPrototype]
+---@param previous_results [data.ProductPrototype]
+---@return [data.IngredientPrototype], [data.ProductPrototype]
 local function recipe_item_builder(ingredients, results, previous_ingredients, previous_results)
     local ing_table = table.deepcopy(previous_ingredients)
     local result_table = table.deepcopy(previous_results)
@@ -235,7 +240,7 @@ local function recipe_item_builder(ingredients, results, previous_ingredients, p
 end
 
 ---Provides an interface to quickly build tiered recipes. See recipes-auto-brains.lua for an example
----@param params table
+---@param params {name:RecipeID,category:RecipeCategoryID,subgroup:data.ItemSubGroupID,order:data.Order,main_product?:string,crafting_speed:double,allowed_module_categories:[data.ModuleCategoryID],number_icons:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
 py.autorecipes = function(params)
     local previous_ingredients = {}
     local previous_results = {}
