@@ -10,8 +10,9 @@ require "compound-entities"
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity
 ---@param sprite string
----@param time_to_live integer
----@param blink_interval integer?
+---@param time_to_live integer? default 60 ticks
+---@param blink_interval integer? default 30 ticks
+---@return LuaRenderObject
 py.draw_error_sprite = function(entity, sprite, time_to_live, blink_interval)
     return rendering.draw_sprite {
         sprite = sprite,
@@ -42,7 +43,7 @@ end
 
 ---Randomizes a position by a factor.
 ---@param position MapPosition
----@param factor number?
+---@param factor number? default 1
 ---@return MapPosition
 py.randomize_position = function(position, factor)
     local x = position.x or position[1]
@@ -189,6 +190,7 @@ local si_prefixes = {
 ---formats a number into the amount of energy. Requires 'W' or 'J' as the second parameter
 ---@param energy number
 ---@param watts_or_joules string
+---@return LocalisedString
 py.format_energy = function(energy, watts_or_joules)
     if watts_or_joules == "W" then
         watts_or_joules = "si-unit-symbol-watt"

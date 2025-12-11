@@ -168,15 +168,16 @@ end
 
 ---Returns a composite icon with a base icon and up to 4 child icons.
 ---The child icons are placed in the corners of the base icon, and can be tinted with a shadow color.
----@param base_prototype_string string
----@param child_top_left string?
----@param child_top_right string?
----@param child_bottom_left string?
----@param child_bottom_right string?
----@param shadow_alpha number?
----@param shadow_scale number?
----@param child_scale number?
----@param shift number?
+---@param base_prototype_string data.FileName
+---@param child_top_left data.FileName?
+---@param child_top_right data.FileName?
+---@param child_bottom_left data.FileName?
+---@param child_bottom_right data.FileName?
+---@param shadow_alpha number? default 0.6
+---@param shadow_scale number? default 0.6
+---@param child_scale number? default 0.5
+---@param shift number? default 10
+---@return [data.IconData]
 function py.composite_icon(base_prototype_string, child_top_left, child_top_right, child_bottom_left, child_bottom_right,
                            shadow_alpha, shadow_scale, child_scale, shift)
     shadow_alpha = shadow_alpha or 0.6
@@ -359,6 +360,7 @@ end
 ---adds a small icon to the top right corner of a recipe
 ---@param recipe data.RecipePrototype
 ---@param corner table
+---@return [data.IconData]
 py.add_corner_icon_to_recipe = function(recipe, corner)
     local icon, icon_size, icons
     local result
@@ -427,9 +429,8 @@ end
 ---Retruns a version of graphics_set with the following properties:
 ---The machine will follow a binary finite state machine (bfsm) to determine the current active animation.
 ---Example (sinter machine): https://github.com/pyanodon/pybugreports/issues/588
----@param states data.VisualState[]
----@param raw_working_visualisations data.WorkingVisualisation[]
----@param shadow data.Animation?
+---@param params {states:[data.VisualState], working_visualisations:[data.WorkingVisualisation], shadow:data.Animation?}
+---@return data.WorkingVisualisations
 py.finite_state_machine_working_visualisations = function(params)
     local states = params.states
 
@@ -500,6 +501,7 @@ end
 
 ---Returns a flipped animation
 ---@param animation4way data.Animation4Way
+---@return data.Animation4Way
 py.flip_4way_animation = function(animation4way)
     local inverse = {
         north = "south",

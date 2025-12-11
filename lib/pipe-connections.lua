@@ -1,11 +1,11 @@
 ---Define pipe connection pipe pictures by coping from an existing entity in the base mod.
 ---@param pictures string
----@param shift_north table?
----@param shift_south table?
----@param shift_west table?
----@param shift_east table?
----@param replacements table?
----@return table
+---@param shift_north Vector?
+---@param shift_south Vector?
+---@param shift_west Vector?
+---@param shift_east Vector?
+---@param replacements {north:data.Sprite,east:data.Sprite,south:data.Sprite,west:data.Sprite}?
+---@return data.Sprite4Way
 py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shift_east, replacements)
     local new_pictures = {
         north = shift_north and
@@ -63,14 +63,14 @@ end
 ---@param s boolean?
 ---@param w boolean?
 ---@param e boolean?
----@return table
+---@return data.Sprite4Way
 py.pipe_covers = function(n, s, w, e)
     if (n == nil and s == nil and w == nil and e == nil) then
         n, s, e, w = true, true, true, true
     end
 
-    n =
-        n and {
+    return {
+        north = n and {
             layers = {
                 {
                     filename = "__base__/graphics/entity/pipe-covers/pipe-cover-north.png",
@@ -88,9 +88,8 @@ py.pipe_covers = function(n, s, w, e)
                     draw_as_shadow = true
                 }
             }
-        } or py.empty_image()
-    e =
-        e and {
+        } or py.empty_image(),
+        east = e and {
             layers = {
                 {
                     filename = "__base__/graphics/entity/pipe-covers/pipe-cover-east.png",
@@ -108,9 +107,8 @@ py.pipe_covers = function(n, s, w, e)
                     draw_as_shadow = true
                 }
             }
-        } or py.empty_image()
-    s =
-        s and {
+        } or py.empty_image(),
+        south = s and {
             layers = {
                 {
                     filename = "__base__/graphics/entity/pipe-covers/pipe-cover-south.png",
@@ -128,9 +126,8 @@ py.pipe_covers = function(n, s, w, e)
                     draw_as_shadow = true
                 }
             }
-        } or py.empty_image()
-    w =
-        w and {
+        } or py.empty_image(),
+        west = w and {
             layers = {
                 {
                     filename = "__base__/graphics/entity/pipe-covers/pipe-cover-west.png",
@@ -149,13 +146,13 @@ py.pipe_covers = function(n, s, w, e)
                 }
             }
         } or py.empty_image()
-
-    return {north = n, south = s, east = e, west = w}
+    }
 end
 
 ---Define nice looking pipe pictures based on the space age electromagnetic plant.
 ---These do not come with pipe covers! However there is a frozen variant.
 ---See seaweed-crop.lua in alien life for an example implementation.
+---@return data.Sprite4Way
 py.sexy_pipe_pictures = function()
     local function by_direction(pipe_direction)
         return {
@@ -184,6 +181,7 @@ py.sexy_pipe_pictures = function()
 end
 
 ---Define nice looking pipe frozen pictures based on the space age electromagnetic plant.
+---@return data.Sprite4Way
 py.sexy_pipe_pictures_frozen = function()
     local function by_direction(pipe_direction)
         return {
