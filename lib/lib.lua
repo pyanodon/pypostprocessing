@@ -274,19 +274,18 @@ if py.stage == "data" then
     }
 end
 
-local data_message_sent = false
-local control_message_sent = false
 local control_globals_outside_of_events = false
 if py.stage == "control" then
-    py.on_event(defines.events.on_tick, function(_)
-        ---@diagnostic disable-next-line: undefined-field
-        if not data_message_sent and prototypes.mod_data["py-undocumented-globals"].get("exist") then
-            game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
-            data_message_sent = true
-        end
-        if not control_message_sent and control_globals_outside_of_events then
-            game.print("[color=255,0,0]found references to undefined globals in control stage, check logs[/color]")
-            control_message_sent = true
+    py.on_event(py.events.on_init(), function(changes --[[@as ConfigurationChangedData --]])
+        -- We only run if it's a new map or startup change
+        if not changes or changes.new_version or changes.migration_applied or changes.mod_startup_settings_changed or table_size(changes.mod_changes) > 0 then
+            ---@diagnostic disable-next-line: undefined-field
+            if prototypes.mod_data["py-undocumented-globals"].get("exist") then
+                game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
+            end
+            if control_globals_outside_of_events then
+                game.print("[color=255,0,0]found references to undefined globals in control stage, check logs[/color]")
+            end
         end
     end)
 end
