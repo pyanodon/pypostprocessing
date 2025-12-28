@@ -37,7 +37,7 @@ if mods["pyalienlife"] then
         local fluid = FLUID {
             type = "fluid",
             name = fluid_name,
-            localised_name = {"", "Smart farming with ", {"item-name." .. farm.seed}},
+            localised_name = {"", "Smart farming with ", {"item-name." .. farm.name}},
             icon = resource.icon,
             icon_size = resource.icon_size,
             default_temperature = 15,
@@ -51,7 +51,7 @@ if mods["pyalienlife"] then
 
         for _, recipe_data in ipairs(farm.recipes) do
             local recipe = RECIPE(recipe_data.recipe_name)
-            recipe:add_ingredient {name = farm.seed, amount = 1, type = "item"}
+            recipe:add_ingredient {name = farm.name, amount = 1, type = "item"}
             recipe.results[1] = {type = "fluid", name = fluid_name, amount = math.floor(recipe_data.crop_output) * 529}
         end
     end
