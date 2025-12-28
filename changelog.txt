@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.40
-Date: ????
+Date: 2025-12-28
   Changes:
     - Added unsafe modes for recipe functions, allowing the alteration of recipes regardless if the items/fluids exist.
     - Add compatibility with AAI Signal Transmission. Now researched after logistics science and uses contemporary ingredients
