@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
-Version: 3.0.41
+Version: 3.0.42
 Date: ???
+  Changes:
+    - Fix load failure with zh-cn locale. Resolves https://github.com/pyanodon/pybugreports/issues/1347
+---------------------------------------------------------------------------------------------------
+Version: 3.0.41
+Date: 2025-12-28
   Changes:
     - Fix crash in YAFC from smart farms having a field renamed
 ---------------------------------------------------------------------------------------------------
