@@ -17,6 +17,11 @@ py.empty_image = function()
     }
 end
 
+---Returns if the feature flag spoilage and the mod setting for decay are enabled
+py.spoilage_enabled = function()
+    return feature_flags.spoiling and mods.pyalternativeenergy and settings.startup["py-enable-decay"].value or false
+end
+
 ---Returns a localised name with the respective properties of this item/entity/recipe, generalized to make localisation easier
 ---@param base_name string
 ---@param tier string?
