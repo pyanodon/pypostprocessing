@@ -15,6 +15,8 @@ local lib = {
 ---@field public set_fields fun(self: data.AnyPrototype, fields: table): data.AnyPrototype
 ---@field public set fun(self: data.AnyPrototype, field: string, value: any): data.AnyPrototype
 ---@field public delete fun(self: data.AnyPrototype)
+---@field public hide fun(self: data.AnyPrototype): data.AnyPrototype
+---@field public unhide fun(self: data.AnyPrototype): data.AnyPrototype
 
 for _, meta in pairs(lib) do
     meta.copy = function(self, new_name)
@@ -49,6 +51,18 @@ for _, meta in pairs(lib) do
 
     meta.delete = function(self)
         data.raw[self.type][self.name] = nil
+    end
+
+    meta.hide = function(self)
+        self.hidden = true
+        self.hidden_in_factoriopedia = true
+        return self
+    end
+
+    meta.unhide = function(self)
+        self.hidden = nil
+        self.hidden_in_factoriopedia = nil
+        return self
     end
 end
 
