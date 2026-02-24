@@ -309,9 +309,9 @@ end
 
 ---replace an item/fluid in every recipes ingredients/results
 ---best used to merge items that are duplicated in mods that should be the same
----@param old string
----@param new string
----@param blackrecipe (string | table)?
+---@param old data.ItemID
+---@param new data.ItemID
+---@param blackrecipe (data.RecipeID | data.RecipeID[])?
 py.global_item_replacer = function(old, new, blackrecipe)
     if not data.raw.item[old] and not data.raw.fluid[old] then
         local errstring = "Could not find item or fluid " .. old
@@ -335,31 +335,26 @@ py.global_item_replacer = function(old, new, blackrecipe)
 end
 
 ---replaces every instance of the old prerequesite with the new one. if the new one is omitted, removes the old prerequesite instead
----@param old string
----@param new? string
+---@param old data.TechnologyID
+---@param new? data.TechnologyID
 py.global_prerequisite_replacer = function(old, new)
-  if not data.raw.technology[old] then
-      log("WARNING @ py.global_prerequisite_replacer(): Technology " .. old .. " does not exist")
-      return
-  end
-  if new and not data.raw.technology[new] then
-      log("WARNING @ py.global_prerequisite_replacer(): Technology " .. new .. " does not exist")
-      return
-  end
-  if new then
-    for _, tech in pairs(data.raw.technology) do
-      for i, prereq in pairs(tech.prerequisites or {}) do
-        if prereq == old then
-          tech.prerequisites[i] = new
-          break
+    if not data.raw.technology[old] then
+        log("WARNING @ py.global_prerequisite_replacer(): Technology " .. old .. " does not exist")
+        return
+    end
+    if new and not data.raw.technology[new] then
+        log("WARNING @ py.global_prerequisite_replacer(): Technology " .. new .. " does not exist")
+        return
+    end
+    if new then
+        for tech in pairs(data.raw.technology) do
+            TECHNOLOGY(tech):replace_prereq(old, new)
         end
-      end
+    else -- no need to do fancy checks, just remove it
+        for tech in pairs(data.raw.technology) do
+            TECHNOLOGY(tech):remove_prereq(old)
+        end
     end
-  else -- no need to do fancy checks, just remove it
-    for tech in pairs(data.raw.technology) do
-      TECHNOLOGY(tech):remove_prereq(old)
-    end
-  end
 end
 
 ---adds a small icon to the top right corner of a recipe
