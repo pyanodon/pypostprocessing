@@ -1,9 +1,10 @@
 ---@class data.TechnologyPrototype
 ---@field public standardize fun(): data.TechnologyPrototype
----@field public add_prereq fun(self, prereq_technology_name: string): data.TechnologyPrototype
----@field public remove_prereq fun(self, prereq_technology_name: string): data.TechnologyPrototype
----@field public remove_pack fun(self, science_pack_name: string): data.TechnologyPrototype
----@field public add_pack fun(self, science_pack_name: string): data.TechnologyPrototype
+---@field public add_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype
+---@field public remove_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype
+---@field public replace_prereq fun(self, old: data.TechnologyID, new: data.TechnologyID): data.TechnologyPrototype
+---@field public remove_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype
+---@field public add_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype
 TECHNOLOGY = setmetatable(data.raw.technology, {
     ---@param technology data.TechnologyPrototype
     __call = function(self, technology)
@@ -33,7 +34,7 @@ metas.standardize = function(self)
 end
 
 ---@param self data.TechnologyPrototype
----@param prereq_technology_name string
+---@param prereq_technology_name data.TechnologyID
 ---@return data.TechnologyPrototype self
 ---@return boolean success
 metas.add_prereq = function(self, prereq_technology_name)
@@ -57,13 +58,11 @@ metas.add_prereq = function(self, prereq_technology_name)
 end
 
 ---@param self data.TechnologyPrototype
----@param prereq_technology_name string
+---@param prereq_technology_name data.TechnologyID
 ---@return data.TechnologyPrototype self
 ---@return boolean success
 metas.remove_prereq = function(self, prereq_technology_name)
-    if not self.prerequisites then
-        return self, true -- should it be true? false?
-    end
+    self.prerequisites = self.prerequisites or {}
 
     for i, prereq in pairs(self.prerequisites) do
       if prereq == prereq_technology_name then
@@ -75,8 +74,23 @@ metas.remove_prereq = function(self, prereq_technology_name)
     return self, false -- remove prereq fails
 end
 
+--- Replace old prerequesite with the new one. Fails if the old one was not found.
 ---@param self data.TechnologyPrototype
----@param science_pack_name string
+---@param old data.TechnologyID
+---@param new data.TechnologyID
+---@return data.TechnologyPrototype self
+---@return boolean success
+metas.replace_prereq = function(self, old, new)
+    local _, success = self.remove_prereq(old)
+    if success then
+        return self.add_prereq(new) -- conditional on success of add_prereq
+    else
+        return self, false -- DNE, do not add
+    end
+end
+
+---@param self data.TechnologyPrototype
+---@param science_pack_name data.ItemID
 ---@return data.TechnologyPrototype self
 ---@return boolean success
 metas.remove_pack = function(self, science_pack_name)
@@ -96,7 +110,7 @@ end
 
 -- possible to add the same pack twice, should probably check for that
 ---@param self data.TechnologyPrototype
----@param science_pack_name string
+---@param science_pack_name data.ItemID
 ---@return data.TechnologyPrototype self
 ---@return boolean success
 metas.add_pack = function(self, science_pack_name)
@@ -115,6 +129,14 @@ metas.add_pack = function(self, science_pack_name)
     table.insert(self.unit.ingredients, {science_pack_name, 1})
 
     return self, true -- add pack succeeds
+end
+
+---@param self data.TechnologyPrototype
+---@return data.TechnologyPrototype self
+---@return boolean success
+metas.apply_staged_name = function(self)
+    self.localised_name = {"?", self.localised_name or "technology-name." .. self.name, {"technology-name.py-staged-technology", {"technology-name." .. self.name}}}
+    return self, true
 end
 
 return metas

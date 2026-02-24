@@ -5,6 +5,10 @@ Date: ???
     - Fix load failure with zh-cn locale. Resolves https://github.com/pyanodon/pybugreports/issues/1347
     - Added py.spoilage_enabled() which checks for the feature flag and mod setting
     - Added META:hide() and META:unhide() to hide/unhide the prototype from any in-game browser and factoriopedia
+    - Updated TECHNOLOGY:remove_prereq() and TECHNOLOGY:replace_prereq() annotations
+    - TECHNOLOGY:remove_prereq() will always fail if self.prerequesites is empty or nil
+    - Added TECHNOLOGY:replace_prereq(old, new)
+    - Updated py.global_prerequisite_replacer to use TECHNOLOGY:replace_prereq()
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.41
 Date: 2025-12-28
