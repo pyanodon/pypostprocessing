@@ -131,12 +131,4 @@ metas.add_pack = function(self, science_pack_name)
     return self, true -- add pack succeeds
 end
 
----@param self data.TechnologyPrototype
----@return data.TechnologyPrototype self
----@return boolean success
-metas.apply_staged_name = function(self)
-    self.localised_name = {"?", self.localised_name or "technology-name." .. self.name, {"technology-name.py-staged-technology", {"technology-name." .. self.name}}}
-    return self, true
-end
-
 return metas
