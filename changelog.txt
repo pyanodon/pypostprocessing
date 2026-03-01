@@ -9,6 +9,7 @@ Date: ???
     - TECHNOLOGY:remove_prereq() will always fail if self.prerequesites is empty or nil
     - Added TECHNOLOGY:replace_prereq(old, new)
     - Updated py.global_prerequisite_replacer to use TECHNOLOGY:replace_prereq()
+	- Add compatibility patch for Teleportation Equipment mod
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.41
 Date: 2025-12-28
