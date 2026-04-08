@@ -10,7 +10,7 @@ require "compound-entities"
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity
 ---@param sprite string
----@param time_to_live integer? default 60 ticks
+---@param time_to_live integer? default forever
 ---@param blink_interval integer? default 30 ticks
 ---@return LuaRenderObject
 py.draw_error_sprite = function(entity, sprite, time_to_live, blink_interval)
@@ -20,7 +20,7 @@ py.draw_error_sprite = function(entity, sprite, time_to_live, blink_interval)
         y_scale = entity.prototype.alert_icon_scale or 0.5,
         target = entity,
         surface = entity.surface,
-        time_to_live = time_to_live or 60,
+        time_to_live = time_to_live,
         blink_interval = blink_interval or 30,
         render_layer = "air-entity-info-icon"
     }
