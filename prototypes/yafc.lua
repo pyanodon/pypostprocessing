@@ -61,6 +61,9 @@ if mods["pyalienlife"] then
     data.raw["mining-drill"]["harvester"].input_fluid_box = {}
     ---@diagnostic disable-next-line: missing-fields
     data.raw["mining-drill"]["flora-collector-mk01"].input_fluid_box = {}
+    data.raw["mining-drill"]["flora-collector-mk02"].input_fluid_box = {}
+    data.raw["mining-drill"]["flora-collector-mk03"].input_fluid_box = {}
+    data.raw["mining-drill"]["flora-collector-mk04"].input_fluid_box = {}
 
     -- No rocket launches in farm, make it a normal assembling machine
     data.raw["rocket-silo"]["mega-farm"].type = "assembling-machine"
