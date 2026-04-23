@@ -2,6 +2,7 @@
 Version: 3.0.42
 Date: ???
   Changes:
+    - Allow AdminUnknownFixes to satisfy the Angel's + Py / PyCoalTBaA compatibility gate
     - Fix load failure with zh-cn locale. Resolves https://github.com/pyanodon/pybugreports/issues/1347
     - Added py.spoilage_enabled() which checks for the feature flag and mod setting
     - Added META:hide() and META:unhide() to hide/unhide the prototype from any in-game browser and factoriopedia

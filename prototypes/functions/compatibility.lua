@@ -15,7 +15,7 @@ then
     end
 end
 
-if mods["angelsrefining"] and not mods["PyCoalTBaA"] then
+if mods["angelsrefining"] and not mods["PyCoalTBaA"] and not mods["AdminUnknownFixes"] then
     error("\n\n\n\n\nPlease install PyCoal Touched By an Angel\n\n\n\n\n")
 end
 
