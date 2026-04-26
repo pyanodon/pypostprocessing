@@ -10,7 +10,8 @@ Date: ???
     - Added TECHNOLOGY:replace_prereq(old, new)
     - Updated py.global_prerequisite_replacer to use TECHNOLOGY:replace_prereq()
     - Changed py.draw_error_sprite to default to existing forever instead of 60 ticks
-  	- Add compatibility patch for Teleportation Equipment mod
+    - Add compatibility patch for Teleportation Equipment mod
+    - All flora collectors now have a fake fluid box
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.41
 Date: 2025-12-28
