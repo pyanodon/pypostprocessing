@@ -12,6 +12,7 @@ Date: ???
     - Changed py.draw_error_sprite to default to existing forever instead of 60 ticks
     - Add compatibility patch for Teleportation Equipment mod
     - All flora collectors now have a fake fluid box
+    - Fixed incompatibility with Extended Vanilla. Resolves https://github.com/pyanodon/pybugreports/issues/1265
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.41
 Date: 2025-12-28
