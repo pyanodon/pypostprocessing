@@ -37,10 +37,10 @@ set_underground_recipe("fast-underground-belt", "fast-transport-belt", "undergro
 set_underground_recipe("express-underground-belt", "express-transport-belt", "fast-underground-belt", "fast-transport-belt")
 
 local big_recipe_icons_blacklist = {
-    ["rc-mk01"] = true,
-    ["rc-mk02"] = true,
-    ["rc-mk03"] = true,
-    ["rc-mk04"] = true,
+    -- ["rc-mk01"] = true,
+    -- ["rc-mk02"] = true,
+    -- ["rc-mk03"] = true,
+    -- ["rc-mk04"] = true,
 }
 
 for _, prototype in pairs {"assembling-machine", "furnace", "container", "logistic-container"} do
