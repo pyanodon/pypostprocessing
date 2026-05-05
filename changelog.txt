@@ -14,6 +14,7 @@ Date: ???
     - All flora collectors now have a fake fluid box
     - Fixed incompatibility with Extended Vanilla. Resolves https://github.com/pyanodon/pybugreports/issues/1265
     - Added py.find_latest_undo_action to find the latest undo action referencing a supplied entity
+    - Fixed that reproductive complex had extremely small alt-mode icons. Resolves https://github.com/pyanodon/pybugreports/issues/1377
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.41
 Date: 2025-12-28
