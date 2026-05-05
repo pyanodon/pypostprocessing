@@ -235,3 +235,27 @@ py.get_planet_property = function(planet, property)
     if planet.surface then return planet.surface.get_property(property) end
     return planet.prototype.surface_properties[property]
 end
+
+---Returns the undo item and action associated with this entity
+---@param player_index integer
+---@param entity LuaEntity
+---@param type string UndoRedoAction.type
+---@return uint32? item_index, uint32? action_index
+py.find_latest_undo_action = function(player_index, entity, type)
+    if not player_index or not entity or not entity.valid then return end
+    local stack = game.get_player(player_index).undo_redo_stack
+    local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
+    for i = 1, stack.get_undo_item_count() do
+        for a, action in pairs(stack.get_undo_item(i)) do
+            if action.type == type and
+                action.surface_index == entity.surface_index and
+                action.target.name == name and
+                (not action.target.quality or action.target.quality == entity.quality) and
+                action.target.position.x == entity.position.x and
+                action.target.position.y == entity.position.y and
+                (not action.target.direction or action.target.direction == entity.direction) then
+                return i, a
+            end
+        end
+    end
+end
