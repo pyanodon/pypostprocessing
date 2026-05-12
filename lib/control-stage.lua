@@ -6,6 +6,7 @@ require "events"
 require "vector"
 require "smuggler"
 require "compound-entities"
+require "inventory"
 
 ---Draws a red error icon at the entity's position.
 ---@param entity LuaEntity

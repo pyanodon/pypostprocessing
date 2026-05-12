@@ -156,7 +156,6 @@ _G.gui_events = {
     [defines.events.on_gui_text_changed] = {},
     [defines.events.on_gui_checked_state_changed] = {},
     [defines.events.on_gui_selection_state_changed] = {},
-    [defines.events.on_gui_checked_state_changed] = {},
     [defines.events.on_gui_elem_changed] = {},
     [defines.events.on_gui_value_changed] = {},
     [defines.events.on_gui_location_changed] = {},
