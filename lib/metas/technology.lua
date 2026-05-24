@@ -81,9 +81,9 @@ end
 ---@return data.TechnologyPrototype self
 ---@return boolean success
 metas.replace_prereq = function(self, old, new)
-    local _, success = self.remove_prereq(old)
+    local _, success = self:remove_prereq(old)
     if success then
-        return self.add_prereq(new) -- conditional on success of add_prereq
+        return self:add_prereq(new) -- conditional on success of add_prereq
     else
         return self, false -- DNE, do not add
     end
