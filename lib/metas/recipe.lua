@@ -482,7 +482,7 @@ end
 --- <br /> Check https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#main_product for more details
 ---@param self data.RecipePrototype
 ---@param allow_multi_product boolean
----@return data.ItemPrototype|data.FluidPrototype
+---@return data.ItemPrototype|data.FluidPrototype?
 metas.get_main_product = function(self, allow_multi_product)
     self:standardize()
     local target, target_type = self.main_product, "item"

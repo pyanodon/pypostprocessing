@@ -259,7 +259,7 @@ end
 
 ---Returns an iterator through all data.raw categories of a given supertype.
 ---@param parent_type string
----@return function<string, table>
+---@return fun():{[defines.prototypes]: table}
 function py.iter_prototype_categories(parent_type)
     local types = defines.prototypes[parent_type]
     local child_type_name, value
@@ -369,9 +369,9 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     elseif recipe.results and table_size(recipe.results) >= 1 then
         result = recipe.results[1]
         if result.type == "fluid" then
-            result = FLUID(result.name)
+            result = FLUID(result.name) --[[@as data.FluidPrototype]]
         else
-            result = ITEM(result.name)
+            result = ITEM(result.name) --[[@as data.ItemPrototype]]
         end
     end
 

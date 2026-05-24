@@ -32,7 +32,7 @@ local function check_for_valid_minable_properties(entity)
     if not minable_result then return false end
     if minable_result ~= entity.name then return false end
 
-    minable_result = ITEM(minable_result)
+    minable_result = ITEM(minable_result) --[[@as data.ItemPrototype]]
     if not minable_result then return false end
     if minable_result.hidden then return false end
 
