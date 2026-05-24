@@ -3,7 +3,7 @@ local collision_mask_util = require "__core__/lualib/collision-mask-util"
 local entity_types = defines.prototypes.entity
 
 ---@class data.EntityPrototype
----@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype, boolean
+---@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype
 ---@field public add_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
 ---@field public remove_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
 ---@field public has_flag fun(self: data.EntityPrototype, flag: string): boolean
@@ -12,8 +12,9 @@ ENTITY = setmetatable({}, {
     __call = function(self, entity)
         local etype = type(entity)
         if etype == "string" then
-            for ptype in py.iter_prototype_categories("entity") do
-                local result = data.raw[ptype][entity]
+            ---@cast entity any somehow this works but string doesnt
+            for _, pdata in py.iter_prototype_categories("entity") do
+                local result = pdata[entity]
                 if result then return result:standardize() end
             end
         elseif etype == "table" then
@@ -28,8 +29,8 @@ ENTITY = setmetatable({}, {
         error("Entity " .. tostring(entity) .. " does not exist")
     end,
     __index = function(self, entity_name)
-        for ptype in pairs(defines.prototypes.entity) do
-            local result = data.raw[ptype][entity_name]
+        for _, pdata in py.iter_prototype_categories("entity") do
+            local result = pdata[entity_name]
             if result then return result:standardize() end
         end
         return nil

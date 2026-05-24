@@ -10,6 +10,7 @@ ITEM = setmetatable({}, {
     __call = function(self, item)
         local itype = type(item)
         if itype == "string" then
+            ---@cast item any somehow this works but string doesnt
             for _, pdata in py.iter_prototype_categories("item") do
                 local result = pdata[item]
                 if result then return result end

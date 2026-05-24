@@ -34,6 +34,16 @@ local config = {
     SCIENCE_PACK_INDEX = {}
 }
 
+---@cast config.PY_GRAPHICS_MODS {[string]: boolean}
+---@cast config.PYMODS string[]
+---@cast config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL {[string]: uint[]}
+---@cast config.TC_TECH_INGREDIENTS_PER_LEVEL string[]
+---@cast config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK string[]
+---@cast config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL string[]
+---@cast config.NON_PRODDABLE_ITEMS {[data.ItemID]: boolean}
+---@cast config.SCIENCE_PACKS string[]
+---@cast config.SCIENCE_PACK_INDEX {[data.ItemID]: uint}
+
 if mods.pystellarexpedition then
     config.SCIENCE_PACKS = {
         "automation-science-pack",

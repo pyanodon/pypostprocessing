@@ -11,6 +11,12 @@ local function merge(table, value)
     end
 end
 
+---@class CacheFile
+---@field subset string[]
+---@field cache_file string
+---@field is_fallback_from_pypp boolean
+
+---@param subset string[]
 local function register_cache_file_pypp(subset)
     table.sort(subset)
     local cache_file = table.concat(subset, "+")
@@ -49,11 +55,13 @@ register_cache_file_pypp {"pycoalprocessing", "pyfusionenergy", "pyindustry", "p
 
 local union_of_all_subsets = {}
 for _, cache_file_info in pairs(pypp_registered_cache_files) do
+    ---@cast cache_file_info CacheFile
     for _, mod in pairs(cache_file_info.subset) do
         union_of_all_subsets[mod] = 1
     end
 end
 union_of_all_subsets = table.keys(union_of_all_subsets)
+---@diagnostic disable-next-line: return-type-mismatch
 local recognized_enabled_mods = table.filter(union_of_all_subsets, function(potential_mod) return mods[potential_mod] end)
 table.sort(recognized_enabled_mods)
 
@@ -62,12 +70,15 @@ if #recognized_enabled_mods == 0 then
     return
 end
 
+---@param left CacheFile
+---@param right CacheFile
 local function can_left_replace_fallback_right(left, right)
     return not left.is_fallback_from_pypp and right.is_fallback_from_pypp
 end
 
-local best_cache_file = nil
+local best_cache_file = nil --[[@as CacheFile]]
 for _, cache_file_info in pairs(pypp_registered_cache_files) do
+    ---@cast cache_file_info CacheFile
     local subset = cache_file_info.subset
     if #subset == #recognized_enabled_mods then
         local is_applicable = true

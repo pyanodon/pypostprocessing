@@ -9,11 +9,11 @@
 ---@field rotate fun(self, angle: number): Pyvector -- rotate the vector around the z axis (angle in radians)
 ---@field is_vector fun(self): boolean
 ---@field new fun(x: {x: number, y: number, z: number} | number?, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
----@operator add(): Pyvector
----@operator sub(): Pyvector
----@operator mul(): Pyvector
----@operator div(): Pyvector
----@operator unm(): Pyvector
+---@operator add(Pyvector): Pyvector
+---@operator sub(Pyvector): Pyvector
+---@operator mul(Pyvector): Pyvector
+---@operator div(Pyvector): Pyvector
+---@operator unm(Pyvector): Pyvector
 py.vector = {
     __add = function(self, v)
         return py.vector.new(self.x + v.x, self.y + v.y, self.z + (v.z or 0))

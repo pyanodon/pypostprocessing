@@ -15,9 +15,9 @@ end
 ---@param tbl table
 ---@param f (fun(v: any, k: number, ...: any): number|nil)
 ---@param ... any
----@return table
+---@return number
 table.sum = function(tbl, f, ...)
-    local f = f or function(v, k, ...)
+    f = f or function(v, k, ...)
         return v
     end
     local result = 0
@@ -68,7 +68,7 @@ end
 
 ---Returns true if all elements in the table pass the test implemented by the provided function.
 ---@param tbl table
----@param f fun(v: any, k: any, ...: any): any
+---@param f any|fun(v: any, k: any, ...: any): any
 ---@param ... any
 ---@return boolean
 ---@overload fun(tbl: table, v: any): boolean
@@ -223,7 +223,7 @@ end
 -- @param tbl any[]
 -- @param tbl2 any[]
 table.extend = function(tbl, tbl2)
-    local tbl = table.deepcopy(tbl)
+    tbl = table.deepcopy(tbl)
     
     for _, v in pairs(tbl2) do
         table.insert(tbl, v)

@@ -1,10 +1,10 @@
 ---@class data.TechnologyPrototype
 ---@field public standardize fun(): data.TechnologyPrototype
----@field public add_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype
----@field public remove_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype
----@field public replace_prereq fun(self, old: data.TechnologyID, new: data.TechnologyID): data.TechnologyPrototype
----@field public remove_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype
----@field public add_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype
+---@field public add_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype, boolean
+---@field public remove_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype, boolean
+---@field public replace_prereq fun(self, old: data.TechnologyID, new: data.TechnologyID): data.TechnologyPrototype, boolean
+---@field public remove_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype, boolean
+---@field public add_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype, boolean
 TECHNOLOGY = setmetatable(data.raw.technology, {
     ---@param technology data.TechnologyPrototype
     __call = function(self, technology)
