@@ -72,6 +72,9 @@ py.events = {
     end
 }
 
+---@class (partial) PyPostProcessingStorage
+---@field ignored_players {[uint]: uint} player_index -> game tick
+
 ---Conditionally runs the given event based on if the player is not present within ignored_players
 ---@param event EventData.on_gui_click
 ---@param f function event handler

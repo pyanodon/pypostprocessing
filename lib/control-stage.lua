@@ -53,6 +53,9 @@ py.randomize_position = function(position, factor)
     return {x = x + factor * (random() - 0.5), y = y + factor * (random() - 0.5)}
 end
 
+---@class (partial) PyPostProcessingStorage
+---@field _last_cancel_creation_message uint
+
 ---Intended to be called inside a build event. Cancels creation of the entity.
 ---Returns its item_to_place back to the player or spills it on the ground.
 ---@param entity LuaEntity
@@ -115,7 +118,7 @@ py.cancel_creation = function(entity, player_index, message, color)
                 create_at_cursor = player.index == player_index
             }
         end
-        storage._last_cancel_creation_message = game.tick
+        storage._last_cancel_creation_message = tick
     end
 end
 
