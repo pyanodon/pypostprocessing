@@ -1,12 +1,17 @@
 require "lib"
 
+---@class (partial) PyPostProcessingStorage
+---@field nth_tick_order table<uint, NthTickOrder[]>
+---@field on_tick table<uint, table<uint, {name: string, params: any[]?}>>
+storage = {}
+
 -- on_nth_tick functions
 ---@class NthTickOrder
 ---@field func string
----@field delay int
+---@field delay uint
 
 ---@class NthTickFunc
----@field tick int
+---@field tick uint
 ---@field mod string
 
 ---@type table<string, NthTickFunc>
@@ -27,7 +32,6 @@ local register_on_nth_tick = function(func_list)
 end
 
 local function init_nth_tick(mod)
-    ---@type table<int, NthTickOrder[]>
     storage.nth_tick_order = storage.nth_tick_order or {}
     local added_funcs = {}
     for _, tick_funcs in pairs(storage.nth_tick_order) do
@@ -97,9 +101,6 @@ remote.add_interface("on_nth_tick", {
 })
 
 -- delayed functions
----@type table<integer, table<int, {name: string, params: any[]?}>>
-storage.on_tick = storage.on_tick or {}
-
 py.on_event(defines.events.on_tick, function(event)
     local tick = event.tick
     storage.on_tick = storage.on_tick or {}
