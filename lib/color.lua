@@ -1,3 +1,4 @@
+---@type Color[]
 py.tints = {
     [0] = {r = 0.5,   g = 0.5,   b = 0.5,   a = 1.0},
     {r = 1.0,   g = 1.0,   b = 0.0,   a = 1.0},
@@ -6,6 +7,7 @@ py.tints = {
     {r = 1.0,   g = 0.0,   b = 1.0,   a = 1.0}
 }
 
+---@type Color[]
 py.light_tints = {}
 for i, tint in pairs(py.tints) do
     py.light_tints[i] = {}
