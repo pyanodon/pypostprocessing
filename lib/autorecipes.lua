@@ -57,6 +57,9 @@ numbers: sets amount to this value no matter what it was before
 ]] --
 --if you use the icon part its set to want a size 64 icon right now. if you want to use the size 32 ones ill need to add icon size in because i cant detect the icons size in the code
 
+---@generic V
+---@param tbl V[]
+---@return V[]
 local function ensure_contiguous(tbl)
     if not tbl or type(tbl) ~= "table" then return tbl end
     local contiguous_table = {}
