@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.42
-Date: ???
+Date: 2026-05-27
   Changes:
     - Fix load failure with zh-cn locale. Resolves https://github.com/pyanodon/pybugreports/issues/1347
     - Added py.spoilage_enabled() which checks for the feature flag and mod setting
