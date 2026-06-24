@@ -1,9 +1,8 @@
 local total_string_count
 local function test_localised_strings()
-    local excluded_categories = {}
     local localised_strings = {}
     for _, recipe in pairs(prototypes.recipe) do
-        if not excluded_categories[recipe.category] and not recipe.hidden then table.insert(localised_strings, recipe.localised_name) end
+        if not recipe.hidden then table.insert(localised_strings, recipe.localised_name) end
     end
     local excluded_types = {}
     for _, category in pairs {"item", "fluid", "entity"} do

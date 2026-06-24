@@ -1,6 +1,6 @@
----@class data.TilePrototype
+---@class pYdata.TilePrototype:pYdata.AnyPrototype,data.TilePrototype
+---@operator call(string|pYdata.TilePrototype|data.TilePrototype): pYdata.TilePrototype
 TILE = setmetatable(data.raw.tile, {
-    ---@param tile data.TilePrototype
     __call = function(self, tile)
         local ftype = type(tile)
         if ftype == "string" then
@@ -16,6 +16,8 @@ TILE = setmetatable(data.raw.tile, {
     end
 })
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.TilePrototype
 local metas = {}
 
 return metas

@@ -212,6 +212,13 @@ local pyae_globals = {
     "Solar",
     "Wind",
     "Aerial",
+    "Tidal"
+}
+
+local debugadapter_globals = {
+    -- data stage
+    "setfenv",
+    -- control stage
 }
 
 function py.has_any_py_mods()
@@ -343,7 +350,8 @@ local global_vars = table.array_combine(
     pypp_globals,
     spidertron_enhancements_globals,
     pycp_globals,
-    pyae_globals
+    pyae_globals,
+    debugadapter_globals
 )
 
 for _, var in pairs(global_vars) do

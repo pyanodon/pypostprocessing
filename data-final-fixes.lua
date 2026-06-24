@@ -22,16 +22,7 @@ end
 if feature_flags.spoiling then
     local spoilage_loops = {} -- all known loops
     local spoilage_chains = {} -- all known
-    for _, prototype in pairs{
-        "item",
-        "ammo",
-        "capsule",
-        "gun",
-        "module",
-        "tool",
-        "armor",
-        "repair-tool"
-    } do for _, spoiler in pairs(data.raw[prototype]) do
+    for _, prototype in pairs(defines.prototypes.item) do for _, spoiler in pairs(data.raw[prototype] or {}) do
         if spoiler.spoil_result then
           local spoil_result, spoil_chain, last_checked = find_base_spoil_result(spoiler, {})
           if spoil_result then -- spoilage chain found, set accordingly
@@ -113,7 +104,6 @@ local signal_recipes = {
 local create_signal_mode = settings.startup["pypp-extended-recipe-signals"].value
 
 for _, recipe in pairs(data.raw.recipe) do
-    recipe.always_show_products = true
     recipe.always_show_made_in = true
     if not recipe.maximum_productivity then recipe.maximum_productivity = 1000000 end -- Disable the max productivity cap
 
@@ -194,7 +184,7 @@ if create_signal_mode then
         if #alternatives > 1 then
             for _, recipe in pairs(alternatives) do
                 -- Skip recipe categories where signals aren't useful for any recipe
-                if (recipe.category and (recipe.category.name == "compost" or recipe.category.name == "py-barreling")) then
+                if (recipe:has_category("compost") or recipe:has_category("py-barreling")) then
                     break
                 end
                 -- Determine amount of main product to display in signal name
@@ -202,7 +192,7 @@ if create_signal_mode then
                 local main_product_name = recipe:get_main_product(true).name
                 for _, result in pairs(recipe.results) do
                     if result.name == main_product_name then
-                        if result.probability and result.probability < 1 then
+                        if result.independent_probability and result.independent_probability < 1 then
                             -- Some recipes have random amount for multiples, such as nuclear isotopes.
                             local prob_amt = 0
                             if result.amount then
@@ -210,7 +200,7 @@ if create_signal_mode then
                             elseif result.amount_min and result.amount_max then
                                 prob_amt = (result.amount_min + result.amount_max) / 2
                             end
-                            amt = result.probability * prob_amt
+                            amt = result.independent_probability * prob_amt
                             break
                         elseif result.amount_min and result.amount_max then
                             amt = (result.amount_min + result.amount_max) / 2
@@ -223,7 +213,6 @@ if create_signal_mode then
                 end
                 -- Inject recipe output into each localised name parameter, since native output display is not consistently shown
                 if recipe.localised_name[1] == "?" then
-                    recipe.show_amount_in_title = false
                     for i, name in pairs(recipe.localised_name) do
                         if i > 1 and amt ~= 1 then
                             recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
@@ -406,9 +395,9 @@ end
 
 for _, lab in pairs(data.raw.lab) do
     table.sort(lab.inputs, function(i1, i2)
-        local science_pack_a = data.raw.tool[i1]
+        local science_pack_a = ITEM(i1)
         if not science_pack_a then error("Missing science pack prototype " .. i1 .. " in lab " .. lab.name) end
-        local science_pack_b = data.raw.tool[i2]
+        local science_pack_b = ITEM(i2)
         if not science_pack_b then error("Missing science pack prototype " .. i2 .. " in lab " .. lab.name) end
         return science_pack_a.order < science_pack_b.order
     end)
@@ -550,6 +539,21 @@ if not (mods.declutter or mods.autotech) then
                 local prerequisite = data.raw.technology[prerequisite]
                 if prerequisite and prerequisite.hidden then
                     error("\n\nERROR! Pyanodon detected an impossible-to-research technology.\n" .. technology.name .. " has hidden prerequisite " .. prerequisite.name .. "\nPlease report this on the pY bug tracker. https://github.com/pyanodon/pybugreports/issues\n\n")
+                end
+            end
+        end
+    end
+end
+
+-- cleanup
+if not mods.autotech then 
+    for _, type in pairs(data.raw) do
+        for _, prototype in pairs(type) do
+            prototype.autotech_ignore = nil
+            prototype.autotech_always_available = nil
+            if prototype.results then
+                for _, result in pairs(prototype.results) do
+                    result.autotech_is_not_primary_source = nil
                 end
             end
         end

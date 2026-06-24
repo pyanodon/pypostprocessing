@@ -2,33 +2,41 @@ local table_insert = table.insert
 
 --unsafe functions overrides protections for ingredient/result existence
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.RecipePrototype
 local metas = {}
 
----@class data.RecipePrototype
----@field public standardize fun(self: data.RecipePrototype): data.RecipePrototype
----@field public add_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype, boolean
----@field public remove_unlock fun(self: data.RecipePrototype, technology_name: string | string[]): data.RecipePrototype, boolean
----@field public replace_unlock fun(self: data.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): data.RecipePrototype, boolean
----@field public replace_ingredient fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype, boolean
----@field public replace_ingredient_unsafe fun(self: data.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): data.RecipePrototype, boolean
----@field public add_ingredient fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype, boolean
----@field public add_ingredient_unsafe fun(self: data.RecipePrototype, ingredient: data.IngredientPrototype): data.RecipePrototype, boolean
----@field public remove_ingredient fun(self: data.RecipePrototype, ingredient_name: string): data.RecipePrototype, integer
----@field public replace_result fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype, boolean
----@field public replace_result_unsafe fun(self: data.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): data.RecipePrototype, boolean
----@field public add_result fun(self: data.RecipePrototype, result: data.ProductPrototype): data.RecipePrototype, boolean
----@field public remove_result fun(self: data.RecipePrototype, result_name: string): data.RecipePrototype, integer
----@field public clear_ingredients fun(self: data.RecipePrototype): data.RecipePrototype, boolean
----@field public multiply_result_amount fun(self: data.RecipePrototype, result_name: string, percent: number): data.RecipePrototype, boolean
----@field public multiply_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, percent: number): data.RecipePrototype, boolean
----@field public add_result_amount fun(self: data.RecipePrototype, result_name: string, increase: number): data.RecipePrototype, boolean
----@field public add_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, increase: number): data.RecipePrototype, boolean
----@field public set_result_amount fun(self: data.RecipePrototype, result_name: string, amount: number): data.RecipePrototype, boolean
----@field public set_ingredient_amount fun(self: data.RecipePrototype, ingredient_name: string, amount: number): data.RecipePrototype, boolean
----@field public get_main_product fun(self: data.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype?|LuaFluidPrototype?
----@field public get_icons fun(self: data.RecipePrototype): data.IconData[]
+---@class pYdata.RecipePrototype:pYdata.AnyPrototype,data.RecipePrototype
+---@operator call(string|pYdata.RecipePrototype|data.RecipePrototype): pYdata.RecipePrototype
+---@field public standardize fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype
+---@field public add_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
+---@field public remove_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
+---@field public replace_unlock fun(self: pYdata.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): pYdata.RecipePrototype, boolean
+---@field public replace_ingredient fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public replace_ingredient_unsafe fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public add_ingredient fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
+---@field public add_ingredient_unsafe fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
+---@field public remove_ingredient fun(self: pYdata.RecipePrototype, ingredient_name: string): pYdata.RecipePrototype, integer
+---@field public replace_result fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public replace_result_unsafe fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public add_result fun(self: pYdata.RecipePrototype, result: data.ProductPrototype): pYdata.RecipePrototype, boolean
+---@field public remove_result fun(self: pYdata.RecipePrototype, result_name: string): pYdata.RecipePrototype, integer
+---@field public clear_ingredients fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
+---@field public clear_results fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
+---@field public multiply_result_amount fun(self: pYdata.RecipePrototype, result_name: string, percent: number): pYdata.RecipePrototype, boolean
+---@field public multiply_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, percent: number): pYdata.RecipePrototype, boolean
+---@field public add_result_amount fun(self: pYdata.RecipePrototype, result_name: string, increase: number): pYdata.RecipePrototype, boolean
+---@field public add_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, increase: number): pYdata.RecipePrototype, boolean
+---@field public set_result_amount fun(self: pYdata.RecipePrototype, result_name: string, amount: number): pYdata.RecipePrototype, boolean
+---@field public set_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, amount: number): pYdata.RecipePrototype, boolean
+---@field public add_category fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID): pYdata.RecipePrototype, boolean
+---@field public remove_category fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID): pYdata.RecipePrototype, boolean
+---@field public replace_category fun(self: pYdata.RecipePrototype, old: data.RecipeCategoryID, new: data.RecipeCategoryID): pYdata.RecipePrototype, boolean
+---@field public has_category fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID): boolean
+---@field public has_categories fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID[], all?: boolean): boolean # Returns true if the recipe has any of the categories. all? categories must match to pass
+---@field public get_main_product fun(self: pYdata.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_icons fun(self: pYdata.RecipePrototype): data.IconData[]
 RECIPE = setmetatable(data.raw.recipe, {
-    ---@param recipe data.RecipePrototype
     __call = function(self, recipe)
         local rtype = type(recipe)
         if rtype == "string" then
@@ -80,10 +88,6 @@ py.allow_productivity = function(recipe_names)
     end
 end
 
----@param self data.RecipePrototype
----@param technology_name string|string[]
----@return data.RecipePrototype self
----@return boolean success
 metas.add_unlock = function(self, technology_name)
     if type(technology_name) == "table" then
         local success = true
@@ -116,10 +120,6 @@ metas.add_unlock = function(self, technology_name)
     return self, true
 end
 
----@param self data.RecipePrototype
----@param technology_name string|string[]
----@return data.RecipePrototype self
----@return boolean success
 metas.remove_unlock = function(self, technology_name)
     if type(technology_name) == "table" then
         local success = true
@@ -148,11 +148,6 @@ metas.remove_unlock = function(self, technology_name)
     return self, false -- recipe not part of tech
 end
 
----@param self data.RecipePrototype
----@param technology_old string|string[]
----@param technology_new string|string[]
----@return data.RecipePrototype self
----@return boolean success
 metas.replace_unlock = function(self, technology_old, technology_new)
     local _, success_remove = self:remove_unlock(technology_old)
     local _, success_add = self:add_unlock(technology_new)
@@ -198,65 +193,37 @@ do
         return true -- must have been a success! cant early return on success because of possible repeated results
     end
 
-    ---@param self data.RecipePrototype
-    ---@param old_ingredient string
-    ---@param new_ingredient string|data.IngredientPrototype
-    ---@param new_amount? int
-    ---@return data.RecipePrototype self
-    ---@return boolean success
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
         local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, false)
         return self, success
     end
 
-    ---@param self data.RecipePrototype
-    ---@param old_ingredient string
-    ---@param new_ingredient string|data.IngredientPrototype
-    ---@param new_amount? int
-    ---@return data.RecipePrototype self
-    ---@return boolean success
     metas.replace_ingredient_unsafe = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
         local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
         return self, success
     end
 
-    ---@param self data.RecipePrototype
-    ---@param old_result string
-    ---@param new_result string|data.ProductPrototype
-    ---@param new_amount? int
-    ---@return data.RecipePrototype self
-    ---@return boolean success
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
         local success = replacement_helper(self, self.results, old_result, new_result, new_amount, false)
         if self.main_product == old_result then
-            self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
+            self.main_product = type(new_result) == "string" and new_result or new_result.name
         end
         return self, success
     end
 
-    ---@param self data.RecipePrototype
-    ---@param old_result string
-    ---@param new_result string|data.ProductPrototype
-    ---@param new_amount? int
-    ---@return data.RecipePrototype self
-    ---@return boolean success
     metas.replace_result_unsafe = function(self, old_result, new_result, new_amount)
         self:standardize()
         local success = replacement_helper(self, self.results, old_result, new_result, new_amount, true)
         if self.main_product == old_result then
-            self.main_product = type(new_result) == "string" and new_result or new_result[1] or new_result.name
+            self.main_product = type(new_result) == "string" and new_result or new_result.name
         end
         return self, success
     end
 end
 
----@param self data.RecipePrototype
----@param ingredient data.IngredientPrototype
----@return data.RecipePrototype self
----@return boolean success
 metas.add_ingredient_unsafe = function(self, ingredient)
     self:standardize()
     -- Ensure that this ingredient does not already exist in this recipe.
@@ -271,18 +238,14 @@ metas.add_ingredient_unsafe = function(self, ingredient)
         end
     end
 
-    if (not self.category or self.category == "crafting") and ingredient.type == "fluid" then
-        self.category = "crafting-with-fluid"
+    if ingredient.type == "fluid" and self:has_category("crafting") then
+        self:replace_category("crafting", "crafting-with-fluid")
     end
 
     table_insert(self.ingredients, ingredient)
     return self, true
 end
 
----@param self data.RecipePrototype
----@param ingredient data.IngredientPrototype
----@return data.RecipePrototype self
----@return boolean success
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
@@ -293,20 +256,12 @@ metas.add_ingredient = function(self, ingredient)
     return metas.add_ingredient_unsafe(self, ingredient)
 end
 
----@param self data.RecipePrototype
----@param result data.ProductPrototype
----@return data.RecipePrototype self
----@return boolean success
 metas.add_result = function(self, result)
     self:standardize()
     table_insert(self.results, result)
     return self, true
 end
 
----@param self data.RecipePrototype
----@param ingredient_name string
----@return data.RecipePrototype self
----@return int amount_removed
 metas.remove_ingredient = function(self, ingredient_name)
     self:standardize()
     local amount_removed = 0
@@ -320,16 +275,12 @@ metas.remove_ingredient = function(self, ingredient_name)
     return self, amount_removed
 end
 
----@param self data.RecipePrototype
----@param result_name string
----@return data.RecipePrototype self
----@return int amount_removed
 metas.remove_result = function(self, result_name)
     self:standardize()
     local amount_removed = 0
     self.results = table.filter(self.results, function(result)
         if result.name == result_name then
-            local amount = result.amount * (result.probability or 1) or (result.amount_min + result.amount_max) * (result.probability or 1) / 2
+            local amount = result.amount * (result.independent_probability or 1) or (result.amount_min + result.amount_max) * (result.independent_probability or 1) / 2
             amount_removed = amount_removed + amount
             return false
         end
@@ -344,15 +295,10 @@ metas.clear_ingredients = function(self)
 end
 
 metas.clear_results = function(self)
-    self.ingredients = {}
+    self.results = {}
     return self, true -- impossible to fail
 end
 
----@param self data.RecipePrototype
----@param result_name string
----@param percent float
----@return data.RecipePrototype self
----@return boolean success
 metas.multiply_result_amount = function(self, result_name, percent)
     self:standardize()
 
@@ -374,11 +320,6 @@ metas.multiply_result_amount = function(self, result_name, percent)
     return self, false -- could not find result
 end
 
----@param self data.RecipePrototype
----@param ingredient_name string
----@param percent float
----@return data.RecipePrototype self
----@return boolean success
 metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
     self:standardize()
 
@@ -397,11 +338,6 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
     return self, false -- could not find ingredient
 end
 
----@param self data.RecipePrototype
----@param result_name string
----@param increase int
----@return data.RecipePrototype self
----@return boolean success
 metas.add_result_amount = function(self, result_name, increase)
     self:standardize()
 
@@ -420,11 +356,6 @@ metas.add_result_amount = function(self, result_name, increase)
     return self, false -- could not find result
 end
 
----@param self data.RecipePrototype
----@param ingredient_name string
----@param increase int
----@return data.RecipePrototype self
----@return boolean success
 metas.add_ingredient_amount = function(self, ingredient_name, increase)
     self:standardize()
 
@@ -443,46 +374,107 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
     return self, false -- could not find ingredient
 end
 
----@param self data.RecipePrototype
----@param result_name string
----@param amount int
----@return data.RecipePrototype self
----@return boolean success
 metas.set_result_amount = function(self, result_name, amount)
     return self:replace_result(result_name, result_name, amount)
 end
 
----@param self data.RecipePrototype
----@param ingredient_name string
----@param amount int
----@return data.RecipePrototype self
----@return boolean success
 metas.set_ingredient_amount = function(self, ingredient_name, amount)
     return self:replace_ingredient(ingredient_name, ingredient_name, amount)
 end
 
----@param self data.RecipePrototype
----@param category_name string
----@return data.RecipePrototype self
----@return boolean success
-metas.change_category = function(self, category_name)
+metas.add_category = function(self, category_name)
+    self:standardize()
+    self.categories = self.categories or {} -- not in self:standardize() because a recipe with no categories errors the game
+
+    if not data.raw["recipe-category"][category_name] then
+        log("WARNING @ \'" .. self.name .. "\':add_category(): Category " .. category_name .. " not found")
+        return self, false -- category does not exist
+    else
+        for _, category in pairs(self.categories) do
+            if category == category_name then
+                return self, false -- category already set
+            end
+        end
+        self.categories[#self.categories+1] = category_name
+        return self, true -- successful set
+    end
+end
+
+metas.remove_category = function(self, category_name)
     self:standardize()
 
-    if data.raw["recipe-category"][category_name] then
-        self.category = category_name
-        return self, true -- successful set
-    else
-        log("WARNING @ \'" .. self.name .. "\':change_category(): Category " .. category_name .. " not found")
+    if not data.raw["recipe-category"][category_name] then
+        log("WARNING @ \'" .. self.name .. "\':remove_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
+    else
+        if category_name == "crafting" and (not self.categories or #self.categories == 0) then
+            return self, true -- fake positive if trying to remove 'category' with no categories because its the default
+        end
+        for i, category in pairs(self.categories or {}) do
+            if category == category_name then
+                table.remove(self.categories, i)
+                if #self.categories == 0 then self.categories = nil end -- remove categories if it is an empty table
+                return self, true -- successfully removed
+            end
+        end
+        return self, false -- category not found
     end
+end
+
+metas.replace_category = function(self, old, new)
+    self:standardize()
+
+    if not data.raw["recipe-category"][old] then
+        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not found")
+        return self, false -- category does not exist
+    elseif not data.raw["recipe-category"][new] then
+        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. new .. " not found")
+        return self, false -- category does not exist
+    else
+        local _, success = self:remove_category(old)
+        if success then
+            return self:add_category(new) -- conditional on success of add_category
+        else
+            return self, false -- DNE, do not add
+        end
+    end
+end
+
+metas.has_category = function(self, category_name)
+    self:standardize()
+
+    if not data.raw["recipe-category"][category_name] then
+        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. category_name .. " not found")
+        return false -- category does not exist
+    else
+        if category_name == "crafting" and (not self.categories or #self.categories == 0) then
+            return self, true -- fake positive if trying to remove 'category' with no categories because its the default
+        end
+        for _, category in pairs(self.categories or {}) do
+            if category == category_name then
+                return true -- category found
+            end
+        end
+        return false -- category not found
+    end
+end
+
+metas.has_categories = function(self, categories, all)
+    self:standardize()
+
+    for _, category in pairs(categories) do
+        if all and not self:has_category(category) then
+            return false -- all categories must be contained but this one was not
+        elseif not all and self:has_category(category) then
+            return true -- any categories must match and this one matched
+        end
+    end
+    return not not all -- all categories matched, or none did
 end
 
 --- Get the prototype for the main_product using the same logic the game uses.
 --- Set allow_multi_product to take the *first* result (not game behavior) instead of failing when a recipe has no main_product set but has multiple results.
 --- <br /> Check https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#main_product for more details
----@param self data.RecipePrototype
----@param allow_multi_product boolean
----@return data.ItemPrototype|data.FluidPrototype?
 metas.get_main_product = function(self, allow_multi_product)
     self:standardize()
     local target, target_type = self.main_product, "item"
@@ -504,16 +496,11 @@ metas.get_main_product = function(self, allow_multi_product)
     else -- or only result
         _, result = next(self.results)
     end
-    --[[@cast result data.ItemProductPrototype|data.ResearchProgressProductPrototype]]
+    --[[@cast result data.ItemProductPrototype]]
     -- Special modding funtimes case: invalid spec
-    if not (result.type == "research-progress" and result.research_item or result.name) then return end
-    if result.type ~= nil and (result.type ~= "item" and result.type ~= "fluid" and result.type ~= "research-progress") then return end
+    if not result.name then return end
+    if result.type ~= nil and result.type ~= "item" and result.type ~= "fluid" then return end
     target, target_type = result.name, result.type or target_type
-    -- Special case: type of research-progress uses an item prototype
-    if target_type == "research-progress" then
-        target = result.research_item
-        target_type = "item"
-    end
     -- Find our prototype :)
     for _, category in py.iter_prototype_categories(target_type) do
         local proto = category[target]
@@ -538,8 +525,6 @@ end
 --- Returns the icons table a recipe would use (i.e. using the item icon if the recipe prototype has no .icons/.icon set).
 --- May error on malformed prototypes.
 --- <br /> Check https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#icon for more details.
----@param self data.RecipePrototype
----@return data.IconData[]
 metas.get_icons = function(self)
     local icon = icons(self)
     if icon then return icon end

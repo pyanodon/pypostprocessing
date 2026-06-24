@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.1.0
+Date: ???
+  Changes:
+    - Updated to Factorio 2.1
+    - Removed RECIPE.change_category, added add_category, remove_category, replace_category, has_category, and has_categories
+    - Updated annotations for emmylua integration
+    - Updated py.farm_speed and py.farm_speed_derived to use 0-indexed module slots with a building at native -100% speed
+    - Updated certain tests for new prototype properties
+    - Updated global checker
+    - Updated py.pipe_pictures to load graphics definitions directly from base instead of inferring them, allowing more to be used
+    - Fixed a potential crash when no tools are defined
+---------------------------------------------------------------------------------------------------
 Version: 3.0.42
 Date: 2026-05-27
   Changes:

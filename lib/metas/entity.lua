@@ -1,14 +1,15 @@
+---@diagnostic disable-next-line: unresolved-require
 local collision_mask_util = require "__core__/lualib/collision-mask-util"
 
 local entity_types = defines.prototypes.entity
 
----@class data.EntityPrototype
----@field public standardize fun(self: data.EntityPrototype): data.EntityPrototype
----@field public add_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
----@field public remove_flag fun(self: data.EntityPrototype, flag: string): data.EntityPrototype, boolean
----@field public has_flag fun(self: data.EntityPrototype, flag: string): boolean
+---@class pYdata.EntityPrototype:pYdata.AnyPrototype,data.EntityPrototype
+---@operator call(string|pYdata.EntityPrototype|data.EntityPrototype): pYdata.EntityPrototype
+---@field public standardize fun(self: pYdata.EntityPrototype): pYdata.EntityPrototype
+---@field public add_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
+---@field public remove_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
+---@field public has_flag fun(self: pYdata.EntityPrototype, flag: string): boolean
 ENTITY = setmetatable({}, {
-    ---@param entity data.EntityPrototype
     __call = function(self, entity)
         local etype = type(entity)
         if etype == "string" then
@@ -37,6 +38,8 @@ ENTITY = setmetatable({}, {
     end
 })
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.EntityPrototype
 local metas = {}
 
 metas.standardize = function(self)
@@ -58,10 +61,6 @@ metas.standardize = function(self)
     return self
 end
 
----@param self data.EntityPrototype
----@param flag string
----@return data.EntityPrototype self
----@return boolean success
 metas.add_flag = function(self, flag)
     self.flags = self.flags or {}  
     for _, f in pairs(self.flags) do
@@ -73,10 +72,6 @@ metas.add_flag = function(self, flag)
     return self, true -- flag added
 end
 
----@param self data.EntityPrototype
----@param flag string
----@return data.EntityPrototype self
----@return boolean success
 metas.remove_flag = function(self, flag)
     if not self.flags then return self, false end
     for i, f in pairs(self.flags) do
@@ -88,9 +83,6 @@ metas.remove_flag = function(self, flag)
     return self, false -- could not find flag
 end
 
----@param self data.EntityPrototype
----@param flag string
----@return boolean has_flag
 metas.has_flag = function(self, flag)
     if not self.flags then return false end
     for _, f in pairs(self.flags) do
