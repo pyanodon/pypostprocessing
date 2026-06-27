@@ -343,10 +343,13 @@ for category_name, proto in pairs(data.raw["resource-category"]) do
 end
 -- End resource category locale builder
 
-if mods.pycoalprocessing and not mods["extended-descriptions"] then
+if mods.pycoalprocessing and not mods["MoreTooltips"] then
     for _, recipe in pairs(data.raw.recipe) do
-        if recipe.allow_productivity then
-            py.add_to_description("recipe", recipe, {"recipe-description.affected-by-productivity"})
+        if recipe.allow_productivity == true then
+            if not recipe.custom_tooltip_fields then
+                recipe.custom_tooltip_fields = {}
+            end
+            table.insert(recipe.custom_tooltip_fields, { name = "", value = { "recipe-description.affected-by-productivity" }, order = 10 })
         end
     end
 end
