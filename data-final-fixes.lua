@@ -530,6 +530,10 @@ for _, bot_type in pairs {"construction-robot", "logistic-robot"} do
     end
 end
 
+-- unhide the shortcut to toggle tall entities and make it available from the start
+data.raw.shortcut["toggle-tall-entity-visibility"].hidden = nil
+data.raw.shortcut["toggle-tall-entity-visibility"].technology_to_unlock = nil
+
 -- Skip check if user has [declutter](https://mods.factorio.com/mod/declutter) mod which hides arbitrary techs
 -- Also skip check if user has autotech mod, since autotech runs after this check.
 if not (mods.declutter or mods.autotech) then
