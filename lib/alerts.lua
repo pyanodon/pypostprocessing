@@ -47,11 +47,13 @@ end
 py.clear_alert = function(alert_id)
     if not alert_id then return end
     local alert_data = storage.alerts[alert_id]
+    if not alert_data then return end
     if alert_data.entity and alert_data.entity.valid then
         alert_data.entity.force.remove_alert{
             entity = alert_data.entity,
             surface = alert_data.surface
         }
+        alert_data.rendering.destroy()
     else
         for _, alert in pairs(alert_data.force.players[1].get_alerts{
             type = defines.alert_type.custom,
