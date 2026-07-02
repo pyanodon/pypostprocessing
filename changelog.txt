@@ -10,6 +10,7 @@ Date: ???
     - Updated global checker
     - Updated py.pipe_pictures to load graphics definitions directly from base instead of inferring them, allowing more to be used
     - Fixed a potential crash when no tools are defined
+    - Added py.generate_alert and py.clear_alert to generate rendered and pinnable alerts for all players on a force
 ---------------------------------------------------------------------------------------------------
 Version: 3.0.42
 Date: 2026-05-27
