@@ -435,6 +435,7 @@ metas.replace_category = function(self, old, new)
         if success then
             return self:add_category(new) -- conditional on success of add_category
         else
+            log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not present for replacement")
             return self, false -- DNE, do not add
         end
     end
