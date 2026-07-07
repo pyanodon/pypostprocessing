@@ -9,14 +9,14 @@ local lib = {
     tile = require "tile"
 }
 
----@class data.AnyPrototype
----@field public copy fun(self: data.AnyPrototype, new_name: (string | fun(self: data.AnyPrototype): string)?): data.AnyPrototype
----@field public subgroup_order fun(self: data.AnyPrototype, subgroup: string, order: string): data.AnyPrototype
----@field public set_fields fun(self: data.AnyPrototype, fields: table): data.AnyPrototype
----@field public set fun(self: data.AnyPrototype, field: string, value: any): data.AnyPrototype
----@field public delete fun(self: data.AnyPrototype)
----@field public hide fun(self: data.AnyPrototype): data.AnyPrototype
----@field public unhide fun(self: data.AnyPrototype): data.AnyPrototype
+---@class pYdata.AnyPrototype:data.AnyPrototype
+---@field public copy fun(self: pYdata.AnyPrototype, new_name: (string | fun(self: pYdata.AnyPrototype): string)?): pYdata.AnyPrototype
+---@field public subgroup_order fun(self: pYdata.AnyPrototype, subgroup: string, order: string): pYdata.AnyPrototype
+---@field public set_fields fun(self: pYdata.AnyPrototype, fields: table): pYdata.AnyPrototype
+---@field public set fun(self: pYdata.AnyPrototype, field: string, value: any): pYdata.AnyPrototype
+---@field public delete fun(self: pYdata.AnyPrototype)
+---@field public hide fun(self: pYdata.AnyPrototype): pYdata.AnyPrototype
+---@field public unhide fun(self: pYdata.AnyPrototype): pYdata.AnyPrototype
 
 for _, meta in pairs(lib) do
     meta.copy = function(self, new_name)

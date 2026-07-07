@@ -1,6 +1,6 @@
----@class data.FluidPrototype
+---@class pYdata.FluidPrototype:pYdata.AnyPrototype,data.FluidPrototype
+---@operator call(string|pYdata.FluidPrototype|data.FluidPrototype): pYdata.FluidPrototype
 FLUID = setmetatable(data.raw.fluid, {
-    ---@param fluid data.FluidPrototype
     __call = function(self, fluid)
         local ftype = type(fluid)
         if ftype == "string" then
@@ -16,6 +16,8 @@ FLUID = setmetatable(data.raw.fluid, {
     end
 })
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.FluidPrototype
 local metas = {}
 
 return metas

@@ -161,7 +161,7 @@ if mods["pyalienlife"] then
                     {type = "item", name = y[1],          amount = 4}
                 },
                 main_product = "nexelit-ore",
-                category = "dino-dig-site"
+                categories = {"dino-dig-site"}
             }
         end
     end
@@ -188,7 +188,7 @@ if mods["pyalienlife"] then
                     {type = "item", name = creature_name, amount = 1}
                 },
                 main_product = "guano",
-                category = "biofluid"
+                categories = {"biofluid"}
             }
         end
     end

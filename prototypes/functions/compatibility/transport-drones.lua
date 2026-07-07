@@ -7,7 +7,7 @@ if mods["Transport_Drones"] then
         "fluid-depot"
     }
     data.raw.technology["transport-system"].prerequisites = nil
-    data.raw.recipe["road"].category = "crafting-with-fluid"
+    data.raw.recipe["road"].categories = {"crafting-with-fluid"}
     data.raw.recipe["road"].ingredients = data.raw.recipe["concrete"].ingredients
     TECHNOLOGY("transport-drone-capacity-1"):add_prereq("logistic-science-pack")
     TECHNOLOGY("transport-drone-speed-1"):add_prereq("logistic-science-pack")
