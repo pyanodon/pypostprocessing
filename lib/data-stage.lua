@@ -150,8 +150,8 @@ end
 ---@return number
 function py.farm_speed(num_slots, desired_speed, module_bonus)
     module_bonus = module_bonus or 1
-    -- mk1 modules are 100% bonus speed * module_bonus. The farm itself then counts as much as one module
-    return desired_speed / (num_slots / module_bonus) / module_bonus
+    -- mk1 modules are 100% bonus speed * module_bonus
+    return desired_speed / (num_slots * module_bonus)
 end
 
 ---Returns the correct farm speed for a mk2+ farm based on the number of modules and the mk1 speed.
