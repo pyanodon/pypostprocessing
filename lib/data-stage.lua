@@ -155,19 +155,28 @@ function py.farm_speed(num_slots, desired_speed, module_bonus)
 end
 
 ---Returns the correct farm speed for a mk2+ farm based on the number of modules and the mk1 speed.
----Optionally gets tier 1 module speed (default: 1) and current module speed (default: current_module_slots / base_module_slots * base_module_speed)
----@param num_slots integer
+---Optionally gets tier 1 module speed (default: 1) and current module speed (default: this_module_slots / base_module_slots * base_module_speed)
+---@param this_module_slots integer
 ---@param base_entity_name string
 ---@param base_module_bonus number?
----@param this_bonus number?
+---@param this_module_bonus number?
 ---@return number
-function py.farm_speed_derived(num_slots, base_entity_name, base_module_bonus, this_bonus)
+function py.farm_speed_derived(this_module_slots, base_entity_name, base_module_bonus, this_module_bonus)
+    local mk1 = data.raw["assembling-machine"][base_entity_name]
+    local base_module_slots = mk1.module_slots
+
+    -- This could be simplified but it's more legible this way
     base_module_bonus = base_module_bonus or 1
-    local e = data.raw["assembling-machine"][base_entity_name]
-    local mk1_slots = e.module_slots
-    local desired_mk1_speed = e.crafting_speed * mk1_slots * base_module_bonus
-    this_bonus = this_bonus or base_module_bonus * num_slots / mk1_slots
-    return desired_mk1_speed * this_bonus / (num_slots * base_module_bonus)
+    this_module_bonus = this_module_bonus or this_module_slots / base_module_slots * base_module_bonus
+
+    local module_speed_ratio = this_module_bonus / base_module_bonus
+    local module_count_ratio = this_module_slots / base_module_slots
+
+
+    local base_full_speed = mk1.crafting_speed * base_module_slots * base_module_bonus
+    local this_full_speed = base_full_speed * module_speed_ratio * module_count_ratio
+
+    return this_full_speed / (this_module_slots * this_module_bonus)
 end
 
 ---Returns a composite icon with a base icon and up to 4 child icons.
