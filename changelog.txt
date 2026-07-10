@@ -2,7 +2,7 @@
 Version: 3.1.2
 Date: ???
   Changes:
-    - Fixed math in farm speed functions
+    - Fixed py farm buildings being slower than intended (via py.farm_speed/py.farm_speed_derived)
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.1
 Date: 2026-07-08
