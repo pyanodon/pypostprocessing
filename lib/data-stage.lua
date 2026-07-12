@@ -140,6 +140,57 @@ py.merge = function(old, new)
     return old
 end
 
+---OLD VERSION of this function, kept around to correct previous typos.
+---The purpose of the farm_speed functions is to remove the farm building itself
+---from the building speed. For example, for xyhiphoe mk1 which has only one animal
+---per farm, we want the speed to be equal to 1 xyhiphoe not 2 (farm + module)
+---Returns the correct farm speed for a mk1 farm based on number of modules and desired speed using mk1 modules
+---@param num_slots integer
+---@param desired_speed number
+---@param module_bonus number?
+---@return number
+function py.farm_speed20(num_slots, desired_speed, module_bonus)
+    module_bonus = module_bonus or 1
+    -- mk1 modules are 100% bonus speed * module_bonus. The farm itself then counts as much as one module
+    return desired_speed / (num_slots + 1 / module_bonus) / module_bonus
+end
+
+---OLD VERSION of this function, kept around to correct previous typos.
+---Returns the correct farm speed for a mk2+ farm based on the number of modules and the mk1 speed.
+---Optionally gets tier 1 module speed (default: 1) and current module speed (default: current_module_slots / base_module_slots * base_module_speed)
+---@param num_slots integer
+---@param base_entity_name string
+---@param base_module_bonus number?
+---@param this_bonus number?
+---@return number
+function py.farm_speed_derived20(num_slots, base_entity_name, base_module_bonus, this_bonus)
+    base_module_bonus = base_module_bonus or 1
+    local e = data.raw["assembling-machine"][base_entity_name]
+    local mk1_slots = e.module_slots
+    local desired_mk1_speed = e.crafting_speed * (mk1_slots * base_module_bonus + 1)
+    local speed_improvement_ratio = num_slots / mk1_slots
+    this_bonus = this_bonus or speed_improvement_ratio * base_module_bonus
+    return (desired_mk1_speed * speed_improvement_ratio) / (num_slots + 1 / this_bonus) / base_module_bonus
+end
+
+---Some of the farms in 2.0 had their base speeds set by py.farm_speed_derived with wrong module values given.
+---To keep the new farms the same speed, must correct by that amount. The new base crafting speeds will adjust by this correction.
+---@param num_slots integer
+---@param base_entity_name string
+---@param correct_base_module_bonus number
+---@param correct_this_bonus number
+---@param given_base_module_bonus number?
+---@param given_this_bonus number?
+---@return number factor to multiply the crafting speed of the machine by
+function py.farm_speed_correction20_wrong_modules(num_slots, base_entity_name,
+                                                correct_base_module_bonus, correct_this_bonus,
+                                                given_base_module_bonus, given_this_bonus)
+
+    return py.farm_speed_derived20(num_slots, base_entity_name, given_base_module_bonus, given_this_bonus) /
+        py.farm_speed_derived20(num_slots, base_entity_name, correct_base_module_bonus, correct_this_bonus)
+end
+
+
 ---The purpose of the farm_speed functions is to remove the farm building itself
 ---from the building speed. For example, for xyhiphoe mk1 which has only one animal
 ---per farm, we want the speed to be equal to 1 xyhiphoe not 2 (farm + module)
@@ -163,6 +214,8 @@ end
 ---@return number
 function py.farm_speed_derived(this_module_slots, base_entity_name, base_module_bonus, this_module_bonus)
     local mk1 = data.raw["assembling-machine"][base_entity_name]
+    --[[ old work which was equal to mk1.crafting_speed
+
     local base_module_slots = mk1.module_slots
 
     -- This could be simplified but it's more legible this way
@@ -176,7 +229,9 @@ function py.farm_speed_derived(this_module_slots, base_entity_name, base_module_
     local base_full_speed = mk1.crafting_speed * base_module_slots * base_module_bonus
     local this_full_speed = base_full_speed * module_speed_ratio * module_count_ratio
 
-    return this_full_speed / (this_module_slots * this_module_bonus)
+    --return this_full_speed / (this_module_slots * this_module_bonus)
+    ]]
+    return mk1.crafting_speed
 end
 
 ---Returns a composite icon with a base icon and up to 4 child icons.
