@@ -176,9 +176,12 @@ end
 ---Some of the farms in 2.0 had their base speeds set by py.farm_speed_derived with wrong module values given.
 ---To keep the new farms the same speed, must correct by that amount. The new base crafting speeds will adjust by this correction.
 ---@param num_slots integer
----@param desired_speed number
----@param module_bonus number?
----@return number
+---@param base_entity_name string
+---@param correct_base_module_bonus number
+---@param correct_this_bonus number
+---@param given_base_module_bonus number?
+---@param given_this_bonus number?
+---@return number factor to multiply the crafting speed of the machine by
 function py.farm_speed_correction20_wrong_modules(num_slots, base_entity_name,
                                                 correct_base_module_bonus, correct_this_bonus,
                                                 given_base_module_bonus, given_this_bonus)
