@@ -245,13 +245,11 @@ require "defines"
 require "color"
 require "world-generation"
 
-if data and data.raw and not data.raw.item["iron-plate"] then
-    py.stage = "settings"
-elseif data and data.raw then
-    py.stage = "data"
+if helpers.stage == "settings" then
+
+elseif helpers.stage == "prototype" then
     require "data-stage"
-elseif script then
-    py.stage = "control"
+elseif helpers.stage == "runtime" then
     require "control-stage"
 else
     error("Could not determine load order stage.")
@@ -271,23 +269,14 @@ local function declare(name, initval)
     declaredNames[name] = true
 end
 
-if py.stage == "data" then
-    data:extend {
-        {
-            type = "mod-data",
-            name = "py-undocumented-globals",
-            data = {}
-        }
-    }
-end
-
 local control_globals_outside_of_events = false
-if py.stage == "control" then
-    py.on_event(py.events.on_init(), function(changes --[[@as ConfigurationChangedData --]])
+if helpers.stage == "runtime" then
+    py.on_event(py.events.on_init(), function(changes)
+        ---@cast changes ConfigurationChangedData
         -- We only run if it's a new map or startup change
         if not changes or changes.new_version or changes.migration_applied or changes.mod_startup_settings_changed or table_size(changes.mod_changes) > 0 then
             ---@diagnostic disable-next-line: undefined-field
-            if prototypes.mod_data["py-undocumented-globals"].get("exist") then
+            if py.mod_data.undeclared_globals_exist then
                 game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
             end
             if control_globals_outside_of_events then
@@ -301,7 +290,7 @@ if settings.startup["pypp-no-globals"].value then
     setmetatable(_G, {
         __newindex = function(t, n, v)
             if not declaredNames[n] then
-                if py.stage == "control" then
+                if helpers.stage == "runtime" then
                     -- temp
                     if game then
                         game.print(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
@@ -318,7 +307,7 @@ if settings.startup["pypp-no-globals"].value then
         end,
         __index = function(_, n)
             if not declaredNames[n] then
-                if py.stage == "control" then
+                if helpers.stage == "runtime" then
                     -- temp
                     if game then
                         game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
@@ -328,10 +317,10 @@ if settings.startup["pypp-no-globals"].value then
                     log(debug.traceback("attempt to read undeclared global variable: " .. n, 2))
                     -- end temp
                     -- error("attempt to read undeclared variable: " .. n, 2)
-                elseif py.stage == "data" then
+                elseif helpers.stage == "prototype" then
                     -- temp, ultimately won't print at game start and will have a strict mode setting for testing that will crash the game
                     log(debug.traceback("WARNING: attempt to read undeclared global variable: " .. n, 2))
-                    data.raw["mod-data"]["py-undocumented-globals"].data.exist = true
+                    py.mod_data.undeclared_globals_exist = true
                 end
             else
                 return nil

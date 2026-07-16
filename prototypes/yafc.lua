@@ -1,3 +1,5 @@
+---@diagnostic disable: missing-fields, param-type-mismatch, assign-type-mismatch, need-check-nil
+
 if mods["pyalienlife"] then
     log("Fix Automated smartfarm")
     -- Add the replicator as proper ingredient
@@ -46,7 +48,6 @@ if mods["pyalienlife"] then
         }
         resource.minable.required_fluid = fluid_name
         resource.minable.fluid_amount = 10
-        ---@diagnostic disable-next-line: missing-fields
         resource.autoplace = {control = "trees"}
 
         for _, recipe_data in ipairs(farm.recipes) do
@@ -57,9 +58,7 @@ if mods["pyalienlife"] then
     end
 
     -- Collector and harvester need a fluid box - an empty table is enough for YAFC
-    ---@diagnostic disable-next-line: missing-fields
     data.raw["mining-drill"]["harvester"].input_fluid_box = {}
-    ---@diagnostic disable-next-line: missing-fields
     data.raw["mining-drill"]["flora-collector-mk01"].input_fluid_box = {}
     data.raw["mining-drill"]["flora-collector-mk02"].input_fluid_box = {}
     data.raw["mining-drill"]["flora-collector-mk03"].input_fluid_box = {}
@@ -143,9 +142,7 @@ if mods["pyalienlife"] then
         {"work-o-dile", 3, 8,  49 * 2}
     }
 
-    Digosaurus = {}
-    require "__pyalienlife__/scripts/digosaurus/digosaurus-prototypes"
-    for food_name, food_bonus in pairs(Digosaurus.favorite_foods) do
+    for food_name, food_bonus in pairs(data.raw["mod-data"].pyanodons.data.digosaurus.foods) do
         for _, y in ipairs(dig_creatures) do
             -- The creature is looped in the recipe to make it only available after the creature is available
             RECIPE {

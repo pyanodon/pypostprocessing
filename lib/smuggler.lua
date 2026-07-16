@@ -1,25 +1,22 @@
-if py.stage == "data" then
+if helpers.stage == "prototype" then
   data:extend{
     {
       type = "mod-data",
-      name = "py-smuggled-data",
+      name = "pyanodons",
       data = {}
     }
   }
-
-  function py.smuggle(name, to_smuggle)
-    data.raw["mod-data"]["py-smuggled-data"].data[name] = to_smuggle
-  end
-
-  function py.smuggle_get(name, nil_value)
-    if data.raw["mod-data"]["py-smuggled-data"].data[name] == nil then
-      py.smuggle(name, nil_value)
-    end
-  
-    return data.raw["mod-data"]["py-smuggled-data"].data[name]
-  end
-elseif py.stage == "control" then
-  function py.get_smuggled_data(name)
-    return prototypes.mod_data["py-smuggled-data"].get(name)
-  end
+  py.mod_data = data.raw["mod-data"].pyanodons.data
+else
+  py.mod_data = prototypes.mod_data.pyanodons.data
 end
+
+---Adds data to the pyanodons mod-data object, for use at runtime. Data validation must be done by the script in question
+---@param index string
+---@param data AnyBasic
+function py.smuggle(index, data)
+  data.raw["mod-data"].pyanodons.data[index] = data
+end
+
+---@class (partial) pyModData
+---@cast py.mod_data pyModData
