@@ -271,17 +271,15 @@ end
 
 local control_globals_outside_of_events = false
 if helpers.stage == "runtime" then
-    py.on_event(py.events.on_init(), function(changes)
-        ---@cast changes ConfigurationChangedData
-        -- We only run if it's a new map or startup change
-        if not changes or changes.new_version or changes.migration_applied or changes.mod_startup_settings_changed or table_size(changes.mod_changes) > 0 then
-            ---@diagnostic disable-next-line: undefined-field
+    py.on_event(defines.events.on_tick, function(_)
+        if not storage.global_messages_sent then
             if py.mod_data.undeclared_globals_exist then
                 game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
             end
             if control_globals_outside_of_events then
                 game.print("[color=255,0,0]found references to undefined globals in control stage, check logs[/color]")
             end
+            storage.global_messages_sent = true
         end
     end)
 end
@@ -300,6 +298,8 @@ if settings.startup["pypp-no-globals"].value then
                     end
                     -- end temp
                     -- error("attempt to write to undeclared variable: " .. n, 2)
+                else
+                    py.mod_data.undeclared_globals_exist = true
                 end
                 log(debug.traceback("INFO: creating a new global variable\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
             end
