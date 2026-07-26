@@ -189,6 +189,11 @@ end
 storage.on_tick = storage.on_tick or {}
 ---@type table<string, function>
 py.on_tick_funcs = {}
+setmetatable(py.on_tick_funcs, {
+    __newindex = function(_, _, _)
+        error("use py.register_delayed_function instead")
+    end,
+})
 
 ---register delayed functions
 ---@param func_name string
@@ -196,7 +201,8 @@ py.on_tick_funcs = {}
 py.register_delayed_function = function(func_name, func)
     log("registered delayed_event function " .. func_name)
     if py.on_tick_funcs[func_name] and py.on_tick_funcs[func_name] ~= func then error("attempting to overwrite a registered function " .. func_name) end
-    py.on_tick_funcs[func_name] = func
+    if game then error("can't register a delayed function inside of events") end
+    rawset(py.on_tick_funcs, func_name, func)
 end
 
 -- use this to call functions after a delay
@@ -220,6 +226,11 @@ local on_nth_tick_init = false
 local function_list = {}
 
 py.mod_nth_tick_funcs = {}
+setmetatable(py.mod_nth_tick_funcs, {
+    __newindex = function(_, _, _)
+        error("use py.register_on_nth_tick instead")
+    end,
+})
 
 ---use instead of script.on_nth_tick, avoids multiple functions running on the same tick
 ---@param tick int
@@ -228,8 +239,9 @@ py.mod_nth_tick_funcs = {}
 ---@param func function
 py.register_on_nth_tick = function(tick, func_name, mod, func)
     if py.mod_nth_tick_funcs[mod .. "-" .. func_name] then error("py.register_on_nth_tick: function with name " .. mod .. "-" .. func_name .. " is already registered") end
+    if game then error("can't register an nth tick function inside of events") end
     function_list[func_name] = {tick = tick, mod = mod}
-    py.mod_nth_tick_funcs[mod .. "-" .. func_name] = func
+    rawset(py.mod_nth_tick_funcs, mod .. "-" .. func_name, func)
 end
 
 py.on_event(defines.events.on_tick, function(event)
