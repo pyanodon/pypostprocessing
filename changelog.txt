@@ -8,6 +8,7 @@ Date: ????
     - Fixed that defines.prototypes.item was being mutated in data-final-fixes. Resolves https://github.com/pyanodon/pybugreports/issues/1538
     - Removed unused controls. Resolves https://github.com/pyanodon/pybugreports/issues/1535
     - Fixed a crash when indexing alerts. Resolves https://github.com/pyanodon/pybugreports/issues/1533
+    - Fixed a crash processing recycling recipes with some other mods
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.2
 Date: 2026-07-10
