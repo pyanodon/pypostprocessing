@@ -55,13 +55,15 @@ py.clear_alert = function(alert_id)
         }
         alert_data.rendering.destroy()
     else
-        for _, alert in pairs(alert_data.force.players[1].get_alerts{
-            type = defines.alert_type.custom,
-            surface = alert_data.surface,
-            icon = alert_data.signal,
-            message = alert_data.message
-        }) do
-            alert_data.force.remove_alert(alert)
+        for _, player in pairs(alert_data.force.players) do
+            for _, alert in pairs(player.get_alerts{
+                type = defines.alert_type.custom,
+                surface = alert_data.surface,
+                icon = alert_data.signal,
+                message = alert_data.message
+            }) do
+                alert_data.force.remove_alert(alert)
+            end
         end
     end
     storage.alerts[alert_id] = nil
