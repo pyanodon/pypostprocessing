@@ -5,6 +5,7 @@ Date: ????
     - Changed stage detection to use helper functions
     - Added pyanodons mod-data for custom compound prototypes and other information to be accessible at data stage, instead of using remote interfaces
     - Updated emmylua annotations
+    - Fixed that defines.prototypes.item was being mutated in data-final-fixes. Resolves https://github.com/pyanodon/pybugreports/issues/1538
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.2
 Date: 2026-07-10

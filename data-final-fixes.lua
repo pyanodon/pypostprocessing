@@ -433,7 +433,7 @@ if create_signal_mode then
             else
                 product = recipe.results[1].name
             end
-            local types = defines.prototypes.item
+            local types = table.deepcopy(defines.prototypes.item)
             types["fluid"] = 0
             for ttype, _ in pairs(types) do
                 if data.raw[ttype] and data.raw[ttype][product] then
