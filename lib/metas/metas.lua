@@ -10,13 +10,13 @@ local lib = {
 }
 
 ---@class pYdata.AnyPrototype:data.AnyPrototype
----@field public copy fun(self: pYdata.AnyPrototype, new_name: (string | fun(self: pYdata.AnyPrototype): string)?): pYdata.AnyPrototype
----@field public subgroup_order fun(self: pYdata.AnyPrototype, subgroup: string, order: string): pYdata.AnyPrototype
----@field public set_fields fun(self: pYdata.AnyPrototype, fields: table): pYdata.AnyPrototype
----@field public set fun(self: pYdata.AnyPrototype, field: string, value: any): pYdata.AnyPrototype
----@field public delete fun(self: pYdata.AnyPrototype)
----@field public hide fun(self: pYdata.AnyPrototype): pYdata.AnyPrototype
----@field public unhide fun(self: pYdata.AnyPrototype): pYdata.AnyPrototype
+---@field public copy fun<T>(self: T, new_name: (string | fun(self: T): string)?): T
+---@field public subgroup_order fun<T>(self: T, subgroup: string, order: string): T
+---@field public set_fields fun<T>(self: T, fields: table): T
+---@field public set fun<T>(self: T, field: string, value: any): T
+---@field public delete fun<T>(self: T)
+---@field public hide fun<T>(self: T): T
+---@field public unhide fun<T>(self: T): T
 
 for _, meta in pairs(lib) do
     meta.copy = function(self, new_name)
