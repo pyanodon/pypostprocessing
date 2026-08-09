@@ -60,6 +60,7 @@ local pyal_globals = {
     "entity_changed_unit_number",
     "order_by_distance",
     "Mounts",
+    "RecipeGUI"
 }
 
 local maraxsis_globals = {
