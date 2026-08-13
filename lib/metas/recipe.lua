@@ -494,6 +494,7 @@ metas.get_main_product = function(self, allow_multi_product)
                 result = v
             end
         end
+        if not result then error("ERROR @ \'" .. self.name .. "\':get_main_product(): results does not contain main_product \'" .. target .. "\'") end
     else -- or only result
         _, result = next(self.results)
     end
