@@ -162,66 +162,51 @@ for _, recipe in pairs(data.raw.recipe) do
     end
     ::NEXT_RECIPE::
 
-    -- Build table of recipes that may need signals
+    -- Generate signal, if required
     if create_signal_mode and recipe.results then
-        local product = (recipe.main_product or (#recipe.results == 1 and recipe.results[1].name))
-        if product and product ~= "" and recipe.localised_name then
-            if signal_recipes[product] == nil then
-                signal_recipes[product] = {recipe}
-            else
-                table.insert(signal_recipes[product], recipe)
-            end
-        end
-    end
-end
-
--------------------------------------------
--- Recipe signals --
--------------------------------------------
-
-if create_signal_mode then
-    for _, alternatives in pairs(signal_recipes) do
-        if #alternatives > 1 then
-            for _, recipe in pairs(alternatives) do
-                -- Skip recipe categories where signals aren't useful for any recipe
-                if (recipe:has_category("compost") or recipe:has_category("py-barreling")) then
-                    break
-                end
-                -- Determine amount of main product to display in signal name
-                local amt = 0
-                local main_product_name = recipe:get_main_product(true).name
-                for _, result in pairs(recipe.results) do
-                    if result.name == main_product_name then
-                        if result.independent_probability and result.independent_probability < 1 then
-                            -- Some recipes have random amount for multiples, such as nuclear isotopes.
-                            local prob_amt = 0
-                            if result.amount then
-                                prob_amt = result.amount
-                            elseif result.amount_min and result.amount_max then
-                                prob_amt = (result.amount_min + result.amount_max) / 2
-                            end
-                            amt = result.independent_probability * prob_amt
-                            break
+        local main_product = recipe:get_main_product()
+        local amt = 0
+        if main_product then
+            for _, result in pairs(recipe.results) do
+                if result.name == main_product.name then
+                    if result.independent_probability and result.independent_probability < 1 then
+                        local prob_amt = 0
+                        if result.amount then
+                            prob_amt = result.amount
                         elseif result.amount_min and result.amount_max then
-                            amt = (result.amount_min + result.amount_max) / 2
-                            break
-                        elseif result.amount then
-                            amt = result.amount
-                            break
+                            prob_amt = (result.amount_min + result.amount_max) / 2
                         end
+                        amt = result.independent_probability * prob_amt
+                        break
+                    elseif result.shared_probability then
+                        -- Some recipes have random amount for multiples, such as nuclear isotopes.
+                        local prob_amt = 0
+                        if result.amount then
+                            prob_amt = result.amount
+                        elseif result.amount_min and result.amount_max then
+                            prob_amt = (result.amount_min + result.amount_max) / 2
+                        end
+                        amt = (result.shared_probability.max - result.shared_probability.min) * prob_amt
+                        break
+                    elseif result.amount_min and result.amount_max then
+                        amt = (result.amount_min + result.amount_max) / 2
+                        break
+                    elseif result.amount then
+                        amt = result.amount
+                        break
                     end
                 end
-                -- Inject recipe output into each localised name parameter, since native output display is not consistently shown
-                if recipe.localised_name[1] == "?" then
-                    for i, name in pairs(recipe.localised_name) do
-                        if i > 1 and amt ~= 1 then
-                            recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
-                        end
-                    end
-                end
-                recipe.hide_from_signal_gui = false
             end
         end
+        -- Inject recipe output into each localised name parameter if required, since native output display is not consistently shown
+        if main_product and recipe.localised_name and recipe.localised_name[1] == "?" then
+            for i, name in pairs(recipe.localised_name) do
+                if i > 1 and amt ~= 1 then
+                    recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
+                end
+            end
+        end
+        recipe.hide_from_signal_gui = false
     end
 end
 
