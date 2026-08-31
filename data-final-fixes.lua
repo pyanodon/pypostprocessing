@@ -320,7 +320,7 @@ end
 if mods.pycoalprocessing and not mods["extended-descriptions"] then
     for _, recipe in pairs(data.raw.recipe) do
         if recipe.allow_productivity then
-            py.add_to_description("recipe", recipe, nil, {"recipe-description.affected-by-productivity"})
+            py.add_to_description(recipe, nil, {"recipe-description.affected-by-productivity"})
         end
     end
 end
