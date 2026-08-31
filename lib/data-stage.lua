@@ -49,44 +49,17 @@ py.generate_localised_description = function(base_name, tier)
 end
 
 ---Adds a localised string to the prototype's description.
----@param type string
 ---@param prototype data.AnyPrototype
----@param localised_string LocalisedString
-py.add_to_description = function(type, prototype, localised_string)
-    --[[@cast localised_string string]] -- can also be a nested table but it hides warnings at least
-    if prototype.localised_description and prototype.localised_description ~= "" then
-        prototype.localised_description = {"", prototype.localised_description, "\n", localised_string}
-        return
-    end
-
-    local place_result = prototype.place_result or prototype.place_as_equipment_result
-    if type == "item" and place_result then
-        for _, machine in pairs(data.raw) do
-            machine = machine[place_result]
-            if machine and machine.localised_description then
-                prototype.localised_description = {
-                    "?",
-                    {"", machine.localised_description, "\n", localised_string},
-                    localised_string
-                }
-                return
-            end
-        end
-
-        local entity_type = prototype.place_result and "entity" or "equipment"
-        prototype.localised_description = {
-            "?",
-            {"", {entity_type .. "-description." .. place_result}, "\n", localised_string},
-            {"", {type .. "-description." .. prototype.name},      "\n", localised_string},
-            localised_string
-        }
-    else
-        prototype.localised_description = {
-            "?",
-            {"", {type .. "-description." .. prototype.name}, "\n", localised_string},
-            localised_string
-        }
-    end
+---@param name? LocalisedString|string filled with an empty string if not added
+---@param value LocalisedString|string
+py.add_to_description = function(prototype, name, value)
+    ---@cast name LocalisedString?
+    ---@cast value LocalisedString?
+    prototype.custom_tooltip_fields = prototype.custom_tooltip_fields or {}
+    prototype.custom_tooltip_fields[#prototype.custom_tooltip_fields + 1] = {
+      name = name or "",
+      value = value
+    }
 end
 
 ---adds a glow layer to any item prototype.
