@@ -48,22 +48,7 @@ py.transfer_stack_to_cursor = function(player, stack, amount_to_transfer)
         amount_to_transfer = math.floor(stack.count * amount_to_transfer + 0.5)
     end
     ---@cast amount_to_transfer uint
-    if is_simple_stack(stack) then
-        cursor_stack.set_stack{
-            name = stack.name,
-            quality = stack.quality,
-            count = amount_to_transfer or stack.count,
-            spoil_percent = stack.spoil_percent,
-            health = stack.health
-        }
-        if amount_to_transfer then
-            stack.count = stack.count - amount_to_transfer
-        else
-            stack.clear()
-        end 
-    else
-        cursor_stack.transfer_stack(stack, amount_to_transfer)
-    end
+    cursor_stack.transfer_stack(stack, amount_to_transfer)
 end
 
 ---@param player LuaPlayer
@@ -76,22 +61,7 @@ py.transfer_cursor_to_stack = function(player, stack, amount_to_transfer)
         amount_to_transfer = math.floor(cursor_stack.count * amount_to_transfer + 0.5)
     end
     ---@cast amount_to_transfer uint
-    if is_simple_stack(cursor_stack) then
-        stack.set_stack{
-            name = cursor_stack.name,
-            quality = cursor_stack.quality,
-            count = amount_to_transfer or cursor_stack.count,
-            spoil_percent = cursor_stack.spoil_percent,
-            health = cursor_stack.health
-        }
-        if amount_to_transfer then
-            cursor_stack.count = cursor_stack.count - amount_to_transfer
-        else
-            cursor_stack.clear()
-        end 
-    else
-        stack.transfer_stack(cursor_stack, amount_to_transfer)
-    end
+    stack.transfer_stack(cursor_stack, amount_to_transfer)
 end
 
 ---@param inventory LuaInventory
