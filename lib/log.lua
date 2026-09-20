@@ -11,41 +11,50 @@ if helpers.stage == "prototype" then log("log level: " .. log_level) end
 
 ---@param category string used to identify what the log is about
 ---@param message string
----@param info_level int?
+---@param info_level int used to print the actual call site
 local log_debug = function(category, message, info_level)
-    if log_level < 2 then return end
-    info_level = info_level or 2
     local info = debug.getinfo(info_level) ---@cast info -?
     local callsite = info.short_src .. ":" .. info.currentline
     
     log("DEBUG: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
 end
+if log_level < 2 then
+    log_debug = function(category, message, info_level)
+        return
+    end
+end
 
 ---@param category string used to identify what the log is about
 ---@param message string
----@param info_level int?
+---@param info_level int used to print the actual call site
 local log_info = function(category, message, info_level)
-    if log_level < 1 then return end
-    info_level = info_level or 2
     local info = debug.getinfo(info_level) ---@cast info -?
     local callsite = info.short_src .. ":" .. info.currentline
 
     log("INFO: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
 end
+if log_level < 1 then
+    log_info = function(category, message, info_level)
+        return
+    end
+end
 
 ---@param category string used to identify what the log is about
 ---@param message string
----@param info_level int?
+---@param info_level int used to print the actual call site
 local log_warning = function(category, message, info_level)
-    if log_level < 0 then return end
-    info_level = info_level or 2
     local info = debug.getinfo(info_level) ---@cast info -?
     local callsite = info.short_src .. ":" .. info.currentline
 
     log("WARNING: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
+end
+if log_level < 0 then
+    log_warning = function(category, message, info_level)
+        return
+    end
 end
 
 --- returns a logger which adds the category to all logs  
@@ -54,13 +63,13 @@ end
 ---@return Logger
 py.log.init = function(category)
     local debug = function(message)
-        return log_debug(category, message)
+        return log_debug(category, message, 2)
     end
     local info = function(message)
-        return log_info(category, message)
+        return log_info(category, message, 2)
     end
     local warning = function(message)
-        return log_warning(category, message)
+        return log_warning(category, message, 2)
     end
     ---@type Logger
     local logger = {debug = debug, info = info, warning = warning}
