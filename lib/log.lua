@@ -13,21 +13,33 @@ log("log level: " .. log_level)
 ---@param message string
 local log_debug = function(category, message)
     if log_level < 2 then return end
+    local info = debug.getinfo(2) ---@cast info -?
+    local callsite = info.short_src .. ":" .. info.currentline
+    
     log("DEBUG: " .. category .. ": " .. message)
+    log("callsite: " .. callsite)
 end
 
 ---@param category string used to identify what the log is about
 ---@param message string
 local log_info = function(category, message)
     if log_level < 1 then return end
+    local info = debug.getinfo(2) ---@cast info -?
+    local callsite = info.short_src .. ":" .. info.currentline
+
     log("INFO: " .. category .. ": " .. message)
+    log("callsite: " .. callsite)
 end
 
 ---@param category string used to identify what the log is about
 ---@param message string
 local log_warning = function(category, message)
     if log_level < 0 then return end
+    local info = debug.getinfo(2) ---@cast info -?
+    local callsite = info.short_src .. ":" .. info.currentline
+
     log("WARNING: " .. category .. ": " .. message)
+    log("callsite: " .. callsite)
 end
 
 --- returns a logger which adds the category to all logs  
@@ -47,4 +59,19 @@ py.log.init = function(category)
     ---@type Logger
     local logger = {debug = debug, info = info, warning = warning}
     return logger
+end
+
+---@param message string
+py.log.debug = function(message)
+    log_debug("default", message)
+end
+
+---@param message string
+py.log.info = function(message)
+    log_info("default", message)
+end
+
+---@param message string
+py.log.warning = function(message)
+    log_warning("default", message)
 end
