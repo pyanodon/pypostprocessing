@@ -42,5 +42,13 @@ data:extend {
         minimum_value = 0,
         maximum_value = 10,
         order = "a"
+    },
+    {
+        type = "string-setting",
+        name = "pypp-log-level",
+        setting_type = "startup",
+        default_value = "info",
+        allowed_values = {"debug", "info", "warning"},
+        order = "f",
     }
 }

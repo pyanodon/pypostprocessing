@@ -167,6 +167,7 @@ require "defines"
 require "color"
 require "world-generation"
 require "assertion"
+require "log"
 
 if helpers.stage == "settings" then
 
