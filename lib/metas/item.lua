@@ -178,10 +178,10 @@ metas.has_fuel_category = function(self, category_name)
     elseif not self.fuel_value then
         return false -- does not support categories, is not a fuel
     else
-        if category_name == "chemical" and (not self.categories or #self.categories == 0) then
+        if category_name == "chemical" and (not self.fuel_categories or #self.fuel_categories == 0) then
             return true -- fake positive if trying to remove 'category' with no categories because its the default
         end
-        for _, category in pairs(self.categories or {}) do
+        for _, category in pairs(self.fuel_categories or {}) do
             if category == category_name then
                 return true -- category found
             end
