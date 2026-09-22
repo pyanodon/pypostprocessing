@@ -246,7 +246,7 @@ local function recipe_item_builder(ingredients, results, previous_ingredients, p
 end
 
 ---Provides an interface to quickly build tiered recipes. See recipes-auto-brains.lua for an example
----@param params {name:RecipeID,categories:RecipeCategoryID[],subgroup:data.ItemSubGroupID,order:data.Order,main_product?:string,crafting_speed:double,allowed_module_categories:[data.ModuleCategoryID],number_icons:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
+---@param params {name:RecipeID,categories:RecipeCategoryID[],subgroup?:data.ItemSubGroupID,order?:data.Order,main_product?:string,crafting_speed?:double,allowed_module_categories?:[data.ModuleCategoryID],number_icons?:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
 py.autorecipes = function(params)
     local previous_ingredients = {}
     local previous_results = {}

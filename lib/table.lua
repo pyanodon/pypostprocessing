@@ -50,7 +50,7 @@ end
 ---Returns the first element that satisfies the predicate.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<any,V>
 ---@param f V|fun(v: V, k: K, ...: any): any
 ---@param ... any
 ---@return V?,K?
@@ -178,8 +178,7 @@ end
 
 ---Returns a new array by merging the provided tables. The values are appended in the order they are provided.
 ---@generic V
----@generic K
----@param ... table<K,V>
+---@param ... table<any, V>
 ---@return V[]
 table.array_combine = function(...)
     local result = {}

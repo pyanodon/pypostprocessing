@@ -137,26 +137,13 @@ for _, recipe in pairs(data.raw.recipe) do
             goto NEXT_RECIPE
         end
         for i, result in pairs(recipe.results) do
-            local name = result.name or result[1]
-            local amount = result.amount or result[2]
+            local name = result.name
+            local amount = result.amount
             if not name or not config.NON_PRODDABLE_ITEMS[name] or result.ignored_by_productivity then
                 goto NEXT_RESULT
             end
-            -- Convert to an explicitly long-form result format
-            if result[1] then
-                recipe.results[i] = {
-                    type = result.type or "item",
-                    name = name,
-                    amount = amount,
-                    ignored_by_stats = amount,
-                    ignored_by_productivity = amount,
-                    [1] = nil,
-                    [2] = nil
-                }
-            else -- Just set the catalyst amount
-                result.ignored_by_stats = amount
-                result.ignored_by_productivity = amount
-            end
+            result.ignored_by_stats = amount
+            result.ignored_by_productivity = amount
             ::NEXT_RESULT::
         end
     end

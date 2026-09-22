@@ -4,7 +4,7 @@
 ---@param shift_south Vector?
 ---@param shift_west Vector?
 ---@param shift_east Vector?
----@param replacements {north:data.Sprite,east:data.Sprite,south:data.Sprite,west:data.Sprite}?
+---@param replacements {north:data.Sprite?,east:data.Sprite?,south:data.Sprite?,west:data.Sprite?}?
 ---@return data.Sprite4Way
 py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shift_east, replacements)
     local new_pictures = {

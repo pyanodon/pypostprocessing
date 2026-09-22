@@ -57,7 +57,7 @@ if script.active_mods.pyalienlife then
   end
 
   function helper.get_entity_at(position)
-    radius = radius or 0.5
+    local radius = 0.5
     local area = {
       {position[1] - radius, position[2] - radius},
       {position[1] + radius, position[2] + radius}
