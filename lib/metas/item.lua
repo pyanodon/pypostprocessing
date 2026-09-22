@@ -6,11 +6,11 @@ local item_prototypes = defines.prototypes.item
 ---@field public remove_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
 ---@field public has_flag fun(self: pYdata.ItemPrototype, flag: string): boolean
 ---@field public spoil fun(self: pYdata.ItemPrototype, spoil_result: (string | table), spoil_ticks: uint): pYdata.ItemPrototype, boolean
----@field public add_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
----@field public remove_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
----@field public replace_category fun(self: pYdata.ItemPrototype, old: data.FuelCategoryID, new: data.FuelCategoryID): pYdata.ItemPrototype, boolean
----@field public has_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): boolean
----@field public has_categories fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID[], all?: boolean): boolean # Returns true if the item has any of the fuel categories. all? categories must match to pass
+---@field public add_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
+---@field public remove_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
+---@field public replace_fuel_category fun(self: pYdata.ItemPrototype, old: data.FuelCategoryID, new: data.FuelCategoryID): pYdata.ItemPrototype, boolean
+---@field public has_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): boolean
+---@field public has_fuel_categories fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID[], all?: boolean): boolean # Returns true if the item has any of the fuel categories. all? categories must match to pass
 ITEM = setmetatable({}, {
     ---@param item data.ItemPrototype
     __call = function(self, item)
@@ -116,11 +116,11 @@ metas.spoil = function(self, spoil_result, spoil_ticks)
     return self, true
 end
 
-metas.add_category = function(self, category_name)
+metas.add_fuel_category = function(self, category_name)
     self.fuel_categories = self.fuel_categories or {}
 
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':add_category(): Category " .. category_name .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':add_fuel_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         for _, category in pairs(self.fuel_categories) do
@@ -133,9 +133,9 @@ metas.add_category = function(self, category_name)
     end
 end
 
-metas.remove_category = function(self, category_name)
+metas.remove_fuel_category = function(self, category_name)
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':remove_category(): Category " .. category_name .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':remove_fuel_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         if category_name == "chemical" and (not self.fuel_categories or #self.fuel_categories == 0) then
@@ -153,27 +153,27 @@ metas.remove_category = function(self, category_name)
     end
 end
 
-metas.replace_category = function(self, old, new)
+metas.replace_fuel_category = function(self, old, new)
     if not data.raw["fuel-category"][old] then
-        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not found")
         return self, false -- category does not exist
     elseif not data.raw["fuel-category"][new] then
-        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. new .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. new .. " not found")
         return self, false -- category does not exist
     else
-        local _, success = self:remove_category(old)
+        local _, success = self:remove_fuel_category(old)
         if success then
-            return self:add_category(new) -- conditional on success of add_category
+            return self:add_fuel_category(new) -- conditional on success of add_category
         else
-            log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not present for replacement")
+            log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not present for replacement")
             return self, false -- DNE, do not add
         end
     end
 end
 
-metas.has_category = function(self, category_name)
+metas.has_fuel_category = function(self, category_name)
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':has_category(): Category " .. category_name .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':has_fuel_category(): Category " .. category_name .. " not found")
         return false -- category does not exist
     elseif not self.fuel_value then
         return false -- does not support categories, is not a fuel
@@ -190,11 +190,11 @@ metas.has_category = function(self, category_name)
     end
 end
 
-metas.has_categories = function(self, categories, all)
+metas.has_fuel_categories = function(self, categories, all)
     for _, category in pairs(categories) do
-        if all and not self:has_category(category) then
+        if all and not self:has_fuel_category(category) then
             return false -- all categories must be contained but this one was not
-        elseif not all and self:has_category(category) then
+        elseif not all and self:has_fuel_category(category) then
             return true -- any categories must match and this one matched
         end
     end
