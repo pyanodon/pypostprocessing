@@ -4,6 +4,8 @@ Date: ????
   Changes:
     - Fixed that error messages would not show when using py.assert() and not passing varargs
     - added a logging library (py.log)
+    - Added ITEM():add_category(), remove_category(), replace_category(), has_category(), and has_categories() to manipulate fuel categories
+    - Fixed a malform return in RECIPE():has_category()
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.4
 Date: 2026-09-16

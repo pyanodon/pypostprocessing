@@ -412,6 +412,7 @@ metas.remove_category = function(self, category_name)
         end
         for i, category in pairs(self.categories or {}) do
             if category == category_name then
+                ---@diagnostic disable-next-line: param-type-mismatch
                 table.remove(self.categories, i)
                 if #self.categories == 0 then self.categories = nil end -- remove categories if it is an empty table
                 return self, true -- successfully removed
@@ -445,11 +446,11 @@ metas.has_category = function(self, category_name)
     self:standardize()
 
     if not data.raw["recipe-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. category_name .. " not found")
+        log("WARNING @ \'" .. self.name .. "\':has_category(): Category " .. category_name .. " not found")
         return false -- category does not exist
     else
         if category_name == "crafting" and (not self.categories or #self.categories == 0) then
-            return self, true -- fake positive if trying to remove 'category' with no categories because its the default
+            return true -- fake positive if trying to remove 'category' with no categories because its the default
         end
         for _, category in pairs(self.categories or {}) do
             if category == category_name then
