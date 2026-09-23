@@ -168,8 +168,6 @@ if mods["pyalienlife"] then
     data.raw.recipe["bioport-hidden-recipe"].results = {}
     data.raw["assembling-machine"]["bioport"].fixed_recipe = nil
 
-    Biofluid = {}
-    require "__pyalienlife__/scripts/biofluid/biofluid-prototypes"
     for food_name, food_bonus in pairs(Biofluid.favorite_foods) do
         for creature_name, poop_amount in pairs(Biofluid.taco_bell) do
             RECIPE {
@@ -206,7 +204,6 @@ if mods["pyalienlife"] then
         results = {{type = "item", name = "hidden-beacon-turd", amount = 1}}
     }
 
-    _G.yafc_turd_integration = true
     local tech_upgrades, farm_building_tiers = table.unpack(require "__pyalienlife__/prototypes/turd")
     for _, tech_upgrade in pairs(tech_upgrades) do
         local master_tech = tech_upgrade.master_tech
