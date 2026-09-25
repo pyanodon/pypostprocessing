@@ -407,10 +407,18 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     return icons
 end
 
+---@class PyVisualState
+---@field name string
+---@field next_active string
+---@field next_inactive string
+---@field frame_sequence int[]
+---@field duration number?
+---@field speed number?
+
 ---Retruns a version of graphics_set with the following properties:
 ---The machine will follow a binary finite state machine (bfsm) to determine the current active animation.
 ---Example (sinter machine): https://github.com/pyanodon/pybugreports/issues/588
----@param params {states:[data.VisualState], working_visualisations:[data.WorkingVisualisation], shadow:data.Animation?}
+---@param params {states:[PyVisualState], working_visualisations:[data.WorkingVisualisation], shadow:data.Animation?}
 ---@return data.WorkingVisualisations
 py.finite_state_machine_working_visualisations = function(params)
     local states = params.states

@@ -5,10 +5,11 @@
 ---@field cross fun(self, v: Pyvector): Pyvector -- cross product
 ---@field dot fun(self, v: Pyvector): number -- dot product
 ---@field mag fun(self): number -- get the magnitude of a vector
+---@field mag2 fun(self): number -- get the magnitude square of a vector, skips square root
 ---@field normalized fun(self): Pyvector -- normalize the vector
 ---@field rotate fun(self, angle: number): Pyvector -- rotate the vector around the z axis (angle in radians)
 ---@field is_vector fun(self): boolean
----@field new fun(x: {x: number, y: number, z: number} | number?, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
+---@field new fun(x: {x: number, y: number, z: number} | MapPosition | number?, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
 ---@operator add(Pyvector): Pyvector
 ---@operator sub(Pyvector): Pyvector
 ---@operator mul(Pyvector): Pyvector
@@ -47,6 +48,9 @@ py.vector = {
         ---@return Pyvector
         new = function(x, y, z)
             if type(x) == "table" then
+                x.x = x.x or 0
+                x.y = x.y or 0
+                x.z = x.z or 0
                 return setmetatable(x, py.vector)
             end
             return setmetatable({x = x or 0, y = y or 0, z = z or 0}, py.vector)
@@ -77,6 +81,11 @@ py.vector = {
         ---@return number
         mag = function(self)
             return math.sqrt(self.x ^ 2 + self.y ^ 2 + self.z ^ 2)
+        end,
+
+        ---@return number
+        mag2 = function(self)
+            return self.x ^ 2 + self.y ^ 2 + self.z ^ 2
         end,
 
         ---@return Pyvector
