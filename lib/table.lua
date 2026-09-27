@@ -3,7 +3,7 @@
 ---Returns a new table with the results of calling a provided function on every element in the table.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<any,V>
 ---@param f fun(v: V, k: K, ...: any): any
 ---@param ... any
 ---@return table<K,V>
