@@ -309,8 +309,7 @@ py.global_item_replacer = function(old, new, blackrecipe)
     for _, recipe in pairs(data.raw.recipe) do
         ---@diagnostic disable-next-line: undefined-field
         if not recipe.ignored_by_recipe_replacement and not blackrecipe[recipe.name] then
-            recipe:replace_ingredient(old, new)
-            recipe:replace_result(old, new)
+            RECIPE(recipe):replace_ingredient(old, new):replace_result(old, new)
         end
     end
 end

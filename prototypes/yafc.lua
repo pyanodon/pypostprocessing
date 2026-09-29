@@ -52,7 +52,7 @@ if mods["pyalienlife"] then
 
         for _, recipe_data in ipairs(farm.recipes) do
             local recipe = RECIPE(recipe_data.recipe_name)
-            recipe:add_ingredient {name = farm.name, amount = 1, type = "item"}
+            RECIPE(recipe):add_ingredient {name = farm.name, amount = 1, type = "item"}
             recipe.results[1] = {type = "fluid", name = fluid_name, amount = math.floor(recipe_data.crop_output) * 529}
         end
     end

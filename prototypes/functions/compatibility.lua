@@ -8,9 +8,9 @@ if data.raw.recipe["electronic-circuit"].enabled == false
     and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
 then
     for _, recipe in pairs(data.raw.recipe) do
-        recipe:standardize()
+        RECIPE(recipe):standardize()
         if recipe.enabled ~= false then
-            recipe:replace_ingredient("electronic-circuit", "inductor1")
+            RECIPE(recipe):replace_ingredient("electronic-circuit", "inductor1")
         end
     end
 end
@@ -24,11 +24,11 @@ if mods.pyhightech then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "processing-unit" then
-                technology:remove_prereq("processing-unit"):add_prereq("advanced-circuit")
+                TECHNOLOGY(technology):remove_prereq("processing-unit"):add_prereq("advanced-circuit")
             elseif prereq == "battery-mk2-equipment" then
-                technology:remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
+                TECHNOLOGY(technology):remove_prereq("battery-mk2-equipment"):add_prereq("py-accumulator-mk01")
             elseif prereq == "battery-equipment" then
-                technology:remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
+                TECHNOLOGY(technology):remove_prereq("battery-equipment"):add_prereq("electric-energy-accumulators")
             end
         end
     end
@@ -38,13 +38,13 @@ if mods.pycoalprocessing then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "modules" then
-                technology:remove_prereq("modules"):add_prereq("speed-module")
+                TECHNOLOGY(technology):remove_prereq("modules"):add_prereq("speed-module")
             elseif prereq == "laser" then
-                technology:remove_prereq("laser"):add_prereq("logistic-science-pack")
+                TECHNOLOGY(technology):remove_prereq("laser"):add_prereq("logistic-science-pack")
             elseif prereq == "flammables" then
-                technology:remove_prereq("flammables")
+                TECHNOLOGY(technology):remove_prereq("flammables")
                 if technology.name ~= "flamethrower" then
-                    technology:add_prereq("flamethrower")
+                    TECHNOLOGY(technology):add_prereq("flamethrower")
                 end
             end
         end
@@ -56,11 +56,11 @@ if mods.pyalternativeenergy then
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "solar-energy" then
-                technology:remove_prereq("solar-energy"):add_prereq("solar-mk01")
+                TECHNOLOGY(technology):remove_prereq("solar-energy"):add_prereq("solar-mk01")
             elseif prereq == "battery" then
-                technology:remove_prereq("battery"):add_prereq("battery-mk01")
+                TECHNOLOGY(technology):remove_prereq("battery"):add_prereq("battery-mk01")
             elseif prereq == "nuclear-fuel-reprocessing" then
-                technology:remove_prereq("nuclear-fuel-reprocessing")
+                TECHNOLOGY(technology):remove_prereq("nuclear-fuel-reprocessing")
             end
         end
     end
@@ -69,13 +69,13 @@ end
 if mods.pyrawores then
     for _, recipe in pairs(data.raw.recipe) do
         if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
-            recipe:replace_ingredient("coal", "raw-coal")
+            RECIPE(recipe):replace_ingredient("coal", "raw-coal")
         end
     end
     for _, technology in pairs(data.raw.technology) do
         for _, prereq in pairs(technology.prerequisites or {}) do
             if prereq == "kovarex-enrichment-process" then
-                technology:remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
+                TECHNOLOGY(technology):remove_prereq("kovarex-enrichment-process"):add_prereq("uranium-mk01")
             end
         end
     end
@@ -85,7 +85,7 @@ if mods.pyindustry then
     for _, technology in pairs(data.raw.technology) do
         for i, pre in pairs(technology.prerequisites or {}) do
             if pre == "radar" then
-                technology:remove_prereq("radar"):add_prereq("radars-mk01")
+                TECHNOLOGY(technology):remove_prereq("radar"):add_prereq("radars-mk01")
                 break
             end
         end
