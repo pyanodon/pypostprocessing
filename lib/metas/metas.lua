@@ -9,14 +9,14 @@ local lib = {
     tile = require "tile"
 }
 
----@class data.AnyPrototype
----@field public copy fun(self: data.AnyPrototype, new_name: (string | fun(self: data.AnyPrototype): string)?): data.AnyPrototype
----@field public subgroup_order fun(self: data.AnyPrototype, subgroup: string, order: string): data.AnyPrototype
----@field public set_fields fun(self: data.AnyPrototype, fields: table): data.AnyPrototype
----@field public set fun(self: data.AnyPrototype, field: string, value: any): data.AnyPrototype
----@field public delete fun(self: data.AnyPrototype)
----@field public hide fun(self: data.AnyPrototype): data.AnyPrototype
----@field public unhide fun(self: data.AnyPrototype): data.AnyPrototype
+---@class pYdata.AnyPrototype:data.AnyPrototype
+---@field public copy fun<T>(self: T, new_name: (string | fun(self: T): string)?): T
+---@field public subgroup_order fun<T>(self: T, subgroup: string, order: string): T
+---@field public set_fields fun<T>(self: T, fields: table): T
+---@field public set fun<T>(self: T, field: string, value: any): T
+---@field public delete fun<T>(self: T)
+---@field public hide fun<T>(self: T): T
+---@field public unhide fun<T>(self: T): T
 
 for _, meta in pairs(lib) do
     meta.copy = function(self, new_name)
@@ -82,21 +82,6 @@ for ptype, prototypes in pairs(data.raw) do
     local meta = metas[ptype]
     if meta then
         for _, prototype in pairs(prototypes) do
-            setmetatable(prototype, meta)
-        end
-    end
-end
-
-local extend = data.extend
-data.extend = function(self, prototypes)
-    -- Wube made it so data:extend and data.extend are the same
-    if self ~= prototypes and prototypes == nil then
-        prototypes = self
-    end
-    extend(self, prototypes)
-    for _, prototype in pairs(prototypes) do
-        local meta = metas[prototype.type]
-        if meta then
             setmetatable(prototype, meta)
         end
     end

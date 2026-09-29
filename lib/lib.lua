@@ -1,76 +1,7 @@
 _G.py = {}
 
 local factorio_globals = {
-    "get_beam_sprite",
-    "get_chain_sprite",
-    "make_tesla_electric_beam_graphics",
-    "make_tesla_electric_beam_chain_graphics",
-    "make_tesla_beam",
-    "make_tesla_beam_chain",
-    "beam_tint",
-    "blend_mode",
-    "shared_bay_hatch",
-    "platform_upper_hatch",
-    "platform_lower_hatch",
-    "load_cockpit_sprite",
-    "cockpit_animation",
-    "crusher_integration_patch_horizontal",
-    "crusher_integration_patch_vertical",
-    "crusher_animation_horizontal_main",
-    "crusher_animation_horizontal_shadow",
-    "crusher_animation_vertical_main",
-    "crusher_animation_vertical_shadow",
-    "crusher_working_visualisations_horizontal",
-    "crusher_working_visualisations_vertical",
-    "rocket_turret_rising",
-    "rocket_turret_attack",
-    "tesla_turret_rising",
-    "tesla_turret_ready",
-    "tesla_turret_cooldown",
-    "tesla_turret_LED",
-    "result_table",
-    "get_leg_joint_rotation_offsets",
-    "create_leg_graphics_set",
-    "get_leg_hit_the_ground_when_attacking_trigger",
-    "gleba_hit_effects",
-    "make_pentapod_leg_dying_trigger_effects",
-    "make_segment_name",
-    "make_demolisher_ash_cloud_update_effect",
-    "make_demolisher_head",
-    "make_demolisher_corpse",
-    "make_demolisher_segment",
-    "make_demolisher_tail",
-    "make_demolisher_segment_specifications",
-    "make_demolisher_segments",
-    "make_ash_cloud_trigger_effects",
-    "make_demolisher_fissure_attack",
-    "make_demolisher_effects",
-    "make_demolisher",
-    "make_leg",
-    "wriggler_spritesheet",
-    "wriggler_corpse_spritesheet",
-    "make_stomper",
-    "make_strafer",
-    "make_wriggler",
-    "leg_graphics_properties",
-    "stream_tint_stomper",
-    "splash_tint_stomper",
-    "sticker_tint_stomper",
-    "create_asteroid_chunk_parameter",
-    "item_effects",
-    "lava_tile_type_names",
-    "space_age_tiles_util",
-    "lava_transition_group_id",
-    "vulcanus_tile_offset",
-    "gleba_tile_offset",
-    "gleba_lowland_tile_offset",
-    "get_decal_pictures",
-    "chimney_sulfuric_stateless_visualisation",
-    "chimney_sulfuric_stateless_visualisation_tinted",
-    "chimney_sulfuric_stateless_visualisation_faded",
-    "variant_parameters",
-    "gleba_water_tiles",
-    "gleba_land_tiles",
+    -- data stage
     "generate_recycling_recipe_icons_from_item",
     "add_recipe_values",
     "scale",
@@ -87,16 +18,6 @@ local factorio_globals = {
     "hour",
     "meter",
     "kilometer",
-    -- TODO those are bugs
-    "tru",
-    "usage",
-    "i",
-    "lava_stone_transitions",
-    "ground_to_out_of_map_transition",
-    "patch_for_inner_corner_of_transition_between_transition",
-    "concrete_to_out_of_map_transition",
-    "lake_ambience",
-    "base_decorative_sprite_priority",
 }
 
 local spidertron_patrols_globals = {
@@ -139,6 +60,7 @@ local pyal_globals = {
     "entity_changed_unit_number",
     "order_by_distance",
     "Mounts",
+    "RecipeGUI"
 }
 
 local maraxsis_globals = {
@@ -188,11 +110,11 @@ local pypp_globals = {
     "fix_tech",
     "science_pack_order",
     "tech",
-    "data", -- required to determine stage
+    "data", -- required for turd stuff
     "script",
     -- control stage
     "gui_events",
-    "mods", -- required to determine stage
+    "mods", -- required for turd stuff
 }
 
 local pycp_globals = {
@@ -212,6 +134,13 @@ local pyae_globals = {
     "Solar",
     "Wind",
     "Aerial",
+    "Tidal"
+}
+
+local debugadapter_globals = {
+    -- data stage
+    "setfenv",
+    -- control stage
 }
 
 function py.has_any_py_mods()
@@ -237,14 +166,14 @@ require "string"
 require "defines"
 require "color"
 require "world-generation"
+require "assertion"
+require "log"
 
-if data and data.raw and not data.raw.item["iron-plate"] then
-    py.stage = "settings"
-elseif data and data.raw then
-    py.stage = "data"
+if helpers.stage == "settings" then
+
+elseif helpers.stage == "prototype" then
     require "data-stage"
-elseif script then
-    py.stage = "control"
+elseif helpers.stage == "runtime" then
     require "control-stage"
 else
     error("Could not determine load order stage.")
@@ -264,28 +193,17 @@ local function declare(name, initval)
     declaredNames[name] = true
 end
 
-if py.stage == "data" then
-    data:extend {
-        {
-            type = "mod-data",
-            name = "py-undocumented-globals",
-            data = {}
-        }
-    }
-end
-
 local control_globals_outside_of_events = false
-if py.stage == "control" then
-    py.on_event(py.events.on_init(), function(changes --[[@as ConfigurationChangedData --]])
-        -- We only run if it's a new map or startup change
-        if not changes or changes.new_version or changes.migration_applied or changes.mod_startup_settings_changed or table_size(changes.mod_changes) > 0 then
-            ---@diagnostic disable-next-line: undefined-field
-            if prototypes.mod_data["py-undocumented-globals"].get("exist") then
+if helpers.stage == "runtime" then
+    py.on_event(defines.events.on_tick, function(_)
+        if not storage.global_messages_sent then
+            if py.mod_data.undeclared_globals_exist then
                 game.print("[color=255,0,0]found references to undefined globals in data stage, check logs[/color]")
             end
             if control_globals_outside_of_events then
                 game.print("[color=255,0,0]found references to undefined globals in control stage, check logs[/color]")
             end
+            storage.global_messages_sent = true
         end
     end)
 end
@@ -294,7 +212,7 @@ if settings.startup["pypp-no-globals"].value then
     setmetatable(_G, {
         __newindex = function(t, n, v)
             if not declaredNames[n] then
-                if py.stage == "control" then
+                if helpers.stage == "runtime" then
                     -- temp
                     if game then
                         game.print(debug.traceback("attempt to write to undeclared global variable, please report it\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
@@ -304,6 +222,8 @@ if settings.startup["pypp-no-globals"].value then
                     end
                     -- end temp
                     -- error("attempt to write to undeclared variable: " .. n, 2)
+                else
+                    py.mod_data.undeclared_globals_exist = true
                 end
                 log(debug.traceback("INFO: creating a new global variable\nIf this is intended, add it to the globals list in pypp/lib/lib.lua\n" .. n, 2))
             end
@@ -311,7 +231,7 @@ if settings.startup["pypp-no-globals"].value then
         end,
         __index = function(_, n)
             if not declaredNames[n] then
-                if py.stage == "control" then
+                if helpers.stage == "runtime" then
                     -- temp
                     if game then
                         game.print(debug.traceback("attempt to read undeclared global variable, please report it: " .. n, 2))
@@ -321,10 +241,10 @@ if settings.startup["pypp-no-globals"].value then
                     log(debug.traceback("attempt to read undeclared global variable: " .. n, 2))
                     -- end temp
                     -- error("attempt to read undeclared variable: " .. n, 2)
-                elseif py.stage == "data" then
+                elseif helpers.stage == "prototype" then
                     -- temp, ultimately won't print at game start and will have a strict mode setting for testing that will crash the game
                     log(debug.traceback("WARNING: attempt to read undeclared global variable: " .. n, 2))
-                    data.raw["mod-data"]["py-undocumented-globals"].data.exist = true
+                    py.mod_data.undeclared_globals_exist = true
                 end
             else
                 return nil
@@ -343,7 +263,8 @@ local global_vars = table.array_combine(
     pypp_globals,
     spidertron_enhancements_globals,
     pycp_globals,
-    pyae_globals
+    pyae_globals,
+    debugadapter_globals
 )
 
 for _, var in pairs(global_vars) do

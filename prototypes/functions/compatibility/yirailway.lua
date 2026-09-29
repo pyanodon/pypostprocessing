@@ -4,7 +4,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
         if recipe.subgroup and string.sub(recipe.subgroup, 1, 4) == "yir_" then
             if recipe.subgroup == "yir_locomotives_steam" then
                 recipe.enabled = true
-                recipe.category = data.raw.recipe["locomotive"].category
+                recipe.categories = data.raw.recipe["locomotive"].categories
                 recipe.group = data.raw.recipe["locomotive"].group
                 recipe.energy_required = data.raw.recipe["locomotive"].energy_required
                 recipe.ingredients = data.raw.recipe["locomotive"].ingredients -- I know what this does and I don't care
@@ -29,7 +29,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 end
             elseif recipe.subgroup == "yir_locomotives_diesel" or recipe.subgroup == "yir_locomotives_nslong" then
                 recipe.enabled = true
-                recipe.category = data.raw.recipe["mk02-locomotive"].category
+                recipe.categories = data.raw.recipe["mk02-locomotive"].categories
                 recipe.group = data.raw.recipe["mk02-locomotive"].group
                 recipe.energy_required = data.raw.recipe["mk02-locomotive"].energy_required
                 recipe.ingredients = data.raw.recipe["mk02-locomotive"].ingredients
@@ -52,7 +52,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
             elseif recipe.subgroup == "yir_cargowagons" or recipe.subgroup == "yir_cargowagons_4A" or
                 recipe.subgroup == "yir_cargowagons_2A2" then
                 recipe.enabled = true
-                recipe.category = data.raw.recipe["cargo-wagon"].category
+                recipe.categories = data.raw.recipe["cargo-wagon"].categories
                 recipe.group = data.raw.recipe["cargo-wagon"].group
                 recipe.energy_required = data.raw.recipe["cargo-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["cargo-wagon"].ingredients
@@ -71,7 +71,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 ywagon.inventory_size = wagon.inventory_size
             elseif recipe.subgroup == "yir_tankwagons2a" and recipe.subgroup == "yir_fluidwagons_4A" then
                 recipe.enabled = true
-                recipe.category = data.raw.recipe["fluid-wagon"].category
+                recipe.categories = data.raw.recipe["fluid-wagon"].categories
                 recipe.group = data.raw.recipe["fluid-wagon"].group
                 recipe.energy_required = data.raw.recipe["fluid-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["fluid-wagon"].ingredients
@@ -89,7 +89,6 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 ywagon.air_resistance = wagon.air_resistance
                 ywagon.capacity = wagon.capacity
             else
-                recipe.unlock_results = false
                 recipe.hidden = true
                 if (recipe.results) then
                     for i, v in ipairs(recipe.results[1]) do
@@ -99,7 +98,6 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 end
             end
         elseif string.sub(recipe_name, 1, 4) == "yir_" and string.find(recipe_name, "pyvoid") == nil then
-            recipe.unlock_results = false
             recipe.hidden = true
             if (recipe.results) then
                 for i, v in ipairs(recipe.results[1]) do

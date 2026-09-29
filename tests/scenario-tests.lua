@@ -1,3 +1,4 @@
+if not script.active_mods.pyalienlife then return end
 local tests = {}
 
 local helper = require("scenario-helper")

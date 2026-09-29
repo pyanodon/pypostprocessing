@@ -12,8 +12,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-N.png",
                 priority = "extra-high",
-                width = 71,
-                height = 38,
+                width = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-N").width,
+                height = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-N").height,
                 shift = shift_north,
                 scale = 0.5
             } or py.empty_image(),
@@ -21,8 +21,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-S.png",
                 priority = "extra-high",
-                width = 88,
-                height = 61,
+                width = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-S").width,
+                height = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-S").height,
                 shift = shift_south,
                 scale = 0.5
             } or py.empty_image(),
@@ -30,8 +30,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-W.png",
                 priority = "extra-high",
-                width = 39,
-                height = 73,
+                width = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-W").width,
+                height = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-W").height,
                 shift = shift_west,
                 scale = 0.5
             } or py.empty_image(),
@@ -39,8 +39,8 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             {
                 filename = "__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-E.png",
                 priority = "extra-high",
-                width = 42,
-                height = 76,
+                width = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-E").width,
+                height = require("__base__/graphics/entity/" .. pictures .. "/" .. pictures .. "-pipe-E").height,
                 shift = shift_east,
                 scale = 0.5
             } or py.empty_image()
@@ -50,6 +50,7 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
             new_pictures[direction].filename = image.filename
             new_pictures[direction].width = image.width
             new_pictures[direction].height = image.height
+            new_pictures[direction].size = image.size
             new_pictures[direction].priority = image.priority or new_pictures[direction].priority
             new_pictures[direction].scale = 1 or new_pictures[direction].scale
         end

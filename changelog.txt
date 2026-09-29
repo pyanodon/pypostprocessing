@@ -1,4 +1,61 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.1.6
+Date: ????
+  Changes:
+    - Force metas to apply metatables when called. Resolves https://github.com/pyanodon/pybugreports/issues/1580, resolves https://github.com/pyanodon/pybugreports/issues/1172, resolves https://github.com/pyanodon/pybugreports/issues/1283
+    - Fixed a startup crash when a subset of cargo ships mods are enabled. Resolves https://github.com/pyanodon/pybugreports/issues/1560
+---------------------------------------------------------------------------------------------------
+Version: 3.1.5
+Date: 2026-09-22
+  Changes:
+    - Fixed that error messages would not show when using py.assert() and not passing varargs
+    - added a logging library (py.log)
+    - Added ITEM():add_fuel_category(), remove_fuel_category(), replace_fuel_category(), has_fuel_category(), and has_fuel_categories() to manipulate fuel categories
+    - Fixed a malform return in RECIPE():has_category()
+---------------------------------------------------------------------------------------------------
+Version: 3.1.4
+Date: 2026-09-16
+  Changes:
+    - Changed py.add_to_description to use custom_tooltip_fields
+    - Fixed that recipes without a main product or without a localised name would not have recipe signals generated for them. Resolves https://github.com/pyanodon/pybugreports/issues/1494, resolves https://github.com/pyanodon/pybugreports/issues/1528
+    - Fixed that transferring items to/from a caravan with right-click could delete items. Resolves https://github.com/pyanodon/pybugreports/issues/1474 
+---------------------------------------------------------------------------------------------------
+Version: 3.1.3
+Date: 2026-08-28
+  Changes:
+    - Changed stage detection to use helper functions
+    - Added pyanodons mod-data for custom compound prototypes and other information to be accessible at data stage, instead of using remote interfaces
+    - Added py.assert and py.assert_type for custom prototype validation
+    - Updated emmylua annotations
+    - Fixed that defines.prototypes.item was being mutated in data-final-fixes. Resolves https://github.com/pyanodon/pybugreports/issues/1538
+    - Removed unused controls. Resolves https://github.com/pyanodon/pybugreports/issues/1535
+    - Fixed a crash when indexing alerts. Resolves https://github.com/pyanodon/pybugreports/issues/1533
+    - Fixed a crash processing recycling recipes with some other mods
+    - Updated metas generics to use propogating classes
+---------------------------------------------------------------------------------------------------
+Version: 3.1.2
+Date: 2026-07-10
+  Changes:
+    - Fixed py farm buildings being slower than intended (via py.farm_speed/py.farm_speed_derived)
+---------------------------------------------------------------------------------------------------
+Version: 3.1.1
+Date: 2026-07-08
+  Changes:
+    - Updated culling of dead recyler recipes to support the new standalone recycler mod
+---------------------------------------------------------------------------------------------------
+Version: 3.1.0
+Date: 2026-07-07
+  Changes:
+    - Updated to Factorio 2.1
+    - Removed RECIPE.change_category, added add_category, remove_category, replace_category, has_category, and has_categories
+    - Updated annotations for emmylua integration
+    - Updated py.farm_speed and py.farm_speed_derived to use 0-indexed module slots with a building at native -100% speed
+    - Updated certain tests for new prototype properties
+    - Updated global checker
+    - Updated py.pipe_pictures to load graphics definitions directly from base instead of inferring them, allowing more to be used
+    - Fixed a potential crash when no tools are defined
+    - Added py.generate_alert and py.clear_alert to generate rendered and pinnable alerts for all players on a force
+---------------------------------------------------------------------------------------------------
 Version: 3.0.42
 Date: 2026-05-27
   Changes:

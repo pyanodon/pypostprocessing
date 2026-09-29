@@ -23,7 +23,7 @@ local function test_entity_graphics()
         ["electric-energy-interface"] = {{"picture", "pictures", "animation", "animations"}},
         ["electric-pole"] = {"pictures"},
         ["fish"] = {"pictures"},
-        ["generator"] = {"horizontal_animation", "vertical_animation"},
+        ["generator"] = {"pictures"},
         ["heat-interface"] = {"picture"},
         ["heat-pipe"] = {"connection_sprites", "heat_glow_sprites"},
         ["inserter"] = {"hand_base_picture", "hand_closed_picture", "hand_open_picture", "hand_base_shadow", "hand_closed_shadow", "hand_open_shadow"},
@@ -54,6 +54,7 @@ local function test_entity_graphics()
         ["solar-panel"] = {"picture"},
         ["storage-tank"] = {"pictures"},
         ["tree"] = {{"pictures", "variations"}},
+        ["valve"] = {"animations"},
         ["wall"] = {"pictures"},
     }
     local excluded_types = {
@@ -224,7 +225,6 @@ local function factoriopedia_recipes(check_absent_recipes)
         ["space-science-pack"] = 12,
     }
     local unlocks = {}
-    local barreling = {["py-barreling"] = true, ["py-unbarreling"] = true}
     for _, tech in pairs(data.raw["technology"]) do
         local unit_tech = table.deepcopy(tech)
         local science
@@ -255,7 +255,7 @@ local function factoriopedia_recipes(check_absent_recipes)
             end
         end
         for _, modifier in pairs(tech.effects or {}) do
-            if modifier.type == "unlock-recipe" and not barreling[data.raw["recipe"][modifier.recipe].category] then
+            if modifier.type == "unlock-recipe" and not RECIPE(modifier.recipe):has_categories{"py-barreling", "py-unbarreling"} then
                 if not science then
                     for _, pack in pairs(unit_tech.unit.ingredients) do
                         if pack[2] == 1 then
@@ -271,7 +271,7 @@ local function factoriopedia_recipes(check_absent_recipes)
         end
     end
     for name, recipe in pairs(data.raw["recipe"]) do
-        if recipe.enabled ~= false and not recipe.category == "py-incineration" and not recipe.hidden then
+        if recipe.enabled ~= false and not RECIPE(name):has_category("py-incineration") and not recipe.hidden then
             for _, product in pairs(recipe.results) do
                 unlocks[product.name] = unlocks[product.name] or {}
                 table.insert(unlocks[product.name], {science = 0, recipe = name})

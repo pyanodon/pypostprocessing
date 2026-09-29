@@ -1,19 +1,25 @@
----@class data.TechnologyPrototype
----@field public standardize fun(): data.TechnologyPrototype
----@field public add_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype, boolean
----@field public remove_prereq fun(self, prereq_technology_name: data.TechnologyID): data.TechnologyPrototype, boolean
----@field public replace_prereq fun(self, old: data.TechnologyID, new: data.TechnologyID): data.TechnologyPrototype, boolean
----@field public remove_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype, boolean
----@field public add_pack fun(self, science_pack_name: data.ItemID): data.TechnologyPrototype, boolean
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.TechnologyPrototype
+local metas = {}
+
+---@class pYdata.TechnologyPrototype:pYdata.AnyPrototype,data.TechnologyPrototype
+---@operator call(string|pYdata.TechnologyPrototype|data.TechnologyPrototype): pYdata.TechnologyPrototype
+---@field public standardize fun(self: pYdata.TechnologyPrototype): pYdata.TechnologyPrototype
+---@field public add_prereq fun(self: pYdata.TechnologyPrototype, prereq_technology_name: data.TechnologyID): pYdata.TechnologyPrototype, boolean
+---@field public remove_prereq fun(self: pYdata.TechnologyPrototype, prereq_technology_name: data.TechnologyID): pYdata.TechnologyPrototype, boolean
+---@field public replace_prereq fun(self: pYdata.TechnologyPrototype, old: data.TechnologyID, new: data.TechnologyID): pYdata.TechnologyPrototype, boolean
+---@field public remove_pack fun(self: pYdata.TechnologyPrototype, science_pack_name: data.ItemID): pYdata.TechnologyPrototype, boolean
+---@field public add_pack fun(self: pYdata.TechnologyPrototype, science_pack_name: data.ItemID): pYdata.TechnologyPrototype, boolean
 TECHNOLOGY = setmetatable(data.raw.technology, {
-    ---@param technology data.TechnologyPrototype
     __call = function(self, technology)
         local ttype = type(technology)
         if ttype == "string" then
             if not self[technology] then error("Technology " .. technology .. " does not exist") end
             technology = self[technology]
+            technology = setmetatable(technology, {__index = metas})
         elseif ttype == "table" then
             technology.type = "technology"
+            technology = setmetatable(technology, {__index = metas})
             data:extend {technology}
         else
             error("Invalid type " .. ttype)
@@ -22,9 +28,8 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
     end
 })
 
-local metas = {}
-
 metas.standardize = function(self)
+ ---@diagnostic disable-next-line: assign-type-mismatch
     if not self.unit and not self.research_trigger then self.unit = {ingredients = {}} end
 
     self.prerequisites = self.prerequisites or {}
@@ -33,10 +38,6 @@ metas.standardize = function(self)
     return self
 end
 
----@param self data.TechnologyPrototype
----@param prereq_technology_name data.TechnologyID
----@return data.TechnologyPrototype self
----@return boolean success
 metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
@@ -57,10 +58,6 @@ metas.add_prereq = function(self, prereq_technology_name)
     return self, true -- add prereq succeeds
 end
 
----@param self data.TechnologyPrototype
----@param prereq_technology_name data.TechnologyID
----@return data.TechnologyPrototype self
----@return boolean success
 metas.remove_prereq = function(self, prereq_technology_name)
     self.prerequisites = self.prerequisites or {}
 
@@ -75,11 +72,6 @@ metas.remove_prereq = function(self, prereq_technology_name)
 end
 
 --- Replace old prerequesite with the new one. Fails if the old one was not found.
----@param self data.TechnologyPrototype
----@param old data.TechnologyID
----@param new data.TechnologyID
----@return data.TechnologyPrototype self
----@return boolean success
 metas.replace_prereq = function(self, old, new)
     local _, success = self:remove_prereq(old)
     if success then
@@ -89,10 +81,6 @@ metas.replace_prereq = function(self, old, new)
     end
 end
 
----@param self data.TechnologyPrototype
----@param science_pack_name data.ItemID
----@return data.TechnologyPrototype self
----@return boolean success
 metas.remove_pack = function(self, science_pack_name)
     if not self.unit then
         return self, true -- should it be true? false?
@@ -109,15 +97,12 @@ metas.remove_pack = function(self, science_pack_name)
 end
 
 -- possible to add the same pack twice, should probably check for that
----@param self data.TechnologyPrototype
----@param science_pack_name data.ItemID
----@return data.TechnologyPrototype self
----@return boolean success
 metas.add_pack = function(self, science_pack_name)
     if self.research_trigger then
         error("WARNING @ \'" .. self.name .. "\':add_pack(): Attempted to add science packs to technology with research_trigger.")
     end
 
+    ---@diagnostic disable-next-line: assign-type-mismatch
     self.unit = self.unit or {ingredients = {}}
 
     for _, ingredient in pairs(self.unit.ingredients) do

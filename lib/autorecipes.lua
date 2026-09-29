@@ -2,7 +2,7 @@
 --[[
 py.autorecipes { -- is a function call can be many per file is the same as RECIPE{} that is used in the rest of pymods
     name = 'single-example', -- recipe name if in single recipe mode *@*
-    category = 'recipe-category', -- used in input recipe and output if outcategory not provided to set category
+    categories = {'recipe-category'}, -- used in input recipe and output if outcategory not provided to set category
 	singlerecipe = false, --=true: its a single recipe done 1 machine. takes ingredients and outputs the results. --=false: creates 2 recipes. 1 with the ingredients as inputs and outputs an item. 2nd recipe takes the item in and outputs the results.
 	module_limitations = "ulric", --adds the recipes to a modules allowed recipes table *
 	subgroup = 'subgroup', -- sets the recipes subgroups for menu organizion
@@ -18,7 +18,7 @@ py.autorecipes { -- is a function call can be many per file is the same as RECIP
 				},
 			results = -- double duh, same as ingredients first time cant be empty or you get nothing
 				{
-					{name='bones', amount = 'amount'*('*!*'),probability = 'probability'**, amount_min = 'amount_min'**'***', amount_max = 'amount_max'**'***'},
+					{name='bones', amount = 'amount'*('*!*'),independent_probability = 'independent_probability'**, amount_min = 'amount_min'**'***', amount_max = 'amount_max'**'***'},
 					{'result'}, -- see above for details
 					{'result'}, -- again not limited by this code to number of results
 				},
@@ -86,12 +86,11 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
     elseif type(item.fallback) == "table" and item.fallback.name then
         name = item.fallback.name
         item.name = name
-        if item.fallback.amount then
-            item.amount = item.fallback.amount
-        end
+        item.amount = item.fallback.amount
     elseif data.raw.fluid[barrel] then
         name = item.name
     end
+    item.fallback = nil -- remove unnecessary data
 
     if previous_item_names[name] ~= true then
         local item_type
@@ -165,6 +164,8 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
             for _, pre in pairs(items_table) do
                 if pre.name == name then
                     pre.amount = item.amount
+                    pre.amount_min = nil
+                    pre.amount_max = nil
                 end
             end
         end
@@ -183,6 +184,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         end
         return_item = {type = item_type, name = name, amount = amount}
         table.insert(result_table, return_item)
+        item.return_item = nil
     end
 
     if item.return_barrel then
@@ -208,6 +210,7 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
         end
         table.insert(result_table, barrels_to_return)
         ::already_had_barrel_result::
+        item.return_barrel = nil
     end
 end
 
@@ -243,7 +246,7 @@ local function recipe_item_builder(ingredients, results, previous_ingredients, p
 end
 
 ---Provides an interface to quickly build tiered recipes. See recipes-auto-brains.lua for an example
----@param params {name:RecipeID,category:RecipeCategoryID,subgroup:data.ItemSubGroupID,order:data.Order,main_product?:string,crafting_speed:double,allowed_module_categories:[data.ModuleCategoryID],number_icons:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
+---@param params {name:RecipeID,categories:RecipeCategoryID[],subgroup:data.ItemSubGroupID,order:data.Order,main_product?:string,crafting_speed:double,allowed_module_categories:[data.ModuleCategoryID],number_icons:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
 py.autorecipes = function(params)
     local previous_ingredients = {}
     local previous_results = {}
@@ -264,7 +267,7 @@ py.autorecipes = function(params)
         local recipe = RECIPE {
             type = "recipe",
             name = recipe_name,
-            category = params.category,
+            categories = params.categories,
             enabled = tier.tech == nil,
             energy_required = tier.crafting_speed or params.crafting_speed,
             ingredients = fixed_ingredients,
@@ -274,7 +277,7 @@ py.autorecipes = function(params)
             allowed_module_categories = params.allowed_module_categories,
             icons = tier.icons,
             main_product = tier.main_product or params.main_product,
-            allow_productivity = params.category ~= "slaughterhouse",
+            allow_productivity = not table.any(params.categories, "slaughterhouse"),
         }
         if tier.tech then recipe:add_unlock(tier.tech) end
         if params.number_icons then -- add numbers to farming recipes so that they're not identical
@@ -300,7 +303,7 @@ py.autorecipes = function(params)
             local scale = (data.raw.recipe[recipe_name].icons[1].scale or .5) / 2
             table.insert(
                 data.raw.recipe[recipe_name].icons,
-                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {32 * scale, 32 * scale}, floating = true}
+                {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {36 * scale, 36 * scale}, floating = true}
             )
         elseif tier.icon then
             data.raw.recipe[recipe_name].icon = tier.icon

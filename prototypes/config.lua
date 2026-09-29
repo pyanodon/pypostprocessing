@@ -34,12 +34,12 @@ local config = {
     SCIENCE_PACK_INDEX = {}
 }
 
----@cast config.PY_GRAPHICS_MODS {[string]: boolean}
+---@cast config.PY_GRAPHICS_MODS {[string]: uint}
 ---@cast config.PYMODS string[]
 ---@cast config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL {[string]: uint[]}
----@cast config.TC_TECH_INGREDIENTS_PER_LEVEL string[]
----@cast config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK string[]
----@cast config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL string[]
+---@cast config.TC_TECH_INGREDIENTS_PER_LEVEL {string: data.ResearchIngredient[]}
+---@cast config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK boolean
+---@cast config.TC_MIL_SCIENCE_PACK_COUNT_PER_LEVEL {[string]: uint}
 ---@cast config.NON_PRODDABLE_ITEMS {[data.ItemID]: boolean}
 ---@cast config.SCIENCE_PACKS string[]
 ---@cast config.SCIENCE_PACK_INDEX {[data.ItemID]: uint}
@@ -122,6 +122,7 @@ end
 
 for highest_level_pack, counts_per_level in pairs(config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL) do
     local pack_count = #counts_per_level
+    ---@type data.ResearchIngredient[]
     local packs = {}
 
     for level, count in pairs(counts_per_level) do
