@@ -1,13 +1,21 @@
+---@diagnostic disable-next-line: missing-fields
+---@class Logger
+---@field debug fun(message: string)
+---@field info fun(message: string)
+---@field warning fun(message: string)
+---@field level {warning: boolean, info: boolean, debug: boolean}
+---@type Logger
 py.log = {}
 
 local int_log_levels = {warning = 0, info = 1, debug = 2}
 local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
 if helpers.stage == "prototype" then log("log level: " .. log_level) end
 
----@class Logger
----@field debug fun(message: string)
----@field info fun(message: string)
----@field warning fun(message: string)
+py.log.level = {
+  warning = log_level >= 0,
+  info = log_level >= 0,
+  debug = log_level >= 0,
+}
 
 ---@param category string used to identify what the log is about
 ---@param message string
