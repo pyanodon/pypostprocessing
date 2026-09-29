@@ -2,6 +2,7 @@
 Version: 3.1.6
 Date: ????
   Changes:
+    - Force metas to apply metatables when called. Resolves https://github.com/pyanodon/pybugreports/issues/1580, resolves https://github.com/pyanodon/pybugreports/issues/1172, resolves https://github.com/pyanodon/pybugreports/issues/1283
     - Fixed a startup crash when a subset of cargo ships mods are enabled. Resolves https://github.com/pyanodon/pybugreports/issues/1560
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.5
