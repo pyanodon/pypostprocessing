@@ -151,7 +151,7 @@ for _, recipe in pairs(data.raw.recipe) do
 
     -- Generate signal, if required
     if create_signal_mode and recipe.results then
-        local main_product = recipe:get_main_product()
+        local main_product = RECIPE(recipe):get_main_product()
         local amt = 0
         if main_product then
             for _, result in pairs(recipe.results) do
