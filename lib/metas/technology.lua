@@ -1,3 +1,7 @@
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.TechnologyPrototype
+local metas = {}
+
 ---@class pYdata.TechnologyPrototype:pYdata.AnyPrototype,data.TechnologyPrototype
 ---@operator call(string|pYdata.TechnologyPrototype|data.TechnologyPrototype): pYdata.TechnologyPrototype
 ---@field public standardize fun(self: pYdata.TechnologyPrototype): pYdata.TechnologyPrototype
@@ -12,8 +16,10 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
         if ttype == "string" then
             if not self[technology] then error("Technology " .. technology .. " does not exist") end
             technology = self[technology]
+            technology = setmetatable(technology, {__index = metas})
         elseif ttype == "table" then
             technology.type = "technology"
+            technology = setmetatable(technology, {__index = metas})
             data:extend {technology}
         else
             error("Invalid type " .. ttype)
@@ -21,10 +27,6 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
         return technology:standardize()
     end
 })
-
----@diagnostic disable-next-line: missing-fields
----@type pYdata.TechnologyPrototype
-local metas = {}
 
 metas.standardize = function(self)
  ---@diagnostic disable-next-line: assign-type-mismatch

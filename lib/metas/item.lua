@@ -1,5 +1,9 @@
 local item_prototypes = defines.prototypes.item
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.ItemPrototype
+local metas = {}
+
 ---@class pYdata.ItemPrototype:pYdata.AnyPrototype,data.ItemPrototype
 ---@operator call(string|pYdata.ItemPrototype|data.ItemPrototype): pYdata.ItemPrototype
 ---@field public add_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
@@ -19,12 +23,16 @@ ITEM = setmetatable({}, {
             ---@cast item any somehow this works but string doesnt
             for _, pdata in py.iter_prototype_categories("item") do
                 local result = pdata[item]
-                if result then return result end
+                if result then
+                    result = setmetatable(result, {__index = metas})
+                    return result
+                end
             end
         elseif itype == "table" then
             if not item.type then error("Tried to extend an item " .. item.name .. " without providing a type") end
             if not item_prototypes[item.type] then error("Tried to use ITEM{} on a non-item: " .. item.name) end
 
+            item = setmetatable(item, {__index = metas})
             data:extend {item}
             return item
         else
@@ -40,10 +48,6 @@ ITEM = setmetatable({}, {
         return nil
     end
 })
-
----@diagnostic disable-next-line: missing-fields
----@type pYdata.ItemPrototype
-local metas = {}
 
 metas.add_flag = function(self, flag)
     self.flags = self.flags or {}  

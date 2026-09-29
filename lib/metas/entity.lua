@@ -3,6 +3,10 @@ local collision_mask_util = require "__core__/lualib/collision-mask-util"
 
 local entity_types = defines.prototypes.entity
 
+---@diagnostic disable-next-line: missing-fields
+---@type pYdata.EntityPrototype
+local metas = {}
+
 ---@class pYdata.EntityPrototype:pYdata.AnyPrototype,data.EntityPrototype
 ---@operator call(string|pYdata.EntityPrototype|data.EntityPrototype): pYdata.EntityPrototype
 ---@field public standardize fun(self: pYdata.EntityPrototype): pYdata.EntityPrototype
@@ -16,12 +20,16 @@ ENTITY = setmetatable({}, {
             ---@cast entity any somehow this works but string doesnt
             for _, pdata in py.iter_prototype_categories("entity") do
                 local result = pdata[entity]
-                if result then return result:standardize() end
+                if result then
+                    result = setmetatable(result, {__index = metas})
+                    return result:standardize()
+                end
             end
         elseif etype == "table" then
             if not entity.type then error("Tried to extend an entity " .. entity.name .. " without providing a type") end
             if not entity_types[entity.type] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
 
+            entity = setmetatable(entity, {__index = metas})
             data:extend {entity}
             return entity:standardize()
         else
@@ -32,15 +40,12 @@ ENTITY = setmetatable({}, {
     __index = function(self, entity_name)
         for _, pdata in py.iter_prototype_categories("entity") do
             local result = pdata[entity_name]
+            result = setmetatable(self[result], {__index = metas})
             if result then return result:standardize() end
         end
         return nil
     end
 })
-
----@diagnostic disable-next-line: missing-fields
----@type pYdata.EntityPrototype
-local metas = {}
 
 metas.standardize = function(self)
     local minable = self.minable

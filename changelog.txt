@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.1.6
+Date: ????
+  Changes:
+    - Force metas to apply metatables when called. Resolves https://github.com/pyanodon/pybugreports/issues/1580, resolves https://github.com/pyanodon/pybugreports/issues/1172, resolves https://github.com/pyanodon/pybugreports/issues/1283
+---------------------------------------------------------------------------------------------------
 Version: 3.1.5
 Date: 2026-09-22
   Changes:
