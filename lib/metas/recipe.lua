@@ -59,6 +59,7 @@ RECIPE = setmetatable(data.raw.recipe, {
                 recipe.allow_productivity = recipe.allow_productivity or old_recipe.allow_productivity
             end
             recipe.type = "recipe"
+            recipe = setmetatable(recipe, {__index = metas})
             data:extend {recipe}
         else
             error("Invalid type " .. rtype)
