@@ -218,8 +218,8 @@ if mods["pyalienlife"] then
                     if data.raw.module[tech.name .. "-module"] then
                         table.insert(modules, tech.name .. "-module")
                     else
-                        for i, entity in pairs(tech_upgrade.affected_entities or {}) do
-                            table.insert(modules, tech.name .. "-module-mk0" .. i)
+                        for entity, tier in pairs(tech_upgrade.affected_entities or {}) do
+                            table.insert(modules, tech.name .. "-module-mk0" .. tier)
                         end
                     end
                     for _, module in pairs(modules) do
@@ -228,7 +228,7 @@ if mods["pyalienlife"] then
                             name = module,
                             enabled = false,
                             ingredients = {},
-                            result = module
+                            results = {{type = "item", name = module, amount = 1}}
                         }
                         table.insert(effects, {
                             type = "unlock-recipe",
