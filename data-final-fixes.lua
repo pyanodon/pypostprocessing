@@ -66,7 +66,7 @@ if feature_flags.spoiling then
         -- ignore chains we've already covered
         if not ignore_items[spoil_data.result] then
             local chain = spoil_data.chain
-            local longest_chain, base_loop
+            local longest_chain, base_loop = {}, {}
             -- find the biggest and smallest chain that end the same way
             for _, other_spoil_data in pairs(spoilage_loops) do
                 local other_chain = other_spoil_data.chain
@@ -152,14 +152,14 @@ for _, recipe in pairs(data.raw.recipe) do
     -- Generate signal, if required
     if create_signal_mode and recipe.results then
         local main_product = RECIPE(recipe):get_main_product()
-        local amt = 0
+        local amt = 0.0
         if main_product then
             for _, result in pairs(recipe.results) do
                 if result.name == main_product.name then
                     if result.independent_probability and result.independent_probability < 1 then
-                        local prob_amt = 0
+                        local prob_amt = 0.0
                         if result.amount then
-                            prob_amt = result.amount
+                            prob_amt = result.amount--[[@as number]]
                         elseif result.amount_min and result.amount_max then
                             prob_amt = (result.amount_min + result.amount_max) / 2
                         end
@@ -167,9 +167,9 @@ for _, recipe in pairs(data.raw.recipe) do
                         break
                     elseif result.shared_probability then
                         -- Some recipes have random amount for multiples, such as nuclear isotopes.
-                        local prob_amt = 0
+                        local prob_amt = 0.0
                         if result.amount then
-                            prob_amt = result.amount
+                            prob_amt = result.amount--[[@as number]]
                         elseif result.amount_min and result.amount_max then
                             prob_amt = (result.amount_min + result.amount_max) / 2
                         end
@@ -179,7 +179,7 @@ for _, recipe in pairs(data.raw.recipe) do
                         amt = (result.amount_min + result.amount_max) / 2
                         break
                     elseif result.amount then
-                        amt = result.amount
+                        amt = result.amount--[[@as number]]
                         break
                     end
                 end
@@ -189,7 +189,7 @@ for _, recipe in pairs(data.raw.recipe) do
         if main_product and recipe.localised_name and recipe.localised_name[1] == "?" then
             for i, name in pairs(recipe.localised_name) do
                 if i > 1 and amt ~= 1 then
-                    recipe.localised_name[i] = {"recipe-name.recipe-amount", tostring(amt), name}
+                    recipe.localised_name--[[@as LocalisedString]][i] = {"recipe-name.recipe-amount", tostring(amt), name}
                 end
             end
         end
@@ -250,7 +250,7 @@ local category_data = {
     ["ree"] = {""},
     ["antimonium"] = {""},
     ["mova"] = {""}
-}
+}--[[@as table<string, LocalisedString>]]
 for resource, proto in pairs(data.raw.resource) do
     local category_name = proto.category or "basic-solid"
     local entry = category_data[category_name]
@@ -282,7 +282,7 @@ for category_name, proto in pairs(data.raw["resource-category"]) do
         -- Just one entry besides the string concat
         if #resource_list == 2 then
             -- resource name, not autoplace - no icon. absolutely cursed indexing.
-            local ore_locale = resource_list[2][2][3][3][3][1]
+            local ore_locale = resource_list[2]--[[@cast -?]][2][3][3][3][1]
             -- {'!'} here just functions to tell '?' to skip the entry
             proto.localised_name = {"?", proto.localised_name or {"!"}, {ore_locale}}
             -- resource description just transposed here
@@ -298,7 +298,7 @@ for category_name, proto in pairs(data.raw["resource-category"]) do
                     resource_list
                 },
                 resource_list
-            }
+            }--[[@as data.LocalisedString]]
         end
     end
 end
@@ -336,7 +336,7 @@ for _, tech in pairs(data.raw.technology) do
     local highest_science_pack = "automation-science-pack"
     -- Add the current ingredients for the technology
     for _, ingredient in pairs(tech.unit and tech.unit.ingredients or {}) do
-        local pack = ingredient.name or ingredient[1]
+        local pack = ingredient[1]
         if pack == "military-science-pack" and not config.TC_MIL_SCIENCE_IS_PROGRESSION_PACK then
             add_military_science = true
         elseif config.SCIENCE_PACK_INDEX[pack] then
@@ -344,13 +344,13 @@ for _, tech in pairs(data.raw.technology) do
                 highest_science_pack = pack
             end
         else -- not one of ours, sir
-            tech_ingredients_to_use[pack] = ingredient.amount or ingredient[2]
+            tech_ingredients_to_use[pack] = ingredient[2]
         end
     end
 
     -- Add any missing ingredients that we want present
     for _, ingredient in pairs(config.TC_TECH_INGREDIENTS_PER_LEVEL[highest_science_pack]) do
-        tech_ingredients_to_use[ingredient.name or ingredient[1]] = ingredient.amount or ingredient[2]
+        tech_ingredients_to_use[ingredient[1]] = ingredient[2]
     end
     -- Add military ingredients if applicable
     if add_military_science then
@@ -403,9 +403,9 @@ if create_signal_mode then
             if recipe.main_product then
                 product = recipe.main_product
             else
-                product = recipe.results[1].name
+                product = recipe.results--[[@cast -?]][1]--[[@cast -?]].name
             end
-            local types = table.deepcopy(defines.prototypes.item)
+            local types = table.deepcopy(defines.prototypes.item)--[[@as table<string, 0>]]
             types["fluid"] = 0
             for ttype, _ in pairs(types) do
                 if data.raw[ttype] and data.raw[ttype][product] then
@@ -414,7 +414,7 @@ if create_signal_mode then
                 end
             end
         end
-        if data.raw["item-subgroup"][old_subgroup] then
+        if old_subgroup and data.raw["item-subgroup"][old_subgroup] then
             local new_subgroup = "recipe-" .. (old_subgroup)
             if not data.raw["item-subgroup"][new_subgroup] then
                 data:extend {{
@@ -448,6 +448,7 @@ for _, type in pairs {"furnace", "assembling-machine", "mining-drill", "lab"} do
     end
 end
 
+---@diagnostic disable-next-line: undefined-field
 -- YAFC
 if type(data.data_crawler) == "string" and string.sub(data.data_crawler, 1, 5) == "yafc " then
     require "prototypes/yafc"

@@ -31,7 +31,7 @@ if script.active_mods.pyalienlife then
   end
 
   function helper.build(name, position)
-    local machine = game.surfaces.nauvis.create_entity{name = name, position = position, force = game.player.force, player = game.player, raise_built = true}
+    local machine = game.surfaces.nauvis.create_entity{name = name, position = position, force = game.player--[[@cast -?]].force, player = game.player, raise_built = true}
     return machine
   end
 
@@ -42,7 +42,7 @@ if script.active_mods.pyalienlife then
     for i=1,16 do
       local beacon = helper.build("ee-super-beacon", position)
       table.insert(beacons, beacon)
-      beacon.get_module_inventory().insert({
+      beacon--[[@cast -?]].get_module_inventory()--[[@cast -?]].insert({
         name = "ee-super-speed-module",
         count = 10
       })

@@ -2,7 +2,7 @@
 ---@param generator LuaRandomGenerator
 ---@return LuaRandomGenerator
 py.reseed = function(generator)
-    return game.create_random_generator(generator(341, 2147483647))
+    return game.create_random_generator(generator(341, 2147483647)--[[@as int]])
 end
 
 ---Sets a noise constant which can be accessed inside a named_noise_expression. WARNING: Prone to floating point inaccuracies, don't use this to transfer worldgen seeds.
@@ -12,7 +12,7 @@ end
 py.set_noise_constant = function(i, surface, data)
     local mgs = surface.map_gen_settings
     mgs.autoplace_controls = mgs.autoplace_controls or {}
-    mgs.autoplace_controls["py-autoplace-control-" .. i] = mgs.autoplace_controls["py-autoplace-control-" .. i] or {}
+    mgs.autoplace_controls["py-autoplace-control-" .. i] = mgs.autoplace_controls["py-autoplace-control-" .. i] or {}--[[@as AutoplaceControl]]
     mgs.autoplace_controls["py-autoplace-control-" .. i].richness = data
     surface.map_gen_settings = mgs
 end
@@ -24,8 +24,8 @@ py.get_noise_constant = function(i)
 end
 
 ---Returns a noise expression which is an approximation of perlin noise. The output ranges from -1.2 to 1.2.
----@param x NoiseExpression
----@param y NoiseExpression
+---@param x data.NoiseExpression
+---@param y data.NoiseExpression
 ---@param seed integer
 ---@param zoom number
 py.basis_noise = function(x, y, seed, zoom) -- todo: remove first two parameters in all uses.

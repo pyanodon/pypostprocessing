@@ -61,7 +61,7 @@ numbers: sets amount to this value no matter what it was before
 ---@param tbl V[]
 ---@return V[]
 local function ensure_contiguous(tbl)
-    if not tbl or type(tbl) ~= "table" then return tbl end
+    if not tbl or type(tbl) ~= "table" then error() end
     local contiguous_table = {}
     for _, v in pairs(tbl) do
         if v ~= nil then
@@ -215,8 +215,8 @@ local function modify_recipe_tables(item, items_table, previous_item_names, resu
 end
 
 ---handles all adjustments for each ingredient and result changes in autorecipe
----@param ingredients [data.IngredientPrototype]
----@param results [data.ProductPrototype]
+---@param ingredients [data.IngredientPrototype]?
+---@param results [data.ProductPrototype]?
 ---@param previous_ingredients [data.IngredientPrototype]
 ---@param previous_results [data.ProductPrototype]
 ---@return [data.IngredientPrototype], [data.ProductPrototype]
@@ -234,11 +234,11 @@ local function recipe_item_builder(ingredients, results, previous_ingredients, p
         previous_result_names[pre.name] = true
     end
 
-    for _, ing in pairs(ingredients) do
+    for _, ing in pairs(ingredients or {}) do
         modify_recipe_tables(ing, ing_table, previous_ingredient_names, result_table)
     end
 
-    for _, result in pairs(results) do
+    for _, result in pairs(results or {}) do
         modify_recipe_tables(result, result_table, previous_result_names)
     end
 
@@ -248,8 +248,8 @@ end
 ---Provides an interface to quickly build tiered recipes. See recipes-auto-brains.lua for an example
 ---@param params {name:RecipeID,categories:RecipeCategoryID[],subgroup?:data.ItemSubGroupID,order?:data.Order,main_product?:string,crafting_speed?:double,allowed_module_categories?:[data.ModuleCategoryID],number_icons?:boolean,mats:[{name?:string,ingredients?:[data.IngredientPrototype],results?:[data.ProductPrototype],crafting_speed?:double,tech?:TechnologyID,icon?:data.FileName,icon_size?:integer,icons?:[data.IconData],main_product?:string}]}
 py.autorecipes = function(params)
-    local previous_ingredients = {}
-    local previous_results = {}
+    local previous_ingredients = {}--[[@as data.IngredientPrototype[] ]]
+    local previous_results = {}--[[@as data.ProductPrototype[] ]]
 
     for _, tier in pairs(params.mats) do
         local fixed_ingredients, fixed_results = recipe_item_builder(tier.ingredients, tier.results, previous_ingredients, previous_results)
@@ -278,8 +278,8 @@ py.autorecipes = function(params)
             icons = tier.icons,
             main_product = tier.main_product or params.main_product,
             allow_productivity = not table.any(params.categories, "slaughterhouse"),
-        }
-        if tier.tech then recipe:add_unlock(tier.tech) end
+        }--[[@as data.RecipePrototype]]
+        if tier.tech then recipe:add_unlock(tier.tech--[[@as string]]) end
         if params.number_icons then -- add numbers to farming recipes so that they're not identical
             if tier.name then error("can't use number_icons with individual recipe names") end
             if recipe_name == "arthurian-egg-incubation-01" then log("fucked up") end
@@ -289,10 +289,10 @@ py.autorecipes = function(params)
             end
             data.raw.recipe[recipe_name].icons = data.raw.recipe[recipe_name].icons or {}
             if #data.raw.recipe[recipe_name].icons == 0 then
-                local item_name = tier.main_product or params.main_product or tier.results[1].name
-                local item = (data.raw.module[item_name] or data.raw.item[item_name])
+                local item_name = tier.main_product or params.main_product or tier.results--[[@cast -?]][1].name
+                local item = (data.raw.module[item_name] or data.raw.item[item_name])--[[@as data.ModulePrototype|data.ItemPrototype]]
                 if not item.icon then
-                    data.raw.recipe[recipe_name].icons = table.array_combine(data.raw.recipe[recipe_name].icons, item.icons)
+                    data.raw.recipe[recipe_name].icons = table.array_combine(data.raw.recipe[recipe_name].icons, item.icons--[[@cast -?]])
                 else
                     table.insert(
                         data.raw.recipe[recipe_name].icons,
@@ -300,7 +300,7 @@ py.autorecipes = function(params)
                     )
                 end
             end
-            local scale = (data.raw.recipe[recipe_name].icons[1].scale or .5) / 2
+            local scale = (data.raw.recipe[recipe_name].icons[1]--[[@cast -?]].scale or .5) / 2
             table.insert(
                 data.raw.recipe[recipe_name].icons,
                 {icon = "__pyalienlifegraphics__/graphics/icons/" .. i .. ".png", scale = scale, shift = {36 * scale, 36 * scale}, floating = true}

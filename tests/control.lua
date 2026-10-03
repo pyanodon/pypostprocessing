@@ -36,7 +36,7 @@ end)
 local tests = require("scenario-tests")
 local helper = require("scenario-helper")
 
-commands.add_command("pytest", nil, function(param)
+commands.add_command("pytest", "", function(param)
     local beacons = helper.create_speed_beacons()
     
     for _, test in pairs(tests) do

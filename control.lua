@@ -1,9 +1,12 @@
-require "lib"
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
 
 ---@class (partial) PyPostProcessingStorage
 ---@field nth_tick_order table<uint, NthTickOrder[]>
 ---@field on_tick table<uint, table<uint, {name: string, params: any[]?}>>
-storage = {}
+
+require "lib"
 
 -- on_nth_tick functions
 ---@class NthTickOrder
@@ -17,12 +20,12 @@ storage = {}
 ---@type table<string, NthTickFunc>
 py.nth_tick_funcs = {}
 
-py.nth_tick_total = 0
+py.nth_tick_total = 0.0
 
 ---use instead of script.on_nth_tick
 ---@param func_list NthTickFunc[]
 local register_on_nth_tick = function(func_list)
-    local this_nth_tick_total = 0
+    local this_nth_tick_total = 0.0
     for func_name, details in pairs(func_list) do
         log("registered on_nth_tick function " .. func_name .. " from mod " .. details.mod)
         this_nth_tick_total = this_nth_tick_total + 1 / details.tick

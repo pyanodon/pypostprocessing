@@ -44,7 +44,7 @@ py.pipe_pictures = function(pictures, shift_north, shift_south, shift_west, shif
                 shift = shift_east,
                 scale = 0.5
             } or py.empty_image()
-    }
+    }--[[@as data.Sprite4Way]]
     for direction, image in pairs(replacements or {}) do
         if new_pictures[direction].filename ~= "__core__/graphics/empty.png" then
             new_pictures[direction].filename = image.filename
@@ -159,11 +159,13 @@ py.sexy_pipe_pictures = function()
         return {
             layers = {
                 util.sprite_load("__pypostprocessing__/graphics/pipe-connections/pipe-" .. pipe_direction,
+                    ---@diagnostic disable-next-line: generic-constraint-mismatch
                     {
                         scale = 0.5,
                     }
                 ),
                 util.sprite_load("__pypostprocessing__/graphics/pipe-connections/pipe-shadow-" .. pipe_direction,
+                    ---@diagnostic disable-next-line: generic-constraint-mismatch
                     {
                         scale = 0.5,
                         draw_as_shadow = true,
@@ -188,6 +190,7 @@ py.sexy_pipe_pictures_frozen = function()
         return {
             layers = {
                 util.sprite_load("__pypostprocessing__/graphics/pipe-connections/pipe-" .. pipe_direction .. "-frozen",
+                    ---@diagnostic disable-next-line: generic-constraint-mismatch
                     {
                         scale = 0.5,
                     }

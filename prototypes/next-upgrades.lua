@@ -8,11 +8,11 @@ local math2d = require "__core__/lualib/math2d"
 local function next_tier(prototype_name, prototype_category)
     local tier_num = prototype_name:match("%-mk(%d%d)")
     if tier_num then
-        tier_num = tonumber(tier_num)
-        if not tier_num then return end
-        tier_num = tier_num + 1
-        tier_num = string.format("%02d", tier_num)
-        local next_upgrade = prototype_name:gsub("%-mk%d%d", "-mk" .. tier_num)
+        local tier_num_int = tonumber(tier_num)
+        if not tier_num_int then return end
+        tier_num_int = tier_num_int + 1
+        tier_num = string.format("%02d", tier_num_int)
+        local next_upgrade = prototype_name:gsub("%-mk%d%d", "-mk" .. tier_num_int)
         if prototype_category[next_upgrade] then return next_upgrade end
     else
         local next_upgrade = prototype_name .. "-mk02"
@@ -28,19 +28,20 @@ local function check_for_valid_minable_properties(entity)
 
     local minable = entity.minable --[[@as data.MinableProperties]]
     if not minable.result and not minable.results then return false end
-    local minable_result = minable.result or minable.results[1] and (minable.results[1].name or minable.results[1][1])
+    ---@cast minable.results -?
+    local minable_result = minable.result or minable.results[1] and minable.results[1].name
     if not minable_result then return false end
     if minable_result ~= entity.name then return false end
 
-    minable_result = ITEM(minable_result) --[[@as data.ItemPrototype]]
-    if not minable_result then return false end
-    if minable_result.hidden then return false end
+    local minable_result_prototype = ITEM(minable_result) --[[@as data.ItemPrototype]]
+    if not minable_result_prototype then return false end
+    if minable_result_prototype.hidden then return false end
 
     return true
 end
 
 ---Given an entity prototype, check if it meets the criteria for being upgradable.
----@param entity data.EntityPrototype
+---@param entity data.EntityPrototype|data.LocomotivePrototype
 ---@return boolean
 local function can_be_upgraded(entity)
     if not entity then return false end
@@ -58,7 +59,7 @@ for category_name, category in py.iter_prototype_categories("entity") do
         if prototype.next_upgrade then goto continue end
         if not can_be_upgraded(prototype) then goto continue end
 
-        local next_upgrade = category[next_tier(name, category)]
+        local next_upgrade = category[next_tier(name, category)]--[[@as data.EntityPrototype]]
         if not can_be_upgraded(next_upgrade) then goto continue end
 
         if next_upgrade.fast_replaceable_group ~= prototype.fast_replaceable_group then goto continue end
