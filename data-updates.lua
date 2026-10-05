@@ -10,7 +10,7 @@ local function set_underground_recipe(underground, belt, prev_underground, prev_
     if prev_underground then
         prev_dist = data.raw["underground-belt"][prev_underground].max_distance + 1
         local recipe = RECIPE(belt):standardize()
-        local belt_count = recipe.ingredients[1].amount
+        local belt_count = recipe.ingredients[1]--[[@cast -?]].amount
         local fluid = false
 
         for _, ing in pairs(recipe.ingredients) do
@@ -85,7 +85,7 @@ if settings.startup["pypp-compactified-recipe-tooltips"].value then
 end
 
 if data.raw["character"]["ulric-man"] then
-    table.insert(data.raw["character"]["ulric-man"].flags, "not-in-made-in")
+    table.insert(data.raw["character"]["ulric-man"].flags--[[@cast -?]], "not-in-made-in")
 end
 
 -- make sure very early techs are not effected by the tech cost multiplier

@@ -3,7 +3,7 @@
 ---Returns a new table with the results of calling a provided function on every element in the table.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<any,V>
 ---@param f fun(v: V, k: K, ...: any): any
 ---@param ... any
 ---@return table<K,V>
@@ -16,15 +16,15 @@ end
 -- Sums every key up in a table
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
----@param f (fun(v: V, k: K, ...: any): number|nil)
+---@param tbl table<K,V>|V[]
+---@param f (fun(v: V, k: K, ...: any): number)
 ---@param ... any
 ---@return number
 table.sum = function(tbl, f, ...)
     f = f or function(v, k, ...)
         return v
     end
-    local result = 0
+    local result = 0.0
     for k, v in pairs(tbl) do result = result + f(v, k, ...) end
     return result
 end
@@ -32,7 +32,7 @@ end
 ---Returns a new table with all elements that pass the test implemented by the provided function.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<any,V>
 ---@param f fun(v: V, k: K, ...: any): boolean
 ---@param ... any
 ---@return table<K,V>
@@ -50,7 +50,7 @@ end
 ---Returns the first element that satisfies the predicate.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<any,V>
 ---@param f V|fun(v: V, k: K, ...: any): any
 ---@param ... any
 ---@return V?,K?
@@ -66,11 +66,11 @@ end
 ---Returns true if any element in the table passes the test implemented by the provided function.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<K,V>|V[]
 ---@param f fun(v: V, k: K, ...: any): any
 ---@param ... any
 ---@return boolean
----@overload fun(tbl: table<K,V>, v: V): boolean
+---@overload fun(tbl: table<K,V>|V[], v: V): boolean
 table.any = function(tbl, f, ...)
     return table.find(tbl, f, ...) ~= nil
 end
@@ -155,7 +155,7 @@ end
 ---Returns a new table with keys and values swapped.
 ---@generic V
 ---@generic K
----@param tbl table<K,V>
+---@param tbl table<K,V>|V[]
 ---@return table<V,K>
 table.invert = function(tbl)
     local result = {}
@@ -178,8 +178,7 @@ end
 
 ---Returns a new array by merging the provided tables. The values are appended in the order they are provided.
 ---@generic V
----@generic K
----@param ... table<K,V>
+---@param ... V[]
 ---@return V[]
 table.array_combine = function(...)
     local result = {}

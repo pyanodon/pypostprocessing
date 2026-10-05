@@ -15,6 +15,6 @@ end
 
 if mods["bobmining"] then
     data.raw["bool-setting"]["bobmods-mining-pumpjacks"].hidden = true
-    data.raw["bool-setting"]["bobmods-mining-pumpjacks"].allowed_values = {false}
+    data.raw["bool-setting"]["bobmods-mining-pumpjacks"].forced_value = false
     data.raw["bool-setting"]["bobmods-mining-pumpjacks"].default_value = false
 end

@@ -25,8 +25,8 @@ for prototype_name, inventory in pairs {
 
         if not machine.module_slots or machine.module_slots == 0 then goto continue end
 
-        local scale_factors = {1}
-        for i = 1, 20 do scale_factors[i + 1] = scale_factors[i] * 0.95 end
+        local scale_factors = {1}--[[@as number[] ]]
+        for i = 1, 20 do scale_factors[i + 1] = scale_factors[i]--[[@cast -?]] * 0.95 end
 
         if width > 4 then table.insert(scale_factors, 1, 1.25) end
         if width > 5 then table.insert(scale_factors, 1, 1.5) end

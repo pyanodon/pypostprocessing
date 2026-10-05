@@ -2,7 +2,7 @@ if not mods.PlutoniumEnergy or not data.raw.technology["uranium-processing"].hid
 
 local prereqs = data.raw.technology["plutonium-processing"].prerequisites
 data.raw.technology["plutonium-processing"].prerequisites = {}
-for _, prereq in pairs(prereqs) do
+for _, prereq in pairs(prereqs--[[@cast -?]]) do
   if prereq ~= "uranium-processing" then
     data.raw.technology["plutonium-processing"].prerequisites[#data.raw.technology["plutonium-processing"].prerequisites+1] = prereq
   end
