@@ -6,7 +6,7 @@ storage = storage --[[@as PyPostProcessingStorage]]
 ---@field ignored_players {[uint]: uint} player_index -> game tick
 ---@field on_tick table<integer, table<int, {name: string, params: any[]?}>>
 
----@type table<LuaEventType|number, function[]>
+---@type table<LuaEventType|string, function[]>
 local events = {}
 -- Moved to top for referencing below
 --- Sentinel values for defining groups of events
@@ -151,7 +151,7 @@ py.finalize_events = function()
             script.on_init(f)
             script.on_configuration_changed(f)
         else
-            script.on_event(event, f)
+            script.on_event((tonumber(event) or event)--[[@as LuaEventType]], f)
         end
         i = i + 1
     end
