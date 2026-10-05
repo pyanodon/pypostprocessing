@@ -1,3 +1,11 @@
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
+
+---@class (partial) PyPostProcessingStorage
+---@field alert_count int
+---@field alerts table
+
 -- functions and helpers for alerts, warnings, and errors
 
 ---Draws a red error icon at the entity's position.
@@ -25,7 +33,7 @@ end
 ---@param icon SpritePath sprite of rendered alert
 ---@param message LocalisedString message of alert
 ---@param show_on_map boolean whether to show alert on map
----@return uint alert_id unique identifier of this alert
+---@return uint? alert_id unique identifier of this alert
 py.generate_alert = function(entity, signal, icon, message, show_on_map)
     if not entity or not entity.valid or not signal then return end
     storage.alert_count = storage.alert_count + 1

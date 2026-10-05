@@ -22,32 +22,6 @@ py.spoilage_enabled = function()
     return feature_flags.spoiling and mods.pyalternativeenergy and settings.startup["py-enable-decay"].value or false
 end
 
----Returns a localised name with the respective properties of this item/entity/recipe, generalized to make localisation easier
----@param base_name string
----@param tier string?
----@param wrapper string?
----@return LocalisedString
-py.generate_localised_name = function(base_name, tier, wrapper)
-  local localised_name = not tier and base_name or tier {
-    "?",
-    type(base_name) == "string" and (base_name .. "mk0" .. tier) or base_name,
-    {"py.tier.mk0" .. tier, {base_name}}
-  }
-    return wrapper and {wrapper, {localised_name}} or localised_name
-end
-
----Returns a localised description with the respective properties of this item/entity/recipe, generalized to make localisation easier
----@param base_name string
----@param tier string?
----@return LocalisedString
-py.generate_localised_description = function(base_name, tier)
-    return not tier and base_name or tier {
-      "?",
-      type(base_name) == "string" and (base_name .. "mk0" .. tier) or base_name,
-      {"py.tier.mk0" .. tier, {base_name}}
-    }
-end
-
 ---Adds a localised string to the prototype's description.
 ---@param prototype data.AnyPrototype
 ---@param name? LocalisedString|string filled with an empty string if not added
@@ -136,7 +110,7 @@ end
 ---@return number
 function py.farm_speed_derived(this_module_slots, base_entity_name, base_module_bonus, this_module_bonus)
     local mk1 = data.raw["assembling-machine"][base_entity_name]
-    local base_module_slots = mk1.module_slots
+    local base_module_slots = mk1.module_slots--[[@as data.ItemStackIndex]]
 
     -- This could be simplified but it's more legible this way
     base_module_bonus = base_module_bonus or 1
@@ -185,7 +159,7 @@ function py.composite_icon(base_prototype_string, child_top_left, child_top_righ
                 elseif prototype.icons
                 then
                     -- the array index starts at 1 instead of 0 in Lua
-                    return prototype, prototype.icons[1].icon
+                    return prototype, prototype.icons[1]--[[@cast -?]].icon
                 end
             end
         end
@@ -240,7 +214,7 @@ end
 
 ---Returns an iterator through all data.raw categories of a given supertype.
 ---@param parent_type string
----@return fun():{[defines.prototypes]: table}
+---@return fun():table<string, table>
 function py.iter_prototype_categories(parent_type)
     local types = defines.prototypes[parent_type]
     local child_type_name, value
@@ -267,7 +241,7 @@ end
 ---@param parent_type string
 ---@return function
 function py.iter_prototypes(parent_type)
-    local types = defines.prototypes[parent_type]
+    local types = defines.prototypes[parent_type]--[[@as data.AnyPrototype]]
     local cur_type, index, value
 
     return function()
@@ -340,14 +314,14 @@ end
 ---adds a small icon to the top right corner of a recipe
 ---@param recipe data.RecipePrototype
 ---@param corner table
----@return [data.IconData]
+---@return data.IconData[]
 py.add_corner_icon_to_recipe = function(recipe, corner)
     local icon, icon_size, icons
     local result
     if recipe.main_product then
         result = ITEM(recipe.main_product)
     elseif recipe.results and table_size(recipe.results) >= 1 then
-        result = recipe.results[1]
+        result = recipe.results[1]--[[@as data.ProductPrototype]]
         if result.type == "fluid" then
             result = FLUID(result.name) --[[@as data.FluidPrototype]]
         else
@@ -376,10 +350,10 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     end
 
     if recipe.icons then -- If it's already an icons
-        icons = recipe.icons --[[@as table<int, data.IconData>]]
+        icons = recipe.icons--[[@as data.IconData[] ]]
         icons[#icons + 1] = corner
     elseif result and result.icons then
-        icons = table.deepcopy(result.icons)
+        icons = table.deepcopy(result.icons)--[[@as data.IconData[] ]]
         icons[#icons + 1] = corner
     else -- No icons table, use icon found above
         if icon == nil then
@@ -389,7 +363,7 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
         icons = {
             {icon = icon, icon_size = icon_size},
             corner
-        }
+        }--[[@as data.IconData[] ]]
     end
 
     -- Ensure icon sizes are installed in each icon level
@@ -406,10 +380,18 @@ py.add_corner_icon_to_recipe = function(recipe, corner)
     return icons
 end
 
+---@class PyVisualState
+---@field name string
+---@field next_active string
+---@field next_inactive string
+---@field frame_sequence int[]
+---@field duration number?
+---@field speed number?
+
 ---Retruns a version of graphics_set with the following properties:
 ---The machine will follow a binary finite state machine (bfsm) to determine the current active animation.
 ---Example (sinter machine): https://github.com/pyanodon/pybugreports/issues/588
----@param params {states:[data.VisualState], working_visualisations:[data.WorkingVisualisation], shadow:data.Animation?}
+---@param params {states:[PyVisualState], working_visualisations:[data.WorkingVisualisation], shadow:data.Animation?}
 ---@return data.WorkingVisualisations
 py.finite_state_machine_working_visualisations = function(params)
     local states = params.states
@@ -452,6 +434,7 @@ py.finite_state_machine_working_visualisations = function(params)
     for _, visualization in pairs(params.working_visualisations) do
         for _, state in pairs(states) do
             local visualization = table.deepcopy(visualization)
+            ---@cast visualization.animation -?
             if visualization.animation.layers then
                 for _, layer in pairs(visualization.animation.layers) do
                     layer.frame_sequence = table.deepcopy(state.frame_sequence)
@@ -476,7 +459,7 @@ py.finite_state_machine_working_visualisations = function(params)
 
     states[1].duration = 1
 
-    return graphics_set
+    return graphics_set--[[@as data.WorkingVisualisations]]
 end
 
 ---Returns a flipped animation

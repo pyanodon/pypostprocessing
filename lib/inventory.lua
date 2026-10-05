@@ -48,7 +48,7 @@ py.transfer_stack_to_cursor = function(player, stack, amount_to_transfer)
         amount_to_transfer = math.floor(stack.count * amount_to_transfer + 0.5)
     end
     ---@cast amount_to_transfer uint
-    cursor_stack.transfer_stack(stack, amount_to_transfer)
+    cursor_stack--[[@cast -?]].transfer_stack(stack, amount_to_transfer)
 end
 
 ---@param player LuaPlayer

@@ -30,7 +30,7 @@ ENTITY = setmetatable({}, {
             if not entity_types[entity.type] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
 
             entity = setmetatable(entity, {__index = metas})
-            data:extend {entity}
+            data:extend {entity--[[@as data.AnyPrototype]]}
             return entity:standardize()
         else
             error("Invalid type " .. etype)

@@ -1,3 +1,12 @@
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
+
+---@class (partial) PyPostProcessingStorage
+---@field ignored_players {[uint]: uint} player_index -> game tick
+---@field on_tick table<integer, table<int, {name: string, params: any[]?}>>
+
+---@type table<LuaEventType|number, function[]>
 local events = {}
 -- Moved to top for referencing below
 --- Sentinel values for defining groups of events
@@ -72,9 +81,6 @@ py.events = {
     end
 }
 
----@class (partial) PyPostProcessingStorage
----@field ignored_players {[uint]: uint} player_index -> game tick
-
 ---Conditionally runs the given event based on if the player is not present within ignored_players
 ---@param event EventData.on_gui_click
 ---@param f function event handler
@@ -140,12 +146,12 @@ py.finalize_events = function()
     for event, functions in pairs(events) do
         local f = one_function_from_many(functions)
         if type(event) == "number" then
-            script.on_nth_tick(event, f)
+            script.on_nth_tick(event--[[@as MapTick]], f)
         elseif event == py.events.on_init() then
             script.on_init(f)
             script.on_configuration_changed(f)
         else
-            script.on_event(tonumber(event) or event, f)
+            script.on_event(event, f)
         end
         i = i + 1
     end
@@ -185,7 +191,6 @@ for event, _ in pairs(gui_events) do
     py.on_event(event, process_gui_event)
 end
 
----@type table<integer, table<int, {name: string, params: any[]?}>>
 storage.on_tick = storage.on_tick or {}
 ---@type table<string, function>
 py.on_tick_funcs = {}
@@ -246,7 +251,7 @@ end
 
 py.on_event(defines.events.on_tick, function(event)
     -- on_nth_tick
-    local tick = event.tick
+    local tick = event.tick--[[@as int]]
     if not on_nth_tick_init then
         remote.call("on_nth_tick", "add", function_list)
         on_nth_tick_init = true

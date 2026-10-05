@@ -1,11 +1,16 @@
----@type Color[]
+---@class PyColor:Color
+---@field r number
+---@field g number
+---@field b number
+---@field a number
+
 py.tints = {
     [0] = {r = 0.5,   g = 0.5,   b = 0.5,   a = 1.0},
     {r = 1.0,   g = 1.0,   b = 0.0,   a = 1.0},
     {r = 1.0,   g = 0.0,   b = 0.0,   a = 1.0},
     {r = 0.223, g = 0.490, b = 0.858, a = 1.0},
     {r = 1.0,   g = 0.0,   b = 1.0,   a = 1.0}
-}
+}--[[@as PyColor[] ]]
 
 ---@type Color[]
 py.light_tints = {}
@@ -18,11 +23,11 @@ for i, tint in pairs(py.tints) do
 end
 
 ---@param color Color
----@return Color
+---@return PyColor
 function py.color_normalize(color)
-    local r = color.r or color[1]
-    local g = color.g or color[2]
-    local b = color.b or color[3]
+    local r = color.r or color[1] or 0
+    local g = color.g or color[2] or 0
+    local b = color.b or color[3] or 0
     local a = color.a or color[4] or 1
     if r > 1 then r = r / 255 end
     if g > 1 then g = g / 255 end

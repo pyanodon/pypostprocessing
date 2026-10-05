@@ -12,15 +12,15 @@ local metas = {}
 ---@field public add_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
 ---@field public remove_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
 ---@field public replace_unlock fun(self: pYdata.RecipePrototype, technology_old: string | string[], technology_new: string | string[]): pYdata.RecipePrototype, boolean
----@field public replace_ingredient fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public replace_ingredient fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: number?): pYdata.RecipePrototype, boolean
 ---@field public replace_ingredient_unsafe fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
 ---@field public add_ingredient fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
 ---@field public add_ingredient_unsafe fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
 ---@field public remove_ingredient fun(self: pYdata.RecipePrototype, ingredient_name: string): pYdata.RecipePrototype, integer
----@field public replace_result fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
+---@field public replace_result fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: number?): pYdata.RecipePrototype, boolean
 ---@field public replace_result_unsafe fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
 ---@field public add_result fun(self: pYdata.RecipePrototype, result: data.ProductPrototype): pYdata.RecipePrototype, boolean
----@field public remove_result fun(self: pYdata.RecipePrototype, result_name: string): pYdata.RecipePrototype, integer
+---@field public remove_result fun(self: pYdata.RecipePrototype, result_name: string): pYdata.RecipePrototype, number
 ---@field public clear_ingredients fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
 ---@field public clear_results fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
 ---@field public multiply_result_amount fun(self: pYdata.RecipePrototype, result_name: string, percent: number): pYdata.RecipePrototype, boolean
@@ -34,8 +34,10 @@ local metas = {}
 ---@field public replace_category fun(self: pYdata.RecipePrototype, old: data.RecipeCategoryID, new: data.RecipeCategoryID): pYdata.RecipePrototype, boolean
 ---@field public has_category fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID): boolean
 ---@field public has_categories fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID[], all?: boolean): boolean # Returns true if the recipe has any of the categories. all? categories must match to pass
----@field public get_main_product fun(self: pYdata.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype?|LuaFluidPrototype?
+---@field public get_main_product fun(self: pYdata.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype|LuaFluidPrototype?
 ---@field public get_icons fun(self: pYdata.RecipePrototype): data.IconData[]
+---@field public ingredients data.ItemIngredientPrototype[]|data.FluidIngredientPrototype[]
+---@field public results data.ItemProductPrototype[]|data.FluidProductPrototype[]
 RECIPE = setmetatable(data.raw.recipe, {
     __call = function(self, recipe)
         local rtype = type(recipe)
@@ -278,7 +280,7 @@ end
 
 metas.remove_result = function(self, result_name)
     self:standardize()
-    local amount_removed = 0
+    local amount_removed = 0.0
     self.results = table.filter(self.results, function(result)
         if result.name == result_name then
             local amount = result.amount * (result.independent_probability or 1) or (result.amount_min + result.amount_max) * (result.independent_probability or 1) / 2
@@ -507,7 +509,7 @@ metas.get_main_product = function(self, allow_multi_product)
     target, target_type = result.name, result.type or target_type
     -- Find our prototype :)
     for _, category in py.iter_prototype_categories(target_type) do
-        local proto = category[target]
+        local proto = category[target--[[@as any]]]
         if proto then return proto end
     end
     -- haha oh no

@@ -34,7 +34,7 @@ local config = {
     SCIENCE_PACK_INDEX = {}
 }
 
----@cast config.PY_GRAPHICS_MODS {[string]: uint}
+---@cast config.PY_GRAPHICS_MODS table<string, uint>
 ---@cast config.PYMODS string[]
 ---@cast config.TC_SCIENCE_PACK_COUNTS_PER_LEVEL {[string]: uint[]}
 ---@cast config.TC_TECH_INGREDIENTS_PER_LEVEL {string: data.ResearchIngredient[]}
@@ -126,7 +126,7 @@ for highest_level_pack, counts_per_level in pairs(config.TC_SCIENCE_PACK_COUNTS_
     local packs = {}
 
     for level, count in pairs(counts_per_level) do
-        packs[#packs + 1] = {config.SCIENCE_PACKS[pack_count - level + 1], count}
+        packs[#packs + 1] = {config.SCIENCE_PACKS[pack_count - level + 1], count}--[[@as data.ResearchIngredient]]
     end
 
     config.TC_TECH_INGREDIENTS_PER_LEVEL[highest_level_pack] = packs
