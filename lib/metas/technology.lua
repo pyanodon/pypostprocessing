@@ -10,6 +10,9 @@ local metas = {}
 ---@field public replace_prereq fun(self: pYdata.TechnologyPrototype, old: data.TechnologyID, new: data.TechnologyID): pYdata.TechnologyPrototype, boolean
 ---@field public remove_pack fun(self: pYdata.TechnologyPrototype, science_pack_name: data.ItemID): pYdata.TechnologyPrototype, boolean
 ---@field public add_pack fun(self: pYdata.TechnologyPrototype, science_pack_name: data.ItemID): pYdata.TechnologyPrototype, boolean
+---wraps the given icon with the border taken from the same mod (graphics/technology/border.png)  
+---strips any numbers from the end of the mod name
+---@field public create_icons fun(self: pYdata.TechnologyPrototype, icon_path: string?, ...: data.IconData): pYdata.TechnologyPrototype
 TECHNOLOGY = setmetatable(data.raw.technology, {
     __call = function(self, technology)
         local ttype = type(technology)
@@ -24,9 +27,27 @@ TECHNOLOGY = setmetatable(data.raw.technology, {
         else
             error("Invalid type " .. ttype)
         end
+        if type(technology.icons) == "string" then
+            technology = technology:create_icons()
+        end
         return technology:standardize()
     end
 })
+
+metas.create_icons = function(self, icon_path, ...)
+    if type(self.icons) == "string" then icon_path = self.icons end
+    if not icon_path then error("provide a icon path for " .. self.name) end
+    local base_mod = string.gsub(icon_path, "%d*__/.*", "__")
+    self.icons = {
+        {icon = base_mod .. "/graphics/technology/border.png", icon_size = 128},
+        {icon = icon_path, icon_size = 128, scale = 0.8},
+    }
+    for _, icon in pairs{...} do
+        table.insert(self.icons, icon)
+    end
+    self.icon_size = 128
+    return self
+end
 
 metas.standardize = function(self)
  ---@diagnostic disable-next-line: assign-type-mismatch
