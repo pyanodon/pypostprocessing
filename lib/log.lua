@@ -9,6 +9,7 @@ local int_log_levels = {warning = 0, info = 1, debug = 2}
 local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
 if helpers.stage == "prototype" then log("log level: " .. log_level) end
 
+-- returns whether the logger will print this log level
 py.log.level = {
   warning = log_level >= int_log_levels.warning,
   info = log_level >= int_log_levels.info,
