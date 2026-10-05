@@ -16,7 +16,7 @@ local metas = {}
 ---@field public replace_ingredient_unsafe fun(self: pYdata.RecipePrototype, old_ingredient: string, new_ingredient: string | data.IngredientPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
 ---@field public add_ingredient fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
 ---@field public add_ingredient_unsafe fun(self: pYdata.RecipePrototype, ingredient: data.IngredientPrototype): pYdata.RecipePrototype, boolean
----@field public remove_ingredient fun(self: pYdata.RecipePrototype, ingredient_name: string): pYdata.RecipePrototype, integer
+---@field public remove_ingredient fun(self: pYdata.RecipePrototype, ingredient_name: string): pYdata.RecipePrototype, number
 ---@field public replace_result fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: number?): pYdata.RecipePrototype, boolean
 ---@field public replace_result_unsafe fun(self: pYdata.RecipePrototype, old_result: string, new_result: string | data.ProductPrototype, new_amount: integer?): pYdata.RecipePrototype, boolean
 ---@field public add_result fun(self: pYdata.RecipePrototype, result: data.ProductPrototype): pYdata.RecipePrototype, boolean
@@ -267,7 +267,7 @@ end
 
 metas.remove_ingredient = function(self, ingredient_name)
     self:standardize()
-    local amount_removed = 0
+    local amount_removed = 0.0
     self.ingredients = table.filter(self.ingredients, function(ingredient)
         if ingredient.name == ingredient_name then
             amount_removed = amount_removed + ingredient.amount
