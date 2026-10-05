@@ -112,7 +112,7 @@ local function test_entity_graphics()
         ["bitumen-seep-mk04-base"] = true,
         ["tar-seep-mk01-base"] = true,
         ["natural-gas-seep-mk01-base"] = true,
-        ["hidden-beacon"] = true,
+        ["hidden-beacon-vatbrain"] = true,
         ["hidden-beacon-turd"] = true,
         ["atomic-bomb-wave-spawns-nuke-shockwave-explosion"] = true,
         ["atomic-bomb-wave-spawns-nuclear-smoke"] = true,
