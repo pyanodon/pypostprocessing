@@ -6,6 +6,7 @@ Date: ????
     - Fixed a startup crash when a subset of cargo ships mods are enabled. Resolves https://github.com/pyanodon/pybugreports/issues/1560
     - Fixed that jetpack would not load with just alienlife. Resolves https://github.com/pyanodon/pybugreports/issues/1468
     - added mag2 function to vectors
+    - added TECHNOLOGY:create_icons function
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.5
 Date: 2026-09-22
