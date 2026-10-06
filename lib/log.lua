@@ -1,13 +1,20 @@
+---@class Logger
+---@field debug fun(message: string)
+---@field info fun(message: string)
+---@field warning fun(message: string)
+
 py.log = {}
 
 local int_log_levels = {warning = 0, info = 1, debug = 2}
 local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
 if helpers.stage == "prototype" then log("log level: " .. log_level) end
 
----@class Logger
----@field debug fun(message: string)
----@field info fun(message: string)
----@field warning fun(message: string)
+-- returns whether the logger will print this log level
+py.log.level = {
+  warning = log_level >= int_log_levels.warning,
+  info = log_level >= int_log_levels.info,
+  debug = log_level >= int_log_levels.debug,
+}
 
 ---@param category string used to identify what the log is about
 ---@param message string
@@ -19,7 +26,7 @@ local log_debug = function(category, message, info_level)
     log("DEBUG: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
 end
-if log_level < 2 then
+if log_level < int_log_levels.debug then
     log_debug = function(category, message, info_level)
         return
     end
@@ -35,7 +42,7 @@ local log_info = function(category, message, info_level)
     log("INFO: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
 end
-if log_level < 1 then
+if log_level < int_log_levels.info then
     log_info = function(category, message, info_level)
         return
     end
@@ -51,7 +58,7 @@ local log_warning = function(category, message, info_level)
     log("WARNING: " .. category .. ": " .. message)
     log("callsite: " .. callsite)
 end
-if log_level < 0 then
+if log_level < int_log_levels.warning then
     log_warning = function(category, message, info_level)
         return
     end
