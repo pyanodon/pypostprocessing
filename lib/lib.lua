@@ -50,7 +50,7 @@ local pyal_globals = {
     "remove_digosaur",
     "Oculua",
     "Farming",
-    "Smart_Farm",
+    "SmartFarm",
     "Worm",
     "Turd",
     "Vatbrain",
