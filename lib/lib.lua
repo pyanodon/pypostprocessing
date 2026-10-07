@@ -1,5 +1,13 @@
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
+
+---@class (partial) PyPostProcessingStorage
+---@field global_messages_sent boolean
+
 _G.py = {}
 
+---@type string[]
 local factorio_globals = {
     -- data stage
     "generate_recycling_recipe_icons_from_item",
@@ -85,9 +93,6 @@ local pysex_globals = {
     "transitions_between_transitions",
     "stone_path_vehicle_speed_modifier",
     -- control stage
-    "Planet",
-    "Orbit",
-    "Planets",
     "H2O2",
     "Centrifuge",
     "RocketSilo",
@@ -141,6 +146,14 @@ local debugadapter_globals = {
     -- control stage
 }
 
+local realorbits_globals = {
+    -- data stage
+    "realorbits",
+    "Planet",
+    "Orbit",
+    "Planets",
+}
+
 function py.has_any_py_mods()
     local mods = mods or script.active_mods
     return mods.pyindustry or mods.pycoalprocessing
@@ -161,7 +174,7 @@ end
 
 require "table"
 require "string"
-require "defines"
+require "__pypostprocessing__.lib.defines"
 require "color"
 require "world-generation"
 require "assertion"
@@ -177,7 +190,7 @@ else
     error("Could not determine load order stage.")
 end
 
-local declaredNames = {}
+local declaredNames = {game = true}
 
 ---declare a new global variable
 ---luals doesn't like them being declared like that so use the function here and assign value later
@@ -262,7 +275,8 @@ local global_vars = table.array_combine(
     spidertron_enhancements_globals,
     pycp_globals,
     pyae_globals,
-    debugadapter_globals
+    debugadapter_globals,
+    realorbits_globals
 )
 
 for _, var in pairs(global_vars) do
@@ -270,4 +284,3 @@ for _, var in pairs(global_vars) do
 end
 
 declare("_")
-declare("game") -- needed for globals used outside of events

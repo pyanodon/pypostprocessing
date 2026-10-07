@@ -1,3 +1,12 @@
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
+
+---@class (partial) PyPostProcessingStorage
+---@field compound_entity_pairs table
+---@field compound_entity_pairs_reverse table
+---@field compound_entity_gui_pairs table
+
 if py.stage == "data" then
   -- Attachs an entity to another entity with additional properties
   -- @param parent string

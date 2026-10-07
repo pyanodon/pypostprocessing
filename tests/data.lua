@@ -112,7 +112,7 @@ local function test_entity_graphics()
         ["bitumen-seep-mk04-base"] = true,
         ["tar-seep-mk01-base"] = true,
         ["natural-gas-seep-mk01-base"] = true,
-        ["hidden-beacon"] = true,
+        ["hidden-beacon-vatbrain"] = true,
         ["hidden-beacon-turd"] = true,
         ["atomic-bomb-wave-spawns-nuke-shockwave-explosion"] = true,
         ["atomic-bomb-wave-spawns-nuclear-smoke"] = true,
@@ -177,7 +177,7 @@ local function scan_for_cages()
         local cage_input = false
         local cage_output = false
         for i, ingredient in pairs(recipe.ingredients) do
-            local item_name = ingredient[1] or ingredient.name
+            local item_name = ingredient.name
             if item_name:find("caged") then
                 cage_input = true
                 break
@@ -191,7 +191,7 @@ local function scan_for_cages()
             goto NEXT_RECIPE_CAGECHECK
         end
         for i, result in pairs(recipe.results) do
-            local item_name = result[1] or result.name
+            local item_name = result.name
             if item_name:find("cage") then -- could be the same caged animal or an empty cage
                 cage_output = true
                 break
@@ -257,13 +257,13 @@ local function factoriopedia_recipes(check_absent_recipes)
         for _, modifier in pairs(tech.effects or {}) do
             if modifier.type == "unlock-recipe" and not RECIPE(modifier.recipe):has_categories{"py-barreling", "py-unbarreling"} then
                 if not science then
-                    for _, pack in pairs(unit_tech.unit.ingredients) do
+                    for _, pack in pairs(unit_tech.unit--[[@cast -?]].ingredients) do
                         if pack[2] == 1 then
                             science = pack[1]
                         end
                     end
                 end
-                for _, product in pairs(data.raw["recipe"][modifier.recipe].results) do
+                for _, product in pairs(data.raw["recipe"][modifier.recipe].results--[[@cast -?]]) do
                     unlocks[product.name] = unlocks[product.name] or {}
                     table.insert(unlocks[product.name], {science = science_pack_order[science], recipe = modifier.recipe})
                 end
@@ -272,7 +272,7 @@ local function factoriopedia_recipes(check_absent_recipes)
     end
     for name, recipe in pairs(data.raw["recipe"]) do
         if recipe.enabled ~= false and not RECIPE(name):has_category("py-incineration") and not recipe.hidden then
-            for _, product in pairs(recipe.results) do
+            for _, product in pairs(recipe.results--[[@cast -?]]) do
                 unlocks[product.name] = unlocks[product.name] or {}
                 table.insert(unlocks[product.name], {science = 0, recipe = name})
             end

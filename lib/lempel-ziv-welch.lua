@@ -11,7 +11,7 @@ local function b64encode(data)
         if #x < 6 then return "" end
         local c = 0
         for i = 1, 6 do
-            c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0)
+            c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0)--[[@as int]]
         end
         return b64chars:sub(c + 1, c + 1)
     end) .. ({"", "==", "="})[#data % 3 + 1])
@@ -28,7 +28,7 @@ local function b64decode(data)
     for i = 1, #data do
         local c = data:sub(i, i)
         if c ~= "=" then
-            local val = b64bytes[c]
+            local val = b64bytes[c]--[[@as number]]
             local bits = ""
             for j = 6, 1, -1 do
                 bits = bits .. ((val % 2 ^ j - val % 2 ^ (j - 1) > 0) and "1" or "0")
@@ -43,7 +43,7 @@ local function b64decode(data)
         if #byte == 8 then
             local c = 0
             for j = 1, 8 do
-                c = c + (byte:sub(j, j) == "1" and 2 ^ (8 - j) or 0)
+                c = c + (byte:sub(j, j) == "1" and 2 ^ (8 - j) or 0)--[[@as int]]
             end
             decoded[#decoded + 1] = string.char(c)
         end
@@ -53,6 +53,7 @@ local function b64decode(data)
 end
 
 local function lzw_compress(input)
+    ---@param n int
     local function pack16(n)
         local hi = math.floor(n / 256)
         local lo = n % 256
@@ -115,7 +116,7 @@ local function lzw_decompress(encoded)
         local k = codes[i]
         local entry
         if dict[k] then
-            entry = dict[k]
+            entry = dict[k]--[[@as string]]
         elseif k == dict_size then
             entry = w .. w:sub(1, 1)
         else

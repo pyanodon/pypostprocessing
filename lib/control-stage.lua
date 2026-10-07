@@ -1,8 +1,15 @@
+---@namespace PyPostProcessing
+---@type PyPostProcessingStorage
+storage = storage --[[@as PyPostProcessingStorage]]
+
+---@class (partial) PyPostProcessingStorage
+---@field _last_cancel_creation_message uint
+
 -- Adds helper functions for control stage. Shared across all pymods
 
 local random = math.random
 
-require "events"
+require "__pypostprocessing__/lib/events"
 require "vector"
 require "smuggler"
 require "compound-entities"
@@ -29,14 +36,11 @@ end
 ---@param factor number? default 1
 ---@return MapPosition
 py.randomize_position = function(position, factor)
-    local x = position.x or position[1]
-    local y = position.y or position[2]
+    local x = position.x or position[1]--[[@as number]]
+    local y = position.y or position[2]--[[@as number]]
     factor = factor or 1
     return {x = x + factor * (random() - 0.5), y = y + factor * (random() - 0.5)}
 end
-
----@class (partial) PyPostProcessingStorage
----@field _last_cancel_creation_message uint
 
 ---Intended to be called inside a build event. Cancels creation of the entity.
 ---Returns its item_to_place back to the player or spills it on the ground.
@@ -47,7 +51,7 @@ end
 py.cancel_creation = function(entity, player_index, message, color)
     local inserted = 0
     local items_to_place_this = entity.prototype.items_to_place_this
-    local item_to_place = items_to_place_this and items_to_place_this[1]
+    local item_to_place = items_to_place_this and items_to_place_this[1]--[[@as ItemStackIdentification]]
     local surface = entity.surface
     local position = entity.position
     local name = entity.name
@@ -157,7 +161,7 @@ end
 py.find_grandparent = function(element, name)
     while element do
         if element.name == name then return element end
-        element = element.parent
+        element = element.parent--[[@as LuaGuiElement]]
     end
     error("Could not find parent gui element with name: " .. name)
 end
@@ -192,7 +196,7 @@ py.format_energy = function(energy, watts_or_joules)
         energy = energy / 1000
         prefix = prefix + 1
     end
-    return {"", string.format("%.1f", energy), " ", si_prefixes[prefix] and {si_prefixes[prefix]} or "* 10^" .. (prefix * 3) .. " ", {watts_or_joules}}
+    return {"", string.format("%.1f", energy), " ", si_prefixes[prefix] and {si_prefixes[prefix]} or "* 10^" .. (prefix * 3) .. " ", {watts_or_joules}}--[[@as LocalisedString]]
 end
 
 ---Returns the distance from 0,0
@@ -208,8 +212,8 @@ end
 ---@param second MapPosition
 ---@return number
 py.distance_squared = function(first, second)
-    local x = first.x - second.x
-    local y = first.y - second.y
+    local x = first.x--[[@as number]] - second.x--[[@as number]]
+    local y = first.y--[[@as number]] - second.y--[[@as number]]
     return x * x + y * y
 end
 
@@ -219,7 +223,7 @@ end
 ---@return number
 py.get_planet_property = function(planet, property)
     if planet.surface then return planet.surface.get_property(property) end
-    return planet.prototype.surface_properties[property]
+    return planet.prototype.surface_properties--[[@cast -?]][property]
 end
 
 ---Returns the undo item and action associated with this entity
@@ -229,13 +233,13 @@ end
 ---@return uint32? item_index, uint32? action_index
 py.find_latest_undo_action = function(player_index, entity, type)
     if not player_index or not entity or not entity.valid then return end
-    local stack = game.get_player(player_index).undo_redo_stack
+    local stack = game.get_player(player_index)--[[@as LuaPlayer]].undo_redo_stack
     local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
     for i = 1, stack.get_undo_item_count() do
         for a, action in pairs(stack.get_undo_item(i)) do
             if action.type == type and
                 action.surface_index == entity.surface_index and
-                action.target.name == name and
+                action.target and action.target.name == name and
                 (not action.target.quality or action.target.quality == entity.quality) and
                 action.target.position.x == entity.position.x and
                 action.target.position.y == entity.position.y and

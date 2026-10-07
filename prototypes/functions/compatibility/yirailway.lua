@@ -5,13 +5,13 @@ if mods["yi_railway"] and mods["pyindustry"] then
             if recipe.subgroup == "yir_locomotives_steam" then
                 recipe.enabled = true
                 recipe.categories = data.raw.recipe["locomotive"].categories
-                recipe.group = data.raw.recipe["locomotive"].group
+                -- recipe.group = data.raw.recipe["locomotive"].group
                 recipe.energy_required = data.raw.recipe["locomotive"].energy_required
                 recipe.ingredients = data.raw.recipe["locomotive"].ingredients -- I know what this does and I don't care
 
                 RECIPE(recipe_name):add_unlock("railway")
 
-                local resultname = recipe.results[1]["name"]
+                local resultname = recipe.results--[[@cast -?]][1]--[[@cast -?]]["name"]--[[@as string]]
                 local loco = data.raw.locomotive["locomotive"]
                 if (loco and data.raw.locomotive[resultname]) then
                     data.raw.locomotive[resultname].weight = loco.weight
@@ -30,13 +30,13 @@ if mods["yi_railway"] and mods["pyindustry"] then
             elseif recipe.subgroup == "yir_locomotives_diesel" or recipe.subgroup == "yir_locomotives_nslong" then
                 recipe.enabled = true
                 recipe.categories = data.raw.recipe["mk02-locomotive"].categories
-                recipe.group = data.raw.recipe["mk02-locomotive"].group
+                -- recipe.group = data.raw.recipe["mk02-locomotive"].group
                 recipe.energy_required = data.raw.recipe["mk02-locomotive"].energy_required
                 recipe.ingredients = data.raw.recipe["mk02-locomotive"].ingredients
 
                 RECIPE(recipe_name):add_unlock("railway-mk02")
 
-                local resultname = recipe.results[1]["name"]
+                local resultname = recipe.results--[[@cast -?]][1]--[[@cast -?]]["name"]--[[@as string]]
                 local loco = data.raw.locomotive["mk02-locomotive"]
 
                 data.raw.locomotive[resultname].weight = loco.weight
@@ -53,13 +53,13 @@ if mods["yi_railway"] and mods["pyindustry"] then
                 recipe.subgroup == "yir_cargowagons_2A2" then
                 recipe.enabled = true
                 recipe.categories = data.raw.recipe["cargo-wagon"].categories
-                recipe.group = data.raw.recipe["cargo-wagon"].group
+                -- recipe.group = data.raw.recipe["cargo-wagon"].group
                 recipe.energy_required = data.raw.recipe["cargo-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["cargo-wagon"].ingredients
 
                 RECIPE(recipe_name):add_unlock("railway")
 
-                local resultname = recipe.results[1]["name"]
+                local resultname = recipe.results--[[@cast -?]][1]--[[@cast -?]]["name"]--[[@as string]]
                 local wagon = data.raw["cargo-wagon"]["cargo-wagon"]
                 local ywagon = data.raw["cargo-wagon"][resultname]
 
@@ -72,13 +72,13 @@ if mods["yi_railway"] and mods["pyindustry"] then
             elseif recipe.subgroup == "yir_tankwagons2a" and recipe.subgroup == "yir_fluidwagons_4A" then
                 recipe.enabled = true
                 recipe.categories = data.raw.recipe["fluid-wagon"].categories
-                recipe.group = data.raw.recipe["fluid-wagon"].group
+                -- recipe.group = data.raw.recipe["fluid-wagon"].group
                 recipe.energy_required = data.raw.recipe["fluid-wagon"].energy_required
                 recipe.ingredients = data.raw.recipe["fluid-wagon"].ingredients
 
                 RECIPE(recipe_name):add_unlock("railway")
 
-                local resultname = recipe.results[1]["name"]
+                local resultname = recipe.results--[[@cast -?]][1]--[[@cast -?]]["name"]--[[@as string]]
                 local wagon = data.raw["fluid-wagon"]["fluid-wagon"]
                 local ywagon = data.raw["fluid-wagon"][resultname]
 
@@ -91,7 +91,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
             else
                 recipe.hidden = true
                 if (recipe.results) then
-                    for i, v in ipairs(recipe.results[1]) do
+                    for i, v in ipairs(recipe.results[1]--[[@cast -?]]) do
                         --log('  disabling '..v.name)
                         v.hidden = true
                     end
@@ -100,7 +100,7 @@ if mods["yi_railway"] and mods["pyindustry"] then
         elseif string.sub(recipe_name, 1, 4) == "yir_" and string.find(recipe_name, "pyvoid") == nil then
             recipe.hidden = true
             if (recipe.results) then
-                for i, v in ipairs(recipe.results[1]) do
+                for i, v in ipairs(recipe.results[1]--[[@cast -?]]) do
                     --log('  disabling '..v.name)
                     v.hidden = true
                 end
