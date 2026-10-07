@@ -6,6 +6,10 @@ require "pipe-connections"
 require "smuggler"
 require "compound-entities"
 
+---Functions to be ran at the end of data-final-fixes to supply integration pieces with YAFC
+---@type {[string]:fun()}
+py.yafc_integrations = {}
+
 ---Returns a 1x1 empty image.
 ---@return table
 py.empty_image = function()
