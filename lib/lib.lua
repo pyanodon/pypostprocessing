@@ -277,7 +277,3 @@ for _, var in pairs(global_vars) do
 end
 
 declare("_")
-
--- casting doesn't get rid of warnings for some godforsaken reason
----@type lualib.connector_sprite_template
-universal_connector_template = universal_connector_template
