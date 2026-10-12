@@ -16,15 +16,24 @@ py.log.level = {
   debug = log_level >= int_log_levels.debug,
 }
 
+local log_callsite = function(stack_level)
+    local info = debug.getinfo(stack_level + 1) ---@cast info -?
+    local callsite = info.short_src .. ":" .. info.currentline
+    log("callsite: " .. callsite)
+end
+if log_level < int_log_levels.debug then
+    log_callsite = function(stack_level)
+        return
+    end
+end
+
 ---@param category string used to identify what the log is about
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_debug = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
     
     log("DEBUG: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
 if log_level < int_log_levels.debug then
     log_debug = function(category, message, info_level)
@@ -36,11 +45,9 @@ end
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_info = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
 
     log("INFO: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
 if log_level < int_log_levels.info then
     log_info = function(category, message, info_level)
@@ -52,11 +59,9 @@ end
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_warning = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
 
     log("WARNING: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
 if log_level < int_log_levels.warning then
     log_warning = function(category, message, info_level)

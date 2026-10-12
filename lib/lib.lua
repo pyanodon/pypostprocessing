@@ -87,19 +87,10 @@ local maraxsis_globals = {
 }
 
 local pysex_globals = {
-    -- data stage
-    "collision_mask_util",
-    -- tries to read nil
-    "default_orange_color",
-    "transitions",
-    "transitions_between_transitions",
-    "stone_path_vehicle_speed_modifier",
     -- control stage
     "H2O2",
     "Centrifuge",
     "RocketSilo",
-    -- tries to read nil
-    "on_search",
 }
 
 local pypp_globals = {
@@ -286,3 +277,7 @@ for _, var in pairs(global_vars) do
 end
 
 declare("_")
+
+-- casting doesn't get rid of warnings for some godforsaken reason
+---@type lualib.connector_sprite_template
+universal_connector_template = universal_connector_template

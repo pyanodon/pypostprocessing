@@ -9,7 +9,7 @@ local metas = {}
 ---@field public add_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
 ---@field public remove_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
 ---@field public has_flag fun(self: pYdata.ItemPrototype, flag: string): boolean
----@field public spoil fun(self: pYdata.ItemPrototype, spoil_result: (string | table), spoil_ticks: uint): pYdata.ItemPrototype, boolean
+---@field public spoil fun(self: pYdata.ItemPrototype, spoil_result: (string | table)?, spoil_ticks: uint): pYdata.ItemPrototype, boolean
 ---@field public add_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
 ---@field public remove_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): pYdata.ItemPrototype, boolean
 ---@field public replace_fuel_category fun(self: pYdata.ItemPrototype, old: data.FuelCategoryID, new: data.FuelCategoryID): pYdata.ItemPrototype, boolean

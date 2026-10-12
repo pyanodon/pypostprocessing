@@ -483,6 +483,6 @@ py.flip_4way_animation = function(animation4way)
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field
----@param event defines.events|defines.events[]|string
+---@param event defines.events|defines.events[]|string|string[]
 ---@param f function
 py.on_event = function(event, f) end
