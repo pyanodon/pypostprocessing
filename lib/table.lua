@@ -202,7 +202,7 @@ end
 ---Returns all the keys of a table in a random order
 ---@generic V
 ---@generic K
----@param t table<K,V>
+---@param t table<K,V>|V[]
 ---@return K[]
 local function shuffle(t)
     local keys = {}
@@ -224,7 +224,7 @@ end
 ---Like normal pairs(), but in deterministic randomized order
 ---@generic V
 ---@generic K
----@param t table<K,V>
+---@param t table<K,V>|V[]
 ---@return fun():K, V
 function py.shuffled_pairs(t)
     local shuffled_keys = shuffle(t)
