@@ -5,7 +5,7 @@
 
 py.log = {}
 
-local int_log_levels = {warning = 0, info = 1, debug = 2}
+local int_log_levels = {warning = 0, info = 1, debug = 2, callsite = 3}
 local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
 if helpers.stage == "prototype" then log("log level: " .. log_level) end
 
@@ -21,7 +21,7 @@ local log_callsite = function(stack_level)
     local callsite = info.short_src .. ":" .. info.currentline
     log("callsite: " .. callsite)
 end
-if log_level < int_log_levels.debug then
+if log_level < int_log_levels.callsite then
     log_callsite = function(stack_level)
         return
     end

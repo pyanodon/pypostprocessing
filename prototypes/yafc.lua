@@ -1,4 +1,4 @@
----@diagnostic disable: missing-fields, param-type-mismatch, assign-type-mismatch, need-check-nil
+---@diagnostic disable: missing-fields, param-type-mismatch, assign-type-mismatch, need-check-nil, unresolved-require
 
 if mods["pyalienlife"] then
     log("Fix Automated smartfarm")

@@ -48,7 +48,7 @@ data:extend {
         name = "pypp-log-level",
         setting_type = "startup",
         default_value = "info",
-        allowed_values = {"debug", "info", "warning"},
+        allowed_values = {"warning", "info", "debug", "callsite"},
         order = "f",
     }
 }
