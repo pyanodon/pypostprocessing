@@ -22,12 +22,14 @@ py.nth_tick_funcs = {}
 
 py.nth_tick_total = 0.0
 
+local nth_tick_log = py.log.init("on_nth_tick")
+
 ---use instead of script.on_nth_tick
 ---@param func_list NthTickFunc[]
 local register_on_nth_tick = function(func_list)
     local this_nth_tick_total = 0.0
     for func_name, details in pairs(func_list) do
-        log("registered on_nth_tick function " .. func_name .. " from mod " .. details.mod)
+        nth_tick_log.info("registered function " .. func_name .. " from mod " .. details.mod)
         this_nth_tick_total = this_nth_tick_total + 1 / details.tick
         py.nth_tick_funcs[details.mod .. "-" .. func_name] = {mod = details.mod, tick = details.tick}
     end
@@ -89,6 +91,7 @@ local query_nth_tick = function(mod, tick)
             if not storage.nth_tick_order[tick + 1] then storage.nth_tick_order[tick + 1] = {} end
             order.delay = order.delay + 1
             table.insert(storage.nth_tick_order[tick + 1], delayed, order)
+            nth_tick_log.debug("delayed function " .. order.func .. " by " .. order.delay .. " " .. (order.delay > 1 and "ticks" or "tick"))
         end
         ::continue::
     end

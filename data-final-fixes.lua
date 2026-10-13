@@ -522,7 +522,8 @@ if not (mods.declutter or mods.autotech) then
     end
 end
 
-if py.log.level.warning then
+if py.log.level.debug then
+    local tech_log = py.log.init("tech_recipe_unlocks")
 
     -- warn about technologies with no/hidden effects/no recipes
     for _, technology in pairs(data.raw.technology) do
@@ -543,14 +544,14 @@ if py.log.level.warning then
         end
 
         if visible == nil then
-            py.log.warning("TECHNOLOGY '" .. technology.name .. "' has no effects!")
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' has no effects!")
         elseif not visible then
-            py.log.warning("TECHNOLOGY '" .. technology.name .. "' has no visible effects!")
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' has no visible effects!")
             if not recipes then
-                py.log.warning("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
+                tech_log.debug("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
             end
         elseif not recipes then
-            py.log.warning("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
         end
     end
 
@@ -578,7 +579,7 @@ if py.log.level.warning then
     end
 
     for recipe in pairs(recipes) do
-      py.log.warning("RECIPE '" .. recipe .. "' is not found to be unlocked anywhere")
+      tech_log.debug("RECIPE '" .. recipe .. "' is not found to be unlocked anywhere")
     end
 
 end
