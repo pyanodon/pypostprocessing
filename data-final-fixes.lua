@@ -448,6 +448,11 @@ for _, type in pairs {"furnace", "assembling-machine", "mining-drill", "lab"} do
     end
 end
 
+for index, fun in pairs(py.postprocessing) do
+    py.log.info("Running postprocess function: " .. index)
+    fun()
+end
+
 require "prototypes/yafc"
 
 -- force mining drill speed to not increase with speed modules
