@@ -491,6 +491,10 @@ py.flip_4way_animation = function(animation4way)
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field
----@param event defines.events|defines.events[]|string
+---@param event defines.events|defines.events[]|string|string[]
 ---@param f function
 py.on_event = function(event, f) end
+
+-- casting doesn't get rid of warnings for some godforsaken reason
+---@type lualib.connector_sprite_template
+universal_connector_template = universal_connector_template

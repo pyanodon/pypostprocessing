@@ -12,7 +12,7 @@ local function next_tier(prototype_name, prototype_category)
         if not tier_num_int then return end
         tier_num_int = tier_num_int + 1
         tier_num = string.format("%02d", tier_num_int)
-        local next_upgrade = prototype_name:gsub("%-mk%d%d", "-mk" .. tier_num_int)
+        local next_upgrade = prototype_name:gsub("%-mk%d%d", "-mk" .. tier_num)
         if prototype_category[next_upgrade] then return next_upgrade end
     else
         local next_upgrade = prototype_name .. "-mk02"

@@ -523,6 +523,68 @@ if not (mods.declutter or mods.autotech) then
     end
 end
 
+if py.log.level.debug then
+    local tech_log = py.log.init("tech_recipe_unlocks")
+
+    -- warn about technologies with no/hidden effects/no recipes
+    for _, technology in pairs(data.raw.technology) do
+
+        local visible
+        local recipes
+
+        for _, effect in pairs(technology.effects or {}) do
+            ---@cast effect data.Modifier
+            if effect.type == "unlock-recipe" then
+                recipes = true
+            end
+            if effect.hidden then
+                visible = visible or false
+            else
+                visible = true
+            end
+        end
+
+        if visible == nil then
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' has no effects!")
+        elseif not visible then
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' has no visible effects!")
+            if not recipes then
+                tech_log.debug("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
+            end
+        elseif not recipes then
+            tech_log.debug("TECHNOLOGY '" .. technology.name .. "' unlocks no recipes!")
+        end
+    end
+
+    -- warn about recipes that have no unlocks (not necessarially a bad thing, but something to note)
+    local recipes = {}
+    for _, recipe in pairs(data.raw.recipe) do
+        if not recipe.enabled then
+            recipes[recipe.name] = true
+            -- ignore if TURD recipe
+            for _, field in pairs(recipe.custom_tooltip_fields or {}) do
+                if type(field.value) == "table" and field.value[1]:match("turd") then
+                    recipes[recipe.name] = nil
+                    break
+                end
+            end
+        end
+    end
+    for _, technology in pairs(data.raw.technology) do
+        for _, effect in pairs(technology.effects or {}) do
+            ---@cast effect data.Modifier
+            if effect.type == "unlock-recipe" then
+                recipes[effect.recipe] = nil
+            end
+        end
+    end
+
+    for recipe in pairs(recipes) do
+      tech_log.debug("RECIPE '" .. recipe .. "' is not found to be unlocked anywhere")
+    end
+
+end
+
 -- cleanup
 if not mods.autotech then 
     for _, type in pairs(data.raw) do

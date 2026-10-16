@@ -1,25 +1,41 @@
-py.log = {}
-
-local int_log_levels = {warning = 0, info = 1, debug = 2}
-local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
-if helpers.stage == "prototype" then log("log level: " .. log_level) end
-
 ---@class Logger
 ---@field debug fun(message: string)
 ---@field info fun(message: string)
 ---@field warning fun(message: string)
 
+py.log = {}
+
+local int_log_levels = {warning = 0, info = 1, debug = 2, callsite = 3}
+local log_level = int_log_levels[settings.startup["pypp-log-level"].value]
+if helpers.stage == "prototype" then log("log level: " .. log_level) end
+
+-- returns whether the logger will print this log level
+py.log.level = {
+  warning = log_level >= int_log_levels.warning,
+  info = log_level >= int_log_levels.info,
+  debug = log_level >= int_log_levels.debug,
+}
+
+local log_callsite = function(stack_level)
+    local info = debug.getinfo(stack_level + 1) ---@cast info -?
+    local callsite = info.short_src .. ":" .. info.currentline
+    log("callsite: " .. callsite)
+end
+if log_level < int_log_levels.callsite then
+    log_callsite = function(stack_level)
+        return
+    end
+end
+
 ---@param category string used to identify what the log is about
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_debug = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
     
     log("DEBUG: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
-if log_level < 2 then
+if log_level < int_log_levels.debug then
     log_debug = function(category, message, info_level)
         return
     end
@@ -29,13 +45,11 @@ end
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_info = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
 
     log("INFO: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
-if log_level < 1 then
+if log_level < int_log_levels.info then
     log_info = function(category, message, info_level)
         return
     end
@@ -45,13 +59,11 @@ end
 ---@param message string
 ---@param info_level int used to print the actual call site
 local log_warning = function(category, message, info_level)
-    local info = debug.getinfo(info_level) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
 
     log("WARNING: " .. category .. ": " .. message)
-    log("callsite: " .. callsite)
+    log_callsite(info_level)
 end
-if log_level < 0 then
+if log_level < int_log_levels.warning then
     log_warning = function(category, message, info_level)
         return
     end
