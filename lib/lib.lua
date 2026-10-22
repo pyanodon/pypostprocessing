@@ -48,8 +48,6 @@ local pyal_globals = {
     "make_unit_melee_ammo_type",
     "Biofluid",
     "Digosaurus",
-    -- tries to read nil
-    "yafc_turd_integration",
     -- control stage
     "Caravan",
     "CaravanGuiComponents",
@@ -60,7 +58,7 @@ local pyal_globals = {
     "remove_digosaur",
     "Oculua",
     "Farming",
-    "Smart_Farm",
+    "SmartFarm",
     "Worm",
     "Turd",
     "Vatbrain",

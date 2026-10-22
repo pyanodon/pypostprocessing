@@ -72,6 +72,6 @@ py.assert_type = function (value, type, error_msg, ...)
     return true
   end
   ---@cast type pY.value_type
-  if error_msg then error ((... and error_msg:format(...) or error_msg) .. (type_errors[type] and type_errors[type]:format(value) or (". Expected %s, found %s"):format(type, _G.type(value))), 0) end
+  if error_msg then error ((... and error_msg:format(...) or error_msg) .. (type_errors[type] and type_errors[type]:format(value) or (". Expected %s, found %s"):format(type, _G.type(value))), 2) end
   return false
 end
