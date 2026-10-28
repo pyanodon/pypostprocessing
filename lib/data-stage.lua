@@ -283,7 +283,7 @@ py.global_item_replacer = function(old, new, blackrecipe)
     for _, recipe in pairs(data.raw.recipe) do
         ---@diagnostic disable-next-line: undefined-field
         if not recipe.ignored_by_recipe_replacement and not blackrecipe[recipe.name] then
-            RECIPE(recipe):replace_ingredient(old, new):replace_result(old, new)
+            RECIPE(recipe.name):replace_ingredient(old, new):replace_result(old, new)
         end
     end
 end
@@ -482,8 +482,11 @@ py.flip_4way_animation = function(animation4way)
     return inverse
 end
 
+---Drop-in replacement for script.on_event however it supports multiple handlers per event  
+---You can also use 'on_built' 'on_destroyed' and 'on_init' as shortcuts for multiple events.  
+---Remember to call py.finalize_events() after all events are declared
 ---@diagnostic disable-next-line: duplicate-set-field
----@param event defines.events|defines.events[]|string|string[]
+---@param event LuaEventType|LuaEventType[]
 ---@param f function
 py.on_event = function(event, f) end
 

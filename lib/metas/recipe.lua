@@ -1,4 +1,5 @@
 local table_insert = table.insert
+local log = py.log.init("RECIPE")
 
 --unsafe functions overrides protections for ingredient/result existence
 
@@ -23,8 +24,8 @@ local metas = {}
 ---@field public remove_result fun(self: pYdata.RecipePrototype, result_name: string): pYdata.RecipePrototype, number
 ---@field public clear_ingredients fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
 ---@field public clear_results fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype, boolean
----@field public multiply_result_amount fun(self: pYdata.RecipePrototype, result_name: string, percent: number): pYdata.RecipePrototype, boolean
----@field public multiply_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, percent: number): pYdata.RecipePrototype, boolean
+---@field public multiply_result_amount fun(self: pYdata.RecipePrototype, result_name: string, amount: number): pYdata.RecipePrototype, boolean
+---@field public multiply_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, amount: number): pYdata.RecipePrototype, boolean
 ---@field public add_result_amount fun(self: pYdata.RecipePrototype, result_name: string, increase: number): pYdata.RecipePrototype, boolean
 ---@field public add_ingredient_amount fun(self: pYdata.RecipePrototype, ingredient_name: string, increase: number): pYdata.RecipePrototype, boolean
 ---@field public set_result_amount fun(self: pYdata.RecipePrototype, result_name: string, amount: number): pYdata.RecipePrototype, boolean
@@ -59,6 +60,9 @@ RECIPE = setmetatable(data.raw.recipe, {
             local old_recipe = data.raw.recipe[recipe.name]
             if old_recipe then
                 recipe.allow_productivity = recipe.allow_productivity or old_recipe.allow_productivity
+                local info = debug.getinfo(2) ---@cast info -?
+                local callsite = info.source .. ":" .. info.currentline
+                log.warning("overwriting existing recipe: " .. recipe.name .. " at " .. callsite)
             end
             recipe.type = "recipe"
             recipe = setmetatable(recipe, {__index = metas})
@@ -86,7 +90,7 @@ py.allow_productivity = function(recipe_names)
         if data.raw.recipe[recipe_name] then
             data.raw.recipe[recipe_name].allow_productivity = true
         else
-            log("WARNING @ allow_productivity(): Recipe " .. recipe_name .. " does not exist")
+            log.warning("allow_productivity(): Recipe " .. recipe_name .. " does not exist")
         end
     end
 end
@@ -103,7 +107,7 @@ metas.add_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log("WARNING @ \'" .. self.name .. "\':add_unlock(): Technology " .. technology_name .. " does not exist")
+        log.warning("\'" .. self.name .. "\':add_unlock(): Technology " .. technology_name .. " does not exist")
         return self, false -- fails, tech does not exist
     end
 
@@ -135,7 +139,7 @@ metas.remove_unlock = function(self, technology_name)
 
     local technology = data.raw.technology[technology_name]
     if not technology then
-        log("WARNING @ \'" .. self.name .. "\':remove_unlock(): Technology " .. technology_name .. " does not exist")
+        log.warning("\'" .. self.name .. "\':remove_unlock(): Technology " .. technology_name .. " does not exist")
         return self, false -- fails, tech does not exist
     elseif not technology.effects then
         return self, false -- tech effects do not exist
@@ -164,7 +168,7 @@ do
         local type = type(new)
         if type == "string" then
             if not FLUID[new] and not ITEM[new] and not unsafe then
-                log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
+                log.warning("\'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
                 return false
             end
             for _, ingredient in pairs(ingredients_or_results) do
@@ -184,7 +188,7 @@ do
         elseif type == "table" then
             new = table.deepcopy(new)
             if not FLUID[new.name] and not ITEM[new.name] and not unsafe then
-                log("WARNING @ \'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
+                log.warning("\'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
                 return false
             end
             for k, ingredient in pairs(ingredients_or_results) do
@@ -252,7 +256,7 @@ end
 metas.add_ingredient = function(self, ingredient)
     self:standardize()
     if not FLUID[ingredient.name] and not ITEM[ingredient.name] then
-        log("WARNING @ \'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
+        log.warning("\'" .. self.name .. "\':add_ingredient(): Ingredient " .. ingredient.name .. " does not exist")
         return self, false
     end
 
@@ -319,7 +323,7 @@ metas.multiply_result_amount = function(self, result_name, percent)
         end
     end
 
-    log("WARNING @ \'" .. self.name .. "\':multiply_result_amount(): Result " .. result_name .. " not found")
+    log.warning("\'" .. self.name .. "\':multiply_result_amount(): Result " .. result_name .. " not found")
     return self, false -- could not find result
 end
 
@@ -337,7 +341,7 @@ metas.multiply_ingredient_amount = function(self, ingredient_name, percent)
         end
     end
 
-    log("WARNING @ \'" .. self.name .. "\':multiply_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
+    log.warning("\'" .. self.name .. "\':multiply_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
     return self, false -- could not find ingredient
 end
 
@@ -355,7 +359,7 @@ metas.add_result_amount = function(self, result_name, increase)
         end
     end
 
-    log("WARNING @ \'" .. self.name .. "\':add_result_amount(): Result " .. result_name .. " not found")
+    log.warning("\'" .. self.name .. "\':add_result_amount(): Result " .. result_name .. " not found")
     return self, false -- could not find result
 end
 
@@ -373,7 +377,7 @@ metas.add_ingredient_amount = function(self, ingredient_name, increase)
         end
     end
 
-    log("WARNING @ \'" .. self.name .. "\':add_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
+    log.warning("\'" .. self.name .. "\':add_ingredient_amount(): Ingredient " .. ingredient_name .. " not found")
     return self, false -- could not find ingredient
 end
 
@@ -390,7 +394,7 @@ metas.add_category = function(self, category_name)
     self.categories = self.categories or {} -- not in self:standardize() because a recipe with no categories errors the game
 
     if not data.raw["recipe-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':add_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':add_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         for _, category in pairs(self.categories) do
@@ -407,7 +411,7 @@ metas.remove_category = function(self, category_name)
     self:standardize()
 
     if not data.raw["recipe-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':remove_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':remove_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         if category_name == "crafting" and (not self.categories or #self.categories == 0) then
@@ -429,17 +433,17 @@ metas.replace_category = function(self, old, new)
     self:standardize()
 
     if not data.raw["recipe-category"][old] then
-        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not found")
+        log.warning("\'" .. self.name .. "\':replace_category(): Category " .. old .. " not found")
         return self, false -- category does not exist
     elseif not data.raw["recipe-category"][new] then
-        log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. new .. " not found")
+        log.warning("\'" .. self.name .. "\':replace_category(): Category " .. new .. " not found")
         return self, false -- category does not exist
     else
         local _, success = self:remove_category(old)
         if success then
             return self:add_category(new) -- conditional on success of add_category
         else
-            log("WARNING @ \'" .. self.name .. "\':replace_category(): Category " .. old .. " not present for replacement")
+            log.warning("\'" .. self.name .. "\':replace_category(): Category " .. old .. " not present for replacement")
             return self, false -- DNE, do not add
         end
     end
@@ -449,7 +453,7 @@ metas.has_category = function(self, category_name)
     self:standardize()
 
     if not data.raw["recipe-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':has_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':has_category(): Category " .. category_name .. " not found")
         return false -- category does not exist
     else
         if category_name == "crafting" and (not self.categories or #self.categories == 0) then
@@ -553,7 +557,7 @@ metas.get_icons = function(self)
             end
         end
     end
-    log(serpent.block(self))
+    log.warning(serpent.block(self))
     error(string.format("Couldn't find icons for recipe %s", self.name))
 end
 
