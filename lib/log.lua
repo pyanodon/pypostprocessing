@@ -18,7 +18,7 @@ py.log.level = {
 
 local log_callsite = function(stack_level)
     local info = debug.getinfo(stack_level + 1) ---@cast info -?
-    local callsite = info.short_src .. ":" .. info.currentline
+    local callsite = info.source .. ":" .. info.currentline
     log("callsite: " .. callsite)
 end
 if log_level < int_log_levels.callsite then

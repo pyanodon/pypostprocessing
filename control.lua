@@ -99,8 +99,6 @@ local query_nth_tick = function(mod, tick)
     return query_funcs[mod] or {}
 end
 
-py.finalize_events()
-
 remote.add_interface("on_nth_tick", {
     add = register_on_nth_tick,
     query = query_nth_tick,
@@ -117,6 +115,8 @@ py.on_event(defines.events.on_tick, function(event)
     end
     storage.on_tick[tick] = nil
 end)
+
+py.finalize_events()
 
 -- PAST HERE IS PY ONLY STUFF
 if not py.has_any_py_mods() then

@@ -41,7 +41,6 @@ metas.create_icons = function(self, icon_path,  ...)
     if type(self.icons) == "string" then icon_path = self.icons end
     if not icon_path then error("provide a icon path for " .. self.name) end
     local base_mod = string.gsub(icon_path, "%d*__/.*", "__")
-    log(self.name .. ": " .. icon_size)
     self.icons = {
         {icon = base_mod .. "/graphics/technology/border.png", icon_size = 128},
         {icon = icon_path, icon_size = icon_size, scale = 0.7 * 128 / icon_size},
