@@ -1,8 +1,13 @@
-local item_prototypes = defines.prototypes.item
+local log = py.log.init("ITEM")
 
 ---@diagnostic disable-next-line: missing-fields
 ---@type pYdata.ItemPrototype
 local metas = {}
+
+local metatable = {
+    __index = function(self, index) return metas[index] or self.prototype[index] end,
+    __newindex = function(self, index, value) self.prototype[index] = value end
+}
 
 ---@class pYdata.ItemPrototype:pYdata.AnyPrototype,data.ItemPrototype
 ---@operator call(string|pYdata.ItemPrototype|data.ItemPrototype): pYdata.ItemPrototype
@@ -16,36 +21,30 @@ local metas = {}
 ---@field public has_fuel_category fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID): boolean
 ---@field public has_fuel_categories fun(self: pYdata.ItemPrototype, category_name: data.FuelCategoryID[], all?: boolean): boolean # Returns true if the item has any of the fuel categories. all? categories must match to pass
 ITEM = setmetatable({}, {
-    ---@param item data.ItemPrototype
-    __call = function(self, item)
-        local itype = type(item)
-        if itype == "string" then
-            ---@cast item any somehow this works but string doesnt
+    __call = function(_, object)
+        local type = type(object)
+        if type == "string" then
             for _, pdata in py.iter_prototype_categories("item") do
-                local result = pdata[item]
+                local result = pdata[object]
                 if result then
-                    result = setmetatable(result, {__index = metas})
-                    return result
+                    return setmetatable({prototype = result}, metatable)
                 end
             end
-        elseif itype == "table" then
-            if not item.type then error("Tried to extend an item " .. item.name .. " without providing a type") end
-            if not item_prototypes[item.type] then error("Tried to use ITEM{} on a non-item: " .. item.name) end
-
-            item = setmetatable(item, {__index = metas})
-            data:extend {item}
-            return item
-        else
-            error("Invalid type " .. itype)
+            error("Item " .. object .. " does not exist")
+        elseif type == "table" and getmetatable(object) == metatable then
+            return object
+        elseif type == "table" then
+            if not object.type then error("Tried to extend an entity " .. object.name .. " without providing a type") end
+            if not defines.prototypes.item[object.type] then error("Tried to use ITEM{} on a non-entity: " .. object.name) end
+            local old_object = data.raw[object.type][object.name]
+            if old_object then
+                local info = debug.getinfo(2) ---@cast info -?
+                local callsite = info.source .. ":" .. info.currentline
+                log.warning("overwriting existing item: " .. object.name .. " at " .. callsite)
+            end
+            data:extend {object}
+            return setmetatable({prototype = object}, metatable)
         end
-        error("Item " .. tostring(item) .. " does not exist")
-    end,
-    __index = function(self, item_name)
-        for _, pdata in py.iter_prototype_categories("item") do
-            local result = pdata[item_name]
-            if result then return result end
-        end
-        return nil
     end
 })
 
@@ -124,7 +123,7 @@ metas.add_fuel_category = function(self, category_name)
     self.fuel_categories = self.fuel_categories or {}
 
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':add_fuel_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':add_fuel_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         for _, category in pairs(self.fuel_categories) do
@@ -139,7 +138,7 @@ end
 
 metas.remove_fuel_category = function(self, category_name)
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':remove_fuel_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':remove_fuel_category(): Category " .. category_name .. " not found")
         return self, false -- category does not exist
     else
         if category_name == "chemical" and (not self.fuel_categories or #self.fuel_categories == 0) then
@@ -159,17 +158,17 @@ end
 
 metas.replace_fuel_category = function(self, old, new)
     if not data.raw["fuel-category"][old] then
-        log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not found")
+        log.warning("\'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not found")
         return self, false -- category does not exist
     elseif not data.raw["fuel-category"][new] then
-        log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. new .. " not found")
+        log.warning("\'" .. self.name .. "\':replace_fuel_category(): Category " .. new .. " not found")
         return self, false -- category does not exist
     else
         local _, success = self:remove_fuel_category(old)
         if success then
             return self:add_fuel_category(new) -- conditional on success of add_category
         else
-            log("WARNING @ \'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not present for replacement")
+            log.warning("\'" .. self.name .. "\':replace_fuel_category(): Category " .. old .. " not present for replacement")
             return self, false -- DNE, do not add
         end
     end
@@ -177,7 +176,7 @@ end
 
 metas.has_fuel_category = function(self, category_name)
     if not data.raw["fuel-category"][category_name] then
-        log("WARNING @ \'" .. self.name .. "\':has_fuel_category(): Category " .. category_name .. " not found")
+        log.warning("\'" .. self.name .. "\':has_fuel_category(): Category " .. category_name .. " not found")
         return false -- category does not exist
     elseif not self.fuel_value then
         return false -- does not support categories, is not a fuel

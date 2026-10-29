@@ -1,49 +1,48 @@
 ---@diagnostic disable-next-line: unresolved-require
 local collision_mask_util = require "__core__/lualib/collision-mask-util"
-
-local entity_types = defines.prototypes.entity
+local log = py.log.init("ENTITY")
 
 ---@diagnostic disable-next-line: missing-fields
 ---@type pYdata.EntityPrototype
 local metas = {}
 
+local metatable = {
+    __index = function(self, index) return metas[index] or self.prototype[index] end,
+    __newindex = function(self, index, value) self.prototype[index] = value end
+}
+
 ---@class pYdata.EntityPrototype:pYdata.AnyPrototype,data.EntityPrototype
+---@field collision_mask data.CollisionMaskConnector
 ---@operator call(string|pYdata.EntityPrototype|data.EntityPrototype): pYdata.EntityPrototype
 ---@field public standardize fun(self: pYdata.EntityPrototype): pYdata.EntityPrototype
 ---@field public add_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
 ---@field public remove_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
 ---@field public has_flag fun(self: pYdata.EntityPrototype, flag: string): boolean
 ENTITY = setmetatable({}, {
-    __call = function(self, entity)
-        local etype = type(entity)
-        if etype == "string" then
-            ---@cast entity any somehow this works but string doesnt
+    __call = function(_, object)
+        local type = type(object)
+        if type == "string" then
             for _, pdata in py.iter_prototype_categories("entity") do
-                local result = pdata[entity]
+                local result = pdata[object]
                 if result then
-                    result = setmetatable(result, {__index = metas})
-                    return result:standardize()
+                    return setmetatable({prototype = result}, metatable):standardize()
                 end
             end
-        elseif etype == "table" then
-            if not entity.type then error("Tried to extend an entity " .. entity.name .. " without providing a type") end
-            if not entity_types[entity.type] then error("Tried to use ENTITY{} on a non-entity: " .. entity.name) end
-
-            entity = setmetatable(entity, {__index = metas})
-            data:extend {entity--[[@as data.AnyPrototype]]}
-            return entity:standardize()
-        else
-            error("Invalid type " .. etype)
+            error("Entity " .. object .. " does not exist")
+        elseif type == "table" and getmetatable(object) == metatable then
+            return object:standardize()
+        elseif type == "table" then
+            if not object.type then error("Tried to extend an entity " .. object.name .. " without providing a type") end
+            if not defines.prototypes.entity[object.type] then error("Tried to use ENTITY{} on a non-entity: " .. object.name) end
+            local old_object = data.raw[object.type][object.name]
+            if old_object then
+                local info = debug.getinfo(2) ---@cast info -?
+                local callsite = info.source .. ":" .. info.currentline
+                log.warning("overwriting existing entity: " .. object.name .. " at " .. callsite)
+            end
+            data:extend {object}
+            return setmetatable({prototype = object}, metatable):standardize()
         end
-        error("Entity " .. tostring(entity) .. " does not exist")
-    end,
-    __index = function(self, entity_name)
-        for _, pdata in py.iter_prototype_categories("entity") do
-            local result = pdata[entity_name]
-            result = setmetatable(self[result], {__index = metas})
-            if result then return result:standardize() end
-        end
-        return nil
     end
 })
 
