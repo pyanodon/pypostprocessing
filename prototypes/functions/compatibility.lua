@@ -8,9 +8,8 @@ if data.raw.recipe["electronic-circuit"].enabled == false
     and (data.raw.recipe["inductor1-2"].enabled == nil or data.raw.recipe["inductor1-2"].enabled == true)
 then
     for _, recipe in pairs(data.raw.recipe) do
-        RECIPE(recipe):standardize()
         if recipe.enabled ~= false then
-            RECIPE(recipe):replace_ingredient("electronic-circuit", "inductor1")
+            RECIPE(recipe.name):replace_ingredient("electronic-circuit", "inductor1")
         end
     end
 end
@@ -69,7 +68,7 @@ end
 if mods.pyrawores then
     for _, recipe in pairs(data.raw.recipe) do
         if recipe.enabled == nil or recipe.enabled == true and recipe.name ~= "coal-gas" then
-            RECIPE(recipe):replace_ingredient("coal", "raw-coal")
+            RECIPE(recipe.name):replace_ingredient("coal", "raw-coal")
         end
     end
     for _, technology in pairs(data.raw.technology) do

@@ -110,8 +110,10 @@ local function set_ignore_click(f)
 end
 
 
----Drop-in replacement for script.on_event however it supports multiple handlers per event. You can also use 'on_built' 'on_destroyed' and 'on_init' as shortcuts for multiple events.
----@param event defines.events|defines.events[]|string|string[]
+---Drop-in replacement for script.on_event however it supports multiple handlers per event  
+---You can also use 'on_built' 'on_destroyed' and 'on_init' as shortcuts for multiple events.  
+---Remember to call py.finalize_events() after all events are declared
+---@param event LuaEventType|LuaEventType[]
 ---@param f function
 ---@diagnostic disable-next-line: duplicate-set-field
 py.on_event = function(event, f)
