@@ -7,7 +7,15 @@ local log = py.log.init("RECIPE")
 ---@type pYdata.RecipePrototype
 local metas = {}
 
+local metatable = {
+    __index = function(self, index) return metas[index] or self.prototype[index] end,
+    __newindex = function(self, index, value) self.prototype[index] = value end
+}
+
 ---@class pYdata.RecipePrototype:pYdata.AnyPrototype,data.RecipePrototype
+---@field results data.ProductPrototype[]
+---@field ingredients data.IngredientPrototype[]
+---@field energy_required double
 ---@operator call(string|pYdata.RecipePrototype|data.RecipePrototype): pYdata.RecipePrototype
 ---@field public standardize fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype
 ---@field public add_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
@@ -37,40 +45,36 @@ local metas = {}
 ---@field public has_categories fun(self: pYdata.RecipePrototype, category_name: data.RecipeCategoryID[], all?: boolean): boolean # Returns true if the recipe has any of the categories. all? categories must match to pass
 ---@field public get_main_product fun(self: pYdata.RecipePrototype, allow_multi_product: boolean?): LuaItemPrototype|LuaFluidPrototype?
 ---@field public get_icons fun(self: pYdata.RecipePrototype): data.IconData[]
----@field public ingredients data.ItemIngredientPrototype[]|data.FluidIngredientPrototype[]
----@field public results data.ItemProductPrototype[]|data.FluidProductPrototype[]
-RECIPE = setmetatable(data.raw.recipe, {
-    __call = function(self, recipe)
-        local rtype = type(recipe)
-        if rtype == "string" then
-            if not self[recipe] then
-                local dummyResult = {
+RECIPE = setmetatable({}, {
+    __call = function(_, object)
+        local type = type(object)
+        if type == "string" then
+            if not data.raw.recipe[object] then
+                return setmetatable({}, {
                     __index = function(self2)
                         return self2
                     end,
                     __call = function(self2)
                         return self2
                     end
-                }
-                setmetatable(dummyResult, dummyResult)
-                return dummyResult
+                })
             end
-            recipe = setmetatable(self[recipe], {__index = metas})
-        elseif rtype == "table" then
-            local old_recipe = data.raw.recipe[recipe.name]
-            if old_recipe then
-                recipe.allow_productivity = recipe.allow_productivity or old_recipe.allow_productivity
+            object = assert(data.raw.recipe[object], "Recipe " .. object .. " does not exist")
+            return setmetatable({prototype = object}, metatable):standardize()
+        elseif type == "table" and getmetatable(object) == metatable then
+            return object:standardize()
+        elseif type == "table" then
+            local old_object = data.raw.recipe[object.name]
+            if old_object then
+                object.allow_productivity = object.allow_productivity or object.allow_productivity
                 local info = debug.getinfo(2) ---@cast info -?
                 local callsite = info.source .. ":" .. info.currentline
-                log.warning("overwriting existing recipe: " .. recipe.name .. " at " .. callsite)
+                log.warning("overwriting existing recipe: " .. object.name .. " at " .. callsite)
             end
-            recipe.type = "recipe"
-            recipe = setmetatable(recipe, {__index = metas})
-            data:extend {recipe}
-        else
-            error("Invalid type " .. rtype)
+            object.type = "recipe"
+            data:extend {object}
+            return setmetatable({prototype = object}, metatable):standardize()
         end
-        return recipe:standardize()
     end
 })
 

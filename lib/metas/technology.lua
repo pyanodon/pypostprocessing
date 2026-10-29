@@ -1,8 +1,17 @@
+local log = py.log.init("TECHNOLOGY")
+
 ---@diagnostic disable-next-line: missing-fields
 ---@type pYdata.TechnologyPrototype
 local metas = {}
 
+local metatable = {
+    __index = function(self, index) return metas[index] or self.prototype[index] end,
+    __newindex = function(self, index, value) self.prototype[index] = value end
+}
+
 ---@class pYdata.TechnologyPrototype:pYdata.AnyPrototype,data.TechnologyPrototype
+---@field prerequisites data.TechnologyID[]
+---@field effects data.Modifier[]
 ---@operator call(string|pYdata.TechnologyPrototype|data.TechnologyPrototype): pYdata.TechnologyPrototype
 ---@field public standardize fun(self: pYdata.TechnologyPrototype): pYdata.TechnologyPrototype
 ---@field public add_prereq fun(self: pYdata.TechnologyPrototype, prereq_technology_name: data.TechnologyID): pYdata.TechnologyPrototype, boolean
@@ -15,24 +24,25 @@ local metas = {}
 ---scales the icon to the prototype's icon_size or 128  
 ---if you want to adjust the icon manually, pass an empty sprite as the path and the icon as the second argument
 ---@field public create_icons fun(self: pYdata.TechnologyPrototype, icon_path: string?, ...: data.IconData): pYdata.TechnologyPrototype
-TECHNOLOGY = setmetatable(data.raw.technology, {
-    __call = function(self, technology)
-        local ttype = type(technology)
-        if ttype == "string" then
-            if not self[technology] then error("Technology " .. technology .. " does not exist") end
-            technology = self[technology]
-            technology = setmetatable(technology, {__index = metas})
-        elseif ttype == "table" then
-            technology.type = "technology"
-            technology = setmetatable(technology, {__index = metas})
-            data:extend {technology}
-        else
-            error("Invalid type " .. ttype)
+TECHNOLOGY = setmetatable({}, {
+    __call = function(_, object)
+        local type = type(object)
+        if type == "string" then
+            object = assert(data.raw.technology[object], "Technology " .. object .. " does not exist")
+            return setmetatable({prototype = object}, metatable):standardize()
+        elseif type == "table" and getmetatable(object) == metatable then
+            return object:standardize()
+        elseif type == "table" then
+            local old_object = data.raw.technology[object.name]
+            if old_object then
+                local info = debug.getinfo(2) ---@cast info -?
+                local callsite = info.source .. ":" .. info.currentline
+                log.warning("overwriting existing technology: " .. object.name .. " at " .. callsite)
+            end
+            object.type = "technology"
+            data:extend {object}
+            return setmetatable({prototype = object}, metatable):standardize()
         end
-        if type(technology.icons) == "string" then
-            technology = technology:create_icons()
-        end
-        return technology:standardize()
     end
 })
 
@@ -65,7 +75,7 @@ end
 metas.add_prereq = function(self, prereq_technology_name)
     local prereq_technology = data.raw.technology[prereq_technology_name]
     if not prereq_technology then
-        log("WARNING @ \'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
+        log.warning("\'" .. self.name .. "\':add_prereq(): Technology " .. prereq_technology_name .. " does not exist")
         return self, false -- add prereq failed
     end
 
