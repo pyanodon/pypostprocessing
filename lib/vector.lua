@@ -2,8 +2,8 @@
 ---@field x number
 ---@field y number
 ---@field z number
----@field cross fun(self, v: Pyvector): Pyvector -- cross product
----@field dot fun(self, v: Pyvector): number -- dot product
+---@field cross fun(self, v: Pyvector|MapPosition): Pyvector -- cross product
+---@field dot fun(self, v: Pyvector|MapPosition): number -- dot product
 ---@field mag fun(self): number -- get the magnitude of a vector
 ---@field mag2 fun(self): number -- get the magnitude square of a vector, skips square root
 ---@field normalized fun(self): Pyvector -- normalize the vector
@@ -11,10 +11,14 @@
 ---@field is_vector fun(self): boolean
 ---@field new fun(x: {x: number, y: number, z: number} | MapPosition | number?, y: number?, z: number?): Pyvector -- create new vector from table or 3 numbers
 ---@operator add(Pyvector): Pyvector
+---@operator add(MapPosition): Pyvector
 ---@operator sub(Pyvector): Pyvector
+---@operator sub(MapPosition): Pyvector
 ---@operator mul(Pyvector): Pyvector
+---@operator mul(MapPosition): Pyvector
 ---@operator div(Pyvector): Pyvector
----@operator unm(Pyvector): Pyvector
+---@operator div(MapPosition): Pyvector
+---@operator unm: Pyvector
 py.vector = {
     __add = function(self, v)
         return py.vector.new(self.x + v.x, self.y + v.y, self.z + (v.z or 0))

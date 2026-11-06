@@ -448,11 +448,12 @@ for _, type in pairs {"furnace", "assembling-machine", "mining-drill", "lab"} do
     end
 end
 
----@diagnostic disable-next-line: undefined-field
--- YAFC
-if type(data.data_crawler) == "string" and string.sub(data.data_crawler, 1, 5) == "yafc " then
-    require "prototypes/yafc"
+for index, fun in pairs(py.postprocessing) do
+    py.log.info("Running postprocess function: " .. index)
+    fun()
 end
+
+require "prototypes/yafc"
 
 -- force mining drill speed to not increase with speed modules
 for _, drill in pairs(data.raw["mining-drill"]) do
