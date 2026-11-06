@@ -17,7 +17,7 @@ end
 
 local string_test_success = true
 local string_count = 0
---- @param event EventData.on_string_translated
+---@param event EventData.on_string_translated
 script.on_event(defines.events.on_string_translated, function(event)
     string_count = string_count + 1
     if not event.translated then
