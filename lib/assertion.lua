@@ -22,7 +22,8 @@ local _value_type = {
   gtzero = 10,
   ltzero = 11,
   gteqzero = 12,
-  lteqzero = 13
+  lteqzero = 13,
+  energy = 14
 }
 
 ---@generic V
@@ -42,6 +43,7 @@ local type_check = {
   ["ltzero"]   = function (value) return type(value) == "number" and value < 0 end,
   ["gteqzero"] = function (value) return type(value) == "number" and value >= 0 end,
   ["lteqzero"] = function (value) return type(value) == "number" and value <= 0 end,
+  ["energy"]   = function (value) return type(value) == "string" and value:sub(-1) == "W" or value:sub(-1) == "J" and not not tonumber(value:sub(1,1)) end
 }
 
 ---@type {[pY.value_type]: string}
@@ -50,7 +52,8 @@ local type_errors = {
   gtzero   = ". Number must be > 0, found %q",
   ltzero   = ". Number must be < 0, found %q",
   gteqzero = ". Number must be >= 0, found %q",
-  lteqzero = ". Number must be <= 0, found %q"
+  lteqzero = ". Number must be <= 0, found %q",
+  energy   = ". Value must be energy, found %q"
 }
 
 ---@param value any?
