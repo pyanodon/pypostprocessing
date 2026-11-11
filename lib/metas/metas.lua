@@ -14,6 +14,7 @@ local lib = {
 ---@field public subgroup_order fun<T>(self: T, subgroup: string, order: string): T
 ---@field public set_fields fun<T>(self: T, fields: table): T
 ---@field public set fun<T>(self: T, field: string, value: any): T
+---@field public extend fun<T>(self: T): T
 ---@field public delete fun<T>(self: T)
 ---@field public hide fun<T>(self: T): T
 ---@field public unhide fun<T>(self: T): T
@@ -24,9 +25,8 @@ for _, meta in pairs(lib) do
         if new_name then
             if type(new_name) == "function" then new_name = new_name(copy) end
             copy.name = new_name
-            data:extend {copy}
         end
-        return setmetatable(copy, getmetatable(self))
+        return copy
     end
 
     meta.subgroup_order = function(self, subgroup, order)
@@ -49,6 +49,11 @@ for _, meta in pairs(lib) do
         return self
     end
 
+    meta.extend = function(self)
+        data.raw[self.type][self.name] = rawget(self, "prototype")
+        return self
+    end
+
     meta.delete = function(self)
         data.raw[self.type][self.name] = nil
     end
@@ -63,26 +68,5 @@ for _, meta in pairs(lib) do
         self.hidden = nil
         self.hidden_in_factoriopedia = nil
         return self
-    end
-end
-
-local metas = {}
-metas.recipe = {__index = lib.recipe}
-metas.technology = {__index = lib.technology}
-for ptype in pairs(defines.prototypes.entity) do
-    metas[ptype] = {__index = lib.entity}
-end
-for ptype in pairs(defines.prototypes.item) do
-    metas[ptype] = {__index = lib.item}
-end
-metas.fluid = {__index = lib.fluid}
-metas.tile = {__index = lib.tile}
-
-for ptype, prototypes in pairs(data.raw) do
-    local meta = metas[ptype]
-    if meta then
-        for _, prototype in pairs(prototypes) do
-            setmetatable(prototype, meta)
-        end
     end
 end
