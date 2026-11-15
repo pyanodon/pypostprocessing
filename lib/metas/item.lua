@@ -53,8 +53,7 @@ ITEM = setmetatable({}, {
     end,
     __index = function(self, name)
         for _, pdata in py.iter_prototype_categories("item") do
-            local result = pdata[name]
-            if result then return ITEM(result) end
+            if pdata[name] then return ITEM(name) end
         end
         return nil
     end

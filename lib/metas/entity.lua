@@ -47,8 +47,7 @@ ENTITY = setmetatable({}, {
     end,
     __index = function(self, name)
         for _, pdata in py.iter_prototype_categories("entity") do
-            local result = pdata[name]
-            if result then return ENTITY(result) end
+            if pdata[name] then return ENTITY(name) end
         end
         return nil
     end

@@ -46,8 +46,7 @@ TECHNOLOGY = setmetatable({}, {
         end
     end,
     __index = function(self, name)
-        local result = data.raw.technology[name]
-        if result then return TECHNOLOGY(result) end
+        if data.raw.technology[name] then return TECHNOLOGY(name) end
         return nil
     end
 })

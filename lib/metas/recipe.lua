@@ -78,8 +78,7 @@ RECIPE = setmetatable({}, {
         end
     end,
     __index = function(self, name)
-        local result = data.raw.recipe[name]
-        if result then return RECIPE(result) end
+        if data.raw.recipe[name] then return RECIPE(name) end
         return nil
     end
 })

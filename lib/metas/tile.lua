@@ -33,8 +33,7 @@ TILE = setmetatable({}, {
         end
     end,
     __index = function(self, name)
-        local result = data.raw.tile[name]
-        if result then return TILE(result) end
+        if data.raw.tile[name] then return TILE(name) end
         return nil
     end
 })

@@ -33,8 +33,7 @@ FLUID = setmetatable({}, {
         end
     end,
     __index = function(self, name)
-        local result = data.raw.fluid[name]
-        if result then return FLUID(result) end
+        if data.raw.fluid[name] then return FLUID(name) end
         return nil
     end
 })
