@@ -7,7 +7,7 @@ storage = storage --[[@as PyPostProcessingStorage]]
 ---@field compound_entity_pairs_reverse table
 ---@field compound_entity_gui_pairs table
 
-if py.stage == "data" then
+if helpers.stage == "prototype" then
   -- Attachs an entity to another entity with additional properties
   -- @param parent string
   -- @param child string
@@ -36,7 +36,7 @@ if py.stage == "data" then
     table.insert(info[parent], additional)
     log(serpent.block(data.raw["mod-data"]))
   end
-elseif py.stage == "control" then
+elseif helpers.stage == "runtime" then
   local init = function()
     if not storage.compound_entity_pairs then
       storage.compound_entity_pairs = {}
