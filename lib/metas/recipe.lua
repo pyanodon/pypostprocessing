@@ -163,34 +163,31 @@ metas.replace_unlock = function(self, technology_old, technology_new)
 end
 
 do
-    --old is a string
-    local function replacement_helper(recipe, ingredients_or_results, old, new, new_amount, unsafe)
+
+    ---@param ingredients_or_results data.IngredientPrototype[]|data.ProductPrototype[]
+    ---@param old string
+    ---@param new string|data.IngredientPrototype|data.ProductPrototype
+    ---@param new_amount number?
+    ---@param merge boolean?
+    local function replacement_helper(ingredients_or_results, old, new, new_amount, merge)
         local type = type(new)
         if type == "string" then
-            if not FLUID[new] and not ITEM[new] and not unsafe then
-                log.warning("\'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new .. " does not exist")
-                return false
-            end
-            for _, ingredient in pairs(ingredients_or_results) do
-                if ingredient.name == old then
-                    ingredient.name = new
-                    ingredient.type = FLUID[new] and "fluid" or "item"
-                    ingredient.minimum_temperature = nil
-                    ingredient.maximum_temperature = nil
-                    ingredient.temperature = nil
+            for _, instance in pairs(ingredients_or_results) do
+                if instance.name == old then
+                    instance.name = new
+                    instance.type = FLUID[new] and "fluid" or "item"
+                    instance.minimum_temperature = nil
+                    instance.maximum_temperature = nil
+                    instance.temperature = nil
                     if new_amount then
-                        ingredient.amount = new_amount
-                        ingredient.amount_min = nil
-                        ingredient.amount_max = nil
+                        instance.amount = new_amount
+                        instance.amount_min = nil
+                        instance.amount_max = nil
                     end
                 end
             end
         elseif type == "table" then
             new = table.deepcopy(new)
-            if not FLUID[new.name] and not ITEM[new.name] and not unsafe then
-                log.warning("\'" .. recipe.name .. "\':replace_ingredient(): Ingredient " .. new.name .. " does not exist")
-                return false
-            end
             for k, ingredient in pairs(ingredients_or_results) do
                 if ingredient.name == old then
                     ingredients_or_results[k] = new
@@ -200,21 +197,64 @@ do
         return true -- must have been a success! cant early return on success because of possible repeated results
     end
 
+    ---@param ingredients data.IngredientPrototype[]
+    ---@param name string
+    local function combine_copies(ingredients, name)
+        ---@type data.IngredientPrototype[]
+        local instances = {}
+        local remove = {}
+        for i, instance in pairs(ingredients) do
+            if instance.name == name then
+                if instances[1] then remove[#remove + 1] = i end
+                instances[#instances + 1] = instance
+            end
+        end
+        if #instances >= 2 then
+            local primary = instances[1]
+            ---@diagnostic disable-next-line: param-type-mismatch
+            table.remove(instances, 1)
+            for _, instance in pairs(instances) do
+                ---@cast instance data.IngredientPrototype
+                primary.amount = primary.amount + instance.amount
+                if primary.ignored_by_stats or instance.ignored_by_stats then
+                    primary.ignored_by_stats = (primary.ignored_by_stats or 0) + (instance.ignored_by_stats or 0)
+                end
+            end
+            for j, i in pairs(remove) do
+                ---@diagnostic disable-next-line: param-type-mismatch
+                table.remove(ingredients, i - j + 1)
+            end
+        end
+    end
+
     metas.replace_ingredient = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, false)
+        local name = type(new_ingredient) == "string" and new_ingredient or new_ingredient.name --[[@as string]]
+        if not FLUID[name] and not ITEM[name] then
+            log.warning("\'" .. self.name .. "\':replace_ingredient(): Ingredient " .. name .. " does not exist")
+            return self, false
+        end
+        local success = replacement_helper(self.ingredients, old_ingredient, new_ingredient, new_amount, true)
+        combine_copies(self.ingredients, name)
         return self, success
     end
 
     metas.replace_ingredient_unsafe = function(self, old_ingredient, new_ingredient, new_amount)
         self:standardize()
-        local success = replacement_helper(self, self.ingredients, old_ingredient, new_ingredient, new_amount, true)
+        local success = replacement_helper(self.ingredients, old_ingredient, new_ingredient, new_amount, true)
+        local name = type(new_ingredient) == "string" and new_ingredient or new_ingredient.name --[[@as string]]
+        combine_copies(self.ingredients, name)
         return self, success
     end
 
     metas.replace_result = function(self, old_result, new_result, new_amount)
         self:standardize()
-        local success = replacement_helper(self, self.results, old_result, new_result, new_amount, false)
+        local name = type(new_result) == "string" and new_result or new_result.name
+        if not FLUID[name] and not ITEM[name] then
+            log.warning("\'" .. self.name .. "\':replace_result(): Result " .. name .. " does not exist")
+            return self, false
+        end
+        local success = replacement_helper(self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result.name
         end
@@ -223,7 +263,7 @@ do
 
     metas.replace_result_unsafe = function(self, old_result, new_result, new_amount)
         self:standardize()
-        local success = replacement_helper(self, self.results, old_result, new_result, new_amount, true)
+        local success = replacement_helper(self.results, old_result, new_result, new_amount)
         if self.main_product == old_result then
             self.main_product = type(new_result) == "string" and new_result or new_result.name
         end
