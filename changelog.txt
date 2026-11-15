@@ -5,6 +5,7 @@ Date: ????
     - Added py.postprocessing to run at the end of data-final-fixes
     - Added py.yafc_integrations to run at the end of data-final-fixes when YAFC is enabled
     - Fixed that RECIPE:replace_ingredient() could add duplicate ingredients
+    - Updated RU locale (thanks, Astorin!)
 ---------------------------------------------------------------------------------------------------
 Version: 3.1.7
 Date: 2026-10-22
