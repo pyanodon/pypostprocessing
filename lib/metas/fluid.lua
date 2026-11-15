@@ -11,6 +11,7 @@ local metatable = {
 
 ---@class pYdata.FluidPrototype:pYdata.AnyPrototype,data.FluidPrototype
 ---@operator call(string|pYdata.FluidPrototype|data.FluidPrototype): pYdata.FluidPrototype
+---@operator index(string): pYdata.FluidPrototype?
 FLUID = setmetatable({}, {
     __call = function(_, object)
         local type = type(object)
@@ -30,6 +31,11 @@ FLUID = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable)
         end
+    end,
+    __index = function(self, name)
+        local result = data.raw.fluid[name]
+        if result then return FLUID(result) end
+        return nil
     end
 })
 

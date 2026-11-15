@@ -14,6 +14,7 @@ local metatable = {
 ---@class pYdata.EntityPrototype:pYdata.AnyPrototype,data.EntityPrototype
 ---@field collision_mask data.CollisionMaskConnector
 ---@operator call(string|pYdata.EntityPrototype|data.EntityPrototype): pYdata.EntityPrototype
+---@operator index(string): pYdata.EntityPrototype?
 ---@field public standardize fun(self: pYdata.EntityPrototype): pYdata.EntityPrototype
 ---@field public add_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
 ---@field public remove_flag fun(self: pYdata.EntityPrototype, flag: string): pYdata.EntityPrototype, boolean
@@ -43,6 +44,13 @@ ENTITY = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable):standardize()
         end
+    end,
+    __index = function(self, name)
+        for _, pdata in py.iter_prototype_categories("entity") do
+            local result = pdata[name]
+            if result then return ENTITY(result) end
+        end
+        return nil
     end
 })
 

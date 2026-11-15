@@ -11,6 +11,7 @@ local metatable = {
 
 ---@class pYdata.TilePrototype:pYdata.AnyPrototype,data.TilePrototype
 ---@operator call(string|pYdata.TilePrototype|data.TilePrototype): pYdata.TilePrototype
+---@operator index(string): pYdata.TilePrototype?
 TILE = setmetatable({}, {
     __call = function(_, object)
         local type = type(object)
@@ -30,6 +31,11 @@ TILE = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable)
         end
+    end,
+    __index = function(self, name)
+        local result = data.raw.tile[name]
+        if result then return TILE(result) end
+        return nil
     end
 })
 

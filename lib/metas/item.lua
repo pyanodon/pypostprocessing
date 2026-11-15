@@ -9,8 +9,13 @@ local metatable = {
     __newindex = function(self, index, value) self.prototype[index] = value end
 }
 
+for type in pairs(defines.prototypes.item) do
+    data.raw[type] = data.raw[type] or {}
+end
+
 ---@class pYdata.ItemPrototype:pYdata.AnyPrototype,data.ItemPrototype
 ---@operator call(string|pYdata.ItemPrototype|data.ItemPrototype): pYdata.ItemPrototype
+---@operator index(string): pYdata.ItemPrototype?
 ---@field public add_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
 ---@field public remove_flag fun(self: pYdata.ItemPrototype, flag: string): pYdata.ItemPrototype, boolean
 ---@field public has_flag fun(self: pYdata.ItemPrototype, flag: string): boolean
@@ -45,6 +50,13 @@ ITEM = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable)
         end
+    end,
+    __index = function(self, name)
+        for _, pdata in py.iter_prototype_categories("item") do
+            local result = pdata[name]
+            if result then return ITEM(result) end
+        end
+        return nil
     end
 })
 

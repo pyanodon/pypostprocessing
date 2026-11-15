@@ -13,6 +13,7 @@ local metatable = {
 ---@field prerequisites data.TechnologyID[]
 ---@field effects data.Modifier[]
 ---@operator call(string|pYdata.TechnologyPrototype|data.TechnologyPrototype): pYdata.TechnologyPrototype
+---@operator index(string): pYdata.TechnologyPrototype?
 ---@field public standardize fun(self: pYdata.TechnologyPrototype): pYdata.TechnologyPrototype
 ---@field public add_prereq fun(self: pYdata.TechnologyPrototype, prereq_technology_name: data.TechnologyID): pYdata.TechnologyPrototype, boolean
 ---@field public remove_prereq fun(self: pYdata.TechnologyPrototype, prereq_technology_name: data.TechnologyID): pYdata.TechnologyPrototype, boolean
@@ -43,6 +44,11 @@ TECHNOLOGY = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable):standardize()
         end
+    end,
+    __index = function(self, name)
+        local result = data.raw.technology[name]
+        if result then return TECHNOLOGY(result) end
+        return nil
     end
 })
 

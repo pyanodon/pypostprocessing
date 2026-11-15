@@ -17,6 +17,7 @@ local metatable = {
 ---@field ingredients data.IngredientPrototype[]
 ---@field energy_required double
 ---@operator call(string|pYdata.RecipePrototype|data.RecipePrototype): pYdata.RecipePrototype
+---@operator index(string): pYdata.RecipePrototype?
 ---@field public standardize fun(self: pYdata.RecipePrototype): pYdata.RecipePrototype
 ---@field public add_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
 ---@field public remove_unlock fun(self: pYdata.RecipePrototype, technology_name: string | string[]): pYdata.RecipePrototype, boolean
@@ -75,6 +76,11 @@ RECIPE = setmetatable({}, {
             data:extend {object}
             return setmetatable({prototype = object}, metatable):standardize()
         end
+    end,
+    __index = function(self, name)
+        local result = data.raw.recipe[name]
+        if result then return RECIPE(result) end
+        return nil
     end
 })
 
