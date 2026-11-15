@@ -7,7 +7,7 @@ storage = storage --[[@as PyPostProcessingStorage]]
 ---@field compound_entity_pairs_reverse table
 ---@field compound_entity_gui_pairs table
 
-if py.stage == "data" then
+if helpers.stage == "prototype" then
   -- Attachs an entity to another entity with additional properties
   -- @param parent string
   -- @param child string
@@ -36,7 +36,7 @@ if py.stage == "data" then
     table.insert(info[parent], additional)
     log(serpent.block(data.raw["mod-data"]))
   end
-elseif py.stage == "control" then
+elseif helpers.stage == "runtime" then
   local init = function()
     if not storage.compound_entity_pairs then
       storage.compound_entity_pairs = {}
@@ -193,6 +193,7 @@ elseif py.stage == "control" then
     local info = py.get_smuggled_data("compound-info")
 
     for machine, children in pairs(info) do
+      ---@param event EventData.on_built_entity|EventData.on_robot_built_entity|EventData.on_space_platform_built_entity|EventData.script_raised_built|EventData.script_raised_revive
       py.on_event(py.events.on_built(), function(event)
         init()
         if not event.entity.valid or machine ~= event.entity.name then return end
@@ -205,6 +206,7 @@ elseif py.stage == "control" then
         end
       end)
 
+      ---@param event EventData.on_player_mined_entity|EventData.on_robot_mined_entity|EventData.on_space_platform_mined_entity|EventData.script_raised_destroy|EventData.on_entity_died
       py.on_event(py.events.on_destroyed(), function(event)
         init()
         if not event.entity.valid or machine ~= event.entity.name then return end
