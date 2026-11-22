@@ -43,7 +43,7 @@ local type_check = {
   ["ltzero"]   = function (value) return type(value) == "number" and value < 0 end,
   ["gteqzero"] = function (value) return type(value) == "number" and value >= 0 end,
   ["lteqzero"] = function (value) return type(value) == "number" and value <= 0 end,
-  ["energy"]   = function (value) return type(value) == "string" and value:sub(-1) == "W" or value:sub(-1) == "J" and not not tonumber(value:sub(1,1)) end
+  ["energy"]   = function (value) return type(value) == "string" and (value:sub(-1) == "W" or value:sub(-1) == "J") and not not tonumber(value:sub(1,1)) end
 }
 
 ---@type {[pY.value_type]: string}
